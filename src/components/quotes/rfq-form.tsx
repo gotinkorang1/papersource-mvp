@@ -76,6 +76,34 @@ export function RfqForm() {
             <Label htmlFor="notes">Notes</Label>
             <Textarea id="notes" name="notes" />
           </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="documentPurpose">Attachment type</Label>
+            <select
+              id="documentPurpose"
+              name="documentPurpose"
+              defaultValue="rfq"
+              className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink"
+            >
+              <option value="rfq">RFQ document</option>
+              <option value="purchase_order">Purchase order</option>
+              <option value="procurement_list">Procurement list</option>
+              <option value="internal">Other supporting file</option>
+            </select>
+          </div>
+          <div className="space-y-1.5">
+            <Label htmlFor="documents">Attachments (optional)</Label>
+            <Input
+              id="documents"
+              name="documents"
+              type="file"
+              multiple
+              accept=".pdf,.xlsx,.xls,.doc,.docx,.jpg,.jpeg,.png,.webp"
+            />
+            <p className="text-sm text-slate">
+              PDF, Excel, Word or image. Up to five files, 15 MB each. Stored
+              privately — not on the public product CDN.
+            </p>
+          </div>
         </div>
       </GhanaAddressForm>
     </div>

@@ -101,3 +101,13 @@ export const staffRoleEnum = pgEnum("staff_role", [
 ]);
 
 export type StaffRole = (typeof staffRoleEnum.enumValues)[number];
+
+export const documentPurposeEnum = pgEnum("document_purpose", [
+  "rfq",
+  "purchase_order",
+  "procurement_list",
+  "invoice",
+  "internal",
+]);
+
+export type DocumentPurpose = (typeof documentPurposeEnum.enumValues)[number];

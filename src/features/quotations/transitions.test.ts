@@ -14,6 +14,13 @@ describe("quote transitions", () => {
     expect(canTransitionQuote("accepted", "payment_pending")).toBe(true);
   });
 
+  it("allows a guest to cancel before review", () => {
+    expect(canTransitionQuote("submitted", "cancelled")).toBe(true);
+    expect(canTransitionQuote("under_review", "cancelled")).toBe(true);
+    expect(canTransitionQuote("sent", "cancelled")).toBe(false);
+    expect(canTransitionQuote("sent", "declined")).toBe(true);
+  });
+
   it("rejects jumping submitted to paid", () => {
     expect(canTransitionQuote("submitted", "paid")).toBe(false);
     expect(() => assertQuoteTransition("submitted", "paid")).toThrow(

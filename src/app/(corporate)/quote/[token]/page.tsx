@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AcceptQuoteButton } from "@/components/quotes/accept-quote-button";
 import { getQuoteByAccessToken } from "@/features/quotations/accept";
+import { signedDocumentPath } from "@/lib/documents/sign";
 import { formatGhs } from "@/lib/money";
 import { isDatabaseConfigured } from "@/lib/db/client";
 
@@ -11,9 +12,11 @@ export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
+export const dynamic = "force-dynamic";
+
 type PageProps = {
   params: Promise<{ token: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; notice?: string }>;
 };
 
 export default async function CustomerQuotePage({ params, searchParams }: PageProps) {
@@ -22,13 +25,14 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
   }
 
   const { token } = await params;
-  const { error } = await searchParams;
+  const { error, notice } = await searchParams;
   const quote = await getQuoteByAccessToken(token);
   if (!quote) {
     notFound();
   }
 
   const canAccept = quote.status === "sent";
+  const canCancel = quote.status === "submitted" || quote.status === "draft";
   const nationwide = quote.deliveryFeeStatus === "pending_nationwide";
 
   return (
@@ -79,17 +83,58 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
           <dd className="tabular-nums">{formatGhs(quote.grandTotal)}</dd>
         </div>
       </dl>
-      {canAccept ? (
-        <div className="mt-8">
+      {quote.documents.length > 0 ? (
+        <section className="mt-8">
+          <h2 className="font-heading text-xl text-ink">Attachments</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {quote.documents.map((document) => (
+              <li key={document.id}>
+                <a href={signedDocumentPath(document.id)} className="underline">
+                  {document.filename}
+                </a>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+      {notice === "cancelled" || quote.status === "cancelled" ? (
+        <p className="mt-8 text-slate">This quotation has been cancelled.</p>
+      ) : notice === "declined" || quote.status === "declined" ? (
+        <p className="mt-8 text-slate">You declined this quotation.</p>
+      ) : canAccept ? (
+        <div className="mt-8 space-y-4">
           <AcceptQuoteButton token={token} error={error} />
+          <form action="/quote/decline" method="post">
+            <input type="hidden" name="token" value={token} />
+            <button type="submit" className="text-sm underline text-slate">
+              Decline this quotation
+            </button>
+          </form>
         </div>
       ) : (
         <p className="mt-8 text-slate">
-          {quote.status === "payment_pending" || quote.status === "accepted"
-            ? "This quotation has been accepted."
-            : "PaperSource is still reviewing this request."}
+          {quote.status === "expired"
+            ? "This quotation has expired. Ask PaperSource for a revision."
+            : quote.status === "revised"
+              ? "This version was superseded. Use the latest quotation in your email."
+              : quote.status === "payment_pending" || quote.status === "accepted"
+                ? "This quotation has been accepted."
+                : "PaperSource is still reviewing this request."}
         </p>
       )}
+      {canCancel ? (
+        <form action="/quote/cancel" method="post" className="mt-6">
+          <input type="hidden" name="token" value={token} />
+          {error ? (
+            <p role="alert" className="mb-3 border border-error/40 bg-cream px-4 py-3 text-sm text-error">
+              {error}
+            </p>
+          ) : null}
+          <button type="submit" className="text-sm underline text-slate">
+            Cancel this request
+          </button>
+        </form>
+      ) : null}
       <p className="mt-8">
         <Link href="/shop" className="underline">
           Continue shopping

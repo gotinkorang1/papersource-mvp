@@ -10,6 +10,10 @@ import {
   quoteItems,
   quotes,
 } from "@/lib/db/schema";
+import { notifyOrderPlaced, notifyQuoteAccepted } from "@/lib/email/notify";
+import { customerEmailFromSnapshot } from "@/lib/email/snapshot";
+import { expireQuoteIfStale } from "./expire";
+import { listQuoteDocuments } from "./documents";
 import { assertQuoteTransition, QuoteTransitionError } from "./transitions";
 
 export class QuoteAcceptError extends Error {
@@ -35,12 +39,15 @@ export async function getQuoteByAccessToken(token: string) {
     return null;
   }
 
+  const quote = (await expireQuoteIfStale(row.quote.id)) ?? row.quote;
+
   const lines = await db
     .select()
     .from(quoteItems)
-    .where(eq(quoteItems.quoteId, row.quote.id));
+    .where(eq(quoteItems.quoteId, quote.id));
+  const documents = await listQuoteDocuments(quote.id);
 
-  return { ...row.quote, lines, token: row.token };
+  return { ...quote, lines, documents, token: row.token };
 }
 
 export async function acceptQuoteByToken(input: {
@@ -163,6 +170,25 @@ export async function acceptQuoteByToken(input: {
     );
 
     return created;
+  });
+
+  const email =
+    found.guestEmail ?? customerEmailFromSnapshot(found.addressSnapshot);
+  await notifyQuoteAccepted({
+    quoteId: found.id,
+    quoteNumber: found.number ?? found.id,
+    orderNumber: order.number,
+    email,
+    contactName: found.contactName,
+  });
+  await notifyOrderPlaced({
+    orderId: order.id,
+    orderNumber: order.number,
+    source: "quote",
+    email,
+    contactName: found.contactName ?? found.addressSnapshot?.fullName,
+    grandTotalPesewas: found.grandTotal,
+    nationwide,
   });
 
   return { orderNumber: order.number, quoteStatus: quoteAfterAccept };

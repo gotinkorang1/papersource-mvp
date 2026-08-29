@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { canAccessAdmin } from "./rbac";
+import { canAccessAdmin, canConfirmQuoteTerms } from "./rbac";
 
 describe("admin RBAC", () => {
   it("lets sales price quotes but not change settings or zones", () => {
@@ -15,6 +15,10 @@ describe("admin RBAC", () => {
     expect(canAccessAdmin("warehouse", "pricing", "write")).toBe(false);
     expect(canAccessAdmin("warehouse", "quotes", "read")).toBe(true);
     expect(canAccessAdmin("warehouse", "quotes", "write")).toBe(false);
+    expect(canAccessAdmin("warehouse", "payments", "write")).toBe(false);
+    expect(canAccessAdmin("warehouse", "payments", "read")).toBe(true);
+    expect(canConfirmQuoteTerms("sales")).toBe(true);
+    expect(canConfirmQuoteTerms("warehouse")).toBe(false);
   });
 
   it("keeps content managers off quotes, orders, and payments", () => {

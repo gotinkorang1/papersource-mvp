@@ -172,3 +172,10 @@ export function canAccessAdmin(
 ) {
   return MATRIX[role][area].includes(action);
 }
+
+export function canConfirmQuoteTerms(role: StaffRole) {
+  return (
+    canAccessAdmin(role, "quotes", "write") ||
+    canAccessAdmin(role, "payments", "write")
+  );
+}

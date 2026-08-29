@@ -5,11 +5,13 @@ import {
   parseLinePrices,
   parseOptionalDeliveryFee,
   QuoteAdminError,
+  reviseQuote,
   saveQuotePrices,
   sendQuote,
   startQuoteReview,
 } from "@/features/quotations/admin";
-import { canAccessAdmin } from "@/lib/staff/rbac";
+import { confirmQuoteTerms } from "@/features/quotations/terms";
+import { canAccessAdmin, canConfirmQuoteTerms } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
 const quoteIdSchema = z.string().uuid();
@@ -19,10 +21,18 @@ export async function POST(request: Request) {
   const formData = await request.formData();
   const quoteId = quoteIdSchema.parse(formData.get("quoteId"));
   const intent = String(formData.get("intent") ?? "");
-  const detail = new URL(`/admin/quotes/${quoteId}`, origin);
+  let detail = new URL(`/admin/quotes/${quoteId}`, origin);
 
   const actor = await readStaffActor();
-  if (!actor || !canAccessAdmin(actor.role, "quotes", "write")) {
+  if (!actor) {
+    return NextResponse.redirect(new URL("/admin/login", origin), 303);
+  }
+
+  const termsIntent = intent === "confirm-terms";
+  const allowed = termsIntent
+    ? canConfirmQuoteTerms(actor.role)
+    : canAccessAdmin(actor.role, "quotes", "write");
+  if (!allowed) {
     return NextResponse.redirect(new URL("/admin/login", origin), 303);
   }
 
@@ -52,6 +62,21 @@ export async function POST(request: Request) {
         role: actor.role,
         actorId: actor.profileId,
         quoteId,
+      });
+    } else if (intent === "revise") {
+      const revised = await reviseQuote({
+        role: actor.role,
+        actorId: actor.profileId,
+        quoteId,
+      });
+      detail = new URL(`/admin/quotes/${revised.quoteId}`, origin);
+    } else if (intent === "confirm-terms") {
+      await confirmQuoteTerms({
+        role: actor.role,
+        actorId: actor.profileId,
+        quoteId,
+        provider: String(formData.get("provider") ?? ""),
+        note: String(formData.get("note") ?? ""),
       });
     } else {
       detail.searchParams.set("error", "Unknown quote action.");

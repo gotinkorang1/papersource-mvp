@@ -4,7 +4,7 @@ import { paperButton } from "@/components/commerce/paper-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { pesewasToMajor } from "@/lib/money";
-import { canAccessAdmin } from "@/lib/staff/rbac";
+import { canAccessAdmin, canConfirmQuoteTerms } from "@/lib/staff/rbac";
 import type { StaffRole } from "@/lib/staff/types";
 
 type QuoteLine = {
@@ -31,7 +31,8 @@ export function QuoteAdminActions({
   deliveryFee: number;
 }) {
   const canWrite = canAccessAdmin(role, "quotes", "write");
-  if (!canWrite) {
+  const canTerms = canConfirmQuoteTerms(role);
+  if (!canWrite && !canTerms) {
     return (
       <p className="text-sm text-slate">
         This role can read quotations but cannot price or send them.
@@ -41,7 +42,7 @@ export function QuoteAdminActions({
 
   return (
     <div className="space-y-6">
-      {status === "submitted" ? (
+      {canWrite && status === "submitted" ? (
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="start-review" />
@@ -51,7 +52,7 @@ export function QuoteAdminActions({
         </form>
       ) : null}
 
-      {status === "under_review" || status === "priced" ? (
+      {canWrite && (status === "under_review" || status === "priced") ? (
         <form action="/admin/quotes/mutate" method="post" className="space-y-4">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="save-prices" />
@@ -109,7 +110,7 @@ export function QuoteAdminActions({
         </form>
       ) : null}
 
-      {status === "priced" ? (
+      {canWrite && status === "priced" ? (
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="send" />
@@ -119,12 +120,49 @@ export function QuoteAdminActions({
         </form>
       ) : null}
 
-      {status === "submitted" || status === "under_review" ? (
+      {canWrite && (status === "submitted" || status === "under_review") ? (
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="decline" />
           <button type="submit" className={paperButton({ variant: "secondary" })}>
             Decline
+          </button>
+        </form>
+      ) : null}
+
+      {canWrite && status === "sent" ? (
+        <form action="/admin/quotes/mutate" method="post">
+          <input type="hidden" name="quoteId" value={quoteId} />
+          <input type="hidden" name="intent" value="revise" />
+          <button type="submit" className={paperButton({ variant: "secondary" })}>
+            Revise quotation
+          </button>
+        </form>
+      ) : null}
+
+      {canTerms && (status === "accepted" || status === "payment_pending") ? (
+        <form action="/admin/quotes/mutate" method="post" className="space-y-3">
+          <input type="hidden" name="quoteId" value={quoteId} />
+          <input type="hidden" name="intent" value="confirm-terms" />
+          <div className="max-w-xs space-y-1.5">
+            <Label htmlFor="provider">Payment terms</Label>
+            <select
+              id="provider"
+              name="provider"
+              required
+              className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink"
+            >
+              <option value="bank_transfer">Bank transfer</option>
+              <option value="purchase_order">Purchase order</option>
+              <option value="invoice_terms">Invoice terms</option>
+            </select>
+          </div>
+          <div className="max-w-md space-y-1.5">
+            <Label htmlFor="note">Reference / notes</Label>
+            <Input id="note" name="note" placeholder="PO number or transfer ref" />
+          </div>
+          <button type="submit" className={paperButton()}>
+            Confirm terms
           </button>
         </form>
       ) : null}

@@ -1,0 +1,42 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import { CatalogueAdminError, saveBrand } from "@/features/catalogue/admin";
+import { canAccessAdmin } from "@/lib/staff/rbac";
+import { readStaffActor } from "@/lib/staff/require";
+
+const uuid = z.string().uuid();
+
+export async function POST(request: Request) {
+  const origin = new URL(request.url).origin;
+  const next = new URL("/admin/brands", origin);
+  const actor = await readStaffActor();
+  if (!actor) {
+    return NextResponse.redirect(new URL("/admin/login", origin), 303);
+  }
+  if (!canAccessAdmin(actor.role, "brands", "write")) {
+    next.searchParams.set("error", "This role cannot change brands.");
+    return NextResponse.redirect(next, 303);
+  }
+
+  try {
+    const formData = await request.formData();
+    await saveBrand({
+      role: actor.role,
+      brandId:
+        String(formData.get("intent")) === "save-brand"
+          ? uuid.parse(formData.get("brandId"))
+          : undefined,
+      name: String(formData.get("name") ?? ""),
+      slug: String(formData.get("slug") ?? ""),
+      active: String(formData.get("active") ?? "true") === "true",
+    });
+  } catch (error) {
+    const message =
+      error instanceof CatalogueAdminError || error instanceof Error
+        ? error.message
+        : "Could not save that brand.";
+    next.searchParams.set("error", message);
+  }
+
+  return NextResponse.redirect(next, 303);
+}

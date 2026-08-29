@@ -36,8 +36,8 @@ export default async function AdminDashboardPage() {
       <p className="text-sm tracking-[0.16em] text-slate uppercase">Operations</p>
       <h1 className="mt-2 font-heading text-3xl text-ink">Dashboard</h1>
       <p className="mt-3 max-w-2xl text-slate">
-        Quote queue and unpaid orders. Catalogue, settings, and emails land in
-        later phases — do not operate this business from Supabase Studio.
+        Quote queue, unpaid orders, and catalogue desks. Do not operate this
+        business from Supabase Studio.
       </p>
       <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
         {openQuotes.map((row) => (

@@ -70,11 +70,6 @@ export const ADMIN_NAV = [
 export const ADMIN_PLACEHOLDER_SECTIONS = [
   "customers",
   "organisations",
-  "products",
-  "categories",
-  "brands",
-  "inventory",
-  "pricing",
   "promotions",
   "banners",
   "featured",

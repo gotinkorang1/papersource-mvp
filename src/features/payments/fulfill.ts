@@ -12,6 +12,9 @@ import {
   quotes,
 } from "@/lib/db/schema";
 import { canTransitionQuote } from "@/features/quotations/transitions";
+import { notifyPaymentConfirmed } from "@/lib/email/notify";
+import { customerEmailFromSnapshot } from "@/lib/email/snapshot";
+import type { AddressSnapshot } from "@/lib/db/schema/identity";
 
 export async function fulfillSuccessfulPayment(input: {
   reference: string;
@@ -54,6 +57,7 @@ export async function fulfillSuccessfulPayment(input: {
     .from(orderItems)
     .where(eq(orderItems.orderId, order.id));
 
+  let paidNow = false;
   await db.transaction(async (tx) => {
     const [locked] = await tx
       .select()
@@ -128,11 +132,24 @@ export async function fulfillSuccessfulPayment(input: {
         referenceId: order.id,
       });
     }
+
+    paidNow = true;
   });
 
   if (order.sessionId && order.source === "cart") {
     await clearCart(order.sessionId);
   }
 
-  return { orderId: order.id, alreadyPaid: false };
+  if (paidNow) {
+    const snapshot = order.addressSnapshot as AddressSnapshot | null;
+    await notifyPaymentConfirmed({
+      orderId: order.id,
+      orderNumber: order.number,
+      email: customerEmailFromSnapshot(snapshot),
+      contactName: snapshot?.fullName,
+      grandTotalPesewas: order.grandTotal,
+    });
+  }
+
+  return { orderId: order.id, alreadyPaid: !paidNow };
 }

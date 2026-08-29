@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { QuoteAdminActions } from "@/components/admin/quote-admin-actions";
 import { getQuoteForAdmin } from "@/features/quotations/admin";
 import { formatGhs } from "@/lib/money";
+import { signedDocumentPath } from "@/lib/documents/sign";
 import { publicEnv } from "@/lib/env";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -43,6 +44,8 @@ export default async function AdminQuoteDetailPage({
       </h1>
       <p className="mt-2 text-sm text-slate">
         Status: <span className="text-ink">{quote.status.replaceAll("_", " ")}</span>
+        {quote.expiresAt ? ` · Expires ${quote.expiresAt.toISOString().slice(0, 10)}` : ""}
+        {quote.parentQuoteId ? " · Revision of an earlier quotation" : ""}
       </p>
       {error ? (
         <p role="alert" className="mt-4 border border-error/40 bg-white px-4 py-3 text-sm text-error">
@@ -88,6 +91,24 @@ export default async function AdminQuoteDetailPage({
             {customerUrl}
           </Link>
         </p>
+      ) : null}
+      {quote.documents.length > 0 ? (
+        <section className="mt-8">
+          <h2 className="font-heading text-xl text-ink">Attachments</h2>
+          <ul className="mt-3 space-y-2 text-sm">
+            {quote.documents.map((document) => (
+              <li key={document.id}>
+                <a
+                  href={signedDocumentPath(document.id)}
+                  className="underline"
+                >
+                  {document.filename}
+                </a>
+                <span className="text-slate"> · {document.purpose.replaceAll("_", " ")}</span>
+              </li>
+            ))}
+          </ul>
+        </section>
       ) : null}
       <div className="mt-8">
         <QuoteAdminActions

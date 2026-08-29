@@ -30,7 +30,8 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
         <h1 className="mt-2 font-heading text-2xl text-ink">Staff sign in</h1>
         <p className="mt-3 text-sm text-slate">
           Local operations login. Roles come from <code>admin_roles</code>, not
-          user-editable metadata. Supabase Auth for staff is a later phase.
+          user-editable metadata. Seeded desks: sales@, admin@, warehouse@, and
+          content@ papersource.test. Supabase Auth for staff is a later phase.
         </p>
         <div className="mt-6">
           <StaffLoginForm error={error} />

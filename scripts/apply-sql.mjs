@@ -10,6 +10,8 @@ const files = [
   "drizzle/0003_orders_rfq.sql",
   "drizzle/0004_payments.sql",
   "drizzle/0005_admin_quotes.sql",
+  "drizzle/0006_quote_documents.sql",
+  "drizzle/0007_staff_catalogue_roles.sql",
 ];
 
 function run(command, args) {

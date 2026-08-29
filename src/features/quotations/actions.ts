@@ -46,10 +46,12 @@ export async function submitRfqAction(
   }
   let number: string;
   let token: string;
+  let attachmentError = false;
   try {
     const result = await submitGuestRfq({ sessionId, formData });
     number = result.number;
     token = result.token;
+    attachmentError = result.attachmentError;
   } catch (error) {
     if (error instanceof RfqError) {
       return { error: error.message };
@@ -59,7 +61,9 @@ export async function submitRfqAction(
     }
     throw error;
   }
-  redirect(
-    `/request-quote/received?number=${encodeURIComponent(number)}&token=${encodeURIComponent(token)}`,
-  );
+  const received = new URLSearchParams({ number, token });
+  if (attachmentError) {
+    received.set("attachments", "failed");
+  }
+  redirect(`/request-quote/received?${received.toString()}`);
 }

@@ -14,7 +14,14 @@ import {
   quoteItems,
   quotes,
 } from "@/lib/db/schema";
+import { notifyQuoteSubmitted } from "@/lib/email";
 import { inclusiveVatBreakdown } from "@/lib/tax";
+import {
+  assertAllowedDocument,
+  DocumentUploadError,
+  MAX_DOCUMENTS_PER_RFQ,
+} from "@/lib/documents/mime";
+import { attachQuoteDocumentsFromForm } from "@/features/quotations/documents";
 import { z } from "zod";
 
 const rfqSchema = z.object({
@@ -71,6 +78,27 @@ export async function submitGuestRfq(input: {
     requestedDeliveryDate: input.formData.get("requestedDeliveryDate") ?? "",
     notes: input.formData.get("notes") ?? "",
   });
+
+  const files = input.formData
+    .getAll("documents")
+    .filter((value): value is File => value instanceof File && value.size > 0);
+  if (files.length > MAX_DOCUMENTS_PER_RFQ) {
+    throw new RfqError("Attach up to five files.");
+  }
+  try {
+    for (const file of files) {
+      assertAllowedDocument({
+        filename: file.name,
+        mime: file.type,
+        size: file.size,
+      });
+    }
+  } catch (error) {
+    if (error instanceof DocumentUploadError) {
+      throw new RfqError(error.message);
+    }
+    throw error;
+  }
 
   const zone = await getDeliveryZoneByCode(
     zoneCodeForDeliveryArea(address.deliveryArea),
@@ -172,5 +200,26 @@ export async function submitGuestRfq(input: {
     });
   });
 
-  return { number, token };
+  let attachmentError = false;
+  try {
+    await attachQuoteDocumentsFromForm({
+      quoteId: draft.id,
+      organizationId: organization.id,
+      formData: input.formData,
+    });
+  } catch (error) {
+    console.error("[documents]", error);
+    attachmentError = files.length > 0;
+  }
+
+  await notifyQuoteSubmitted({
+    quoteId: draft.id,
+    number,
+    token,
+    email: details.email,
+    contactName: details.contactName,
+    organizationName: details.organizationName,
+  });
+
+  return { number, token, attachmentError };
 }

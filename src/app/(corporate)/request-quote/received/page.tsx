@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ number?: string; token?: string }>;
+  searchParams: Promise<{ number?: string; token?: string; attachments?: string }>;
 };
 
 export default async function RfqReceivedPage({ searchParams }: PageProps) {
@@ -20,7 +20,7 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
     notFound();
   }
 
-  const { number, token: tokenParam } = await searchParams;
+  const { number, token: tokenParam, attachments } = await searchParams;
   const sessionId = await readGuestSessionId();
   if (!number || !sessionId) {
     notFound();
@@ -61,6 +61,12 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
         the catalogue preview is not the legal total. WhatsApp can discuss the
         quote; it does not replace this submission.
       </p>
+      {attachments === "failed" ? (
+        <p role="alert" className="mt-4 border border-error/40 bg-cream px-4 py-3 text-sm text-error">
+          The request was saved, but the attachments could not be stored. Open
+          the quotation and WhatsApp the files with this quote number.
+        </p>
+      ) : null}
       {token ? (
         <p className="mt-6">
           <Link href={`/quote/${token}`} className="underline">

@@ -14,11 +14,6 @@ type PageProps = {
 const TITLES: Record<string, string> = {
   customers: "Customers",
   organisations: "Organisations",
-  products: "Products",
-  categories: "Categories",
-  brands: "Brands",
-  inventory: "Inventory",
-  pricing: "Pricing",
   promotions: "Promotions",
   banners: "Banners",
   featured: "Featured products",

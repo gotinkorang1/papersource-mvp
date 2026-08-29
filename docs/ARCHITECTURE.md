@@ -264,7 +264,7 @@ Full secret-handling rules: [SECURITY.md](SECURITY.md).
 **Forms:** `react-hook-form`, `zod`  
 **Database:** `drizzle-orm`, `postgres`  
 **Utils:** `date-fns`, `clsx`, `tailwind-merge`  
-**Email:** `resend`, `@react-email/components`  
+**Email:** `resend`, `react-email`  
 **Images:** `cloudinary`, `next-cloudinary`
 
 Do not install a library because an agent suggested it. Justify each addition against this list.

@@ -1,0 +1,187 @@
+import { NextResponse } from "next/server";
+import { z } from "zod";
+import {
+  addBundleItem,
+  addPriceTier,
+  addProductAlias,
+  addProductAttribute,
+  addProductImage,
+  addVariant,
+  CatalogueAdminError,
+  createProduct,
+  deactivatePriceTier,
+  parseOptionalPesewas,
+  parseRequiredPesewas,
+  removeBundleItem,
+  removeProductAlias,
+  removeProductAttribute,
+  removeProductImage,
+  saveProduct,
+  saveVariant,
+} from "@/features/catalogue/admin";
+import { canAccessAdmin } from "@/lib/staff/rbac";
+import { readStaffActor } from "@/lib/staff/require";
+
+const uuid = z.string().uuid();
+const productType = z.enum(["standard", "bundle"]);
+const productStatus = z.enum(["draft", "active", "archived"]);
+
+function redirectWithError(url: URL, error: unknown) {
+  const message =
+    error instanceof CatalogueAdminError || error instanceof Error
+      ? error.message
+      : "Could not update the catalogue.";
+  url.searchParams.set("error", message);
+  return NextResponse.redirect(url, 303);
+}
+
+export async function POST(request: Request) {
+  const origin = new URL(request.url).origin;
+  const formData = await request.formData();
+  const intent = String(formData.get("intent") ?? "");
+  const productIdRaw = String(formData.get("productId") ?? "");
+  const next = new URL(
+    productIdRaw ? `/admin/products/${productIdRaw}` : "/admin/products/new",
+    origin,
+  );
+
+  const actor = await readStaffActor();
+  if (!actor) {
+    return NextResponse.redirect(new URL("/admin/login", origin), 303);
+  }
+
+  const pricingIntent = intent === "add-tier" || intent === "deactivate-tier";
+  const allowed = pricingIntent
+    ? canAccessAdmin(actor.role, "pricing", "write")
+    : canAccessAdmin(actor.role, "products", "write");
+  if (!allowed) {
+    next.searchParams.set("error", "This role cannot run that catalogue action.");
+    return NextResponse.redirect(next, 303);
+  }
+
+  try {
+    if (intent === "create-product") {
+      const created = await createProduct({
+        role: actor.role,
+        name: String(formData.get("name") ?? ""),
+        slug: String(formData.get("slug") ?? ""),
+        brandId: uuid.parse(formData.get("brandId")),
+        categoryId: uuid.parse(formData.get("categoryId")),
+        productType: productType.parse(formData.get("productType") ?? "standard"),
+        description: String(formData.get("description") ?? ""),
+        status: productStatus.parse(formData.get("status") ?? "draft"),
+        sku: String(formData.get("sku") ?? ""),
+        unitLabel: String(formData.get("unitLabel") ?? "each"),
+        baseUnitPricePesewas: parseRequiredPesewas(formData.get("baseUnitPrice")),
+      });
+      return NextResponse.redirect(new URL(`/admin/products/${created.id}`, origin), 303);
+    }
+
+    const productId = uuid.parse(productIdRaw);
+
+    if (intent === "save-product") {
+      await saveProduct({
+        role: actor.role,
+        productId,
+        name: String(formData.get("name") ?? ""),
+        slug: String(formData.get("slug") ?? ""),
+        brandId: uuid.parse(formData.get("brandId")),
+        categoryId: uuid.parse(formData.get("categoryId")),
+        productType: productType.parse(formData.get("productType") ?? "standard"),
+        description: String(formData.get("description") ?? ""),
+        status: productStatus.parse(formData.get("status") ?? "draft"),
+      });
+    } else if (intent === "add-variant") {
+      await addVariant({
+        role: actor.role,
+        productId,
+        sku: String(formData.get("sku") ?? ""),
+        unitLabel: String(formData.get("unitLabel") ?? "each"),
+        baseUnitPricePesewas: parseRequiredPesewas(formData.get("baseUnitPrice")),
+      });
+    } else if (intent === "save-variant") {
+      const priceRaw = String(formData.get("baseUnitPrice") ?? "").trim();
+      await saveVariant({
+        role: actor.role,
+        variantId: uuid.parse(formData.get("variantId")),
+        sku: String(formData.get("sku") ?? ""),
+        unitLabel: String(formData.get("unitLabel") ?? "each"),
+        barcode: String(formData.get("barcode") ?? ""),
+        name: String(formData.get("name") ?? ""),
+        active: String(formData.get("active") ?? "true") === "true",
+        baseUnitPricePesewas: priceRaw ? parseRequiredPesewas(priceRaw) : undefined,
+      });
+    } else if (intent === "add-tier") {
+      const requestQuote = String(formData.get("requestQuote") ?? "") === "true";
+      const maxRaw = String(formData.get("maximumQuantity") ?? "").trim();
+      await addPriceTier({
+        role: actor.role,
+        variantId: uuid.parse(formData.get("variantId")),
+        minimumQuantity: Number(formData.get("minimumQuantity")),
+        maximumQuantity: maxRaw ? Number(maxRaw) : null,
+        unitPricePesewas: requestQuote ? null : parseOptionalPesewas(formData.get("unitPrice")),
+        requestQuote,
+      });
+    } else if (intent === "deactivate-tier") {
+      await deactivatePriceTier({
+        role: actor.role,
+        tierId: uuid.parse(formData.get("tierId")),
+      });
+    } else if (intent === "add-image") {
+      await addProductImage({
+        role: actor.role,
+        productId,
+        cloudinaryPublicId: String(formData.get("cloudinaryPublicId") ?? ""),
+        alt: String(formData.get("alt") ?? ""),
+        position: Number(formData.get("position") ?? 0),
+      });
+    } else if (intent === "remove-image") {
+      await removeProductImage({
+        role: actor.role,
+        imageId: uuid.parse(formData.get("imageId")),
+      });
+    } else if (intent === "add-alias") {
+      await addProductAlias({
+        role: actor.role,
+        productId,
+        alias: String(formData.get("alias") ?? ""),
+      });
+    } else if (intent === "remove-alias") {
+      await removeProductAlias({
+        role: actor.role,
+        aliasId: uuid.parse(formData.get("aliasId")),
+      });
+    } else if (intent === "add-attribute") {
+      await addProductAttribute({
+        role: actor.role,
+        productId,
+        namespace: String(formData.get("namespace") ?? ""),
+        key: String(formData.get("key") ?? ""),
+        valueText: String(formData.get("valueText") ?? ""),
+      });
+    } else if (intent === "remove-attribute") {
+      await removeProductAttribute({
+        role: actor.role,
+        attributeId: uuid.parse(formData.get("attributeId")),
+      });
+    } else if (intent === "add-bundle-item") {
+      await addBundleItem({
+        role: actor.role,
+        bundleProductId: productId,
+        sku: String(formData.get("sku") ?? ""),
+        quantity: Number(formData.get("quantity")),
+      });
+    } else if (intent === "remove-bundle-item") {
+      await removeBundleItem({
+        role: actor.role,
+        bundleItemId: uuid.parse(formData.get("bundleItemId")),
+      });
+    } else {
+      next.searchParams.set("error", "Unknown catalogue action.");
+    }
+  } catch (error) {
+    return redirectWithError(next, error);
+  }
+
+  return NextResponse.redirect(next, 303);
+}

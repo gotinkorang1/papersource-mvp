@@ -10,6 +10,7 @@ import { getDb } from "@/lib/db/client";
 import { nextDocumentNumber } from "@/lib/db/numbers";
 import { inventory, orderItems, orders } from "@/lib/db/schema";
 import type { AddressSnapshot } from "@/lib/db/schema/identity";
+import { notifyOrderPlaced } from "@/lib/email";
 import { inclusiveVatBreakdown } from "@/lib/tax";
 
 export class CheckoutError extends Error {
@@ -144,6 +145,16 @@ export async function placeRetailOrder(input: {
     );
 
     return created;
+  });
+
+  await notifyOrderPlaced({
+    orderId: order.id,
+    orderNumber: order.number,
+    source: "cart",
+    email: input.address.email,
+    contactName: input.address.fullName,
+    grandTotalPesewas: order.grandTotal,
+    nationwide: delivery.status === "pending_nationwide",
   });
 
   return {

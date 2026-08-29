@@ -6,3 +6,4 @@ export * from "./identity";
 export * from "./commerce";
 export * from "./orders";
 export * from "./payments";
+export * from "./documents";

@@ -43,6 +43,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# local private document store (mock Storage)
+/.data
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

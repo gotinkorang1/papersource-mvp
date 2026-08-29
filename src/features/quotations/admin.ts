@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
+import { nextDocumentNumber } from "@/lib/db/numbers";
 import { inclusiveVatBreakdown } from "@/lib/tax";
 import { parseGhsToPesewas } from "@/lib/money";
 import {
@@ -8,10 +9,15 @@ import {
   quoteEvents,
   quoteItems,
   quotes,
+  uploadedDocuments,
 } from "@/lib/db/schema";
 import type { QuoteStatus } from "@/lib/db/schema";
 import type { StaffRole } from "@/lib/staff/types";
+import { notifyQuoteReady, notifyQuoteRevised } from "@/lib/email";
 import { canAccessAdmin } from "@/lib/staff/rbac";
+import { listQuoteDocuments } from "./documents";
+import { expireQuoteIfStale } from "./expire";
+import { putPrivateObject, readPrivateObject } from "@/lib/documents/store";
 import { assertQuoteTransition, QuoteTransitionError } from "./transitions";
 
 export class QuoteAdminError extends Error {
@@ -57,6 +63,7 @@ export async function listSubmittedQuotes(role: StaffRole) {
 
 export async function getQuoteForAdmin(role: StaffRole, quoteId: string) {
   assertQuotesRead(role);
+  await expireQuoteIfStale(quoteId);
   const db = getDb();
   const [quote] = await db
     .select({
@@ -86,6 +93,7 @@ export async function getQuoteForAdmin(role: StaffRole, quoteId: string) {
     .from(quoteAccessTokens)
     .where(eq(quoteAccessTokens.quoteId, quote.quote.id))
     .limit(1);
+  const documents = await listQuoteDocuments(quote.quote.id);
 
   return {
     ...quote.quote,
@@ -93,6 +101,7 @@ export async function getQuoteForAdmin(role: StaffRole, quoteId: string) {
     lines,
     events,
     customerToken: access?.token ?? null,
+    documents,
   };
 }
 
@@ -288,6 +297,21 @@ export async function sendQuote(input: {
     to: "sent",
     actorId: input.actorId,
   });
+
+  const [access] = await db
+    .select()
+    .from(quoteAccessTokens)
+    .where(eq(quoteAccessTokens.quoteId, quote.id))
+    .limit(1);
+
+  await notifyQuoteReady({
+    quoteId: quote.id,
+    number: quote.number ?? quote.id,
+    token: access?.token ?? null,
+    email: quote.guestEmail,
+    contactName: quote.contactName,
+    grandTotalPesewas: quote.grandTotal,
+  });
 }
 
 export async function declineQuote(input: {
@@ -311,6 +335,150 @@ export async function declineQuote(input: {
     to: "declined",
     actorId: input.actorId,
   });
+}
+
+export async function reviseQuote(input: {
+  role: StaffRole;
+  actorId: string;
+  quoteId: string;
+}) {
+  assertSalesWrite(input.role);
+  const db = getDb();
+  const [quote] = await db
+    .select()
+    .from(quotes)
+    .where(eq(quotes.id, input.quoteId))
+    .limit(1);
+  if (!quote) {
+    throw new QuoteAdminError("That quotation was not found.");
+  }
+  try {
+    assertQuoteTransition(quote.status, "revised");
+  } catch (error) {
+    if (error instanceof QuoteTransitionError) {
+      throw new QuoteAdminError(error.message);
+    }
+    throw error;
+  }
+
+  const lines = await db
+    .select()
+    .from(quoteItems)
+    .where(eq(quoteItems.quoteId, quote.id));
+  const documents = await listQuoteDocuments(quote.id);
+  const number = await nextDocumentNumber("quote");
+  const token = crypto.randomUUID();
+
+  const created = await db.transaction(async (tx) => {
+    const [updated] = await tx
+      .update(quotes)
+      .set({ status: "revised", updatedAt: new Date() })
+      .where(and(eq(quotes.id, quote.id), eq(quotes.status, "sent")))
+      .returning();
+    if (!updated) {
+      throw new QuoteAdminError("This quotation is no longer waiting to be revised.");
+    }
+
+    await tx.insert(quoteEvents).values({
+      quoteId: quote.id,
+      fromStatus: "sent",
+      toStatus: "revised",
+      actorType: "admin",
+      actorId: input.actorId,
+      payload: { successorNumber: number },
+    });
+
+    const [child] = await tx
+      .insert(quotes)
+      .values({
+        number,
+        status: "priced",
+        profileId: quote.profileId,
+        sessionId: quote.sessionId,
+        guestEmail: quote.guestEmail,
+        guestPhone: quote.guestPhone,
+        organizationId: quote.organizationId,
+        contactName: quote.contactName,
+        deliveryZoneId: quote.deliveryZoneId,
+        requestedDeliveryDate: quote.requestedDeliveryDate,
+        notes: quote.notes,
+        addressSnapshot: quote.addressSnapshot,
+        currency: quote.currency,
+        goodsTotal: quote.goodsTotal,
+        taxTotal: quote.taxTotal,
+        taxJson: quote.taxJson,
+        deliveryFee: quote.deliveryFee,
+        deliveryFeeStatus: quote.deliveryFeeStatus,
+        grandTotal: quote.grandTotal,
+        parentQuoteId: quote.id,
+      })
+      .returning();
+    if (!child) {
+      throw new QuoteAdminError("Could not create the revised quotation.");
+    }
+
+    if (lines.length > 0) {
+      await tx.insert(quoteItems).values(
+        lines.map((line) => ({
+          quoteId: child.id,
+          variantId: line.variantId,
+          nameSnapshot: line.nameSnapshot,
+          skuSnapshot: line.skuSnapshot,
+          specSnapshot: line.specSnapshot,
+          quantity: line.quantity,
+          unitPrice: line.unitPrice,
+          lineTotal: line.lineTotal,
+          notes: line.notes,
+        })),
+      );
+    }
+
+    await tx.insert(quoteAccessTokens).values({
+      quoteId: child.id,
+      token,
+    });
+    await tx.insert(quoteEvents).values({
+      quoteId: child.id,
+      fromStatus: null,
+      toStatus: "priced",
+      actorType: "admin",
+      actorId: input.actorId,
+      payload: { parentQuoteId: quote.id, parentNumber: quote.number },
+    });
+
+    return child;
+  });
+
+  for (const document of documents) {
+    const bytes = await readPrivateObject(document.path);
+    const objectPath = `${created.id}/${crypto.randomUUID()}-${document.filename}`;
+    await putPrivateObject({
+      objectPath,
+      bytes: new Uint8Array(bytes),
+      mime: document.mime,
+    });
+    await db.insert(uploadedDocuments).values({
+      quoteId: created.id,
+      organizationId: document.organizationId,
+      ownerProfileId: document.ownerProfileId,
+      bucket: "documents",
+      path: objectPath,
+      filename: document.filename,
+      mime: document.mime,
+      purpose: document.purpose,
+    });
+  }
+
+  await notifyQuoteRevised({
+    previousNumber: quote.number ?? quote.id,
+    quoteId: created.id,
+    number,
+    token,
+    email: quote.guestEmail,
+    contactName: quote.contactName,
+  });
+
+  return { quoteId: created.id, number, token };
 }
 
 export function parseLinePrices(formData: FormData) {

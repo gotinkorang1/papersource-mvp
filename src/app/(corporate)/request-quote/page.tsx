@@ -18,8 +18,8 @@ export default async function RequestQuotePage() {
     <main className="mx-auto max-w-3xl px-4 py-16">
       <h1 className="text-3xl text-ink">Request a quote</h1>
       <p className="mt-3 text-slate">
-        Guests can submit. Organisation, phone and email are required. Uploads
-        can follow later — this submits the RFQ from your quote list.
+        Guests can submit. Organisation, phone and email are required. Optional
+        PDF, Excel, Word or image attachments stay private.
       </p>
       {lines.length === 0 ? (
         <p className="mt-8 text-slate">

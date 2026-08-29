@@ -89,6 +89,7 @@ export function GhanaAddressForm({
       id={id}
       className="space-y-4 border border-border bg-card p-5"
       action={action}
+      encType="multipart/form-data"
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
       <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
