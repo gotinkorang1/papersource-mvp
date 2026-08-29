@@ -27,13 +27,22 @@ export function QuoteBasket() {
               PaperSource.
             </p>
           ) : null}
-          <Link
-            href="/request-quote"
-            className={paperButton({ variant: "quote" })}
-            onClick={() => setQuoteOpen(false)}
-          >
-            Request quotation
-          </Link>
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/quote"
+              className={paperButton({ variant: "secondary" })}
+              onClick={() => setQuoteOpen(false)}
+            >
+              View quote list
+            </Link>
+            <Link
+              href="/request-quote"
+              className={paperButton({ variant: "quote" })}
+              onClick={() => setQuoteOpen(false)}
+            >
+              Request quotation
+            </Link>
+          </div>
         </>
       }
     >

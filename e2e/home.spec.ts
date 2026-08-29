@@ -38,7 +38,7 @@ test("add to quote does not fill the retail cart", async ({ page }) => {
   await expect(page.getByText("Procurement basket")).toBeVisible();
   await page.getByRole("button", { name: "Close Quote list" }).click();
   await expect(
-    page.getByRole("button", { name: "Quote list, 1 items" }).first(),
+    page.getByRole("button", { name: "Quote list, 1 item" }).first(),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Cart, 0 items" }).first(),
@@ -53,11 +53,11 @@ test("quote basket survives a reload", async ({ page }) => {
   await page.getByTestId("add-to-quote-double-a-premium-a4").click();
   await persisted;
   await expect(
-    page.getByRole("button", { name: "Quote list, 1 items" }).first(),
+    page.getByRole("button", { name: "Quote list, 1 item" }).first(),
   ).toBeVisible();
   await page.reload();
   await expect(
-    page.getByRole("button", { name: "Quote list, 1 items" }).first(),
+    page.getByRole("button", { name: "Quote list, 1 item" }).first(),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Cart, 0 items" }).first(),

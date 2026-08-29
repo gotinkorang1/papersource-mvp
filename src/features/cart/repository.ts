@@ -1,4 +1,4 @@
-import { eq, sql } from "drizzle-orm";
+import { and, eq, sql } from "drizzle-orm";
 import {
   loadSellableVariant,
   previewUnitPrice,
@@ -105,4 +105,66 @@ export async function addVariantToCart(
   });
 
   return listCartLines(sessionId);
+}
+
+export async function setCartLineQuantity(
+  sessionId: string,
+  variantId: string,
+  quantity: number,
+) {
+  if (quantity < 1) {
+    return removeCartLine(sessionId, variantId);
+  }
+
+  const db = getDb();
+  const [cart] = await db
+    .select()
+    .from(carts)
+    .where(eq(carts.sessionId, sessionId))
+    .limit(1);
+  if (!cart) {
+    return [];
+  }
+
+  await db
+    .update(cartItems)
+    .set({ quantity })
+    .where(
+      and(eq(cartItems.cartId, cart.id), eq(cartItems.variantId, variantId)),
+    );
+  return listCartLines(sessionId);
+}
+
+export async function removeCartLine(sessionId: string, variantId: string) {
+  const db = getDb();
+  const [cart] = await db
+    .select()
+    .from(carts)
+    .where(eq(carts.sessionId, sessionId))
+    .limit(1);
+  if (!cart) {
+    return [];
+  }
+
+  await db
+    .delete(cartItems)
+    .where(
+      and(eq(cartItems.cartId, cart.id), eq(cartItems.variantId, variantId)),
+    );
+  return listCartLines(sessionId);
+}
+
+export async function clearCart(sessionId: string) {
+  const db = getDb();
+  const [cart] = await db
+    .select()
+    .from(carts)
+    .where(eq(carts.sessionId, sessionId))
+    .limit(1);
+  if (!cart) {
+    return [];
+  }
+
+  await db.delete(cartItems).where(eq(cartItems.cartId, cart.id));
+  return [];
 }

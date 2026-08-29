@@ -134,3 +134,66 @@ export async function addVariantToQuote(
 
   return listQuoteLines(sessionId);
 }
+
+export async function setQuoteLineQuantity(
+  sessionId: string,
+  variantId: string,
+  quantity: number,
+) {
+  if (quantity < 1) {
+    return removeQuoteLine(sessionId, variantId);
+  }
+
+  const context = await loadSellableVariant(variantId);
+  if (!context) {
+    throw new Error("That product is not available for quotation.");
+  }
+
+  const draft = await getDraftQuote(sessionId);
+  if (!draft) {
+    return [];
+  }
+
+  const nextPrice = resolveUnitPrice({
+    quantity,
+    baseUnitPricePesewas: context.variant.baseUnitPrice,
+    tiers: context.tiers,
+  });
+
+  const db = getDb();
+  await db
+    .update(quoteItems)
+    .set({
+      quantity,
+      unitPrice: nextPrice.unitPricePesewas,
+      lineTotal:
+        nextPrice.unitPricePesewas === null
+          ? null
+          : nextPrice.unitPricePesewas * quantity,
+      nameSnapshot: context.product.name,
+      skuSnapshot: context.variant.sku,
+      specSnapshot: context.specLine,
+    })
+    .where(
+      and(eq(quoteItems.quoteId, draft.id), eq(quoteItems.variantId, variantId)),
+    );
+
+  return listQuoteLines(sessionId);
+}
+
+export async function removeQuoteLine(sessionId: string, variantId: string) {
+  const draft = await getDraftQuote(sessionId);
+  if (!draft) {
+    return [];
+  }
+
+  const db = getDb();
+  await db
+    .delete(quoteItems)
+    .where(
+      and(eq(quoteItems.quoteId, draft.id), eq(quoteItems.variantId, variantId)),
+    );
+  return listQuoteLines(sessionId);
+}
+
+export { getDraftQuote };

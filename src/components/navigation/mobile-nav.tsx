@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { ClipboardList, House, Search, ShoppingBag, Store } from "lucide-react";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
+import { itemCountLabel } from "@/lib/copy";
 
 export function MobileNav() {
   const { cartLines, quoteLines, setCartOpen, setQuoteOpen } =
@@ -47,7 +48,7 @@ export function MobileNav() {
           <button
             type="button"
             className="flex w-full flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
-            aria-label={`Quote list, ${quoteCount} items`}
+            aria-label={itemCountLabel("Quote list", quoteCount)}
             onClick={() => setQuoteOpen(true)}
           >
             <ClipboardList className="size-4" aria-hidden />
@@ -58,7 +59,7 @@ export function MobileNav() {
           <button
             type="button"
             className="flex w-full flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
-            aria-label={`Cart, ${cartCount} items`}
+            aria-label={itemCountLabel("Cart", cartCount)}
             onClick={() => setCartOpen(true)}
           >
             <ShoppingBag className="size-4" aria-hidden />

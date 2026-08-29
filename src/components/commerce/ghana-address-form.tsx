@@ -1,7 +1,8 @@
 "use client";
 
-import type { ReactNode } from "react";
+import type { ComponentProps, ReactNode } from "react";
 import { useState } from "react";
+import { paperButton } from "@/components/commerce/paper-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -59,9 +60,17 @@ function Field({
 export function GhanaAddressForm({
   id = "ghana-address",
   defaultValues,
+  action,
+  children,
+  submitLabel,
+  submitDisabled,
 }: {
   id?: string;
   defaultValues?: Partial<GhanaAddressValues>;
+  action?: ComponentProps<"form">["action"];
+  children?: ReactNode;
+  submitLabel?: string;
+  submitDisabled?: boolean;
 }) {
   const [values, setValues] = useState<GhanaAddressValues>({
     ...empty,
@@ -79,8 +88,10 @@ export function GhanaAddressForm({
     <form
       id={id}
       className="space-y-4 border border-border bg-card p-5"
-      onSubmit={(event) => event.preventDefault()}
+      action={action}
+      onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
+      <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
       <Field id={`${id}-name`} label="Full Name" required>
         <Input
           id={`${id}-name`}
@@ -199,6 +210,12 @@ export function GhanaAddressForm({
           </p>
         ) : null}
       </fieldset>
+      {children}
+      {submitLabel ? (
+        <button type="submit" className={paperButton()} disabled={submitDisabled}>
+          {submitLabel}
+        </button>
+      ) : null}
     </form>
   );
 }

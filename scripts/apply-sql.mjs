@@ -4,7 +4,12 @@ import { fileURLToPath } from "node:url";
 
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const container = "papersource-postgres";
-const files = ["drizzle/0001_catalogue.sql", "drizzle/0002_carts_quotes.sql"];
+const files = [
+  "drizzle/0001_catalogue.sql",
+  "drizzle/0002_carts_quotes.sql",
+  "drizzle/0003_orders_rfq.sql",
+  "drizzle/0004_payments.sql",
+];
 
 function run(command, args) {
   execFileSync(command, args, { stdio: "inherit", cwd: root });

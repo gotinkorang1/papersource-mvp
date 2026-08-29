@@ -2,4 +2,7 @@ export * from "./enums";
 export * from "./catalogue";
 export * from "./inventory";
 export * from "./delivery";
+export * from "./identity";
 export * from "./commerce";
+export * from "./orders";
+export * from "./payments";

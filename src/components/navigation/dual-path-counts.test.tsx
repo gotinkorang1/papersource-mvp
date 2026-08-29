@@ -31,7 +31,7 @@ describe("dual-path counts", () => {
 
     expect(screen.getByRole("heading", { name: "Quote list" })).toBeInTheDocument();
     expect(screen.getByText(/Procurement basket/)).toBeInTheDocument();
-    expect(screen.getByLabelText("Quote list, 1 items")).toBeInTheDocument();
+    expect(screen.getByLabelText("Quote list, 1 item")).toBeInTheDocument();
     expect(screen.getByLabelText("Cart, 0 items")).toBeInTheDocument();
   });
 });

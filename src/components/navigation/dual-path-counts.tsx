@@ -2,6 +2,7 @@
 
 import { ClipboardList, ShoppingBag } from "lucide-react";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
+import { itemCountLabel } from "@/lib/copy";
 
 export function DualPathCounts() {
   const { cartLines, quoteLines, setCartOpen, setQuoteOpen } =
@@ -14,7 +15,7 @@ export function DualPathCounts() {
       <button
         type="button"
         className="inline-flex items-center gap-1.5 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
-        aria-label={`Quote list, ${quoteCount} items`}
+        aria-label={itemCountLabel("Quote list", quoteCount)}
         onClick={() => setQuoteOpen(true)}
       >
         <ClipboardList className="size-4" aria-hidden />
@@ -24,7 +25,7 @@ export function DualPathCounts() {
       <button
         type="button"
         className="inline-flex items-center gap-1.5 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
-        aria-label={`Cart, ${cartCount} items`}
+        aria-label={itemCountLabel("Cart", cartCount)}
         onClick={() => setCartOpen(true)}
       >
         <ShoppingBag className="size-4" aria-hidden />

@@ -26,13 +26,22 @@ export function CartDrawer() {
               Subtotal (preview) {formatGhs(subtotal)}
             </p>
           ) : null}
-          <Link
-            href="/checkout"
-            className={paperButton({ variant: "primary" })}
-            onClick={() => setCartOpen(false)}
-          >
-            Checkout
-          </Link>
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/cart"
+              className={paperButton({ variant: "secondary" })}
+              onClick={() => setCartOpen(false)}
+            >
+              View cart
+            </Link>
+            <Link
+              href="/checkout"
+              className={paperButton({ variant: "primary" })}
+              onClick={() => setCartOpen(false)}
+            >
+              Checkout
+            </Link>
+          </div>
         </>
       }
     >

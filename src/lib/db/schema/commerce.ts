@@ -1,14 +1,4 @@
-import {
-  char,
-  index,
-  integer,
-  jsonb,
-  pgTable,
-  text,
-  timestamp,
-  uniqueIndex,
-  uuid,
-} from "drizzle-orm/pg-core";
+import { date, char, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { productVariants } from "./catalogue";
 import { deliveryZones } from "./delivery";
 import {
@@ -71,6 +61,7 @@ export const quotes = pgTable(
     organizationId: uuid("organization_id"),
     contactName: text("contact_name"),
     deliveryZoneId: uuid("delivery_zone_id").references(() => deliveryZones.id),
+    requestedDeliveryDate: date("requested_delivery_date"),
     notes: text("notes"),
     currency: char("currency", { length: 3 }).notNull().default("GHS"),
     goodsTotal: integer("goods_total").notNull().default(0),
@@ -128,4 +119,20 @@ export const quoteEvents = pgTable(
       .defaultNow(),
   },
   (table) => [index("quote_events_quote_idx").on(table.quoteId)],
+);
+
+export const quoteAccessTokens = pgTable(
+  "quote_access_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    quoteId: uuid("quote_id")
+      .notNull()
+      .references(() => quotes.id, { onDelete: "cascade" }),
+    token: text("token").notNull(),
+    expiresAt: timestamp("expires_at", { withTimezone: true }),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [uniqueIndex("quote_access_tokens_token_unique").on(table.token)],
 );

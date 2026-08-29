@@ -38,6 +38,8 @@ export const quoteStatusEnum = pgEnum("quote_status", [
   "revised",
 ]);
 
+export type QuoteStatus = (typeof quoteStatusEnum.enumValues)[number];
+
 export const deliveryFeeStatusEnum = pgEnum("delivery_fee_status", [
   "calculated",
   "pending_nationwide",
@@ -49,4 +51,43 @@ export const quoteActorTypeEnum = pgEnum("quote_actor_type", [
   "guest",
   "admin",
   "system",
+]);
+
+export const organizationTypeEnum = pgEnum("organization_type", [
+  "business",
+  "school",
+  "government",
+  "ngo",
+  "hospital",
+  "church",
+  "university",
+  "retailer",
+  "other",
+]);
+
+export const orderSourceEnum = pgEnum("order_source", ["cart", "quote"]);
+
+export const orderStatusEnum = pgEnum("order_status", [
+  "pending_payment",
+  "awaiting_terms",
+  "paid",
+  "processing",
+  "out_for_delivery",
+  "delivered",
+  "cancelled",
+]);
+
+export const paymentProviderEnum = pgEnum("payment_provider", [
+  "paystack",
+  "bank_transfer",
+  "purchase_order",
+  "invoice_terms",
+]);
+
+export const paymentStatusEnum = pgEnum("payment_status", [
+  "initialized",
+  "pending",
+  "success",
+  "failed",
+  "abandoned",
 ]);

@@ -13,9 +13,14 @@ export async function StoreShell({ children }: { children: ReactNode }) {
   const initial = persist
     ? await loadGuestDualPath()
     : { cartLines: [], quoteLines: [] };
+  const hydrationKey = [
+    ...initial.cartLines.map((line) => `c:${line.id}:${line.quantity}`),
+    ...initial.quoteLines.map((line) => `q:${line.id}:${line.quantity}`),
+  ].join("|");
 
   return (
     <DualPathPreviewProvider
+      key={hydrationKey || "empty"}
       persist={persist}
       initialCartLines={initial.cartLines}
       initialQuoteLines={initial.quoteLines}
