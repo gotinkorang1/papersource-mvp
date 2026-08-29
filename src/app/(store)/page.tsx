@@ -2,10 +2,16 @@ import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
 import { CorporateBanner } from "@/components/marketing/corporate-banner";
 import { CategoryTile } from "@/components/products/category-tile";
-import { FeaturedCatalogue } from "@/components/products/featured-catalogue";
-import { sampleCategories } from "@/lib/design-system/fixtures";
+import { ProductGridList } from "@/components/products/product-grid-list";
+import {
+  listDivisionCategories,
+  listFeaturedProductCards,
+} from "@/features/catalogue";
 
 export default function HomePage() {
+  const categories = listDivisionCategories();
+  const featured = listFeaturedProductCards();
+
   return (
     <main>
       <section className="mx-auto max-w-6xl px-4 py-16 md:py-24">
@@ -41,7 +47,7 @@ export default function HomePage() {
             Shop the workplace
           </h2>
           <div className="mt-8 grid grid-cols-2 gap-px bg-border md:grid-cols-4">
-            {sampleCategories.map((category) => (
+            {categories.map((category) => (
               <CategoryTile key={category.name} {...category} />
             ))}
           </div>
@@ -51,14 +57,14 @@ export default function HomePage() {
       <section className="py-16">
         <div className="mx-auto max-w-6xl px-4">
           <h2 className="text-sm tracking-[0.16em] text-slate uppercase">
-            Procurement-grade product cards
+            From the catalogue
           </h2>
           <p className="mt-2 max-w-2xl text-slate">
-            Sample catalogue for the design system. Live inventory lands with
-            the catalogue phase.
+            Unit prices, bulk bands and stock from the PaperSource catalogue.
+            Add to Cart and Add to Quote stay independent.
           </p>
           <div className="mt-8">
-            <FeaturedCatalogue />
+            <ProductGridList products={featured} />
           </div>
         </div>
       </section>

@@ -29,6 +29,8 @@ pnpm lint
 pnpm exec tsc --noEmit
 ```
 
+Catalogue pages (`/shop`, `/shop/[category]`, `/product/[slug]`, `/brands/[slug]`, `/search`) read the in-app seed until a dedicated PaperSource `DATABASE_URL` is connected. Do not apply `drizzle/0001_catalogue.sql` to an unrelated Supabase project.
+
 Do not point `.env.local` at the production database.
 
 ## Cursor

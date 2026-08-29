@@ -2,7 +2,7 @@
 
 import { useId, useState } from "react";
 import Link from "next/link";
-import { shopMegaColumns } from "@/lib/design-system/fixtures";
+import { shopMegaColumns } from "@/features/catalogue/local-data";
 
 export function ShopMegaMenu() {
   const [open, setOpen] = useState(false);

@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useState } from "react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { PaperCard } from "@/components/commerce/paper-card";
@@ -42,7 +43,14 @@ export function ProductCard({
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>
-          <h3 className="text-base font-medium text-ink">{product.name}</h3>
+          <h3 className="text-base font-medium text-ink">
+            <Link
+              href={`/product/${product.slug}`}
+              className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+            >
+              {product.name}
+            </Link>
+          </h3>
           <p className="mt-1 text-sm text-slate">{product.specLine}</p>
         </div>
         <PriceDisplay

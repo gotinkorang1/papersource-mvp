@@ -22,6 +22,21 @@ export type ProductCardModel = {
   tiers: PriceTierPreview[];
 };
 
+export type ProductDetailModel = ProductCardModel & {
+  sku: string;
+  barcode: string | null;
+  description: string;
+  brandName: string;
+  brandSlug: string;
+  categoryName: string;
+  categorySlug: string;
+  divisionName: string;
+  divisionSlug: string;
+  attributes: { namespace: string; key: string; valueText: string }[];
+  bundleContents?: string[];
+  productType: "standard" | "bundle";
+};
+
 export type QuoteLinePreview = {
   id: string;
   name: string;

@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 test("mega menu lists workplace categories", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("button", { name: "Shop" }).click();
+  await page.getByRole("button", { name: "Shop" }).hover();
   await expect(page.getByRole("menuitem", { name: "Paper" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "Printing" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "Schools" })).toBeVisible();
