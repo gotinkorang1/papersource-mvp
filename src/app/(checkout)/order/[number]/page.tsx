@@ -77,7 +77,9 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
-      <p className="text-sm tracking-[0.16em] text-slate uppercase">Retail order</p>
+      <p className="text-sm tracking-[0.16em] text-slate uppercase">
+        {order.source === "quote" ? "Quote order" : "Retail order"}
+      </p>
       <h1 className="mt-2 text-3xl text-ink">Order {order.number}</h1>
       <p className="mt-4 text-slate">
         {order.status === "paid"

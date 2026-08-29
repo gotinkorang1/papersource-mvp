@@ -9,6 +9,7 @@ const files = [
   "drizzle/0002_carts_quotes.sql",
   "drizzle/0003_orders_rfq.sql",
   "drizzle/0004_payments.sql",
+  "drizzle/0005_admin_quotes.sql",
 ];
 
 function run(command, args) {

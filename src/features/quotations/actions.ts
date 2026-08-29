@@ -45,9 +45,11 @@ export async function submitRfqAction(
     return { error: "Your session expired. Add items to the quote list and try again." };
   }
   let number: string;
+  let token: string;
   try {
     const result = await submitGuestRfq({ sessionId, formData });
     number = result.number;
+    token = result.token;
   } catch (error) {
     if (error instanceof RfqError) {
       return { error: error.message };
@@ -57,6 +59,7 @@ export async function submitRfqAction(
     }
     throw error;
   }
-  revalidatePath("/", "layout");
-  redirect(`/request-quote/received?number=${encodeURIComponent(number)}`);
+  redirect(
+    `/request-quote/received?number=${encodeURIComponent(number)}&token=${encodeURIComponent(token)}`,
+  );
 }

@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { formatGhs, inclusiveTaxPortion, pesewasToMajor } from "./money";
+import {
+  formatGhs,
+  inclusiveTaxPortion,
+  parseGhsToPesewas,
+  pesewasToMajor,
+} from "./money";
 
 describe("formatGhs", () => {
   it("formats pesewas as GHS with two decimals", () => {
@@ -12,6 +17,18 @@ describe("formatGhs", () => {
 
   it("rejects floats", () => {
     expect(() => formatGhs(78.99)).toThrow(/integer pesewas/);
+  });
+});
+
+describe("parseGhsToPesewas", () => {
+  it("parses major units into integer pesewas", () => {
+    expect(parseGhsToPesewas("78.99")).toBe(7899);
+    expect(parseGhsToPesewas("12,450.00")).toBe(1_245_000);
+    expect(parseGhsToPesewas("40")).toBe(4000);
+  });
+
+  it("rejects floats and junk", () => {
+    expect(() => parseGhsToPesewas("78.9.9")).toThrow(/GHS amount/);
   });
 });
 

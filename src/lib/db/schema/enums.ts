@@ -91,3 +91,13 @@ export const paymentStatusEnum = pgEnum("payment_status", [
   "failed",
   "abandoned",
 ]);
+
+export const staffRoleEnum = pgEnum("staff_role", [
+  "super_admin",
+  "admin",
+  "sales",
+  "warehouse",
+  "content_manager",
+]);
+
+export type StaffRole = (typeof staffRoleEnum.enumValues)[number];

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
-import { quotes } from "@/lib/db/schema";
+import { quoteAccessTokens, quotes } from "@/lib/db/schema";
 import { readGuestSessionId } from "@/lib/session/guest";
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ number?: string }>;
+  searchParams: Promise<{ number?: string; token?: string }>;
 };
 
 export default async function RfqReceivedPage({ searchParams }: PageProps) {
@@ -20,7 +20,7 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
     notFound();
   }
 
-  const { number } = await searchParams;
+  const { number, token: tokenParam } = await searchParams;
   const sessionId = await readGuestSessionId();
   if (!number || !sessionId) {
     notFound();
@@ -34,13 +34,22 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
       and(
         eq(quotes.number, number),
         eq(quotes.sessionId, sessionId),
-        eq(quotes.status, "submitted"),
       ),
     )
     .limit(1);
 
-  if (!quote) {
+  if (!quote || quote.status === "draft") {
     notFound();
+  }
+
+  let token = tokenParam ?? null;
+  if (!token) {
+    const [access] = await db
+      .select()
+      .from(quoteAccessTokens)
+      .where(eq(quoteAccessTokens.quoteId, quote.id))
+      .limit(1);
+    token = access?.token ?? null;
   }
 
   return (
@@ -52,6 +61,13 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
         the catalogue preview is not the legal total. WhatsApp can discuss the
         quote; it does not replace this submission.
       </p>
+      {token ? (
+        <p className="mt-6">
+          <Link href={`/quote/${token}`} className="underline">
+            View this quotation
+          </Link>
+        </p>
+      ) : null}
       <p className="mt-8">
         <Link href="/shop" className="underline">
           Continue shopping

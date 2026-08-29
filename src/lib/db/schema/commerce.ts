@@ -6,6 +6,7 @@ import {
   quoteActorTypeEnum,
   quoteStatusEnum,
 } from "./enums";
+import type { AddressSnapshot } from "./identity";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -63,6 +64,7 @@ export const quotes = pgTable(
     deliveryZoneId: uuid("delivery_zone_id").references(() => deliveryZones.id),
     requestedDeliveryDate: date("requested_delivery_date"),
     notes: text("notes"),
+    addressSnapshot: jsonb("address_snapshot").$type<AddressSnapshot>(),
     currency: char("currency", { length: 3 }).notNull().default("GHS"),
     goodsTotal: integer("goods_total").notNull().default(0),
     taxTotal: integer("tax_total").notNull().default(0),

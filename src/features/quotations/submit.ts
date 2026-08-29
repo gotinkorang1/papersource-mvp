@@ -147,6 +147,7 @@ export async function submitGuestRfq(input: {
           ? details.requestedDeliveryDate
           : null,
         notes: details.notes,
+        addressSnapshot: { ...address, email: details.email },
         goodsTotal,
         taxTotal: tax.taxTotal,
         taxJson: tax.taxJson,

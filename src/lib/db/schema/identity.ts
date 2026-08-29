@@ -1,6 +1,6 @@
-import { integer, primaryKey, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { integer, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
-import { organizationTypeEnum } from "./enums";
+import { organizationTypeEnum, staffRoleEnum } from "./enums";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -10,6 +10,28 @@ const timestamps = {
     .notNull()
     .defaultNow(),
 };
+
+export const profiles = pgTable(
+  "profiles",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    email: text("email").notNull(),
+    fullName: text("full_name").notNull(),
+    phone: text("phone"),
+    ...timestamps,
+  },
+  (table) => [uniqueIndex("profiles_email_unique").on(table.email)],
+);
+
+export const adminRoles = pgTable("admin_roles", {
+  profileId: uuid("profile_id")
+    .primaryKey()
+    .references(() => profiles.id, { onDelete: "cascade" }),
+  role: staffRoleEnum("role").notNull(),
+  createdAt: timestamp("created_at", { withTimezone: true })
+    .notNull()
+    .defaultNow(),
+});
 
 export const organizations = pgTable("organizations", {
   id: uuid("id").primaryKey().defaultRandom(),

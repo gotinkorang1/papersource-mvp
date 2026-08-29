@@ -8,7 +8,10 @@ import {
   orderItems,
   orders,
   payments,
+  quoteEvents,
+  quotes,
 } from "@/lib/db/schema";
+import { canTransitionQuote } from "@/features/quotations/transitions";
 
 export async function fulfillSuccessfulPayment(input: {
   reference: string;
@@ -71,6 +74,40 @@ export async function fulfillSuccessfulPayment(input: {
       .set({ status: "paid", updatedAt: new Date() })
       .where(eq(orders.id, order.id));
 
+    if (order.quoteId) {
+      const [quote] = await tx
+        .select()
+        .from(quotes)
+        .where(eq(quotes.id, order.quoteId))
+        .limit(1);
+      if (quote && canTransitionQuote(quote.status, "paid")) {
+        await tx
+          .update(quotes)
+          .set({ status: "paid", updatedAt: new Date() })
+          .where(eq(quotes.id, quote.id));
+        await tx.insert(quoteEvents).values({
+          quoteId: quote.id,
+          fromStatus: quote.status,
+          toStatus: "paid",
+          actorType: "system",
+          payload: { orderId: order.id },
+        });
+        if (canTransitionQuote("paid", "order_created")) {
+          await tx
+            .update(quotes)
+            .set({ status: "order_created", updatedAt: new Date() })
+            .where(eq(quotes.id, quote.id));
+          await tx.insert(quoteEvents).values({
+            quoteId: quote.id,
+            fromStatus: "paid",
+            toStatus: "order_created",
+            actorType: "system",
+            payload: { orderId: order.id },
+          });
+        }
+      }
+    }
+
     for (const item of items) {
       if (!item.variantId) {
         continue;
@@ -93,7 +130,7 @@ export async function fulfillSuccessfulPayment(input: {
     }
   });
 
-  if (order.sessionId) {
+  if (order.sessionId && order.source === "cart") {
     await clearCart(order.sessionId);
   }
 
