@@ -4,9 +4,17 @@ import { useRouter } from "next/navigation";
 import { FormEvent, useState } from "react";
 import { cn } from "@/lib/utils";
 
-export function HeaderSearch({ className }: { className?: string }) {
+export function HeaderSearch({
+  className,
+  defaultQuery = "",
+  inputId = "universal-search",
+}: {
+  className?: string;
+  defaultQuery?: string;
+  inputId?: string;
+}) {
   const router = useRouter();
-  const [query, setQuery] = useState("");
+  const [query, setQuery] = useState(defaultQuery);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -19,11 +27,11 @@ export function HeaderSearch({ className }: { className?: string }) {
       onSubmit={onSubmit}
       className={cn("hidden min-w-0 flex-1 md:block", className)}
     >
-      <label htmlFor="universal-search" className="sr-only">
+      <label htmlFor={inputId} className="sr-only">
         Search products
       </label>
       <input
-        id="universal-search"
+        id={inputId}
         type="search"
         value={query}
         onChange={(event) => setQuery(event.target.value)}

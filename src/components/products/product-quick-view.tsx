@@ -60,12 +60,7 @@ export function ProductQuickView({
           />
           <BulkPriceTable tiers={product.tiers} unitLabel={product.unitLabel} />
           <StockBadge level={product.stock} />
-          <DeliveryBadge
-            zone={{
-              label: "Accra & Tema delivery available",
-              feeMode: "calculated",
-            }}
-          />
+          <DeliveryBadge zone={product.deliveryBadge} />
           <QuantitySelector
             value={quantity}
             onChange={setQuantity}

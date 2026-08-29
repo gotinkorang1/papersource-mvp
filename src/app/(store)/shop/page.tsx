@@ -8,8 +8,8 @@ export const metadata: Metadata = {
     "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
 };
 
-export default function ShopPage() {
-  const products = listProductCards();
+export default async function ShopPage() {
+  const products = await listProductCards();
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">

@@ -15,7 +15,7 @@ export function productJsonLd(product: ProductDetailModel, canonical: string) {
     name: product.name,
     description: product.description,
     sku: product.sku,
-    image: canonical,
+    ...(product.imageSrc ? { image: product.imageSrc } : {}),
     brand: {
       "@type": "Brand",
       name: product.brandName,

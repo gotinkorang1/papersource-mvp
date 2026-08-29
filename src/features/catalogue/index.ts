@@ -4,6 +4,7 @@ export { resolveUnitPrice, lineTotalPesewas, tiersOverlap } from "./pricing";
 export {
   listDivisionCategories,
   listProductCards,
+  listProductCardsFromSeed,
   listFeaturedProductCards,
   getProductBySlug,
   getCategoryBySlug,

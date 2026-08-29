@@ -11,7 +11,9 @@ export type PriceTierPreview = {
 
 export type ProductCardModel = {
   id: string;
+  variantId: string;
   slug: string;
+  sku: string;
   name: string;
   specLine: string;
   unitLabel: string;
@@ -20,6 +22,7 @@ export type ProductCardModel = {
   imageSrc?: string;
   stock: StockLevel;
   tiers: PriceTierPreview[];
+  deliveryBadge: DeliveryBadgeModel;
 };
 
 export type ProductDetailModel = ProductCardModel & {
@@ -35,6 +38,21 @@ export type ProductDetailModel = ProductCardModel & {
   attributes: { namespace: string; key: string; valueText: string }[];
   bundleContents?: string[];
   productType: "standard" | "bundle";
+};
+
+export type CatalogueCategoryView = {
+  id: string;
+  parentId: string | null;
+  name: string;
+  slug: string;
+  caption: string;
+  position: number;
+};
+
+export type CatalogueBrandView = {
+  id: string;
+  name: string;
+  slug: string;
 };
 
 export type QuoteLinePreview = {

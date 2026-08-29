@@ -2,7 +2,7 @@ import { expect, test, type Page } from "@playwright/test";
 
 async function gotoReady(page: Page) {
   await page.goto("/");
-  await expect(page.getByTestId("add-to-quote-double-a-a4")).toBeEnabled();
+  await expect(page.getByTestId("add-to-quote-double-a-premium-a4")).toBeEnabled();
 }
 
 test("home shows dual-path chrome and Accra & Tema delivery", async ({
@@ -32,11 +32,30 @@ test("home shows dual-path chrome and Accra & Tema delivery", async ({
 
 test("add to quote does not fill the retail cart", async ({ page }) => {
   await gotoReady(page);
-  await page.getByTestId("add-to-quote-double-a-a4").click();
+  await page.getByTestId("add-to-quote-double-a-premium-a4").click();
   await expect(page.getByTestId("paper-drawer-quote-list")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Quote list" })).toBeVisible();
   await expect(page.getByText("Procurement basket")).toBeVisible();
   await page.getByRole("button", { name: "Close Quote list" }).click();
+  await expect(
+    page.getByRole("button", { name: "Quote list, 1 items" }).first(),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Cart, 0 items" }).first(),
+  ).toBeVisible();
+});
+
+test("quote basket survives a reload", async ({ page }) => {
+  await gotoReady(page);
+  const persisted = page.waitForResponse(
+    (response) => response.request().method() === "POST" && response.ok(),
+  );
+  await page.getByTestId("add-to-quote-double-a-premium-a4").click();
+  await persisted;
+  await expect(
+    page.getByRole("button", { name: "Quote list, 1 items" }).first(),
+  ).toBeVisible();
+  await page.reload();
   await expect(
     page.getByRole("button", { name: "Quote list, 1 items" }).first(),
   ).toBeVisible();

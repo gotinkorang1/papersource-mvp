@@ -284,14 +284,14 @@ export const seedProducts: SeedProduct[] = [
 ];
 
 export const seedDeliveryZones = [
-  { code: "accra_central", name: "Accra Central", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 1 },
-  { code: "accra_east", name: "Accra East", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 2 },
-  { code: "accra_west", name: "Accra West", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 3 },
-  { code: "accra_north", name: "Accra North", region: "Greater Accra", basePrice: 2800, feeMode: "calculated" as const, sortOrder: 4 },
-  { code: "tema", name: "Tema", region: "Greater Accra", basePrice: 3000, feeMode: "calculated" as const, sortOrder: 5 },
-  { code: "tema_industrial", name: "Tema Industrial Area", region: "Greater Accra", basePrice: 3200, feeMode: "calculated" as const, sortOrder: 6 },
-  { code: "other_greater_accra", name: "Other Greater Accra", region: "Greater Accra", basePrice: 4000, feeMode: "calculated" as const, sortOrder: 7 },
-  { code: "nationwide_request", name: "Nationwide Request", region: "Nationwide", basePrice: 0, feeMode: "on_request" as const, sortOrder: 8 },
+  { code: "accra_central", name: "Accra Central", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 1, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  { code: "accra_east", name: "Accra East", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 2, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  { code: "accra_west", name: "Accra West", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 3, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  { code: "accra_north", name: "Accra North", region: "Greater Accra", basePrice: 2800, feeMode: "calculated" as const, sortOrder: 4, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  { code: "tema", name: "Tema", region: "Greater Accra", basePrice: 3000, feeMode: "calculated" as const, sortOrder: 5, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  { code: "tema_industrial", name: "Tema Industrial Area", region: "Greater Accra", basePrice: 3200, feeMode: "calculated" as const, sortOrder: 6, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  { code: "other_greater_accra", name: "Other Greater Accra", region: "Greater Accra", basePrice: 4000, feeMode: "calculated" as const, sortOrder: 7, estimatedMinDays: 1, estimatedMaxDays: 3 },
+  { code: "nationwide_request", name: "Nationwide Request", region: "Nationwide", basePrice: 0, feeMode: "on_request" as const, sortOrder: 8, estimatedMinDays: 3, estimatedMaxDays: 10 },
 ];
 
 export const shopMegaColumns = [

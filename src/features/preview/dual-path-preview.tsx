@@ -8,7 +8,12 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import type { CartLinePreview, ProductCardModel, QuoteLinePreview } from "@/types/catalogue";
+import { addToCartAction, addToQuoteAction } from "@/features/preview/actions";
+import type {
+  CartLinePreview,
+  ProductCardModel,
+  QuoteLinePreview,
+} from "@/types/catalogue";
 
 type DualPathPreview = {
   cartLines: CartLinePreview[];
@@ -23,9 +28,74 @@ type DualPathPreview = {
 
 const DualPathPreviewContext = createContext<DualPathPreview | null>(null);
 
-export function DualPathPreviewProvider({ children }: { children: ReactNode }) {
-  const [cartLines, setCartLines] = useState<CartLinePreview[]>([]);
-  const [quoteLines, setQuoteLines] = useState<QuoteLinePreview[]>([]);
+function mergeCartLine(
+  current: CartLinePreview[],
+  product: ProductCardModel,
+  quantity: number,
+): CartLinePreview[] {
+  const existing = current.find((line) => line.id === product.variantId);
+  if (existing) {
+    return current.map((line) =>
+      line.id === product.variantId
+        ? { ...line, quantity: line.quantity + quantity }
+        : line,
+    );
+  }
+
+  return [
+    ...current,
+    {
+      id: product.variantId,
+      name: product.name,
+      specLine: product.specLine,
+      quantity,
+      unitPricePesewas: product.unitPricePesewas,
+      unitLabel: product.unitLabel,
+    },
+  ];
+}
+
+function mergeQuoteLine(
+  current: QuoteLinePreview[],
+  product: ProductCardModel,
+  quantity: number,
+): QuoteLinePreview[] {
+  const existing = current.find((line) => line.id === product.variantId);
+  if (existing) {
+    return current.map((line) =>
+      line.id === product.variantId
+        ? { ...line, quantity: line.quantity + quantity }
+        : line,
+    );
+  }
+
+  return [
+    ...current,
+    {
+      id: product.variantId,
+      name: product.name,
+      sku: product.sku,
+      specLine: product.specLine,
+      quantity,
+      unitPricePesewas: product.unitPricePesewas,
+      unitLabel: product.unitLabel,
+    },
+  ];
+}
+
+export function DualPathPreviewProvider({
+  children,
+  persist = false,
+  initialCartLines = [],
+  initialQuoteLines = [],
+}: {
+  children: ReactNode;
+  persist?: boolean;
+  initialCartLines?: CartLinePreview[];
+  initialQuoteLines?: QuoteLinePreview[];
+}) {
+  const [cartLines, setCartLines] = useState<CartLinePreview[]>(initialCartLines);
+  const [quoteLines, setQuoteLines] = useState<QuoteLinePreview[]>(initialQuoteLines);
   const [cartOpen, setCartOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
 
@@ -43,60 +113,45 @@ export function DualPathPreviewProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  const addToCart = useCallback((product: ProductCardModel, quantity: number) => {
-    setCartLines((current) => {
-      const existing = current.find((line) => line.id === product.id);
-      if (existing) {
-        return current.map((line) =>
-          line.id === product.id
-            ? { ...line, quantity: line.quantity + quantity }
-            : line,
-        );
+  const addToCart = useCallback(
+    (product: ProductCardModel, quantity: number) => {
+      setCartLines((current) => mergeCartLine(current, product, quantity));
+      setQuoteOpen(false);
+      setCartOpen(true);
+
+      if (persist) {
+        void addToCartAction({ variantId: product.variantId, quantity })
+          .then((state) => {
+            setCartLines(state.cartLines);
+            setQuoteLines(state.quoteLines);
+          })
+          .catch((error) => {
+            console.error("Could not persist the retail cart", error);
+          });
       }
+    },
+    [persist],
+  );
 
-      return [
-        ...current,
-        {
-          id: product.id,
-          name: product.name,
-          specLine: product.specLine,
-          quantity,
-          unitPricePesewas: product.unitPricePesewas,
-          unitLabel: product.unitLabel,
-        },
-      ];
-    });
-    setQuoteOpen(false);
-    setCartOpen(true);
-  }, []);
+  const addToQuote = useCallback(
+    (product: ProductCardModel, quantity: number) => {
+      setQuoteLines((current) => mergeQuoteLine(current, product, quantity));
+      setCartOpen(false);
+      setQuoteOpen(true);
 
-  const addToQuote = useCallback((product: ProductCardModel, quantity: number) => {
-    setQuoteLines((current) => {
-      const existing = current.find((line) => line.id === product.id);
-      if (existing) {
-        return current.map((line) =>
-          line.id === product.id
-            ? { ...line, quantity: line.quantity + quantity }
-            : line,
-        );
+      if (persist) {
+        void addToQuoteAction({ variantId: product.variantId, quantity })
+          .then((state) => {
+            setCartLines(state.cartLines);
+            setQuoteLines(state.quoteLines);
+          })
+          .catch((error) => {
+            console.error("Could not persist the quote basket", error);
+          });
       }
-
-      return [
-        ...current,
-        {
-          id: product.id,
-          name: product.name,
-          sku: product.slug.toUpperCase(),
-          specLine: product.specLine,
-          quantity,
-          unitPricePesewas: product.unitPricePesewas,
-          unitLabel: product.unitLabel,
-        },
-      ];
-    });
-    setCartOpen(false);
-    setQuoteOpen(true);
-  }, []);
+    },
+    [persist],
+  );
 
   const value = useMemo(
     () => ({

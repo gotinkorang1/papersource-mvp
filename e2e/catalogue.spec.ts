@@ -19,6 +19,7 @@ test("category and product pages expose dual-path CTAs", async ({ page }) => {
 
 test("search matches a toner alias", async ({ page }) => {
   await page.goto("/search?q=HP%20305%20black");
+  await expect(page.locator("#catalogue-search")).toHaveValue("HP 305 black");
   await expect(
     page.getByRole("heading", { name: "HP 305 Black Ink Cartridge" }),
   ).toBeVisible();

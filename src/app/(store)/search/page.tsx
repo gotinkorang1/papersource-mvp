@@ -14,7 +14,7 @@ type PageProps = {
 
 export default async function SearchPage({ searchParams }: PageProps) {
   const { q = "" } = await searchParams;
-  const products = q ? listProductCards({ query: q }) : [];
+  const products = q ? await listProductCards({ query: q }) : [];
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
@@ -23,7 +23,12 @@ export default async function SearchPage({ searchParams }: PageProps) {
         Search paper, toner, pens, brands or SKU.
       </p>
       <div className="mt-6">
-        <HeaderSearch className="block w-full" />
+        <HeaderSearch
+          key={q}
+          className="block w-full"
+          defaultQuery={q}
+          inputId="catalogue-search"
+        />
       </div>
       {q ? (
         <div className="mt-10">

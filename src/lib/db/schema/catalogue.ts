@@ -10,6 +10,7 @@ import {
   timestamp,
   uniqueIndex,
   uuid,
+  type AnyPgColumn,
 } from "drizzle-orm/pg-core";
 import { productStatusEnum, productTypeEnum } from "./enums";
 
@@ -32,7 +33,7 @@ export const categories = pgTable(
   "categories",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    parentId: uuid("parent_id"),
+    parentId: uuid("parent_id").references((): AnyPgColumn => categories.id),
     name: text("name").notNull(),
     slug: text("slug").notNull(),
     description: text("description"),

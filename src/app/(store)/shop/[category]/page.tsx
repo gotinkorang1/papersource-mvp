@@ -12,7 +12,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { category: slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await getCategoryBySlug(slug);
 
   if (!category) {
     return { title: "Category" };
@@ -26,13 +26,13 @@ export async function generateMetadata({
 
 export default async function ShopCategoryPage({ params }: PageProps) {
   const { category: slug } = await params;
-  const category = getCategoryBySlug(slug);
+  const category = await getCategoryBySlug(slug);
 
   if (!category) {
     notFound();
   }
 
-  const products = listProductCards({ categorySlug: slug });
+  const products = await listProductCards({ categorySlug: slug });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">

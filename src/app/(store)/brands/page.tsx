@@ -9,8 +9,8 @@ export const metadata: Metadata = {
     "HP, Canon, Double A, BIC and PaperSource packs for Ghana workplaces.",
 };
 
-export default function BrandsPage() {
-  const brands = listBrands();
+export default async function BrandsPage() {
+  const brands = await listBrands();
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">

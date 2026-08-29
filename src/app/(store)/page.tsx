@@ -8,9 +8,9 @@ import {
   listFeaturedProductCards,
 } from "@/features/catalogue";
 
-export default function HomePage() {
-  const categories = listDivisionCategories();
-  const featured = listFeaturedProductCards();
+export default async function HomePage() {
+  const categories = await listDivisionCategories();
+  const featured = await listFeaturedProductCards();
 
   return (
     <main>
@@ -48,7 +48,12 @@ export default function HomePage() {
           </h2>
           <div className="mt-8 grid grid-cols-2 gap-px bg-border md:grid-cols-4">
             {categories.map((category) => (
-              <CategoryTile key={category.name} {...category} />
+              <CategoryTile
+                key={category.slug}
+                name={category.name}
+                href={`/shop/${category.slug}`}
+                caption={category.caption}
+              />
             ))}
           </div>
         </div>

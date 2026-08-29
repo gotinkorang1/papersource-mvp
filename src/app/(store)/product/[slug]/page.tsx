@@ -23,7 +23,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     return { title: "Product" };
@@ -46,7 +46,7 @@ export async function generateMetadata({
 
 export default async function ProductPage({ params }: PageProps) {
   const { slug } = await params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
@@ -112,12 +112,7 @@ export default async function ProductPage({ params }: PageProps) {
               unitLabel={product.unitLabel}
             />
             <StockBadge level={product.stock} />
-            <DeliveryBadge
-              zone={{
-                label: "Accra & Tema delivery available",
-                feeMode: "calculated",
-              }}
-            />
+            <DeliveryBadge zone={product.deliveryBadge} />
           </div>
           <div className="mt-8">
             <ProductPurchase product={product} />

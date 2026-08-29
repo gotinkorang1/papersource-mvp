@@ -21,3 +21,32 @@ export const inventoryMovementReasonEnum = pgEnum("inventory_movement_reason", [
   "fulfil",
   "return",
 ]);
+
+export const quoteStatusEnum = pgEnum("quote_status", [
+  "draft",
+  "submitted",
+  "under_review",
+  "priced",
+  "sent",
+  "accepted",
+  "payment_pending",
+  "paid",
+  "order_created",
+  "declined",
+  "expired",
+  "cancelled",
+  "revised",
+]);
+
+export const deliveryFeeStatusEnum = pgEnum("delivery_fee_status", [
+  "calculated",
+  "pending_nationwide",
+  "waived",
+]);
+
+export const quoteActorTypeEnum = pgEnum("quote_actor_type", [
+  "customer",
+  "guest",
+  "admin",
+  "system",
+]);

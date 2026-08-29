@@ -11,7 +11,7 @@ export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const brand = getBrandBySlug(slug);
+  const brand = await getBrandBySlug(slug);
 
   if (!brand) {
     return { title: "Brand" };
@@ -25,13 +25,13 @@ export async function generateMetadata({
 
 export default async function BrandPage({ params }: PageProps) {
   const { slug } = await params;
-  const brand = getBrandBySlug(slug);
+  const brand = await getBrandBySlug(slug);
 
   if (!brand) {
     notFound();
   }
 
-  const products = listProductCards({ brandSlug: slug });
+  const products = await listProductCards({ brandSlug: slug });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
