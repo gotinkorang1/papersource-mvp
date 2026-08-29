@@ -1,0 +1,16 @@
+---
+description: Accessibility for storefront and admin
+globs: "src/app/**/*.tsx,src/components/**/*.tsx"
+alwaysApply: false
+---
+
+# Accessibility
+
+- Visible focus rings (navy or ochre). Never `outline-none` without a replacement.
+- Dual CTAs use text labels, not icon-only.
+- Mega menu, drawers, and dialogs: keyboard, focus trap, Escape.
+- Product images: alt = name + key spec.
+- Contrast: Graphite on cream; white on navy. Do not put small Slate text on ochre.
+- Honour `prefers-reduced-motion`.
+- Forms: labels above fields; phone `type="tel"`; errors associated with inputs.
+- Run axe on home, shop, PDP, checkout, and quote submit when those pages exist.

@@ -1,0 +1,36 @@
+---
+description: PaperSource master product and architecture constraints
+alwaysApply: true
+---
+
+# PaperSource
+
+Ghana’s modern workplace supply partner. Not a generic stationery shop.
+
+Source of truth: @docs/PRODUCT.md. Companions: @docs/ARCHITECTURE.md @docs/DESIGN-SYSTEM.md @docs/DATABASE.md @docs/SECURITY.md @docs/ECOMMERCE.md @docs/RFQ.md @docs/ADMIN.md @docs/SEO.md @docs/TESTING.md
+
+## Dual path (non-negotiable)
+
+- One catalogue, two purchases: **retail cart** and **quote basket**.
+- Separate persisted objects, drawers, and header counts. Never a “quote checkbox” on the cart.
+- Product surfaces expose **Add to Cart** and **Add to Quote**.
+
+## Locked decisions
+
+- Guests may checkout and submit RFQs.
+- Money is **integer pesewas**. Display `GHS 78.99`. Never floats.
+- Prices are **VAT-inclusive**. Persist a tax breakdown for invoices.
+- Final prices are computed **on the server** from `price_tiers` + promotions.
+- Paystack (card + MoMo): webhook + verify. Never trust `?success=` URLs.
+- Delivery: Accra & Tema direct; nationwide **on request**. Fees and behaviour come from `delivery_zones`.
+- WhatsApp is support, not checkout.
+
+## Stack
+
+Next.js 16 App Router · TypeScript strict · Tailwind 4 · shadcn + Base UI · Drizzle · Supabase · Zod · Paystack · Cloudinary (public images) · Supabase Storage (private docs) · Resend · pnpm.
+
+Do not add Redux, GraphQL, Shopify, Woo, Firebase, Mongo, Algolia/Typesense, or a second Express backend.
+
+## Out of MVP
+
+Reorder/buy-again, credit ledgers, office furniture division, PostHog, custom wordmark.

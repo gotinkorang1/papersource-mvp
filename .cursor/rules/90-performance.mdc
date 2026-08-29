@@ -1,0 +1,14 @@
+---
+description: Performance defaults for catalogue and media
+globs: "src/app/**,src/components/**,src/lib/cloudinary/**"
+alwaysApply: false
+---
+
+# Performance
+
+- Server Components and streaming over client waterfalls.
+- Product images via Cloudinary / `next/image`. No unoptimized full-resolution heroes.
+- Do not install animation or 3D libraries beyond Motion.
+- Search stays in Postgres (`pg_trgm` + FTS) until a later phase names Typesense/Algolia.
+- Avoid huge client bundles on PDP and checkout. Keep drawers isolated.
+- Cache catalogue reads where stale-while-revalidate is safe; never cache authenticated carts, quotes, or payment state as public.

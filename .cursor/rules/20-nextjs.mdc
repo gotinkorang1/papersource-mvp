@@ -1,0 +1,15 @@
+---
+description: Next.js App Router, Server Components, and feature folders
+globs: "src/app/**,src/features/**,src/components/**"
+alwaysApply: false
+---
+
+# Next.js
+
+- App Router only. Route groups: `(store)`, `(account)`, `(checkout)`, `(corporate)`, `admin`, `api`.
+- Default to Server Components. Client components are for drawers, quantity, and interactive forms only.
+- Mutations: Server Actions or route handlers. Do not fetch catalogues in `useEffect`.
+- Business logic lives in `src/features/*` and `src/lib/*`. UI does not call Paystack or recompute legal totals.
+- Admin routes: server-side role check before render. Hidden nav is not security.
+- Prefer `generateMetadata` and JSON-LD on product/category/brand pages. See @docs/SEO.md.
+- Route handlers for external callers only (`/api/paystack/webhook`, uploads). No public GraphQL or generic REST storefront API.

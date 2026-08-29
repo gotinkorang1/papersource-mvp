@@ -1,0 +1,19 @@
+---
+description: Dual-path commerce, pricing, Paystack, and delivery
+globs: "src/features/**,src/components/commerce/**,src/components/products/**,src/components/quotes/**"
+alwaysApply: false
+---
+
+# Commerce
+
+Read @docs/ECOMMERCE.md and @docs/RFQ.md.
+
+- One price-resolution module on the server. Client only previews.
+- Reject retail checkout if a line is `request_quote` only.
+- Checkout: Ghana address; phone required; zones from DB.
+- Other Region / Nationwide Request: do not invent a shipping fee.
+- Paystack init on the server after order insert. Mark paid only after webhook + verify. MoMo is async.
+- Quote statuses: draft → submitted → under_review → priced → sent → accepted → payment_pending → paid → order_created. Also declined, expired, cancelled, revised.
+- Accepted quotes create orders that **snapshot quote prices**, not live tiers.
+- Revisions clone; do not overwrite a sent quote in place.
+- Decrement inventory after paid or confirmed terms (bank / PO / invoice).

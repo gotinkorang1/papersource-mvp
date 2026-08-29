@@ -1,0 +1,15 @@
+---
+description: Vitest, RTL, Playwright, and browser verification
+globs: "**/*.{test,spec}.{ts,tsx},e2e/**,src/features/**"
+alwaysApply: false
+---
+
+# Testing
+
+Read @docs/TESTING.md.
+
+- Unit (Vitest): pricing, VAT split, zones, quote transitions, pesewa format, Paystack amount, webhook idempotency.
+- Component (RTL): ProductCard dual CTAs, Ghana address, independent cart/quote counts.
+- E2E (Playwright): search→cart, product→RFQ, guest checkout, Paystack init, webhook replay, admin product, admin quote response, accept quote, quote→order, delivery calculation.
+- UI work is not done until implemented, tested, and verified in a browser (mobile + desktop + console).
+- Never use production Paystack keys in CI. Never assert paid from a redirect URL.

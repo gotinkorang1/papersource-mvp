@@ -1,0 +1,29 @@
+---
+description: PaperSource visual system — not default shadcn
+globs: "src/app/**/*.tsx,src/components/**/*.tsx,src/app/globals.css"
+alwaysApply: false
+---
+
+# Design system
+
+Read @docs/DESIGN-SYSTEM.md. Restyle shadcn. Do not ship the default zinc/purple look.
+
+| Token | Hex | Role |
+| --- | --- | --- |
+| Ink Navy | `#102A43` | Primary |
+| Paper Green | `#1F6B57` | Sparse secondary |
+| Golden Ochre | `#E6A329` | 3% accents |
+| Paper Cream | `#F8F6F1` | Page background |
+| Pure Paper | `#FFFFFF` | Surfaces |
+| Graphite | `#20262E` | Text |
+| Slate | `#667085` | Secondary text |
+| Soft Grey | `#E4E7EC` | Borders |
+
+**70% cream/white + 20% navy/graphite + 7% green + 3% gold.**
+
+- Fonts: Manrope (headings), Inter (body/UI).
+- Editorial grids, paper surfaces, modest radius (4–8px), no gradients, no cartoon stationery.
+- Product cards: name, spec line, unit price + unit, tier hint, stock, **both** CTAs.
+- Header: Cart and Quote List are visually different with independent counts.
+- Mobile bottom nav: Home · Shop · Search · Quote · Cart.
+- Motion sparingly. Honour `prefers-reduced-motion`.

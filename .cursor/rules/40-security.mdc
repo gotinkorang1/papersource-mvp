@@ -1,0 +1,18 @@
+---
+description: RLS, roles, secrets, and webhook authorization
+globs: "src/lib/supabase/**,src/app/admin/**,src/app/api/**,src/features/payments/**"
+alwaysApply: false
+---
+
+# Security
+
+Read @docs/SECURITY.md.
+
+- RLS on every exposed table. Authenticated ≠ authorized.
+- Staff roles live in `admin_roles`. Never trust `user_metadata` for authorization.
+- `SUPABASE_SERVICE_ROLE_KEY` is server-only. Never `NEXT_PUBLIC_*` secrets.
+- Guest carts: httpOnly `session_id` + Server Actions. Do not let the client query carts by arbitrary session id.
+- Guest quotes: unguessable token or matching email. Do not list all quotes to any user.
+- Private documents: Supabase Storage + short-lived signed URLs after authz. Cloudinary is public product media only.
+- Paystack: verify signature; persist `provider_event_id`; idempotent handler; verify amount/reference.
+- Admin `/admin/**`: session + `admin_roles` on the server. SALES cannot change system settings. WAREHOUSE cannot edit prices.

@@ -1,0 +1,14 @@
+---
+description: TypeScript strict mode and validation conventions
+globs: "**/*.{ts,tsx}"
+alwaysApply: false
+---
+
+# TypeScript
+
+- `strict` is on. Do not weaken `tsconfig` to silence errors.
+- Prefer `unknown` + Zod at trust boundaries (Server Actions, webhooks, form input, env).
+- No `any` in Drizzle queries, payment payloads, or price math.
+- Shared types live in `src/types`. Domain types stay next to `src/features/*` when they are not shared.
+- Money is `number` meaning **pesewas** (integer). Name fields `*Pesewas` or document pesewas in the module.
+- Use named exports. Keep modules small and explicit.

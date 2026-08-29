@@ -1,0 +1,20 @@
+---
+description: Drizzle, pesewas, and PaperSource schema rules
+globs: "src/lib/db/**,drizzle/**,src/features/**"
+alwaysApply: false
+---
+
+# Database
+
+Read @docs/DATABASE.md before adding tables or columns.
+
+- Drizzle on Supabase PostgreSQL. Schema is the TypeScript source of truth.
+- **No float/numeric price columns.** Integer pesewas + `currency` (`GHS`).
+- Cart tables (`carts`, `cart_items`) stay separate from quote tables (`quotes`, `quote_items`).
+- Quote and order **lines snapshot** name, SKU, unit price, tax. Do not bind legal totals to live catalogue rows.
+- `price_tiers` are per variant, including a `request_quote` open-ended tier.
+- Product attributes are EAV (`product_attributes`). Do not add Size/GSM/Yield columns to `products`.
+- Addresses are Ghana-first: phone required; region, city/town, area/suburb, street/landmark, GhanaPost GPS. No required US ZIP.
+- `delivery_zones.fee_mode`: `calculated` | `on_request`. Nationwide Request does not invent a fee.
+- Search: Postgres FTS + `pg_trgm`. Do not add Algolia/Typesense in MVP.
+- Inventory movements after paid or admin-confirmed terms — not on draft cart/quote.
