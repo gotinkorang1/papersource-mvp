@@ -1,23 +1,26 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { refreshSupabaseSession } from "@/lib/supabase/proxy";
 import {
   GUEST_SESSION_COOKIE,
   guestSessionCookieOptions,
   isGuestSessionId,
 } from "@/lib/session/constants";
 
-export function proxy(request: NextRequest) {
-  const response = NextResponse.next();
+export async function proxy(request: NextRequest) {
   // This handler validates Origin before creating its own guest cookie.
   if (request.nextUrl.pathname === "/quick-order/add") {
-    return response;
+    return NextResponse.next();
   }
   const current = request.cookies.get(GUEST_SESSION_COOKIE)?.value;
 
-  if (!isGuestSessionId(current)) {
+  const newSession = !isGuestSessionId(current) ? crypto.randomUUID() : null;
+  if (newSession) request.cookies.set(GUEST_SESSION_COOKIE, newSession);
+  const response = await refreshSupabaseSession(request);
+  if (newSession) {
     response.cookies.set({
       name: GUEST_SESSION_COOKIE,
-      value: crypto.randomUUID(),
+      value: newSession,
       ...guestSessionCookieOptions(),
     });
   }

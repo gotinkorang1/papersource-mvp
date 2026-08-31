@@ -55,6 +55,18 @@ pnpm auth:test:guards
 
 Final checkpoint verification (2026-08-31): `pnpm auth:test` passed; domain Vitest passed 22 files/104 tests; component Vitest passed 3 files/5 tests; changed-file ESLint passed; `pnpm build` passed, including TypeScript and 52 generated pages. The build includes preserved account WIP in the working tree, not a claim that those routes are in this commit. A concurrent component/build run timed out during worker startup; the unchanged component suite passed when run independently. Read-only review approved the foundation after the revoked-token assertion regression was fixed.
 
+## Canonical identity checkpoint
+
+The application's customer actor now comes from Supabase `getClaims()` and a profile selected by that verified subject. The old `ps_customer` cookie does not authorize reads. Anonymous or malformed claims are rejected; editable metadata supplies bounded display fields only. A matching email never selects another profile. The profile transaction handles repeated/concurrent first creation and competing email changes without returning database details.
+
+The proxy makes a newly created guest ID available to the same request, preserves it while refreshing Supabase cookie chunks, and forwards SDK cache-prevention headers. Quick Order still validates Origin before creating a guest cookie.
+
+Run the real profile test with `pnpm auth:test:profiles`. It verifies the dedicated local stack, overrides `DATABASE_URL` only inside its process, and removes only its exact temporary profile fixtures. It never modifies `.env.local` or the original database. This tests profile persistence; `pnpm auth:test` separately exercises real Auth.
+
+The new actor reader is wired into the local account WIP, but its login/logout forms, credential table and email-claiming merge are not shipped or enabled. Keep the app's Supabase configuration unset until those paths are replaced together with commerce ownership. Staff login remains unchanged.
+
+Verification (2026-08-31): domain Vitest passed 25 files/125 tests, including 21 identity/actor/proxy regressions; component Vitest passed 3 files/5 tests. The real profile persistence/concurrency test and `pnpm auth:test` (22 guards plus the real Auth journey) passed. Changed-file ESLint and TypeScript passed; `pnpm build` passed with 52 generated pages. All 9 Quick Order Playwright tests passed after starting the dev server separately following an initial web-server readiness timeout. Build and broad test counts include preserved, uncommitted account WIP; they do not certify that WIP for release. Scoped read-only review cleared this checkpoint after the concurrent email-conflict regression was added and fixed.
+
 ## Sources
 
 - [Supabase local development](https://supabase.com/docs/guides/local-development)

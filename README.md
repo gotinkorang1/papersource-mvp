@@ -4,6 +4,8 @@ Ghana’s modern workplace supply partner. Next.js 16 foundation for a dual-path
 
 Product source of truth: [docs/PRODUCT.md](docs/PRODUCT.md).
 
+Current progress and remaining MVP work: [docs/STATUS.md](docs/STATUS.md).
+
 ## Stack (locked)
 
 Next.js 16 App Router · TypeScript strict · Tailwind CSS 4.3 · shadcn/ui + Base UI · Drizzle · Supabase · Zod · pnpm

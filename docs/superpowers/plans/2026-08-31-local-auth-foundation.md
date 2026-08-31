@@ -101,7 +101,7 @@ it.each([
 - [x] Run the local Auth smoke journey, safe-path tests, typecheck and changed-file lint. Request read-only review of local-only safety and script behavior; fix important findings with regressions.
 - [x] Document setup and resource constraints, the local URLs, and the fact that the storefront still uses its original database pending SSR/ownership wiring. Include official documentation links consulted.
 - [x] Stage only this plan's new foundation files and package/config changes. Inspect the staged diff and confirm no custom-account WIP or secrets entered it.
-- [ ] Commit `feat: establish local Supabase Auth test foundation` and push the existing feature branch. Record actual runtime availability and smoke-test evidence, not merely configuration presence.
+- [x] Commit `feat: establish local Supabase Auth test foundation` and push the existing feature branch. Published as `3e84853`; actual verification is recorded in `docs/LOCAL_AUTH.md`.
 
 ## Self-review and remaining dependency boundary
 

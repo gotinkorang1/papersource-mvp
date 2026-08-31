@@ -1,6 +1,7 @@
 # PaperSource — Product Specification
 
-**Status:** Phase 0 master. All other `docs/` files deepen one domain. They must not contradict this file.  
+**Status:** Product specification; MVP implementation is in progress. See [implementation status](STATUS.md). All other `docs/` files deepen one domain. They must not contradict this file.
+
 **Product:** PaperSource  
 **Domain:** papersourcegh.com  
 **Position:** Ghana’s modern workplace supply partner.
