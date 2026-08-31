@@ -2,6 +2,7 @@
   "name": "papersource",
   "version": "0.1.0",
   "private": true,
+  "engines": { "node": ">=22" },
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -16,7 +17,12 @@
     "db:reset": "docker compose up -d && node scripts/apply-sql.mjs && tsx scripts/seed-catalogue.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
-    "email": "email dev --dir src/lib/email/templates --port 3001"
+    "email": "email dev --dir src/lib/email/templates --port 3001",
+    "auth:start": "node scripts/local-supabase.mjs start",
+    "auth:stop": "node scripts/local-supabase.mjs stop",
+    "auth:bootstrap": "node scripts/local-supabase.mjs bootstrap",
+    "auth:test:guards": "node --test scripts/local-supabase.test.mjs scripts/test-local-auth.test.mjs",
+    "auth:test": "pnpm auth:test:guards && node scripts/test-local-auth.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
@@ -57,6 +63,7 @@
     "eslint": "^9",
     "eslint-config-next": "16.3.3",
     "jsdom": "^30.0.1",
+    "supabase": "2.116.0",
     "tailwindcss": "^4",
     "tsx": "^4.23.12",
     "typescript": "^5",
