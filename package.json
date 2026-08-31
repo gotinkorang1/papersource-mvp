@@ -25,7 +25,8 @@
     "auth:bootstrap": "node scripts/local-supabase.mjs bootstrap",
     "auth:test:guards": "node --test scripts/local-supabase.test.mjs scripts/test-local-auth.test.mjs",
     "auth:test": "pnpm auth:test:guards && node scripts/test-local-auth.mjs",
-    "auth:test:profiles": "node --conditions=react-server --import tsx scripts/test-customer-profile.mjs"
+    "auth:test:profiles": "node --conditions=react-server --import tsx scripts/test-customer-profile.mjs",
+    "auth:test:customer": "node --conditions=react-server --import tsx scripts/test-customer-auth.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",

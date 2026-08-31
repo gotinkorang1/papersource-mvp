@@ -11,6 +11,7 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 - Quick Order and office-pack bundle definitions are committed and pushed.
 - Local Supabase Auth test foundation is committed and pushed (`3e84853`). Confirmation, password login, recovery and refresh-token revocation are tested.
 - Canonical customer identity checkpoint: verified Supabase claims, subject-bound profile synchronization, rejection of the legacy application cookie, and SSR refresh composed with guest identity. Verification details are in [LOCAL_AUTH.md](LOCAL_AUTH.md).
+- Authentication backend operations: registration, confirmation, login, reset email, password update and sign-out, tested through the real SSR SDK against local Supabase. These operations are not yet connected to public forms/actions/callback routes.
 
 **Customer accounts are not yet enabled for users.** The storefront still uses its original database/configuration. Account screens and the old login/merge code remain separate uncommitted WIP; they must not be enabled or treated as shipped.
 
