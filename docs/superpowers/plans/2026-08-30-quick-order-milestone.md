@@ -93,8 +93,8 @@ await expect(page.getByRole("button", { name: "Quote list, 0 items" }).first()).
 - [x] Run typecheck, lint and tests. Fresh typecheck and changed-file lint passed. Full lint had zero errors and one pre-existing warning. The default Vitest invocation stalled; separate Node-domain and jsdom-component runs covered all 24 current test files: 84 tests passed. Exact commands are in `docs/TESTING.md`.
 - [x] Verify the staged tree does not import untracked account files. Inspect `git diff --cached --name-only` and `git diff --cached --check`.
 - [x] Document fresh results in `docs/TESTING.md` and mark this plan's completed checkboxes.
-- [ ] Commit with `git commit -m "feat: add Quick Order and office-pack bundles"`, then `git push origin codex/mvp-customer-accounts`.
-- [ ] Confirm `git rev-parse HEAD` equals `git rev-parse origin/codex/mvp-customer-accounts` and report remaining account WIP separately.
+- [x] Commit with `git commit -m "feat: add Quick Order and office-pack bundles"`, then `git push origin codex/mvp-customer-accounts`. Published feature commit: `eee9a5c`.
+- [x] Confirm local and remote feature commit equality and report remaining account WIP separately. Account routes, authentication, schema/migration and checkout/RFQ ownership changes remain outside this milestone.
 
 ## Self-review
 
@@ -103,3 +103,7 @@ This plan covers only the independently shippable first milestone: parser, catal
 ## Execution checkpoint: 2026-08-30
 
 Task 1 is verified and can be committed independently with this plan and the parent spec's `ps_sid` typo correction. This is not completion of the Quick Order feature milestone. Task 2 is blocked by local infrastructure: Docker Linux engine returns HTTP 500, a direct PostgreSQL `select 1` on the expected local port 54329 fails with `CONNECT_TIMEOUT`, and HTTP on the existing development server port 3000 times out. No containers, volumes, or existing processes were reset or stopped. Restore Docker/database and restart the development server before resuming browser checks. Account implementation and remaining Quick Order WIP remain unstaged.
+
+## Completed milestone: 2026-08-31
+
+Docker recovered; the existing database was preserved. Feature commit `eee9a5c` was pushed after independent review, 84 unit/component tests, nine Quick Order browser tests, typecheck and production build passed. Full lint had zero errors and one existing Paystack warning. See `docs/TESTING.md` for exact commands and scope. The next implementation milestone is Supabase Auth, as defined in the parent customer-accounts design.
