@@ -68,7 +68,7 @@ Maintaining a custom local password table and a separate production cookie creat
 
 `src/proxy.ts` composes two request-level responsibilities:
 
-1. preserve the existing anonymous `ps_session` cookie used by guest commerce; and
+1. preserve the existing anonymous `ps_sid` cookie used by guest commerce; and
 2. refresh Supabase auth cookies when required.
 
 Proxy checks are only an optimization. Every protected read and mutation verifies the customer again close to the data access.
@@ -160,7 +160,7 @@ Quote-origin order creation copies both `profile_id` and `organization_id` from 
 
 ## Guest commerce merge
 
-Guest ownership is proven by the server-read HTTP-only `ps_session` cookie. Email equality alone never claims a quote or order.
+Guest ownership is proven by the server-read HTTP-only `ps_sid` cookie. Email equality alone never claims a quote or order.
 
 The merge runs transactionally after confirmed registration or sign-in:
 
