@@ -8,6 +8,10 @@ import {
 
 export function proxy(request: NextRequest) {
   const response = NextResponse.next();
+  // This handler validates Origin before creating its own guest cookie.
+  if (request.nextUrl.pathname === "/quick-order/add") {
+    return response;
+  }
   const current = request.cookies.get(GUEST_SESSION_COOKIE)?.value;
 
   if (!isGuestSessionId(current)) {

@@ -26,7 +26,8 @@
 - `src/app/quick-order/add/route.ts`: POST, guest cookie, redirect feedback.
 - `src/app/(corporate)/quick-order/page.tsx`, `src/components/quotes/quick-order-form.tsx`: entry page and accessible form.
 - `src/app/(checkout)/cart/page.tsx`, `src/app/(corporate)/quote/page.tsx`: redirect notices.
-- `src/app/(corporate)/business/page.tsx`, `bulk-orders/page.tsx`, `schools/page.tsx`, `corporate-accounts/page.tsx`: existing corporate content and office-pack links.
+- `src/app/(corporate)/business/page.tsx`, `bulk-orders/page.tsx`, `schools/page.tsx`: existing corporate content and office-pack links. `corporate-accounts/page.tsx` stays with account WIP because it links to registration.
+- `src/proxy.ts`: let the Quick Order POST handler validate Origin before creating a guest cookie.
 - `src/components/navigation/store-header.tsx`, `store-footer.tsx`, `src/components/quotes/quote-basket.tsx`: discovery links. Stage only the Quick Order header hunk, leaving AccountLink WIP untouched.
 - `scripts/seed-catalogue.ts`: deterministic contents for three office packs.
 - `e2e/quick-order.spec.ts`: actual browser persistence, dual-path isolation, bundle content and mobile checks.
@@ -66,10 +67,10 @@ for (const [sku, quantity] of merged) {
 
 ## Task 2: Verify the existing browser journeys and office-pack seed
 
-**Interfaces:** `applyQuickOrderLines({ sessionId: string, destination: "quote" | "cart", rows: QuickOrderRow[] }): Promise<{ added: number; unknown: string[]; cartBlocked: string[] }>`. Existing bundle CTA remains the consumer of seeded bundle items.
+**Interfaces:** `applyQuickOrderLines({ sessionId: string, destination: "quote" | "cart", rows: QuickOrderRow[] }): Promise<{ added: number; unknown: string[]; cartBlocked: string[] }>`. Bundle definitions remain editable in the existing catalogue admin; this task adds no new bundle-purchase behavior.
 
-- [ ] Inspect seed writes and local database readiness before running `pnpm db:seed`. Do not run the account migration or reset the volume for this milestone.
-- [ ] Retain the quote-only E2E and add the reverse-path assertion after a cart submission:
+- [x] Inspect seed writes and local database readiness. All seven expected bundle rows were already seeded, so verified them with SQL instead of rewriting catalogue data. No account migration or volume reset was needed.
+- [x] Retain the quote-only E2E and add the reverse-path assertion after a cart submission:
 
 ```ts
 await page.goto("/quick-order");
@@ -80,18 +81,18 @@ await expect(page.getByRole("button", { name: "Cart, 2 items" }).first()).toBeVi
 await expect(page.getByRole("button", { name: "Quote list, 0 items" }).first()).toBeVisible();
 ```
 
-- [ ] Add browser cases for unknown SKU and overflow feedback, empty submission, and request-quote-only quantities rejected from cart. Verify the small-office pack has the three expected component rows (paper 10, pens 2, files 4) with a database read after seeding. Use labels/roles and literal seeded quantities; no fixed sleeps. Existing OfficeBundleCard buttons are unwired; do not represent them as verified purchasing behavior.
-- [ ] Exercise Quick Order at 390x844 and desktop widths. Collect `pageerror` and console errors and assert none. Check for horizontal page overflow.
-- [ ] Run `pnpm exec playwright test e2e/quick-order.spec.ts --workers=1`. Diagnose genuine failures before changing production; for a production fix retain its observed failing test, apply the smallest fix and repeat the command.
+- [x] Add browser cases for unknown SKU and overflow feedback, empty submission, and request-quote-only quantities rejected from cart. Verify the small-office pack has the three expected component rows (paper 10, pens 2, files 4) with a database read. Use labels/roles and literal seeded quantities; no fixed sleeps. Existing OfficeBundleCard buttons are unwired; do not represent them as verified purchasing behavior.
+- [x] Exercise Quick Order at 390x844 and desktop widths. Collect `pageerror` and console errors and assert none. Check for horizontal page overflow.
+- [x] Run `pnpm exec playwright test e2e/quick-order.spec.ts --workers=1`: nine tests passed. Red/green regressions also fixed cart partial-success notice omission, cumulative quantity pricing, and cross-site POST guest-cookie replacement.
 
 ## Task 3: Isolate, verify, commit and push
 
 **Interfaces:** Produces a self-contained feature commit on the existing branch; account WIP stays unstaged.
 
-- [ ] Review every selected diff. Stage the exact file boundaries above, excluding all account implementation and migration files. For the mixed header, apply a zero-context patch to the index containing only the Quick Order navigation addition (`git apply --cached --unidiff-zero`); never reset the working file.
-- [ ] Run `pnpm exec tsc --noEmit`, `pnpm lint`, and `pnpm test`. Record pre-existing failures accurately rather than claiming a full pass.
-- [ ] Verify the staged tree does not import untracked account files. Inspect `git diff --cached --name-only` and `git diff --cached --check`.
-- [ ] Document fresh results in `docs/TESTING.md` and mark this plan's completed checkboxes.
+- [x] Review every selected diff. Stage the exact file boundaries above, excluding all account implementation and migration files. For the mixed header, apply a zero-context patch to the index containing only the Quick Order navigation addition (`git apply --cached --unidiff-zero`); never reset the working file. Independent review cleared the corrected implementation.
+- [x] Run typecheck, lint and tests. Fresh typecheck and changed-file lint passed. Full lint had zero errors and one pre-existing warning. The default Vitest invocation stalled; separate Node-domain and jsdom-component runs covered all 24 current test files: 84 tests passed. Exact commands are in `docs/TESTING.md`.
+- [x] Verify the staged tree does not import untracked account files. Inspect `git diff --cached --name-only` and `git diff --cached --check`.
+- [x] Document fresh results in `docs/TESTING.md` and mark this plan's completed checkboxes.
 - [ ] Commit with `git commit -m "feat: add Quick Order and office-pack bundles"`, then `git push origin codex/mvp-customer-accounts`.
 - [ ] Confirm `git rev-parse HEAD` equals `git rev-parse origin/codex/mvp-customer-accounts` and report remaining account WIP separately.
 

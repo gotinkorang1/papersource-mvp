@@ -7,6 +7,10 @@ export function StoreFooter() {
         <p>PaperSource · Accra &amp; Tema delivery. Nationwide on request.</p>
         <p>
           WhatsApp is for questions and quote discussion — not checkout.{" "}
+          <Link href="/quick-order" className="text-ink underline">
+            Quick Order
+          </Link>
+          {" · "}
           <Link href="/business" className="text-ink underline">
             Business
           </Link>

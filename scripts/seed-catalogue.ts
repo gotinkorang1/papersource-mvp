@@ -10,6 +10,7 @@ import {
   priceTiers,
   productAliases,
   productAttributes,
+  productBundleItems,
   products,
   productVariants,
 } from "../src/lib/db/schema";
@@ -229,6 +230,31 @@ async function seed() {
       );
     }
   }
+
+  const packItems: { packSlug: string; sku: string; quantity: number }[] = [
+    { packSlug: "new-employee-starter-pack", sku: "BIC-CRIS-BLU-50", quantity: 1 },
+    { packSlug: "new-employee-starter-pack", sku: "PS-LA-A4-75", quantity: 1 },
+    { packSlug: "small-office-starter-pack", sku: "DA-A4-80-500", quantity: 10 },
+    { packSlug: "small-office-starter-pack", sku: "BIC-CRIS-BLU-50", quantity: 2 },
+    { packSlug: "small-office-starter-pack", sku: "PS-LA-A4-75", quantity: 4 },
+    { packSlug: "classroom-pack", sku: "DA-A4-80-500", quantity: 1 },
+    { packSlug: "classroom-pack", sku: "BIC-CRIS-BLU-50", quantity: 1 },
+  ];
+
+  for (const pack of ["new-employee-starter-pack", "small-office-starter-pack", "classroom-pack"]) {
+    await db
+      .delete(productBundleItems)
+      .where(eq(productBundleItems.bundleProductId, seedUuid("product", pack)));
+  }
+
+  await db.insert(productBundleItems).values(
+    packItems.map((item) => ({
+      id: seedUuid("bundle-item", `${item.packSlug}:${item.sku}`),
+      bundleProductId: seedUuid("product", item.packSlug),
+      variantId: seedUuid("variant", item.sku),
+      quantity: item.quantity,
+    })),
+  );
 
   await db.execute(sql`
     update products p

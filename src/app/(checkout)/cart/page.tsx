@@ -15,9 +15,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default async function CartPage() {
+type PageProps = {
+  searchParams: Promise<{ added?: string; unknown?: string; quoteOnly?: string; notice?: string }>;
+};
+
+export default async function CartPage({ searchParams }: PageProps) {
   const sessionId = isDatabaseConfigured() ? await readGuestSessionId() : null;
   const lines = sessionId ? await listCartLines(sessionId) : [];
+  const { added, unknown, quoteOnly, notice } = await searchParams;
   const subtotal = lines.reduce(
     (sum, line) => sum + line.unitPricePesewas * line.quantity,
     0,
@@ -29,6 +34,30 @@ export default async function CartPage() {
       <p className="mt-3 text-slate">
         Retail checkout only. Quote lines stay in Quote List.
       </p>
+      {added ? (
+        <p className="mt-4 text-sm text-ink">
+          Added {added} {added === "1" ? "line" : "lines"} from Quick Order.
+        </p>
+      ) : null}
+      {unknown ? (
+        <p role="alert" className="mt-3 text-sm text-error">
+          Not found: {unknown}
+        </p>
+      ) : null}
+      {notice ? (
+        <p role="alert" className="mt-3 text-sm text-error">
+          {notice}
+        </p>
+      ) : null}
+      {quoteOnly ? (
+        <p className="mt-3 text-sm text-slate">
+          Request-quote at that quantity: {quoteOnly}.{" "}
+          <Link href="/quick-order" className="underline">
+            Add those SKUs to quote
+          </Link>
+          .
+        </p>
+      ) : null}
       {lines.length === 0 ? (
         <p className="mt-8 text-slate">
           Your cart is empty.{" "}

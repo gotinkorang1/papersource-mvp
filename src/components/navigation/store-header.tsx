@@ -26,6 +26,9 @@ export function StoreHeader() {
           <Link href="/bulk-orders" className="hover:text-ink">
             Bulk Orders
           </Link>
+          <Link href="/quick-order" className="hover:text-ink">
+            Quick Order
+          </Link>
           <Link href="/request-quote" className="hover:text-ink">
             Request a Quote
           </Link>

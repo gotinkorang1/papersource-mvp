@@ -15,9 +15,14 @@ export const metadata: Metadata = {
   robots: { index: false, follow: true },
 };
 
-export default async function QuoteBasketPage() {
+type PageProps = {
+  searchParams: Promise<{ added?: string; unknown?: string; notice?: string }>;
+};
+
+export default async function QuoteBasketPage({ searchParams }: PageProps) {
   const sessionId = isDatabaseConfigured() ? await readGuestSessionId() : null;
   const lines = sessionId ? await listQuoteLines(sessionId) : [];
+  const { added, unknown, notice } = await searchParams;
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
@@ -26,12 +31,28 @@ export default async function QuoteBasketPage() {
         Procurement basket. This is not your retail cart. Final prices are set
         by PaperSource.
       </p>
+      {added ? (
+        <p className="mt-4 text-sm text-ink">
+          Added {added} {added === "1" ? "line" : "lines"} from Quick Order.
+        </p>
+      ) : null}
+      {unknown ? (
+        <p role="alert" className="mt-3 text-sm text-error">
+          Not found: {unknown}
+        </p>
+      ) : null}
+      {notice ? <p className="mt-3 text-sm text-slate">{notice}</p> : null}
       {lines.length === 0 ? (
         <p className="mt-8 text-slate">
           No items on this quotation yet.{" "}
           <Link href="/shop" className="underline">
             Add products to quote
+          </Link>{" "}
+          or{" "}
+          <Link href="/quick-order" className="underline">
+            use Quick Order
           </Link>
+          .
         </p>
       ) : (
         <div className="mt-8 space-y-6">

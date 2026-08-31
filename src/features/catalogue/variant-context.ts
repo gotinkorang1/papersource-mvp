@@ -1,4 +1,4 @@
-import { and, eq } from "drizzle-orm";
+import { and, eq, or, sql } from "drizzle-orm";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { buildSpecLine } from "@/features/catalogue/search";
 import { getDb } from "@/lib/db/client";
@@ -57,6 +57,27 @@ export async function loadSellableVariant(variantId: string) {
           })),
       ) || row.product.name,
   };
+}
+
+export async function findSellableVariantIdBySku(sku: string) {
+  const needle = sku.trim();
+  if (!needle) {
+    return null;
+  }
+
+  const db = getDb();
+  const [row] = await db
+    .select({ id: productVariants.id })
+    .from(productVariants)
+    .where(
+      or(
+        sql`upper(${productVariants.sku}) = ${needle.toUpperCase()}`,
+        eq(productVariants.barcode, needle),
+      ),
+    )
+    .limit(1);
+
+  return row?.id ?? null;
 }
 
 export function previewUnitPrice(

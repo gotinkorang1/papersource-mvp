@@ -47,7 +47,12 @@ export function QuoteBasket() {
       }
     >
       {quoteLines.length === 0 ? (
-        <p className="text-sm text-slate">No items on this quotation yet.</p>
+        <p className="text-sm text-slate">
+          No items on this quotation yet.{" "}
+          <Link href="/quick-order" className="underline" onClick={() => setQuoteOpen(false)}>
+            Quick Order
+          </Link>
+        </p>
       ) : (
         <table className="w-full text-sm">
           <caption className="sr-only">Quote lines</caption>

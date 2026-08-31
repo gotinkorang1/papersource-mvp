@@ -1,6 +1,6 @@
 # PaperSource — Testing
 
-**Status:** Phase 0. Must not contradict [PRODUCT.md](PRODUCT.md).  
+**Status:** Implementation verification. Must not contradict [PRODUCT.md](PRODUCT.md).
 **Purpose:** Three-layer testing plus browser verification. A feature is not done when the code “looks fine.”
 
 ---
@@ -143,3 +143,22 @@ Do not skip hooks to land broken pricing or webhook code.
 - Use production Paystack keys in CI.
 - Skip dual-path assertions (cart vs quote).
 - Test only the desktop header and ignore mobile Quote/Cart nav.
+
+## 10. Quick Order milestone verification — 2026-08-31
+
+Verified on the local PaperSource database (port 54329), with no database reset:
+
+- `pnpm exec vitest run --pool=threads --maxWorkers=1 --environment=node --exclude '**/*.test.tsx'`: 21 files, 79 tests passed.
+- `pnpm exec vitest run src/components/commerce/ghana-address-form.test.tsx src/components/navigation/dual-path-counts.test.tsx src/components/products/product-card.test.tsx --pool=threads --maxWorkers=1`: 3 files, 5 tests passed.
+- `pnpm exec playwright test e2e/quick-order.spec.ts --workers=1`: 9 tests passed, including mobile layout and browser-console assertions.
+- `pnpm lint`: no errors; one existing unused `siteUrl` warning in `src/lib/paystack/client.ts`.
+- `pnpm exec tsc --noEmit`: passed after the final review fixes. Changed-file ESLint also passed without warnings.
+- `pnpm build`: passed (52 pages generated). This build used the working tree, including preserved account WIP; those account routes are not part of the Quick Order commit.
+
+The default all-jsdom Vitest run stalled during startup on this workstation. The two commands above cover all current test files using Node for domain tests and jsdom for the three component files; no tests were skipped. The totals include the still-local customer-password tests, not a claim that customer accounts are shipped.
+
+Quick Order coverage includes quote-only and cart-only persistence, unknown/empty rows, duplicate quantity overflow, cart partial-success feedback, quote-only pricing at the cumulative cart quantity, and rejection of foreign-Origin POSTs without setting a guest cookie. Independent review found the last two cases; both were reproduced before correction.
+
+Office-pack verification read all seven seeded component rows. Small-office contents are paper ×10, pens ×2, files ×4. This milestone seeds bundle definitions only; it does not claim component-inventory expansion or wire the legacy `OfficeBundleCard` buttons.
+
+Known follow-up: cart quantity validation and insertion are separate operations. Concurrent submissions can still cross a price-tier boundary; checkout remains authoritative. Address atomic validation with repository/security hardening.
