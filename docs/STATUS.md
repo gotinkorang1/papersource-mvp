@@ -18,7 +18,7 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 
 ## Remaining MVP work, in order
 
-1. Stabilize the full Playwright suite, including admin quote journeys; the storefront delivery copy and Product JSON-LD polish is complete.
+1. Stabilize the full Playwright suite, including admin quote journeys; the storefront delivery copy and Product JSON-LD polish is complete. The current run is blocked by intermittent `127.0.0.1:54329` standalone-Postgres connection timeouts, so CI should use a healthy dedicated database container.
 2. Launch verification: hosted Supabase/Vercel environment configuration, migration rollout, and a clean full Playwright run. Vercel Analytics and server-side Sentry instrumentation are present.
 3. Optional: quote-expiring reminders at T-48h.
 
