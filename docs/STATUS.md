@@ -1,6 +1,6 @@
 # Implementation status
 
-PaperSource is in **MVP implementation**. The customer-account, RLS/settings, and operational-read milestones are complete on its feature branch; the next milestone is storefront polish and E2E stabilization. The product specification is not an implementation phase tracker.
+PaperSource is in **MVP implementation**. The customer-account, RLS/settings, operational-read, storefront-polish, and server-observability milestones are complete on its feature branch; the next milestone is launch verification. The product specification is not an implementation phase tracker.
 
 ## Shipped on master
 
@@ -18,8 +18,8 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 
 ## Remaining MVP work, in order
 
-1. Storefront delivery-zone copy and remaining Product JSON-LD; stabilize the full Playwright suite, including admin quote journeys.
-2. Sentry and launch verification. Vercel Analytics is already present.
+1. Stabilize the full Playwright suite, including admin quote journeys; the storefront delivery copy and Product JSON-LD polish is complete.
+2. Launch verification: hosted Supabase/Vercel environment configuration, migration rollout, and a clean full Playwright run. Vercel Analytics and server-side Sentry instrumentation are present.
 3. Optional: quote-expiring reminders at T-48h.
 
 Reorder, credit ledgers, furniture, PostHog, search SaaS and a custom wordmark remain out of MVP. Feature-branch commits are not a claim of deployment or a merge into master.
