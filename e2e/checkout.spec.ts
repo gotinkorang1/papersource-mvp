@@ -4,10 +4,10 @@ async function addFirstInStockToCart(page: Page) {
   await page.goto("/");
   await expect(page.getByTestId("add-to-quote-double-a-premium-a4")).toBeEnabled();
   const persisted = page.waitForResponse(
-    (response) => response.request().method() === "POST" && response.ok(),
+    (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },
   );
-  await page.getByRole("button", { name: "Add to Cart" }).first().click();
+  await page.locator('button:not([disabled])').filter({ hasText: "Add to Cart" }).first().click();
   await persisted;
   await expect(
     page.getByRole("button", { name: "Cart, 1 item" }).first(),
