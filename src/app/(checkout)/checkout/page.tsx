@@ -7,6 +7,7 @@ import { formatGhs } from "@/lib/money";
 import { readCustomerActor } from "@/lib/customer/require";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { getStorefrontDeliveryBadge } from "@/features/delivery/queries";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -18,6 +19,7 @@ export default async function CheckoutPage() {
   const customer = isDatabaseConfigured() ? await readCustomerActor() : null;
   const saved = customer ? await listCustomerAddresses(customer.profileId) : [];
   const preferred = saved.find((row) => row.isDefault) ?? saved[0];
+  const deliveryBadge = await getStorefrontDeliveryBadge();
   const lines = sessionId ? await listCartLines(sessionId) : [];
   const goods = lines.reduce(
     (sum, line) => sum + line.unitPricePesewas * line.quantity,
@@ -28,9 +30,9 @@ export default async function CheckoutPage() {
     <main className="mx-auto max-w-3xl px-4 py-16">
       <h1 className="text-3xl text-ink">Checkout</h1>
       <p className="mt-3 text-slate">
-        Ghana delivery. Prices are confirmed on the server. Accra and Tema
-        orders can pay with Paystack after the order is recorded. Nationwide
-        orders wait for delivery terms — no fee is invented here.
+        Ghana delivery. Prices are confirmed on the server. {deliveryBadge.label}.
+        Accra and Tema orders can pay with Paystack after the order is recorded.
+        Nationwide orders wait for delivery terms — no fee is invented here.
       </p>
       {lines.length === 0 ? (
         <p className="mt-6 text-slate">

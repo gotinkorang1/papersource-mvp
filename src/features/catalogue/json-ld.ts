@@ -20,6 +20,10 @@ export function productJsonLd(product: ProductDetailModel, canonical: string) {
       "@type": "Brand",
       name: product.brandName,
     },
+    category: product.categoryName,
+    ...(product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode)
+      ? { gtin: product.barcode }
+      : {}),
     offers: {
       "@type": "Offer",
       url: canonical,
@@ -27,6 +31,7 @@ export function productJsonLd(product: ProductDetailModel, canonical: string) {
       price: pesewasToMajor(product.unitPricePesewas),
       availability,
       itemCondition: "https://schema.org/NewCondition",
+      seller: { "@type": "Organization", name: "PaperSource" },
     },
   };
 }

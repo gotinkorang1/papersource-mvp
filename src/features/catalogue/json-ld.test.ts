@@ -26,4 +26,14 @@ describe("productJsonLd", () => {
     );
     expect(json.image).toBe("https://res.cloudinary.com/demo/image.jpg");
   });
+
+  it("includes category, seller and a valid barcode as structured product data", () => {
+    const json = productJsonLd(
+      { ...product, categoryName: "Copier Paper", barcode: "123456789012" },
+      "http://localhost:3000/product/double-a-premium-a4",
+    );
+    expect(json.category).toBe("Copier Paper");
+    expect(json.gtin).toBe("123456789012");
+    expect(json.offers.seller).toEqual({ "@type": "Organization", name: "PaperSource" });
+  });
 });
