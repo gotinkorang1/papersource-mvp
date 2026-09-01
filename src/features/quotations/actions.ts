@@ -70,5 +70,9 @@ export async function submitRfqAction(
   if (attachmentError) {
     received.set("attachments", "failed");
   }
+  // The persistent store shell may survive the redirect; refresh its server
+  // snapshot so the submitted draft disappears from the client-side count.
+  revalidatePath("/", "layout");
+  revalidatePath("/request-quote");
   redirect(`/request-quote/received?${received.toString()}`);
 }
