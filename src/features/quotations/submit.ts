@@ -19,6 +19,7 @@ import {
 } from "@/lib/db/schema";
 import { notifyQuoteSubmitted } from "@/lib/email";
 import { inclusiveVatBreakdown } from "@/lib/tax";
+import { getStoreSettings } from "@/features/settings/admin";
 import {
   assertAllowedDocument,
   DocumentUploadError,
@@ -101,6 +102,7 @@ export async function submitGuestRfq(input: {
   const token = crypto.randomUUID();
 
   const db = getDb();
+  const settings = await getStoreSettings();
   const { draft, organization } = await db.transaction(async (tx) => {
     await lockCommerce(tx, identity);
   const draft = await getDraftQuote(identity, tx);
@@ -130,7 +132,7 @@ export async function submitGuestRfq(input: {
     },
     goodsTotal,
   );
-  const tax = inclusiveVatBreakdown(goodsTotal + delivery.feePesewas);
+  const tax = inclusiveVatBreakdown(goodsTotal + delivery.feePesewas, settings.vatRateBps);
 
     let organization = null as typeof organizations.$inferSelect | null;
     if (input.formData.get("useSavedOrganization") === "true") {

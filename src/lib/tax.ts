@@ -1,6 +1,6 @@
 import { inclusiveTaxPortion } from "@/lib/money";
 
-/** Ghana VAT 15%. Admin-configurable rates come later; one function used everywhere. */
+/** Ghana VAT defaults to 15%; operational settings may override the rate in basis points. */
 export const GHANA_VAT_BPS = 1500;
 
 export type TaxLine = {
@@ -9,13 +9,16 @@ export type TaxLine = {
   amount: number;
 };
 
-export function inclusiveVatBreakdown(inclusivePesewas: number): {
+export function inclusiveVatBreakdown(
+  inclusivePesewas: number,
+  rateBps = GHANA_VAT_BPS,
+): {
   taxTotal: number;
   taxJson: TaxLine[];
 } {
-  const taxTotal = inclusiveTaxPortion(inclusivePesewas, GHANA_VAT_BPS);
+  const taxTotal = inclusiveTaxPortion(inclusivePesewas, rateBps);
   return {
     taxTotal,
-    taxJson: [{ name: "VAT", rate_bps: GHANA_VAT_BPS, amount: taxTotal }],
+    taxJson: [{ name: "VAT", rate_bps: rateBps, amount: taxTotal }],
   };
 }

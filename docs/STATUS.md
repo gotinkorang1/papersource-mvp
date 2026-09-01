@@ -1,6 +1,6 @@
 # Implementation status
 
-PaperSource is in **MVP implementation**. The customer-account milestone is complete on its feature branch and the next milestone is full RLS plus delivery/settings administration. The product specification is not an implementation phase tracker.
+PaperSource is in **MVP implementation**. The customer-account and RLS/settings milestones are complete on its feature branch; the next milestone is useful staff reads. The product specification is not an implementation phase tracker.
 
 ## Shipped on master
 
@@ -18,7 +18,7 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 
 ## Remaining MVP work, in order
 
-1. Delivery-zone CRUD; VAT, quote-expiry and WhatsApp settings; useful staff customer/organisation/payment/delivery reads. Full-table RLS policy hardening is complete on the customer-accounts feature branch.
+1. Useful staff customer/organisation/payment/delivery reads. Delivery-zone CRUD, VAT/quote-expiry/WhatsApp/site settings, and full-table RLS policy hardening are complete on the customer-accounts feature branch.
 2. Storefront delivery-zone copy and remaining Product JSON-LD; stabilize the full Playwright suite, including admin quote journeys.
 3. Sentry and launch verification. Vercel Analytics is already present.
 4. Optional: quote-expiring reminders at T-48h.

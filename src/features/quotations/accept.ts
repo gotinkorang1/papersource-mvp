@@ -107,6 +107,9 @@ export async function acceptQuoteByToken(input: {
 
   const number = await nextDocumentNumber("order");
   const db = getDb();
+  const quoteTaxRateBps = Array.isArray(found.taxJson)
+    ? (found.taxJson as Array<{ rate_bps?: unknown }>).find((line) => typeof line.rate_bps === "number")?.rate_bps
+    : undefined;
 
   const order = await db.transaction(async (tx) => {
     const [updated] = await tx
@@ -180,7 +183,10 @@ export async function acceptQuoteByToken(input: {
           quantity: line.quantity,
           unitPrice,
           lineTotal,
-          taxTotal: inclusiveVatBreakdown(lineTotal).taxTotal,
+          taxTotal: inclusiveVatBreakdown(
+            lineTotal,
+            typeof quoteTaxRateBps === "number" ? quoteTaxRateBps : undefined,
+          ).taxTotal,
         };
       }),
     );

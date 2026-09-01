@@ -2,6 +2,7 @@ import { and, asc, desc, eq, ne } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { nextDocumentNumber } from "@/lib/db/numbers";
 import { inclusiveVatBreakdown } from "@/lib/tax";
+import { getStoreSettings } from "@/features/settings/admin";
 import { parseGhsToPesewas } from "@/lib/money";
 import {
   organizations,
@@ -26,8 +27,6 @@ export class QuoteAdminError extends Error {
     this.name = "QuoteAdminError";
   }
 }
-
-const DEFAULT_EXPIRY_DAYS = 14;
 
 function assertSalesWrite(role: StaffRole) {
   if (!canAccessAdmin(role, "quotes", "write")) {
@@ -122,6 +121,7 @@ async function transitionQuote(input: {
   }
 
   const db = getDb();
+  const settings = input.to === "sent" ? await getStoreSettings() : null;
   await db.transaction(async (tx) => {
     await tx
       .update(quotes)
@@ -131,7 +131,7 @@ async function transitionQuote(input: {
         ...(input.to === "sent"
           ? {
               expiresAt: new Date(
-                Date.now() + DEFAULT_EXPIRY_DAYS * 24 * 60 * 60 * 1000,
+                Date.now() + (settings?.quoteExpiryDays ?? 14) * 24 * 60 * 60 * 1000,
               ),
             }
           : {}),
@@ -224,7 +224,8 @@ export async function saveQuotePrices(input: {
     deliveryFee > 0 || quote.deliveryFeeStatus === "waived"
       ? ("calculated" as const)
       : quote.deliveryFeeStatus;
-  const tax = inclusiveVatBreakdown(goodsTotal + deliveryFee);
+  const settings = await getStoreSettings();
+  const tax = inclusiveVatBreakdown(goodsTotal + deliveryFee, settings.vatRateBps);
 
   const nextStatus: QuoteStatus = "priced";
   try {

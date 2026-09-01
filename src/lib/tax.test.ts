@@ -11,4 +11,11 @@ describe("inclusiveVatBreakdown", () => {
       { name: "VAT", rate_bps: 1500, amount: 1500 },
     ]);
   });
+
+  it("supports the admin-configured basis-point rate", () => {
+    expect(inclusiveVatBreakdown(11000, 1000)).toEqual({
+      taxTotal: 1000,
+      taxJson: [{ name: "VAT", rate_bps: 1000, amount: 1000 }],
+    });
+  });
 });

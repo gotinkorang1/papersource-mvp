@@ -1,6 +1,6 @@
 # PaperSource — Admin
 
-**Status:** Phase 0. Must not contradict [PRODUCT.md](PRODUCT.md).  
+**Status:** MVP implementation baseline. Must not contradict [PRODUCT.md](PRODUCT.md).  
 **Purpose:** `/admin` information architecture and RBAC. PaperSource is not operated from the Supabase dashboard.
 
 Authorization rules: [SECURITY.md](SECURITY.md). Quote operations: [RFQ.md](RFQ.md).

@@ -12,6 +12,7 @@ import { inventory, orderItems, orders } from "@/lib/db/schema";
 import type { AddressSnapshot } from "@/lib/db/schema/identity";
 import { notifyOrderPlaced } from "@/lib/email";
 import { inclusiveVatBreakdown } from "@/lib/tax";
+import { getStoreSettings } from "@/features/settings/admin";
 
 export class CheckoutError extends Error {
   constructor(message: string) {
@@ -100,7 +101,8 @@ export async function placeRetailOrder(input: {
     goodsTotal,
   );
   const taxable = goodsTotal + delivery.feePesewas;
-  const tax = inclusiveVatBreakdown(taxable);
+  const settings = await getStoreSettings();
+  const tax = inclusiveVatBreakdown(taxable, settings.vatRateBps);
   const grandTotal = goodsTotal + delivery.feePesewas;
   const status =
     delivery.status === "pending_nationwide"
@@ -142,7 +144,7 @@ export async function placeRetailOrder(input: {
         quantity: line.quantity,
         unitPrice: line.unitPrice,
         lineTotal: line.lineTotal,
-        taxTotal: inclusiveVatBreakdown(line.lineTotal).taxTotal,
+        taxTotal: inclusiveVatBreakdown(line.lineTotal, settings.vatRateBps).taxTotal,
       })),
     );
 
