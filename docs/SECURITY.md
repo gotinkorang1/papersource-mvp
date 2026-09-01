@@ -1,6 +1,6 @@
 # PaperSource — Security
 
-**Status:** MVP implementation security baseline; full-table policy hardening remains in progress. Must not contradict [PRODUCT.md](PRODUCT.md).
+**Status:** MVP implementation security baseline; full-table RLS and Data API grants are implemented in `0009_rls_hardening.sql`. Must not contradict [PRODUCT.md](PRODUCT.md).
 **Purpose:** Authorization, RLS, secrets, payments, and private documents.  
 Supabase is infrastructure. **Authenticated ≠ authorized.**
 
