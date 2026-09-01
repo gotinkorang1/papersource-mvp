@@ -3,3 +3,4 @@ allowBuilds:
   sharp: false
   unrs-resolver: false
   supabase: true
+  '@sentry/cli': true
