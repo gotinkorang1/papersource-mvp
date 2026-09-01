@@ -68,13 +68,9 @@ export const ADMIN_NAV = [
 ] as const;
 
 export const ADMIN_PLACEHOLDER_SECTIONS = [
-  "customers",
-  "organisations",
   "promotions",
   "banners",
   "featured",
-  "deliveries",
-  "payments",
   "enquiries",
   "pages",
   "faqs",
