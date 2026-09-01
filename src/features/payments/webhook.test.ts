@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
+vi.mock("server-only", () => ({}));
 import { PAYSTACK_MOCK_SECRET, signPaystackBody } from "@/lib/paystack/signature";
 import { WebhookSignatureError } from "./webhook";
 import { paystackSignatureValid } from "@/lib/paystack/signature";

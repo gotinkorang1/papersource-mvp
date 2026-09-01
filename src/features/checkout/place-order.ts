@@ -21,10 +21,11 @@ export class CheckoutError extends Error {
 }
 
 export async function placeRetailOrder(input: {
-  sessionId: string;
+  sessionId: string | null;
   address: AddressSnapshot;
+  profileId?: string | null;
 }) {
-  const lines = await listCartLines(input.sessionId);
+  const lines = await listCartLines({ sessionId: input.sessionId, profileId: input.profileId ?? null });
   if (lines.length === 0) {
     throw new CheckoutError("Your cart is empty.");
   }
@@ -114,6 +115,7 @@ export async function placeRetailOrder(input: {
         number,
         source: "cart",
         sessionId: input.sessionId,
+        profileId: input.profileId ?? null,
         status,
         goodsTotal,
         taxTotal: tax.taxTotal,

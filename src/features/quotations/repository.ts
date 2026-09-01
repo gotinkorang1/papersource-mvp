@@ -1,199 +1,66 @@
+import "server-only";
 import { and, eq } from "drizzle-orm";
-import {
-  loadSellableVariant,
-  previewUnitPrice,
-} from "@/features/catalogue/variant-context";
+import { loadSellableVariant } from "@/features/catalogue/variant-context";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { getDb } from "@/lib/db/client";
 import { quoteItems, quotes } from "@/lib/db/schema";
+import { commerceOwner, commerceInsertOwner, lockCommerce, type CommerceInput, type CommerceTransaction } from "@/lib/customer/commerce-identity";
 import type { QuoteLinePreview } from "@/types/catalogue";
 
-async function getDraftQuote(sessionId: string) {
-  const db = getDb();
-  const [draft] = await db
-    .select()
-    .from(quotes)
-    .where(and(eq(quotes.sessionId, sessionId), eq(quotes.status, "draft")))
-    .limit(1);
+export async function getDraftQuote(identity: CommerceInput, db: CommerceTransaction | ReturnType<typeof getDb> = getDb()) {
+  const [draft] = await db.select().from(quotes)
+    .where(and(commerceOwner(quotes, identity), eq(quotes.status, "draft"))).limit(1);
   return draft ?? null;
 }
 
-export async function listQuoteLines(
-  sessionId: string,
-): Promise<QuoteLinePreview[]> {
-  const draft = await getDraftQuote(sessionId);
-  if (!draft) {
-    return [];
-  }
-
-  const db = getDb();
-  const items = await db
-    .select()
-    .from(quoteItems)
-    .where(eq(quoteItems.quoteId, draft.id));
-
+export async function listQuoteLines(identity: CommerceInput, db: CommerceTransaction | ReturnType<typeof getDb> = getDb()): Promise<QuoteLinePreview[]> {
+  const draft = await getDraftQuote(identity, db);
+  if (!draft) return [];
+  const items = await db.select().from(quoteItems).where(eq(quoteItems.quoteId, draft.id));
   const lines: QuoteLinePreview[] = [];
   for (const item of items) {
-    const context = item.variantId
-      ? await loadSellableVariant(item.variantId)
-      : null;
-    lines.push({
-      id: item.variantId ?? item.id,
-      name: item.nameSnapshot,
-      sku: item.skuSnapshot,
-      specLine: item.specSnapshot ?? item.nameSnapshot,
-      quantity: item.quantity,
-      unitPricePesewas: item.unitPrice,
-      unitLabel: context?.variant.unitLabel ?? "each",
-    });
+    const context = item.variantId ? await loadSellableVariant(item.variantId) : null;
+    lines.push({ id: item.variantId ?? item.id, name: item.nameSnapshot, sku: item.skuSnapshot,
+      specLine: item.specSnapshot ?? item.nameSnapshot, quantity: item.quantity,
+      unitPricePesewas: item.unitPrice, unitLabel: context?.variant.unitLabel ?? "each" });
   }
-
   return lines;
 }
 
-export async function addVariantToQuote(
-  sessionId: string,
-  variantId: string,
-  quantity: number,
-) {
-  const context = await loadSellableVariant(variantId);
-  if (!context) {
-    throw new Error("That product is not available for quotation.");
-  }
-
-  const db = getDb();
-  await db.transaction(async (tx) => {
-    let [draft] = await tx
-      .select()
-      .from(quotes)
-      .where(and(eq(quotes.sessionId, sessionId), eq(quotes.status, "draft")))
-      .limit(1);
-
-    if (!draft) {
-      const inserted = await tx
-        .insert(quotes)
-        .values({ status: "draft", sessionId })
-        .returning();
-      draft = inserted[0];
+async function writeQuoteLine(identity: CommerceInput, variantId: string, quantity: number, mode: "add" | "set" | "remove") {
+  if (mode !== "remove" && (!Number.isInteger(quantity) || quantity < 1 || quantity > 9_999)) throw new Error("Use a quantity between 1 and 9,999.");
+  const context = mode === "remove" ? null : await loadSellableVariant(variantId);
+  if (mode !== "remove" && !context) throw new Error("That product is not available for quotation.");
+  await getDb().transaction(async (tx) => {
+    await lockCommerce(tx, identity);
+    let [draft] = await tx.select().from(quotes).where(and(commerceOwner(quotes, identity), eq(quotes.status, "draft"))).limit(1);
+    if (!draft && mode === "add") [draft] = await tx.insert(quotes).values({ status: "draft", ...commerceInsertOwner(identity) }).returning();
+    if (!draft) return;
+    const predicate = and(eq(quoteItems.quoteId, draft.id), eq(quoteItems.variantId, variantId));
+    if (mode === "remove") {
+      await tx.delete(quoteItems).where(predicate);
+    } else if (context) {
+      const [current] = await tx.select().from(quoteItems).where(predicate).limit(1);
+      const nextQuantity = mode === "add" ? (current?.quantity ?? 0) + quantity : quantity;
+      if (nextQuantity > 9_999) throw new Error("Use a quantity between 1 and 9,999.");
+      const price = resolveUnitPrice({ quantity: nextQuantity, baseUnitPricePesewas: context.variant.baseUnitPrice, tiers: context.tiers });
+      const values = { quantity: nextQuantity, unitPrice: price.unitPricePesewas,
+        lineTotal: price.unitPricePesewas === null ? null : price.unitPricePesewas * nextQuantity,
+        nameSnapshot: context.product.name, skuSnapshot: context.variant.sku, specSnapshot: context.specLine };
+      if (current) await tx.update(quoteItems).set(values).where(eq(quoteItems.id, current.id));
+      else if (mode === "add") await tx.insert(quoteItems).values({ quoteId: draft.id, variantId, ...values });
     }
-
-    if (!draft) {
-      throw new Error("Could not create a draft quotation for this session.");
-    }
-
-    const items = await tx
-      .select()
-      .from(quoteItems)
-      .where(eq(quoteItems.quoteId, draft.id));
-    const current = items.find((item) => item.variantId === variantId);
-    const nextQuantity = (current?.quantity ?? 0) + quantity;
-    const nextPrice = resolveUnitPrice({
-      quantity: nextQuantity,
-      baseUnitPricePesewas: context.variant.baseUnitPrice,
-      tiers: context.tiers,
-    });
-
-    if (current) {
-      await tx
-        .update(quoteItems)
-        .set({
-          quantity: nextQuantity,
-          unitPrice: nextPrice.unitPricePesewas,
-          lineTotal:
-            nextPrice.unitPricePesewas === null
-              ? null
-              : nextPrice.unitPricePesewas * nextQuantity,
-          nameSnapshot: context.product.name,
-          skuSnapshot: context.variant.sku,
-          specSnapshot: context.specLine,
-        })
-        .where(eq(quoteItems.id, current.id));
-    } else {
-      const unitPrice = previewUnitPrice(
-        quantity,
-        context.variant.baseUnitPrice,
-        context.tiers,
-      );
-      await tx.insert(quoteItems).values({
-        quoteId: draft.id,
-        variantId,
-        nameSnapshot: context.product.name,
-        skuSnapshot: context.variant.sku,
-        specSnapshot: context.specLine,
-        quantity,
-        unitPrice,
-        lineTotal: unitPrice === null ? null : unitPrice * quantity,
-      });
-    }
-
-    await tx
-      .update(quotes)
-      .set({ updatedAt: new Date() })
-      .where(eq(quotes.id, draft.id));
+    await tx.update(quotes).set({ updatedAt: new Date() }).where(and(eq(quotes.id, draft.id), commerceOwner(quotes, identity), eq(quotes.status, "draft")));
   });
-
-  return listQuoteLines(sessionId);
+  return listQuoteLines(identity);
 }
 
-export async function setQuoteLineQuantity(
-  sessionId: string,
-  variantId: string,
-  quantity: number,
-) {
-  if (quantity < 1) {
-    return removeQuoteLine(sessionId, variantId);
-  }
-
-  const context = await loadSellableVariant(variantId);
-  if (!context) {
-    throw new Error("That product is not available for quotation.");
-  }
-
-  const draft = await getDraftQuote(sessionId);
-  if (!draft) {
-    return [];
-  }
-
-  const nextPrice = resolveUnitPrice({
-    quantity,
-    baseUnitPricePesewas: context.variant.baseUnitPrice,
-    tiers: context.tiers,
-  });
-
-  const db = getDb();
-  await db
-    .update(quoteItems)
-    .set({
-      quantity,
-      unitPrice: nextPrice.unitPricePesewas,
-      lineTotal:
-        nextPrice.unitPricePesewas === null
-          ? null
-          : nextPrice.unitPricePesewas * quantity,
-      nameSnapshot: context.product.name,
-      skuSnapshot: context.variant.sku,
-      specSnapshot: context.specLine,
-    })
-    .where(
-      and(eq(quoteItems.quoteId, draft.id), eq(quoteItems.variantId, variantId)),
-    );
-
-  return listQuoteLines(sessionId);
+export async function addVariantToQuote(identity: CommerceInput, variantId: string, quantity: number) {
+  return writeQuoteLine(identity, variantId, quantity, "add");
 }
-
-export async function removeQuoteLine(sessionId: string, variantId: string) {
-  const draft = await getDraftQuote(sessionId);
-  if (!draft) {
-    return [];
-  }
-
-  const db = getDb();
-  await db
-    .delete(quoteItems)
-    .where(
-      and(eq(quoteItems.quoteId, draft.id), eq(quoteItems.variantId, variantId)),
-    );
-  return listQuoteLines(sessionId);
+export async function setQuoteLineQuantity(identity: CommerceInput, variantId: string, quantity: number) {
+  return writeQuoteLine(identity, variantId, quantity, quantity === 0 ? "remove" : "set");
 }
-
-export { getDraftQuote };
+export async function removeQuoteLine(identity: CommerceInput, variantId: string) {
+  return writeQuoteLine(identity, variantId, 0, "remove");
+}

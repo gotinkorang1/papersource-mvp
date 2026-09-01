@@ -4,6 +4,11 @@ import userEvent from "@testing-library/user-event";
 import { GhanaAddressForm } from "@/components/commerce/ghana-address-form";
 
 describe("GhanaAddressForm", () => {
+  it("associates server validation with the affected Ghana address field", () => {
+    render(<GhanaAddressForm fieldErrors={{ phone: ["Enter a valid phone number"] }} />);
+    expect(screen.getByLabelText(/Phone Number/)).toHaveAttribute("aria-invalid", "true");
+    expect(screen.getByLabelText(/Phone Number/)).toHaveAccessibleDescription("Enter a valid phone number");
+  });
   it("requires phone and does not ask for a US ZIP", () => {
     render(<GhanaAddressForm />);
 

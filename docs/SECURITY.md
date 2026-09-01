@@ -1,6 +1,6 @@
 # PaperSource — Security
 
-**Status:** Phase 0. Must not contradict [PRODUCT.md](PRODUCT.md).  
+**Status:** MVP implementation security baseline; full-table policy hardening remains in progress. Must not contradict [PRODUCT.md](PRODUCT.md).
 **Purpose:** Authorization, RLS, secrets, payments, and private documents.  
 Supabase is infrastructure. **Authenticated ≠ authorized.**
 

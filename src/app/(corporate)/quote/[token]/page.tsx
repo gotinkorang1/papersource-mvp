@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AcceptQuoteButton } from "@/components/quotes/accept-quote-button";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { getQuoteByAccessToken } from "@/features/quotations/accept";
 import { signedDocumentPath } from "@/lib/documents/sign";
 import { formatGhs } from "@/lib/money";
@@ -26,7 +27,7 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
 
   const { token } = await params;
   const { error, notice } = await searchParams;
-  const quote = await getQuoteByAccessToken(token);
+  const quote = await getQuoteByAccessToken(token, await readCommerceIdentity());
   if (!quote) {
     notFound();
   }

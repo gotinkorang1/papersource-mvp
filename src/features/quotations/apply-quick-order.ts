@@ -5,6 +5,7 @@ import {
   previewUnitPrice,
 } from "@/features/catalogue/variant-context";
 import { addVariantToQuote } from "@/features/quotations/repository";
+import type { CommerceInput } from "@/lib/customer/commerce-identity";
 import type { QuickOrderRow } from "@/features/quotations/quick-order";
 
 export type QuickOrderDestination = "quote" | "cart";
@@ -16,7 +17,7 @@ export type QuickOrderApplyResult = {
 };
 
 export async function applyQuickOrderLines(input: {
-  sessionId: string;
+  sessionId: CommerceInput;
   destination: QuickOrderDestination;
   rows: QuickOrderRow[];
 }): Promise<QuickOrderApplyResult> {

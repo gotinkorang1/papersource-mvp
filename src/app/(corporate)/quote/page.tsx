@@ -8,7 +8,7 @@ import { listQuoteLines } from "@/features/quotations/repository";
 import { paperButton } from "@/components/commerce/paper-button";
 import { formatGhs } from "@/lib/money";
 import { isDatabaseConfigured } from "@/lib/db/client";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 
 export const metadata: Metadata = {
   title: "Quote list",
@@ -20,7 +20,7 @@ type PageProps = {
 };
 
 export default async function QuoteBasketPage({ searchParams }: PageProps) {
-  const sessionId = isDatabaseConfigured() ? await readGuestSessionId() : null;
+  const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
   const lines = sessionId ? await listQuoteLines(sessionId) : [];
   const { added, unknown, notice } = await searchParams;
 

@@ -1,6 +1,6 @@
 # Local customer Auth development
 
-Customer accounts are being migrated to real Supabase Auth. This verified local test foundation does not enable the unfinished account UI or the old custom password/session implementation.
+Customer accounts use real Supabase Auth. The public forms, token-hash callbacks, SSR cookies, account UI and actor-aware commerce integration are complete on `codex/mvp-customer-accounts`; this document describes the guarded local verification environment.
 
 ## Docker Desktop binding (verified 2026-08-31)
 
@@ -33,9 +33,9 @@ The project pins Supabase CLI **2.116.0**. `auth:start` creates/verifies the `pa
 
 ## Database and storefront boundary
 
-`auth:bootstrap` applies only the seven committed `drizzle/*.sql` migrations to the fixed local Supabase database. It does not read the current `DATABASE_URL`, reset a volume, apply the uncommitted account migration, or create a second application migration history under `supabase/migrations`. Newly created tables are not automatically granted Data API access; all application tables must have RLS enabled.
+`auth:bootstrap` applies all eight committed `drizzle/*.sql` migrations to the fixed local Supabase database. It does not read the current `DATABASE_URL`, reset a volume, or create a second application migration history under `supabase/migrations`. Newly created tables are not automatically granted Data API access; all application tables must have RLS enabled.
 
-The storefront's `.env.local` and original database remain unchanged at this checkpoint. Switching the application to this database belongs with verified SSR identity, the corrected account schema, and actor-aware commerce repositories. Do not set `AUTH_MODE=live` to activate the WIP: its separate `ps_customer` cookie and email-based quote-claiming code must be replaced first.
+The storefront's `.env.local` and original database remain unchanged. Verification supplies the isolated database/Auth values only to the test process. There is no `AUTH_MODE` or custom `ps_customer` fallback; Supabase claims are the customer identity.
 
 ## Verification contract
 
@@ -73,7 +73,7 @@ Verification (2026-08-31): domain Vitest passed 25 files/125 tests, including 21
 
 Run `pnpm auth:test:customer` to exercise these application operations using the real SSR SDK and dedicated local Auth/database. A Node cookie-jar adapter represents browser/request transport and clients are recreated between operations. Coverage includes unconfirmed-signup denial, profile creation only after confirmation, token replay rejection, persisted login, recovery from a separate browser, changed/old password behavior, and sign-out clearing next-request identity while preserving the guest cookie. The script removes only its unique Auth/profile fixtures and sessions; captured local emails remain. The existing `auth:test` separately verifies refresh-token revocation and local email delivery.
 
-This is **not yet the public account flow**. Server Actions, HTTP callbacks, accessible forms, and token-hash email templates must be wired together with safe commerce ownership before activation. The proposed callback is `/auth/confirm` with `type=email` or `type=recovery`; its implementation and template configuration belong to that integration, not this checkpoint. Keep application Auth configuration unset. Production needs reliable custom SMTP and reviewed provider rate limits. Signing out removes this browser's cookies and revokes refresh tokens; already-issued access JWTs on other browsers remain valid until expiry.
+The public account flow now uses Server Actions, accessible forms, `/auth/confirm` token-hash callbacks and local confirmation/recovery templates. Production still needs hosted Supabase configuration, reliable custom SMTP and reviewed provider rate limits. Signing out removes this browser's cookies and revokes refresh tokens; already-issued access JWTs on other browsers remain valid until expiry.
 
 Operation-layer verification (2026-08-31): **183 domain tests** (including 58 new Auth-operation cases), **5 component tests**, **22 local Auth guards**, the real Auth smoke, profile/concurrency test and SSR-backed application Auth journey passed. Changed-file ESLint, TypeScript and the production build passed (52 generated pages, including preserved WIP). The application Auth journey passed again after hardening fixture cleanup. Independent read-only service review found no blocking issues and identified a provider-error coverage gap; four targeted cases were added. The follow-up reviewer hit a usage limit, so the added tests and integration script did not receive a completed independent review. No new UI was added or browser account-flow completion claimed.
 
@@ -87,3 +87,7 @@ Operation-layer verification (2026-08-31): **183 domain tests** (including 58 ne
 - [Docker network port-binding defaults](https://docs.docker.com/engine/network/port-publishing/)
 
 Production will require a separate hosted-project configuration and reliable SMTP delivery. No hosted project is modified by these local commands.
+
+## Completed customer-account milestone (2026-09-01)
+
+The account integration is complete on the feature branch. Verification used process-local configuration against the guarded Supabase stack and left `.env.local`, the original database and hosted services untouched. The migration and catalogue preparation ran twice; the real Auth smoke, profile synchronization, application Auth, account-data, commerce-ownership and RFQ concurrency scripts passed and removed only their exact fixtures. Vitest passed 32 domain files/234 tests and 6 component files/22 tests; ESLint, TypeScript and the 55-page production build passed. A production-build Playwright journey passed desktop/mobile rendering, real captured confirmation and recovery links, SSR cookie propagation, independent basket merge, Ghana address/checkout prefill, mock Paystack initialization, explicit saved-organisation RFQ sharing, account histories, global sign-out and logged-out ownership denial, with no application console errors. The standalone local server intentionally has no Vercel Analytics collector, so only its expected `/_vercel/insights/script.js` 404 is excluded from that console gate.

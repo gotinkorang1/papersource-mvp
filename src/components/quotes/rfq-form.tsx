@@ -1,7 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
-import { GhanaAddressForm } from "@/components/commerce/ghana-address-form";
+import { GhanaAddressForm, type GhanaAddressValues } from "@/components/commerce/ghana-address-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -19,7 +19,11 @@ const ORGANIZATION_TYPES = [
   ["other", "Other"],
 ] as const;
 
-export function RfqForm() {
+export function RfqForm({ customer, organization, defaultAddress }: {
+  customer?: { fullName: string; email: string; phone: string | null };
+  organization?: { name: string; type: string } | null;
+  defaultAddress?: Partial<GhanaAddressValues>;
+}) {
   const [state, action, pending] = useActionState(submitRfqAction, null);
 
   return (
@@ -31,22 +35,29 @@ export function RfqForm() {
       ) : null}
       <GhanaAddressForm
         action={action}
+        defaultValues={{ fullName: customer?.fullName ?? "", phone: customer?.phone ?? "", ...defaultAddress }}
         submitLabel={pending ? "Submitting quotation…" : "Submit RFQ"}
         submitDisabled={pending}
       >
         <div className="space-y-4 border-t border-border pt-4">
+          {organization ? (
+            <label className="flex items-start gap-2 text-sm text-ink">
+              <input type="checkbox" name="useSavedOrganization" value="true" />
+              <span>Use my saved organisation: {organization.name}. Its members will be able to view this quotation.</span>
+            </label>
+          ) : null}
           <div className="space-y-1.5">
             <Label htmlFor="organizationName">
               Organisation name <span className="text-error">*</span>
             </Label>
-            <Input id="organizationName" name="organizationName" required />
+            <Input id="organizationName" name="organizationName" defaultValue={organization?.name} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="organizationType">Organisation type</Label>
             <select
               id="organizationType"
               name="organizationType"
-              defaultValue="business"
+              defaultValue={organization?.type ?? "business"}
               className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink"
             >
               {ORGANIZATION_TYPES.map(([value, label]) => (
@@ -60,13 +71,13 @@ export function RfqForm() {
             <Label htmlFor="contactName">
               Contact person <span className="text-error">*</span>
             </Label>
-            <Input id="contactName" name="contactName" required />
+            <Input id="contactName" name="contactName" defaultValue={customer?.fullName} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="email">
               Email <span className="text-error">*</span>
             </Label>
-            <Input id="email" name="email" type="email" required />
+            <Input id="email" name="email" type="email" defaultValue={customer?.email} required />
           </div>
           <div className="space-y-1.5">
             <Label htmlFor="requestedDeliveryDate">Requested delivery date</Label>

@@ -8,7 +8,7 @@ import {
   setQuoteLineQuantity,
 } from "@/features/quotations/repository";
 import { RfqError, submitGuestRfq } from "@/features/quotations/submit";
-import { getOrCreateGuestSessionId, readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 
 const lineSchema = z.object({
   variantId: z.string().uuid(),
@@ -20,7 +20,7 @@ export async function updateQuoteQuantityAction(formData: FormData) {
     variantId: formData.get("variantId"),
     quantity: formData.get("quantity"),
   });
-  const sessionId = await getOrCreateGuestSessionId();
+  const sessionId = await readCommerceIdentity(true);
   await setQuoteLineQuantity(sessionId, parsed.variantId, parsed.quantity);
   revalidatePath("/", "layout");
   revalidatePath("/quote");
@@ -29,7 +29,7 @@ export async function updateQuoteQuantityAction(formData: FormData) {
 
 export async function removeQuoteLineAction(formData: FormData) {
   const variantId = z.string().uuid().parse(formData.get("variantId"));
-  const sessionId = await getOrCreateGuestSessionId();
+  const sessionId = await readCommerceIdentity(true);
   await removeQuoteLine(sessionId, variantId);
   revalidatePath("/", "layout");
   revalidatePath("/quote");
@@ -40,15 +40,19 @@ export async function submitRfqAction(
   _prev: { error: string } | null,
   formData: FormData,
 ): Promise<{ error: string } | null> {
-  const sessionId = await readGuestSessionId();
-  if (!sessionId) {
+  const identity = await readCommerceIdentity();
+  if (!identity.profileId && !identity.sessionId) {
     return { error: "Your session expired. Add items to the quote list and try again." };
   }
   let number: string;
   let token: string;
   let attachmentError = false;
   try {
-    const result = await submitGuestRfq({ sessionId, formData });
+    const result = await submitGuestRfq({
+      sessionId: identity.sessionId,
+      formData,
+      profileId: identity.profileId,
+    });
     number = result.number;
     token = result.token;
     attachmentError = result.attachmentError;
@@ -61,7 +65,8 @@ export async function submitRfqAction(
     }
     throw error;
   }
-  const received = new URLSearchParams({ number, token });
+  const received = new URLSearchParams({ number });
+  if (!identity.profileId) received.set("token", token);
   if (attachmentError) {
     received.set("attachments", "failed");
   }

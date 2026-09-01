@@ -9,7 +9,7 @@ import {
   removeCartLine,
   setCartLineQuantity,
 } from "@/features/cart/repository";
-import { getOrCreateGuestSessionId, readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 
 const lineSchema = z.object({
   variantId: z.string().uuid(),
@@ -21,7 +21,7 @@ export async function updateCartQuantityAction(formData: FormData) {
     variantId: formData.get("variantId"),
     quantity: formData.get("quantity"),
   });
-  const sessionId = await getOrCreateGuestSessionId();
+  const sessionId = await readCommerceIdentity(true);
   await setCartLineQuantity(sessionId, parsed.variantId, parsed.quantity);
   revalidatePath("/", "layout");
   revalidatePath("/cart");
@@ -30,7 +30,7 @@ export async function updateCartQuantityAction(formData: FormData) {
 
 export async function removeCartLineAction(formData: FormData) {
   const variantId = z.string().uuid().parse(formData.get("variantId"));
-  const sessionId = await getOrCreateGuestSessionId();
+  const sessionId = await readCommerceIdentity(true);
   await removeCartLine(sessionId, variantId);
   revalidatePath("/", "layout");
   revalidatePath("/cart");
@@ -41,14 +41,18 @@ export async function placeRetailOrderAction(
   _prev: { error: string } | null,
   formData: FormData,
 ): Promise<{ error: string } | null> {
-  const sessionId = await readGuestSessionId();
-  if (!sessionId) {
+  const identity = await readCommerceIdentity();
+  if (!identity.profileId && !identity.sessionId) {
     return { error: "Your session expired. Add items to the cart and try again." };
   }
   let number: string;
   try {
     const address = addressFromFormData(formData);
-    const order = await placeRetailOrder({ sessionId, address });
+    const order = await placeRetailOrder({
+      sessionId: identity.sessionId,
+      address,
+      profileId: identity.profileId,
+    });
     number = order.number;
   } catch (error) {
     if (error instanceof CheckoutError) {

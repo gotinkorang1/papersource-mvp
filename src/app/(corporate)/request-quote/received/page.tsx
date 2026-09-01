@@ -4,7 +4,8 @@ import { and, eq } from "drizzle-orm";
 import { notFound } from "next/navigation";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { quoteAccessTokens, quotes } from "@/lib/db/schema";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { documentOwner } from "@/lib/customer/commerce-identity";
 
 export const metadata: Metadata = {
   title: "RFQ received",
@@ -21,8 +22,8 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
   }
 
   const { number, token: tokenParam, attachments } = await searchParams;
-  const sessionId = await readGuestSessionId();
-  if (!number || !sessionId) {
+  const identity = await readCommerceIdentity();
+  if (!number || (!identity.profileId && !identity.sessionId)) {
     notFound();
   }
 
@@ -33,7 +34,7 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
     .where(
       and(
         eq(quotes.number, number),
-        eq(quotes.sessionId, sessionId),
+        documentOwner(quotes, identity),
       ),
     )
     .limit(1);
@@ -42,7 +43,7 @@ export default async function RfqReceivedPage({ searchParams }: PageProps) {
     notFound();
   }
 
-  let token = tokenParam ?? null;
+  let token = identity.profileId ? quote.id : tokenParam ?? null;
   if (!token) {
     const [access] = await db
       .select()

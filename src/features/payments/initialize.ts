@@ -1,4 +1,5 @@
 import { and, eq, inArray } from "drizzle-orm";
+import { documentOwner } from "@/lib/customer/commerce-identity";
 import { initializePaystackTransaction } from "@/lib/paystack/client";
 import { pesewasToPaystackAmount } from "@/lib/paystack/amount";
 import { publicEnv } from "@/lib/env";
@@ -21,13 +22,14 @@ function siteUrl() {
 
 export async function initializeOrderPayment(input: {
   orderId: string;
-  sessionId: string;
+  sessionId: string | null;
+  profileId?: string | null;
 }) {
   const db = getDb();
   const [order] = await db
     .select()
     .from(orders)
-    .where(and(eq(orders.id, input.orderId), eq(orders.sessionId, input.sessionId)))
+    .where(and(eq(orders.id, input.orderId), documentOwner(orders, { sessionId: input.sessionId, profileId: input.profileId ?? null })))
     .limit(1);
 
   if (!order) {

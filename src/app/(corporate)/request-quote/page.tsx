@@ -1,9 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { RfqForm } from "@/components/quotes/rfq-form";
+import { readCustomerActor } from "@/lib/customer/require";
+import { getCustomerOrganisation } from "@/features/account/organisation";
+import { listCustomerAddresses } from "@/features/account/addresses";
 import { listQuoteLines } from "@/features/quotations/repository";
 import { isDatabaseConfigured } from "@/lib/db/client";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 
 export const metadata: Metadata = {
   title: "Request a quote",
@@ -11,8 +14,12 @@ export const metadata: Metadata = {
 };
 
 export default async function RequestQuotePage() {
-  const sessionId = isDatabaseConfigured() ? await readGuestSessionId() : null;
+  const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
   const lines = sessionId ? await listQuoteLines(sessionId) : [];
+  const customer = isDatabaseConfigured() ? await readCustomerActor() : null;
+  const organization = customer ? await getCustomerOrganisation(customer.profileId) : null;
+  const saved = customer ? await listCustomerAddresses(customer.profileId) : [];
+  const preferred = saved.find((address) => address.isDefault) ?? saved[0];
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
@@ -39,7 +46,14 @@ export default async function RequestQuotePage() {
             ))}
           </ul>
           <div className="mt-8">
-            <RfqForm />
+            <RfqForm customer={customer ?? undefined} organization={organization}
+              defaultAddress={preferred ? {
+                fullName: preferred.fullName, phone: preferred.phone,
+                region: preferred.region, cityTown: preferred.cityTown,
+                areaSuburb: preferred.areaSuburb ?? "", streetLandmark: preferred.streetLandmark ?? "",
+                ghanapostGps: preferred.ghanapostGps ?? "", deliveryInstructions: preferred.deliveryInstructions ?? "",
+                deliveryArea: preferred.deliveryArea === "tema" || preferred.deliveryArea === "other" ? preferred.deliveryArea : "accra",
+              } : undefined} />
           </div>
         </>
       )}

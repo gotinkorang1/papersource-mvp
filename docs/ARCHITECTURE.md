@@ -1,6 +1,6 @@
 # PaperSource — Architecture
 
-**Status:** Phase 0. Must not contradict [PRODUCT.md](PRODUCT.md).  
+**Status:** MVP implementation architecture. Must not contradict [PRODUCT.md](PRODUCT.md).
 **Purpose:** Lock the stack, folder map, rendering rules, environments, and non-stack.
 
 ---

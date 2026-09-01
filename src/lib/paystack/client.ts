@@ -1,6 +1,5 @@
 import { pesewasToPaystackAmount } from "@/lib/paystack/amount";
 import { isLivePaystack, paystackSecret } from "@/lib/paystack/signature";
-import { publicEnv } from "@/lib/env";
 
 export type PaystackInitResult = {
   authorizationUrl: string;
@@ -14,10 +13,6 @@ export type PaystackVerifyResult = {
   reference: string;
   currency: string;
 };
-
-function siteUrl() {
-  return publicEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-}
 
 export async function initializePaystackTransaction(input: {
   email: string;

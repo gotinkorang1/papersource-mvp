@@ -1,4 +1,6 @@
 import { and, eq } from "drizzle-orm";
+import { z } from "zod";
+import { documentOwner, type CommerceIdentity } from "@/lib/customer/commerce-identity";
 import { getDb } from "@/lib/db/client";
 import { nextDocumentNumber } from "@/lib/db/numbers";
 import { inclusiveVatBreakdown } from "@/lib/tax";
@@ -23,9 +25,12 @@ export class QuoteAcceptError extends Error {
   }
 }
 
-export async function getQuoteByAccessToken(token: string) {
+export async function getQuoteByAccessToken(token: string, identity: CommerceIdentity = { profileId: null, sessionId: null }) {
+  if (!z.uuid().safeParse(token).success) return null;
   const db = getDb();
-  const [row] = await db
+  const [owned] = identity.profileId ? await db.select().from(quotes)
+    .where(and(eq(quotes.id, token), documentOwner(quotes, identity))).limit(1) : [];
+  const [access] = owned ? [] : await db
     .select({
       quote: quotes,
       token: quoteAccessTokens.token,
@@ -35,6 +40,7 @@ export async function getQuoteByAccessToken(token: string) {
     .where(eq(quoteAccessTokens.token, token))
     .limit(1);
 
+  const row = owned ? { quote: owned, token } : access;
   if (!row || row.quote.status === "draft") {
     return null;
   }
@@ -53,10 +59,18 @@ export async function getQuoteByAccessToken(token: string) {
 export async function acceptQuoteByToken(input: {
   token: string;
   sessionId: string | null;
+  profileId?: string | null;
 }) {
-  const found = await getQuoteByAccessToken(input.token);
+  const identity = { profileId: input.profileId ?? null, sessionId: input.sessionId };
+  const found = await getQuoteByAccessToken(input.token, identity);
   if (!found) {
     throw new QuoteAcceptError("That quotation was not found.");
+  }
+
+  if (found.profileId) {
+    const [owned] = await getDb().select({ id: quotes.id }).from(quotes)
+      .where(and(eq(quotes.id, found.id), documentOwner(quotes, identity))).limit(1);
+    if (!identity.profileId || !owned) throw new QuoteAcceptError("Sign in to the account that owns this quotation to accept it.");
   }
 
   try {
@@ -112,7 +126,8 @@ export async function acceptQuoteByToken(input: {
       quoteId: found.id,
       fromStatus: "sent",
       toStatus: "accepted",
-      actorType: "guest",
+      actorType: input.profileId ? "customer" : "guest",
+      actorId: input.profileId ?? undefined,
       payload: { number },
     });
 
@@ -132,6 +147,7 @@ export async function acceptQuoteByToken(input: {
         number,
         source: "quote",
         quoteId: found.id,
+        profileId: found.profileId,
         organizationId: found.organizationId ?? undefined,
         sessionId,
         status: orderStatus,

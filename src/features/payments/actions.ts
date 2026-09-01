@@ -7,22 +7,23 @@ import { processPaystackWebhook } from "@/features/payments/webhook";
 import { isLivePaystack, signPaystackBody } from "@/lib/paystack/signature";
 import { getDb } from "@/lib/db/client";
 import { orders, payments } from "@/lib/db/schema";
-import { eq } from "drizzle-orm";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { and, eq } from "drizzle-orm";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { documentOwner } from "@/lib/customer/commerce-identity";
 
 export async function startPaystackPaymentAction(
   _prev: { error: string } | null,
   formData: FormData,
 ): Promise<{ error: string } | null> {
-  const sessionId = await readGuestSessionId();
-  if (!sessionId) {
+  const identity = await readCommerceIdentity();
+  if (!identity.profileId && !identity.sessionId) {
     return { error: "Your session expired. Open the order from this browser." };
   }
 
   let authorizationUrl: string;
   try {
     const orderId = z.string().uuid().parse(formData.get("orderId"));
-    const result = await initializeOrderPayment({ orderId, sessionId });
+    const result = await initializeOrderPayment({ orderId, ...identity });
     authorizationUrl = result.authorizationUrl;
   } catch (error) {
     if (error instanceof PaymentError) {
@@ -42,6 +43,7 @@ export async function simulateMockPaystackSuccessAction(formData: FormData) {
   }
 
   const reference = z.string().min(8).parse(formData.get("reference"));
+  const identity = await readCommerceIdentity();
   const db = getDb();
   const [row] = await db
     .select({
@@ -52,17 +54,13 @@ export async function simulateMockPaystackSuccessAction(formData: FormData) {
     })
     .from(payments)
     .innerJoin(orders, eq(orders.id, payments.orderId))
-    .where(eq(payments.paystackReference, reference))
+    .where(and(eq(payments.paystackReference, reference), documentOwner(orders, identity)))
     .limit(1);
 
   if (!row) {
     throw new Error("That mock payment was not found.");
   }
 
-  const sessionId = await readGuestSessionId();
-  if (!sessionId || sessionId !== row.sessionId) {
-    throw new Error("This mock payment belongs to another session.");
-  }
 
   const raw = JSON.stringify({
     event: "charge.success",

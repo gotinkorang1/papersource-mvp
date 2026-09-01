@@ -53,6 +53,11 @@ export const quoteActorTypeEnum = pgEnum("quote_actor_type", [
   "system",
 ]);
 
+export const organizationMemberRoleEnum = pgEnum("organization_member_role", [
+  "owner",
+  "member",
+]);
+
 export const organizationTypeEnum = pgEnum("organization_type", [
   "business",
   "school",
@@ -64,6 +69,8 @@ export const organizationTypeEnum = pgEnum("organization_type", [
   "retailer",
   "other",
 ]);
+
+export type OrganizationType = (typeof organizationTypeEnum.enumValues)[number];
 
 export const orderSourceEnum = pgEnum("order_source", ["cart", "quote"]);
 

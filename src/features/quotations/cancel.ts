@@ -1,11 +1,12 @@
 import { and, eq } from "drizzle-orm";
+import type { CommerceIdentity } from "@/lib/customer/commerce-identity";
 import { getDb } from "@/lib/db/client";
 import { quoteEvents, quotes } from "@/lib/db/schema";
 import { getQuoteByAccessToken, QuoteAcceptError } from "./accept";
 import { assertQuoteTransition, QuoteTransitionError } from "./transitions";
 
-export async function cancelQuoteByToken(token: string) {
-  const found = await getQuoteByAccessToken(token);
+export async function cancelQuoteByToken(token: string, identity?: CommerceIdentity) {
+  const found = await getQuoteByAccessToken(token, identity);
   if (!found) {
     throw new QuoteAcceptError("That quotation was not found.");
   }
@@ -38,15 +39,16 @@ export async function cancelQuoteByToken(token: string) {
     quoteId: found.id,
     fromStatus: found.status,
     toStatus: "cancelled",
-    actorType: "guest",
+    actorType: identity?.profileId ? "customer" : "guest",
+    actorId: identity?.profileId ?? undefined,
     payload: { token: true },
   });
 
   return { number: updated.number ?? found.id };
 }
 
-export async function declineQuoteByToken(token: string) {
-  const found = await getQuoteByAccessToken(token);
+export async function declineQuoteByToken(token: string, identity?: CommerceIdentity) {
+  const found = await getQuoteByAccessToken(token, identity);
   if (!found) {
     throw new QuoteAcceptError("That quotation was not found.");
   }
@@ -77,7 +79,8 @@ export async function declineQuoteByToken(token: string) {
     quoteId: found.id,
     fromStatus: "sent",
     toStatus: "declined",
-    actorType: "guest",
+    actorType: identity?.profileId ? "customer" : "guest",
+    actorId: identity?.profileId ?? undefined,
     payload: { token: true },
   });
 

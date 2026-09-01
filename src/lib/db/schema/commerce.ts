@@ -1,4 +1,5 @@
-import { date, char, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { date, char, index, integer, jsonb, pgTable, text, timestamp, uniqueIndex, uuid, type AnyPgColumn } from "drizzle-orm/pg-core";
 import { productVariants } from "./catalogue";
 import { deliveryZones } from "./delivery";
 import {
@@ -6,7 +7,7 @@ import {
   quoteActorTypeEnum,
   quoteStatusEnum,
 } from "./enums";
-import type { AddressSnapshot } from "./identity";
+import { profiles, organizations, type AddressSnapshot } from "./identity";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -21,11 +22,14 @@ export const carts = pgTable(
   "carts",
   {
     id: uuid("id").primaryKey().defaultRandom(),
-    profileId: uuid("profile_id"),
-    sessionId: text("session_id").notNull(),
+    profileId: uuid("profile_id").references(() => profiles.id),
+    sessionId: text("session_id"),
     ...timestamps,
   },
-  (table) => [uniqueIndex("carts_session_unique").on(table.sessionId)],
+  (table) => [
+    uniqueIndex("carts_profile_unique").on(table.profileId).where(sql`${table.profileId} is not null`),
+    uniqueIndex("carts_guest_session_unique").on(table.sessionId).where(sql`${table.profileId} is null and ${table.sessionId} is not null`),
+  ],
 );
 
 export const cartItems = pgTable(
@@ -55,11 +59,11 @@ export const quotes = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     number: text("number"),
     status: quoteStatusEnum("status").notNull().default("draft"),
-    profileId: uuid("profile_id"),
+    profileId: uuid("profile_id").references(() => profiles.id),
     sessionId: text("session_id"),
     guestEmail: text("guest_email"),
     guestPhone: text("guest_phone"),
-    organizationId: uuid("organization_id"),
+    organizationId: uuid("organization_id").references(() => organizations.id),
     contactName: text("contact_name"),
     deliveryZoneId: uuid("delivery_zone_id").references(() => deliveryZones.id),
     requestedDeliveryDate: date("requested_delivery_date"),
@@ -75,13 +79,17 @@ export const quotes = pgTable(
       .default("calculated"),
     grandTotal: integer("grand_total").notNull().default(0),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
-    parentQuoteId: uuid("parent_quote_id"),
+    parentQuoteId: uuid("parent_quote_id").references((): AnyPgColumn => quotes.id),
     ...timestamps,
   },
   (table) => [
     uniqueIndex("quotes_number_unique").on(table.number),
     index("quotes_session_idx").on(table.sessionId),
     index("quotes_status_idx").on(table.status),
+    index("quotes_profile_idx").on(table.profileId),
+    index("quotes_organization_idx").on(table.organizationId),
+    uniqueIndex("quotes_profile_draft_unique").on(table.profileId).where(sql`${table.profileId} is not null and ${table.status} = 'draft'`),
+    uniqueIndex("quotes_guest_draft_unique").on(table.sessionId).where(sql`${table.profileId} is null and ${table.sessionId} is not null and ${table.status} = 'draft'`),
   ],
 );
 

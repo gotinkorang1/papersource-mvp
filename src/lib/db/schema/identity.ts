@@ -1,6 +1,11 @@
-import { integer, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { sql } from "drizzle-orm";
+import { boolean, index, integer, primaryKey, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
 import { pgTable } from "drizzle-orm/pg-core";
-import { organizationTypeEnum, staffRoleEnum } from "./enums";
+import {
+  organizationMemberRoleEnum,
+  organizationTypeEnum,
+  staffRoleEnum,
+} from "./enums";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -20,7 +25,7 @@ export const profiles = pgTable(
     phone: text("phone"),
     ...timestamps,
   },
-  (table) => [uniqueIndex("profiles_email_unique").on(table.email)],
+  (table) => [uniqueIndex("profiles_email_unique").on(table.email), uniqueIndex("profiles_email_ci_unique").on(sql`lower(${table.email})`)],
 );
 
 export const adminRoles = pgTable("admin_roles", {
@@ -42,8 +47,29 @@ export const organizations = pgTable("organizations", {
   ...timestamps,
 });
 
+export const organizationMembers = pgTable(
+  "organization_members",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    organizationId: uuid("organization_id")
+      .notNull()
+      .references(() => organizations.id, { onDelete: "cascade" }),
+    profileId: uuid("profile_id")
+      .notNull()
+      .references(() => profiles.id, { onDelete: "cascade" }),
+    role: organizationMemberRoleEnum("role").notNull().default("member"),
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => [uniqueIndex("organization_members_unique").on(table.organizationId, table.profileId), uniqueIndex("organization_members_one_per_profile").on(table.profileId)],
+);
+
 export const addresses = pgTable("addresses", {
   id: uuid("id").primaryKey().defaultRandom(),
+  ownerProfileId: uuid("owner_profile_id").references(() => profiles.id, {
+    onDelete: "cascade",
+  }),
   organizationId: uuid("organization_id").references(() => organizations.id),
   fullName: text("full_name").notNull(),
   phone: text("phone").notNull(),
@@ -53,8 +79,14 @@ export const addresses = pgTable("addresses", {
   streetLandmark: text("street_landmark"),
   ghanapostGps: text("ghanapost_gps"),
   deliveryInstructions: text("delivery_instructions"),
+  deliveryArea: text("delivery_area").notNull().default("accra"),
+  isDefault: boolean("is_default").notNull().default(false),
   ...timestamps,
-});
+}, (table) => [
+  index("addresses_owner_idx").on(table.ownerProfileId),
+  uniqueIndex("addresses_one_personal_default").on(table.ownerProfileId)
+    .where(sql`${table.isDefault} and ${table.ownerProfileId} is not null and ${table.organizationId} is null`),
+]);
 
 export const documentCounters = pgTable(
   "document_counters",

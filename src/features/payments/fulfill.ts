@@ -136,8 +136,8 @@ export async function fulfillSuccessfulPayment(input: {
     paidNow = true;
   });
 
-  if (order.sessionId && order.source === "cart") {
-    await clearCart(order.sessionId);
+  if ((order.profileId || order.sessionId) && order.source === "cart") {
+    await clearCart({ profileId: order.profileId, sessionId: order.sessionId });
   }
 
   if (paidNow) {

@@ -100,7 +100,7 @@ export async function bootstrapLocalDatabase() {
     const migrations = [
       "0001_catalogue.sql", "0002_carts_quotes.sql", "0003_orders_rfq.sql",
       "0004_payments.sql", "0005_admin_quotes.sql", "0006_quote_documents.sql",
-      "0007_staff_catalogue_roles.sql",
+      "0007_staff_catalogue_roles.sql", "0008_customer_accounts.sql",
     ];
     for (const file of migrations) {
       await db.unsafe(await readFile(new URL(`../drizzle/${file}`, import.meta.url), "utf8"));

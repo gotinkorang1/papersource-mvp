@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { paperButton } from "@/components/commerce/paper-button";
 import { simulateMockPaystackSuccessAction } from "@/features/payments/actions";
 import { isLivePaystack } from "@/lib/paystack/signature";
 import { formatGhs } from "@/lib/money";
 import { getDb } from "@/lib/db/client";
 import { orders, payments } from "@/lib/db/schema";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { documentOwner } from "@/lib/customer/commerce-identity";
 
 export const metadata: Metadata = {
   title: "Paystack test checkout",
@@ -24,8 +25,8 @@ export default async function MockPaystackPage({ params }: PageProps) {
   }
 
   const { reference } = await params;
-  const sessionId = await readGuestSessionId();
-  if (!sessionId) {
+  const identity = await readCommerceIdentity();
+  if (!identity.profileId && !identity.sessionId) {
     notFound();
   }
 
@@ -39,10 +40,10 @@ export default async function MockPaystackPage({ params }: PageProps) {
     })
     .from(payments)
     .innerJoin(orders, eq(orders.id, payments.orderId))
-    .where(eq(payments.paystackReference, reference))
+    .where(and(eq(payments.paystackReference, reference), documentOwner(orders, identity)))
     .limit(1);
 
-  if (!row || row.sessionId !== sessionId) {
+  if (!row) {
     notFound();
   }
 

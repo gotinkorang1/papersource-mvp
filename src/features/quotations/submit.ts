@@ -1,3 +1,5 @@
+import "server-only";
+import { commerceOwner, lockCommerce } from "@/lib/customer/commerce-identity";
 import { and, eq } from "drizzle-orm";
 import { addressFromFormData } from "@/features/checkout/address";
 import { getDeliveryZoneByCode } from "@/features/delivery/queries";
@@ -8,6 +10,7 @@ import { assertQuoteTransition, QuoteTransitionError } from "@/features/quotatio
 import { getDb } from "@/lib/db/client";
 import { nextDocumentNumber } from "@/lib/db/numbers";
 import {
+  organizationMembers,
   organizations,
   quoteAccessTokens,
   quoteEvents,
@@ -51,24 +54,11 @@ export class RfqError extends Error {
 }
 
 export async function submitGuestRfq(input: {
-  sessionId: string;
+  sessionId: string | null;
   formData: FormData;
+  profileId?: string | null;
 }) {
-  const draft = await getDraftQuote(input.sessionId);
-  const lines = await listQuoteLines(input.sessionId);
-  if (!draft || lines.length === 0) {
-    throw new RfqError("Your quote list is empty.");
-  }
-
-  try {
-    assertQuoteTransition(draft.status, "submitted");
-  } catch (error) {
-    if (error instanceof QuoteTransitionError) {
-      throw new RfqError(error.message);
-    }
-    throw error;
-  }
-
+  const identity = { profileId: input.profileId ?? null, sessionId: input.sessionId };
   const address = addressFromFormData(input.formData);
   const details = rfqSchema.parse({
     organizationName: input.formData.get("organizationName"),
@@ -107,6 +97,27 @@ export async function submitGuestRfq(input: {
     throw new RfqError("That delivery area is not available yet.");
   }
 
+  const number = await nextDocumentNumber("quote");
+  const token = crypto.randomUUID();
+
+  const db = getDb();
+  const { draft, organization } = await db.transaction(async (tx) => {
+    await lockCommerce(tx, identity);
+  const draft = await getDraftQuote(identity, tx);
+  const lines = await listQuoteLines(identity, tx);
+  if (!draft || lines.length === 0) {
+    throw new RfqError("Your quote list is empty.");
+  }
+
+  try {
+    assertQuoteTransition(draft.status, "submitted");
+  } catch (error) {
+    if (error instanceof QuoteTransitionError) {
+      throw new RfqError(error.message);
+    }
+    throw error;
+  }
+
   const goodsTotal = lines.reduce(
     (sum, line) => sum + (line.unitPricePesewas ?? 0) * line.quantity,
     0,
@@ -120,25 +131,25 @@ export async function submitGuestRfq(input: {
     goodsTotal,
   );
   const tax = inclusiveVatBreakdown(goodsTotal + delivery.feePesewas);
-  const number = await nextDocumentNumber("quote");
-  const token = crypto.randomUUID();
 
-  const db = getDb();
-  const [organization] = await db
-    .insert(organizations)
-    .values({
-      name: details.organizationName,
-      email: details.email,
-      phone: address.phone,
-      type: details.organizationType,
-    })
-    .returning();
+    let organization = null as typeof organizations.$inferSelect | null;
+    if (input.formData.get("useSavedOrganization") === "true") {
+      if (!identity.profileId) throw new RfqError("Sign in to use a saved organisation.");
+      const [membership] = await tx.select({ organization: organizations })
+        .from(organizationMembers)
+        .innerJoin(organizations, eq(organizations.id, organizationMembers.organizationId))
+        .where(eq(organizationMembers.profileId, identity.profileId)).limit(1);
+      organization = membership?.organization ?? null;
+      if (!organization) throw new RfqError("Your saved organisation is unavailable. Refresh and try again.");
+    } else {
+      const [created] = await tx.insert(organizations).values({
+        name: details.organizationName, email: details.email,
+        phone: address.phone, type: details.organizationType,
+      }).returning();
+      organization = created ?? null;
+    }
+    if (!organization) throw new RfqError("Could not save the organisation.");
 
-  if (!organization) {
-    throw new RfqError("Could not save the organisation.");
-  }
-
-  await db.transaction(async (tx) => {
     for (const line of lines) {
       await tx
         .update(quoteItems)
@@ -166,6 +177,7 @@ export async function submitGuestRfq(input: {
       .set({
         number,
         status: "submitted",
+        profileId: input.profileId ?? null,
         guestEmail: details.email,
         guestPhone: address.phone,
         contactName: details.contactName,
@@ -184,13 +196,14 @@ export async function submitGuestRfq(input: {
         grandTotal: goodsTotal + delivery.feePesewas,
         updatedAt: new Date(),
       })
-      .where(eq(quotes.id, draft.id));
+      .where(and(eq(quotes.id, draft.id), commerceOwner(quotes, identity), eq(quotes.status, "draft")));
 
     await tx.insert(quoteEvents).values({
       quoteId: draft.id,
       fromStatus: "draft",
       toStatus: "submitted",
-      actorType: "guest",
+      actorType: input.profileId ? "customer" : "guest",
+      actorId: input.profileId ?? undefined,
       payload: { number, organizationId: organization.id },
     });
 
@@ -198,6 +211,7 @@ export async function submitGuestRfq(input: {
       quoteId: draft.id,
       token,
     });
+    return { draft, organization };
   });
 
   let attachmentError = false;

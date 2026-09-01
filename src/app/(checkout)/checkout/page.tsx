@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
+import { listCustomerAddresses } from "@/features/account/addresses";
 import { listCartLines } from "@/features/cart/repository";
 import { formatGhs } from "@/lib/money";
+import { readCustomerActor } from "@/lib/customer/require";
 import { isDatabaseConfigured } from "@/lib/db/client";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -12,7 +14,10 @@ export const metadata: Metadata = {
 };
 
 export default async function CheckoutPage() {
-  const sessionId = isDatabaseConfigured() ? await readGuestSessionId() : null;
+  const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
+  const customer = isDatabaseConfigured() ? await readCustomerActor() : null;
+  const saved = customer ? await listCustomerAddresses(customer.profileId) : [];
+  const preferred = saved.find((row) => row.isDefault) ?? saved[0];
   const lines = sessionId ? await listCartLines(sessionId) : [];
   const goods = lines.reduce(
     (sum, line) => sum + line.unitPricePesewas * line.quantity,
@@ -54,7 +59,30 @@ export default async function CheckoutPage() {
         </ul>
       )}
       <div className="mt-8">
-        <CheckoutForm canPlaceOrder={lines.length > 0} />
+        <CheckoutForm
+          canPlaceOrder={lines.length > 0}
+          defaultEmail={customer?.email}
+          defaultAddress={
+            preferred
+              ? {
+                  fullName: preferred.fullName,
+                  phone: preferred.phone,
+                  region: preferred.region,
+                  cityTown: preferred.cityTown,
+                  areaSuburb: preferred.areaSuburb ?? "",
+                  streetLandmark: preferred.streetLandmark ?? "",
+                  ghanapostGps: preferred.ghanapostGps ?? "",
+                  deliveryInstructions: preferred.deliveryInstructions ?? "",
+                  deliveryArea:
+                    preferred.deliveryArea === "tema" || preferred.deliveryArea === "other"
+                      ? preferred.deliveryArea
+                      : "accra",
+                }
+              : customer
+                ? { fullName: customer.fullName, phone: customer.phone ?? "" }
+                : undefined
+          }
+        />
       </div>
     </main>
   );

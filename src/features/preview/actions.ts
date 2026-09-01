@@ -4,10 +4,7 @@ import { z } from "zod";
 import { addVariantToCart, listCartLines } from "@/features/cart/repository";
 import { addVariantToQuote, listQuoteLines } from "@/features/quotations/repository";
 import { isDatabaseConfigured } from "@/lib/db/client";
-import {
-  getOrCreateGuestSessionId,
-  readGuestSessionId,
-} from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 import type { CartLinePreview, QuoteLinePreview } from "@/types/catalogue";
 
 const addLineSchema = z.object({
@@ -25,8 +22,8 @@ export async function loadGuestDualPath(): Promise<DualPathState> {
     return { cartLines: [], quoteLines: [] };
   }
 
-  const sessionId = await readGuestSessionId();
-  if (!sessionId) {
+  const sessionId = await readCommerceIdentity();
+  if (!sessionId.profileId && !sessionId.sessionId) {
     return { cartLines: [], quoteLines: [] };
   }
 
@@ -43,7 +40,7 @@ export async function addToCartAction(input: {
   quantity: number;
 }): Promise<DualPathState> {
   const parsed = addLineSchema.parse(input);
-  const sessionId = await getOrCreateGuestSessionId();
+  const sessionId = await readCommerceIdentity(true);
   const cartLines = await addVariantToCart(
     sessionId,
     parsed.variantId,
@@ -58,7 +55,7 @@ export async function addToQuoteAction(input: {
   quantity: number;
 }): Promise<DualPathState> {
   const parsed = addLineSchema.parse(input);
-  const sessionId = await getOrCreateGuestSessionId();
+  const sessionId = await readCommerceIdentity(true);
   const quoteLines = await addVariantToQuote(
     sessionId,
     parsed.variantId,

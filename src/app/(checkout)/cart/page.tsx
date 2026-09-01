@@ -8,7 +8,7 @@ import { listCartLines } from "@/features/cart/repository";
 import { paperButton } from "@/components/commerce/paper-button";
 import { formatGhs } from "@/lib/money";
 import { isDatabaseConfigured } from "@/lib/db/client";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
 
 export const metadata: Metadata = {
   title: "Cart",
@@ -20,7 +20,7 @@ type PageProps = {
 };
 
 export default async function CartPage({ searchParams }: PageProps) {
-  const sessionId = isDatabaseConfigured() ? await readGuestSessionId() : null;
+  const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
   const lines = sessionId ? await listCartLines(sessionId) : [];
   const { added, unknown, quoteOnly, notice } = await searchParams;
   const subtotal = lines.reduce(

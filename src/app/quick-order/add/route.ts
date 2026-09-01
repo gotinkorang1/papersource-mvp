@@ -5,6 +5,7 @@ import {
   GUEST_SESSION_COOKIE,
   guestSessionCookieOptions,
 } from "@/lib/session/constants";
+import { readCustomerActor } from "@/lib/customer/require";
 import { readGuestSessionId } from "@/lib/session/guest";
 
 function withSessionCookie(response: NextResponse, sessionId: string, created: boolean) {
@@ -35,8 +36,9 @@ export async function POST(request: Request) {
     return withSessionCookie(NextResponse.redirect(back, 303), sessionId, created);
   }
 
+  const customer = await readCustomerActor();
   const result = await applyQuickOrderLines({
-    sessionId,
+    sessionId: customer ? { sessionId, profileId: customer.profileId } : sessionId,
     destination,
     rows: parsed.rows,
   });

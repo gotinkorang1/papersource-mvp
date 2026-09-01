@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { AccountLink } from "@/components/navigation/account-link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
 import { HeaderSearch } from "@/components/navigation/header-search";
 import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
@@ -35,12 +36,7 @@ export function StoreHeader() {
         </nav>
         <HeaderSearch />
         <div className="ml-auto flex items-center gap-4">
-          <Link
-            href="/account"
-            className="hidden text-sm text-graphite hover:text-ink lg:inline"
-          >
-            Account
-          </Link>
+          <AccountLink />
           <DualPathCounts />
         </div>
       </div>

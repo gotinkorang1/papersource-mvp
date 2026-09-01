@@ -1,12 +1,23 @@
 "use client";
 
 import { useActionState } from "react";
-import { GhanaAddressForm } from "@/components/commerce/ghana-address-form";
+import {
+  GhanaAddressForm,
+  type GhanaAddressValues,
+} from "@/components/commerce/ghana-address-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { placeRetailOrderAction } from "@/features/checkout/actions";
 
-export function CheckoutForm({ canPlaceOrder = true }: { canPlaceOrder?: boolean }) {
+export function CheckoutForm({
+  canPlaceOrder = true,
+  defaultEmail,
+  defaultAddress,
+}: {
+  canPlaceOrder?: boolean;
+  defaultEmail?: string;
+  defaultAddress?: Partial<GhanaAddressValues>;
+}) {
   const [state, action, pending] = useActionState(placeRetailOrderAction, null);
 
   return (
@@ -18,6 +29,7 @@ export function CheckoutForm({ canPlaceOrder = true }: { canPlaceOrder?: boolean
       ) : null}
       <GhanaAddressForm
         action={canPlaceOrder ? action : undefined}
+        defaultValues={defaultAddress}
         submitLabel={
           canPlaceOrder ? (pending ? "Placing order…" : "Place order") : undefined
         }
@@ -27,7 +39,13 @@ export function CheckoutForm({ canPlaceOrder = true }: { canPlaceOrder?: boolean
           <Label htmlFor="checkout-email">
             Email <span className="text-error">*</span>
           </Label>
-          <Input id="checkout-email" name="email" type="email" required={canPlaceOrder} />
+          <Input
+            id="checkout-email"
+            name="email"
+            type="email"
+            required={canPlaceOrder}
+            defaultValue={defaultEmail}
+          />
         </div>
       </GhanaAddressForm>
     </div>

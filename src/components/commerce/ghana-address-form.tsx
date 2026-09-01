@@ -1,7 +1,7 @@
 "use client";
 
 import type { ComponentProps, ReactNode } from "react";
-import { useState } from "react";
+import { useState, useSyncExternalStore } from "react";
 import { paperButton } from "@/components/commerce/paper-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -64,6 +64,7 @@ export function GhanaAddressForm({
   children,
   submitLabel,
   submitDisabled,
+  fieldErrors,
 }: {
   id?: string;
   defaultValues?: Partial<GhanaAddressValues>;
@@ -71,11 +72,17 @@ export function GhanaAddressForm({
   children?: ReactNode;
   submitLabel?: string;
   submitDisabled?: boolean;
+  fieldErrors?: Record<string, string[] | undefined>;
 }) {
   const [values, setValues] = useState<GhanaAddressValues>({
     ...empty,
     ...defaultValues,
   });
+  const hydrated = useSyncExternalStore(
+    () => () => {},
+    () => true,
+    () => false,
+  );
 
   function patch<K extends keyof GhanaAddressValues>(
     key: K,
@@ -84,12 +91,20 @@ export function GhanaAddressForm({
     setValues((current) => ({ ...current, [key]: value }));
   }
 
+  function errorProps(key: keyof GhanaAddressValues) {
+    return {
+      "aria-invalid": fieldErrors?.[key]?.length ? true : undefined,
+      "aria-describedby": fieldErrors?.[key]?.length ? `${id}-${key}-error` : undefined,
+    };
+  }
+
   return (
     <form
       id={id}
+      data-hydrated={hydrated ? "true" : "false"}
       className="space-y-4 border border-border bg-card p-5"
       action={action}
-      encType="multipart/form-data"
+      encType={typeof action === "function" ? undefined : "multipart/form-data"}
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
       <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
@@ -97,6 +112,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-name`}
           name="fullName"
+          {...errorProps("fullName")}
           autoComplete="name"
           required
           value={values.fullName}
@@ -112,6 +128,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-phone`}
           name="phone"
+          {...errorProps("phone")}
           type="tel"
           inputMode="tel"
           autoComplete="tel"
@@ -125,6 +142,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-region`}
           name="region"
+          {...errorProps("region")}
           required
           value={values.region}
           onChange={(event) => patch("region", event.target.value)}
@@ -134,6 +152,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-city`}
           name="cityTown"
+          {...errorProps("cityTown")}
           required
           value={values.cityTown}
           onChange={(event) => patch("cityTown", event.target.value)}
@@ -143,6 +162,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-area`}
           name="areaSuburb"
+          {...errorProps("areaSuburb")}
           value={values.areaSuburb}
           onChange={(event) => patch("areaSuburb", event.target.value)}
         />
@@ -151,6 +171,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-street`}
           name="streetLandmark"
+          {...errorProps("streetLandmark")}
           value={values.streetLandmark}
           onChange={(event) => patch("streetLandmark", event.target.value)}
         />
@@ -163,6 +184,7 @@ export function GhanaAddressForm({
         <Input
           id={`${id}-gps`}
           name="ghanapostGps"
+          {...errorProps("ghanapostGps")}
           className="font-mono"
           placeholder="GA-123-4567"
           value={values.ghanapostGps}
@@ -173,6 +195,7 @@ export function GhanaAddressForm({
         <Textarea
           id={`${id}-notes`}
           name="deliveryInstructions"
+          {...errorProps("deliveryInstructions")}
           value={values.deliveryInstructions}
           onChange={(event) =>
             patch("deliveryInstructions", event.target.value)
@@ -183,6 +206,7 @@ export function GhanaAddressForm({
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium text-ink">Delivery Area</legend>
         <RadioGroup
+          {...errorProps("deliveryArea")}
           value={values.deliveryArea}
           onValueChange={(value) =>
             patch("deliveryArea", value as GhanaAddressValues["deliveryArea"])
@@ -211,9 +235,12 @@ export function GhanaAddressForm({
           </p>
         ) : null}
       </fieldset>
+      {Object.entries(fieldErrors ?? {}).map(([key, errors]) => errors?.length ? (
+        <p key={key} id={`${id}-${key}-error`} className="text-sm text-error">{errors.join(" ")}</p>
+      ) : null)}
       {children}
       {submitLabel ? (
-        <button type="submit" className={paperButton()} disabled={submitDisabled}>
+        <button type="submit" className={paperButton()} disabled={submitDisabled || !hydrated}>
           {submitLabel}
         </button>
       ) : null}

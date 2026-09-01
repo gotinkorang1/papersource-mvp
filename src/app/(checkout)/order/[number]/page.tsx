@@ -9,7 +9,8 @@ import { isLivePaystack } from "@/lib/paystack/signature";
 import { formatGhs } from "@/lib/money";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema";
-import { readGuestSessionId } from "@/lib/session/guest";
+import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { documentOwner } from "@/lib/customer/commerce-identity";
 
 export const metadata: Metadata = {
   title: "Order received",
@@ -28,8 +29,8 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
 
   const { number } = await params;
   const query = await searchParams;
-  const sessionId = await readGuestSessionId();
-  if (!sessionId) {
+  const identity = await readCommerceIdentity();
+  if (!identity.profileId && !identity.sessionId) {
     notFound();
   }
 
@@ -37,7 +38,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   const [found] = await db
     .select()
     .from(orders)
-    .where(and(eq(orders.number, number), eq(orders.sessionId, sessionId)))
+    .where(and(eq(orders.number, number), documentOwner(orders, identity)))
     .limit(1);
 
   if (!found) {
@@ -63,7 +64,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   const [order] = await db
     .select()
     .from(orders)
-    .where(and(eq(orders.number, number), eq(orders.sessionId, sessionId)))
+    .where(and(eq(orders.number, number), documentOwner(orders, identity)))
     .limit(1);
 
   if (!order) {

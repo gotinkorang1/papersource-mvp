@@ -16,7 +16,8 @@ import {
   orderSourceEnum,
   orderStatusEnum,
 } from "./enums";
-import { organizations } from "./identity";
+import { organizations, profiles } from "./identity";
+import { quotes } from "./commerce";
 
 const timestamps = {
   createdAt: timestamp("created_at", { withTimezone: true })
@@ -33,8 +34,8 @@ export const orders = pgTable(
     id: uuid("id").primaryKey().defaultRandom(),
     number: text("number").notNull(),
     source: orderSourceEnum("source").notNull(),
-    quoteId: uuid("quote_id"),
-    profileId: uuid("profile_id"),
+    quoteId: uuid("quote_id").references(() => quotes.id),
+    profileId: uuid("profile_id").references(() => profiles.id),
     organizationId: uuid("organization_id").references(() => organizations.id),
     sessionId: text("session_id"),
     status: orderStatusEnum("status").notNull(),
@@ -57,6 +58,8 @@ export const orders = pgTable(
     uniqueIndex("orders_number_unique").on(table.number),
     index("orders_session_idx").on(table.sessionId),
     index("orders_status_idx").on(table.status),
+    index("orders_profile_idx").on(table.profileId),
+    index("orders_organization_idx").on(table.organizationId),
   ],
 );
 
