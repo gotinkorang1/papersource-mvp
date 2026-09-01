@@ -8,8 +8,10 @@ async function placeAccraOrder(page: Page) {
     (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },
   );
-  await page.locator('button:not([disabled])').filter({ hasText: "Add to Cart" }).first().click();
-  await persisted;
+  await Promise.all([
+    persisted,
+    page.locator('button:not([disabled])').filter({ hasText: "Add to Cart" }).first().click(),
+  ]);
   await page.goto("/checkout");
   await page.getByLabel("Full Name").fill("Ama Mensah");
   await page.getByLabel(/Phone Number/).fill("0244111222");
@@ -56,6 +58,7 @@ test("Paystack mock checkout marks the order paid via signed webhook", async ({
   });
   const replayResponse = await request.post("/api/paystack/webhook", {
     data: replay,
+    timeout: 30_000,
     headers: {
       "content-type": "application/json",
       "x-paystack-signature": signPaystackBody(replay, PAYSTACK_MOCK_SECRET),

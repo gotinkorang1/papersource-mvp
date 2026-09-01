@@ -39,8 +39,7 @@ test("search to product adds to cart only", async ({ page }) => {
     (response) => response.request().method() === "POST" && response.ok(),
     { timeout: 30_000 },
   );
-  await page.getByRole("button", { name: "Add to Cart" }).click();
-  await persisted;
+  await Promise.all([persisted, page.getByRole("button", { name: "Add to Cart" }).click()]);
   await expect(
     page.getByRole("button", { name: "Cart, 1 item" }).first(),
   ).toBeVisible();

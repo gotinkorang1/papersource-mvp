@@ -11,8 +11,7 @@ test("sales prices a guest RFQ and the customer accepts it into a quote-sourced 
     (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },
   );
-  await page.getByTestId("add-to-quote-double-a-premium-a4").click();
-  await persisted;
+  await Promise.all([persisted, page.getByTestId("add-to-quote-double-a-premium-a4").click()]);
   await expect(page.getByRole("button", { name: "Quote list, 1 item" }).first()).toBeVisible({
     timeout: 45_000,
   });

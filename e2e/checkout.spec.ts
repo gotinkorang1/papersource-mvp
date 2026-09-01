@@ -7,8 +7,10 @@ async function addFirstInStockToCart(page: Page) {
     (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },
   );
-  await page.locator('button:not([disabled])').filter({ hasText: "Add to Cart" }).first().click();
-  await persisted;
+  await Promise.all([
+    persisted,
+    page.locator('button:not([disabled])').filter({ hasText: "Add to Cart" }).first().click(),
+  ]);
   await expect(
     page.getByRole("button", { name: "Cart, 1 item" }).first(),
   ).toBeVisible();
