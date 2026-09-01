@@ -61,8 +61,16 @@ export function parseStoreSettings(input: StoreSettingsForm) {
 
 export async function getStoreSettings() {
   if (!isDatabaseConfigured()) return DEFAULT_STORE_SETTINGS;
-  const [row] = await getDb().select().from(storeSettings).where(eq(storeSettings.id, "store")).limit(1);
-  return row ?? DEFAULT_STORE_SETTINGS;
+  try {
+    const [row] = await getDb().select().from(storeSettings).where(eq(storeSettings.id, "store")).limit(1);
+    return row ?? DEFAULT_STORE_SETTINGS;
+  } catch (error) {
+    // Keep older local/preview databases usable until the settings migration is applied.
+    const code = (error as { code?: string; cause?: { code?: string } })?.code
+      ?? (error as { cause?: { code?: string } })?.cause?.code;
+    if (code === "42P01") return DEFAULT_STORE_SETTINGS;
+    throw error;
+  }
 }
 
 export async function saveStoreSettings(input: StoreSettingsForm & { role: StaffRole; actorId: string }) {
