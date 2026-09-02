@@ -3,6 +3,7 @@ import { AccountLink } from "@/components/navigation/account-link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
 import { HeaderSearch } from "@/components/navigation/header-search";
 import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
+import { BusinessMenu } from "@/components/navigation/business-menu";
 import { Wordmark } from "@/components/marketing/wordmark";
 
 export function StoreHeader() {
@@ -15,22 +16,8 @@ export function StoreHeader() {
           aria-label="Primary"
         >
           <ShopMegaMenu />
-          <Link href="/brands" className="hover:text-ink">
-            Brands
-          </Link>
-          <Link href="/business" className="hover:text-ink">
-            Business
-          </Link>
-          <Link href="/schools" className="hover:text-ink">
-            Schools
-          </Link>
-          <Link href="/bulk-orders" className="hover:text-ink">
-            Bulk Orders
-          </Link>
-          <Link href="/quick-order" className="hover:text-ink">
-            Quick Order
-          </Link>
-          <Link href="/request-quote" className="hover:text-ink">
+          <BusinessMenu />
+          <Link href="/request-quote" className="rounded-md bg-ochre px-3 py-2 text-sm font-medium text-ink hover:bg-ochre/90">
             Request a Quote
           </Link>
         </nav>
