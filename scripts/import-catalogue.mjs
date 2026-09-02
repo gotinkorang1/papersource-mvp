@@ -2,6 +2,9 @@ import { readFile } from "node:fs/promises";
 import path from "node:path";
 import process from "node:process";
 import postgres from "postgres";
+import { config } from "dotenv";
+
+config({ path: ".env.local" });
 
 const file = process.argv[2];
 if (!file) throw new Error("Usage: node scripts/import-catalogue.mjs <csv-file>");
