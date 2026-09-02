@@ -1,5 +1,6 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
+import { expect, it } from "vitest";
 import { BusinessMenu } from "./business-menu";
 
 it("groups business destinations behind one menu", async () => {
