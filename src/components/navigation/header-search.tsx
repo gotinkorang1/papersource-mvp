@@ -36,7 +36,7 @@ export function HeaderSearch({
         value={query}
         onChange={(event) => setQuery(event.target.value)}
         placeholder="Search paper, toner, pens, brands or SKU..."
-        className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink placeholder:text-slate focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink transition-[background-color,border-color,box-shadow] duration-200 placeholder:text-slate focus-visible:border-ink focus-visible:bg-card focus-visible:shadow-[0_0_0_3px_rgba(16,42,67,0.08)] focus-visible:outline-none"
       />
     </form>
   );

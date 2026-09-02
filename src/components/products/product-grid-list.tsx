@@ -27,6 +27,7 @@ export function ProductGridList({
         <ProductCard
           key={product.id}
           product={product}
+          className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2"
           onAddToCart={addToCart}
           onAddToQuote={addToQuote}
         />
