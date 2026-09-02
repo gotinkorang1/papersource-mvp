@@ -22,9 +22,10 @@ export function ShopMegaMenu() {
     >
       <button
         type="button"
-        className="text-sm text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className="min-h-11 text-sm text-graphite transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
         aria-expanded={open}
         aria-controls={menuId}
+        aria-haspopup="menu"
         onClick={() => setOpen((current) => !current)}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
@@ -38,7 +39,7 @@ export function ShopMegaMenu() {
         <div
           id={menuId}
           role="menu"
-          className="absolute top-full left-0 z-30 mt-3 w-[min(36rem,calc(100vw-2rem))] border border-border bg-card p-6 shadow-md"
+          className="absolute top-full left-0 z-30 w-[min(36rem,calc(100vw-2rem))] rounded-lg border border-border bg-card p-6 pt-5 shadow-lg motion-safe:animate-in motion-safe:fade-in-0 motion-safe:zoom-in-95"
         >
           <p className="text-xs tracking-[0.16em] text-slate uppercase">Shop</p>
           <div className="mt-4 grid gap-6 sm:grid-cols-3">
