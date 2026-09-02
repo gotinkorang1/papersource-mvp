@@ -14,11 +14,11 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 - Customer accounts: Supabase-backed registration/confirmation/login/recovery/sign-out, protected account histories, Ghana address book, one-organisation membership, actor-aware cart/quote merge, authenticated checkout/RFQ, and profile/organisation document access are implemented and verified locally.
 - The legacy custom-password/customer-cookie path is retired. Guest cart, checkout, RFQ and capability-token access remain supported as a separate path.
 
-**Customer accounts are complete on this feature branch, not deployed or merged to master.** Production still needs hosted Supabase environment configuration and the migration applied through the deployment process. Staff login remains the existing local-secret mechanism.
+**Customer accounts are complete on this feature branch, not deployed or merged to master.** Production still needs hosted Supabase/Vercel environment verification and hosted flow smoke tests. The ten Drizzle migrations (`0001`–`0010`) have been applied to the connected Supabase project, with 30 public tables and RLS enabled on all 30. Staff login remains the existing local-secret mechanism.
 
 ## Remaining MVP work, in order
 
-1. Launch verification: configure hosted Supabase/Vercel environments, apply migrations through deployment, and verify the hosted flows. Vercel Analytics and server-side Sentry instrumentation are present.
+1. Launch verification: confirm hosted Supabase/Vercel environment variables and verify the hosted flows. Vercel Analytics and server-side Sentry instrumentation are present.
 2. Optional: quote-expiring reminders at T-48h.
 
 The local Playwright gate is complete: all 26 tests pass serially against a healthy dedicated database and development server, including the admin quote, checkout, Paystack, Quick Order, and RFQ journeys.
