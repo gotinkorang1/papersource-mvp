@@ -16,13 +16,13 @@ export function CategoryTile({
     <Link
       href={href}
       className={cn(
-        "group flex min-h-36 flex-col justify-between border-border bg-card p-5 transition-colors hover:bg-cream",
+        "group flex min-h-36 flex-col justify-between border-border bg-card p-5 transition-[background-color,transform] duration-200 ease-out hover:bg-cream motion-safe:hover:-translate-y-0.5 focus-visible:z-10",
         className,
       )}
     >
       <span
         aria-hidden
-        className="mb-8 h-16 border border-dashed border-border bg-cream"
+        className="mb-8 h-16 border border-dashed border-border bg-cream transition-colors duration-200 group-hover:border-ink/30"
       />
       <span>
         <span className="block text-base font-medium text-ink">{name}</span>

@@ -14,11 +14,12 @@ export default async function HomePage() {
 
   return (
     <main>
-      <section className="mx-auto max-w-6xl px-4 py-16 md:py-24">
+      <section className="relative isolate mx-auto max-w-6xl overflow-hidden px-4 py-16 md:py-24">
+        <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-ochre/10 blur-3xl" />
         <p className="text-sm tracking-[0.16em] text-slate uppercase">
           Ghana&apos;s modern workplace supply partner
         </p>
-        <h1 className="mt-4 max-w-3xl text-4xl leading-tight tracking-tight text-ink md:text-6xl">
+        <h1 className="mt-4 max-w-3xl text-4xl leading-tight tracking-tight text-ink motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 md:text-6xl">
           Everything your workplace needs.
         </h1>
         <p className="mt-6 max-w-2xl text-lg text-slate">

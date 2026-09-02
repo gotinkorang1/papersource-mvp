@@ -14,13 +14,13 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Mobile"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border bg-card/95 pb-[env(safe-area-inset-bottom)] shadow-[0_-8px_24px_rgba(16,42,67,0.06)] backdrop-blur-sm md:hidden"
     >
       <ul className="grid grid-cols-5">
         <li>
           <Link
             href="/"
-            className="flex flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
+            className="flex min-h-14 flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
           >
             <House className="size-4" aria-hidden />
             Home
@@ -29,7 +29,7 @@ export function MobileNav() {
         <li>
           <Link
             href="/shop"
-            className="flex flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
+            className="flex min-h-14 flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
           >
             <Store className="size-4" aria-hidden />
             Shop
@@ -38,7 +38,7 @@ export function MobileNav() {
         <li>
           <Link
             href="/search"
-            className="flex flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
+            className="flex min-h-14 flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
           >
             <Search className="size-4" aria-hidden />
             Search
@@ -47,7 +47,7 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className="flex w-full flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
+            className="flex min-h-14 w-full flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
             aria-label={itemCountLabel("Quote list", quoteCount)}
             onClick={() => setQuoteOpen(true)}
           >
@@ -58,7 +58,7 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className="flex w-full flex-col items-center gap-1 px-2 py-3 text-xs text-slate"
+            className="flex min-h-14 w-full flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
             aria-label={itemCountLabel("Cart", cartCount)}
             onClick={() => setCartOpen(true)}
           >
