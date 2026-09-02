@@ -1,0 +1,2663 @@
+Yes — I would build **PaperSource as a premium Ghanaian office-supply commerce platform**, not simply a stationery catalogue with a cart.
+
+The important architectural decision is this:
+
+> **PaperSource has two purchasing paths living on the same product catalogue:**
+> **Retail:** browse → cart → checkout → Paystack/MoMo → delivery
+> **Business:** browse → quote basket → RFQ → PaperSource reviews/prices → customer accepts → order/payment → delivery
+
+That distinction should influence the database, UX, admin dashboard, and Cursor instructions from day one.
+
+## 1. PaperSource brand direction
+
+### Brand position
+
+I would position PaperSource as:
+
+**“Ghana's modern workplace supply partner.”**
+
+Not a cheap stationery shop. Not a school-bookstore aesthetic.
+
+The feeling should be:
+
+**Professional • Reliable • Organised • Modern • Efficient • Approachable**
+
+The brand should be equally comfortable supplying:
+
+* one notebook to an individual
+* 20 boxes of A4 paper to an SME
+* office setup supplies for a new company
+* bulk stationery to a school
+* recurring procurement for an organisation
+
+### Visual concept
+
+Use **paper, document grids, filing systems and office organisation** as the visual inspiration.
+
+Avoid generic:
+
+* giant floating pencils
+* cartoon notebooks
+* rainbow stationery
+* obvious shopping-cart illustrations
+* generic blue SaaS gradients
+
+I would make the website look more like a **modern procurement catalogue/editorial design system**.
+
+Think large typography, crisp grids, beautiful product photography, paper-like surfaces, subtle lines, tabs, labels and strong whitespace.
+
+---
+
+# 2. Recommended PaperSource colour system
+
+My recommended primary palette:
+
+| Role           | Colour       | Hex       |
+| -------------- | ------------ | --------- |
+| Primary        | Ink Navy     | `#102A43` |
+| Secondary      | Paper Green  | `#1F6B57` |
+| Accent         | Golden Ochre | `#E6A329` |
+| Background     | Paper Cream  | `#F8F6F1` |
+| Surface        | Pure Paper   | `#FFFFFF` |
+| Primary text   | Graphite     | `#20262E` |
+| Secondary text | Slate        | `#667085` |
+| Borders        | Soft Grey    | `#E4E7EC` |
+| Success        | Green        | `#15803D` |
+| Error          | Red          | `#B42318` |
+
+### Why this combination
+
+**Navy** gives PaperSource corporate credibility.
+
+**Green** communicates reliability, sustainability and business maturity.
+
+**Paper cream** stops the website from looking like another generic white e-commerce template.
+
+**Ochre/gold** can highlight:
+
+* promotions
+* bulk discounts
+* important CTAs
+* featured products
+* quotation status
+* small graphic elements
+
+I would use the colours roughly:
+
+**70% cream/white + 20% navy/graphite + 7% green + 3% gold.**
+
+Don't make green or yellow dominate the UI.
+
+---
+
+# 3. Logo concept
+
+I recommend a **PaperSource wordmark + PS symbol**.
+
+The symbol could combine:
+
+* `P`
+* `S`
+* two stacked sheets of paper
+* a subtle folded page corner
+
+without looking like Microsoft Office or a printer icon.
+
+Example lockup:
+
+**PAPERSOURCE**
+*Workplace supplies, simply sourced.*
+
+Alternative tagline:
+
+> **Everything your workplace needs.**
+
+For B2B marketing:
+
+> **Smarter sourcing for modern workplaces.**
+
+I particularly like that third line for corporate campaigns.
+
+---
+
+# 4. Technology stack I recommend
+
+For this project, I would use:
+
+```text
+Frontend
+├── Next.js 16.x
+├── React
+├── TypeScript
+├── Tailwind CSS 4.3
+├── shadcn/ui
+├── Base UI
+├── Lucide Icons
+└── Motion
+
+Backend
+├── Next.js Server Components
+├── Server Actions
+├── Route Handlers
+└── Supabase
+
+Database
+├── PostgreSQL / Supabase
+├── Drizzle ORM
+└── Supabase RLS
+
+Authentication
+└── Supabase Auth
+
+Payments
+└── Paystack
+
+Media
+├── Cloudinary
+└── Supabase Storage for documents
+
+Email
+├── Resend
+└── React Email
+
+Deployment
+└── Vercel
+
+Testing
+├── Vitest
+├── React Testing Library
+└── Playwright
+
+Monitoring
+├── Sentry
+└── Vercel Analytics
+
+Code
+├── Git
+├── GitHub
+├── pnpm
+└── Cursor
+```
+
+Next.js 16.2 is a strong choice for this project and includes major development, rendering and AI-agent workflow improvements. Tailwind 4.3 is current, while new shadcn/ui projects now default to Base UI. ([Next.js][1])
+
+---
+
+# 5. Why Next.js
+
+Use **Next.js App Router**, not a separate React frontend and Express backend.
+
+PaperSource will benefit enormously from:
+
+* Server Components
+* Server Actions
+* image optimisation
+* metadata
+* dynamic SEO
+* product structured data
+* caching
+* streaming
+* server-side authentication
+* product pages generated from database content
+* Vercel deployment
+* excellent Cursor/AI support
+
+Next.js has also been explicitly improving its workflows for coding agents, including MCP/debugging-related capabilities. ([Next.js][2])
+
+Suggested structure:
+
+```text
+src/
+├── app/
+│   ├── (store)/
+│   ├── (account)/
+│   ├── (checkout)/
+│   ├── (corporate)/
+│   ├── admin/
+│   └── api/
+│
+├── components/
+│   ├── commerce/
+│   ├── products/
+│   ├── quotes/
+│   ├── navigation/
+│   ├── marketing/
+│   └── ui/
+│
+├── features/
+│   ├── cart/
+│   ├── checkout/
+│   ├── catalogue/
+│   ├── quotations/
+│   ├── organisations/
+│   ├── payments/
+│   ├── inventory/
+│   └── delivery/
+│
+├── lib/
+│   ├── db/
+│   ├── supabase/
+│   ├── paystack/
+│   ├── cloudinary/
+│   └── email/
+│
+└── types/
+```
+
+---
+
+# 6. shadcn/ui + Base UI
+
+This is particularly good for Cursor development because you **own the component source code** instead of depending on an opaque UI library. The shadcn project explicitly describes its components as AI-friendly, and new projects now default to Base UI. ([Shadcn UI][3])
+
+Use it for primitives, but **do not leave the default shadcn appearance**.
+
+PaperSource needs a custom design system.
+
+Build custom components such as:
+
+```text
+PaperButton
+PaperCard
+ProductCard
+ProductGrid
+ProductQuickView
+ProductGallery
+PriceDisplay
+BulkPriceTable
+QuantitySelector
+QuoteButton
+QuoteBasket
+QuoteSummary
+CategoryTile
+BrandLogo
+DeliveryBadge
+StockBadge
+ProcurementCTA
+CorporateBanner
+OfficeBundleCard
+OrderTimeline
+QuoteTimeline
+```
+
+---
+
+# 7. Don't use a generic e-commerce product card
+
+This matters.
+
+Instead of:
+
+```text
+[IMAGE]
+
+HP A4 Paper
+GHS 79.00
+
+[Add to cart]
+```
+
+PaperSource cards should communicate procurement information.
+
+For example:
+
+```text
+Double A Premium A4 Paper
+
+A4 • 80gsm • 500 sheets
+
+GHS 78.00 / ream
+
+10+     GHS 74.50
+50+     Request bulk price
+
+✓ In Stock
+
+[ Add to Cart ]
+[ Add to Quote ]
+```
+
+That immediately makes PaperSource different from ordinary Ghanaian online stores.
+
+---
+
+# 8. The two-cart concept
+
+I would actually maintain:
+
+### Shopping Cart
+
+For direct purchases.
+
+### Quote Basket
+
+For procurement.
+
+They should be visibly different.
+
+For example:
+
+```text
+🛒 Cart          3
+📋 Quote List    8
+```
+
+A corporate buyer can add twenty products to a quote without interfering with their retail cart.
+
+---
+
+# 9. Bulk pricing
+
+Products should support multiple pricing tiers.
+
+Example:
+
+```text
+A4 Copy Paper
+
+1–4 reams       GHS 78.00
+5–19 reams      GHS 75.00
+20–49 reams     GHS 71.50
+50+ reams       Request Quote
+```
+
+But don't hard-code this globally.
+
+Store tiers per product variant.
+
+Example table:
+
+```text
+product_price_tiers
+
+id
+variant_id
+minimum_quantity
+maximum_quantity
+unit_price
+currency
+active
+```
+
+---
+
+# 10. Core database model
+
+I recommend at least these entities:
+
+```text
+users
+profiles
+
+organizations
+organization_members
+
+addresses
+
+categories
+brands
+
+products
+product_variants
+product_images
+product_attributes
+
+inventory
+inventory_movements
+
+price_tiers
+
+carts
+cart_items
+
+quotes
+quote_items
+quote_events
+
+orders
+order_items
+
+payments
+payment_events
+
+delivery_zones
+deliveries
+
+discounts
+promotion_rules
+
+enquiries
+
+uploaded_documents
+
+reviews
+
+wishlists
+
+notifications
+
+audit_logs
+```
+
+### Organisations
+
+Important for PaperSource.
+
+```text
+organizations
+
+id
+name
+email
+phone
+industry
+registration_number
+tax_number
+default_address
+credit_status
+created_at
+```
+
+Possible organisation types:
+
+```text
+Business
+School
+Government
+NGO
+Hospital
+Church
+University
+Retailer
+Other
+```
+
+---
+
+# 11. Very important money rule
+
+Never store:
+
+```text
+78.99
+```
+
+as a floating-point price.
+
+Store money in **pesewas**:
+
+```text
+7899
+```
+
+and format:
+
+```text
+GHS 78.99
+```
+
+This avoids rounding problems.
+
+---
+
+# 12. Quotation workflow
+
+This will probably become one of PaperSource's strongest competitive features.
+
+### Step 1
+
+Customer clicks:
+
+**Add to Quote**
+
+### Step 2
+
+Quote basket.
+
+```text
+Double A Paper       × 50
+Bic Blue Pens        × 100
+A4 Envelopes         × 200
+HP 305 Ink           × 5
+```
+
+### Step 3
+
+Customer information.
+
+```text
+Organisation
+Contact person
+Phone
+Email
+Delivery location
+Requested delivery date
+Notes
+```
+
+### Step 4
+
+Optional uploads.
+
+Allow:
+
+```text
+PDF
+Excel
+Word
+Image
+Purchase order
+Procurement list
+RFQ document
+```
+
+This will be extremely useful for schools and corporate clients.
+
+### Step 5
+
+Submit RFQ.
+
+Status:
+
+```text
+RFQ-2026-000238
+
+Submitted
+```
+
+---
+
+# 13. Quote lifecycle
+
+Use a proper state machine.
+
+```text
+DRAFT
+↓
+SUBMITTED
+↓
+UNDER_REVIEW
+↓
+PRICED
+↓
+SENT
+↓
+ACCEPTED
+↓
+PAYMENT_PENDING
+↓
+PAID
+↓
+ORDER_CREATED
+```
+
+Other paths:
+
+```text
+DECLINED
+EXPIRED
+CANCELLED
+REVISED
+```
+
+Don't make quotes simple contact-form enquiries.
+
+They should be actual business objects.
+
+---
+
+# 14. Best feature: Quote → Order
+
+Once PaperSource approves a quote:
+
+```text
+Quote PSQ-00219
+GHS 12,450
+```
+
+Customer gets:
+
+**Accept Quote**
+
+Then:
+
+```text
+Pay Now
+```
+
+or PaperSource admin can mark:
+
+```text
+Bank Transfer
+Purchase Order
+Invoice Terms
+```
+
+Once accepted:
+
+```text
+Quote
+ ↓
+Order
+ ↓
+Invoice
+ ↓
+Delivery
+```
+
+That is a proper procurement platform.
+
+---
+
+# 15. Payments for Ghana
+
+Use **Paystack as the primary gateway**.
+
+Support:
+
+* cards
+* Mobile Money
+* payment links/hosted checkout where appropriate
+
+Paystack specifically supports its Mobile Money payment channel for businesses in Ghana. Its documentation also notes that MoMo completes asynchronously, so the final payment result must be processed through the server/webhook rather than trusting the browser. ([Paystack][4])
+
+Architecture:
+
+```text
+Customer
+     ↓
+Create Order
+     ↓
+Server
+     ↓
+Initialize Paystack
+     ↓
+Paystack Checkout
+     ↓
+MoMo / Card
+     ↓
+Webhook
+     ↓
+Verify payment
+     ↓
+Update Order → PAID
+```
+
+Never:
+
+```javascript
+if (url.includes("success")) {
+   order.paid = true
+}
+```
+
+The webhook/server verification must determine payment status.
+
+---
+
+# 16. Delivery model for launch
+
+Your launch requirement should become an explicit business rule:
+
+### Standard delivery
+
+**Accra & Tema**
+
+### Other regions
+
+**Nationwide delivery arranged on request**
+
+Put that prominently throughout the website.
+
+For example, product pages:
+
+> **Delivery**
+> Accra & Tema delivery available. Nationwide delivery can be arranged on request.
+
+Checkout:
+
+```text
+Delivery Area
+
+○ Accra
+○ Tema
+○ Other Region
+```
+
+Selecting:
+
+**Other Region**
+
+changes the flow to:
+
+> We'll contact you to confirm the best nationwide delivery option and cost.
+
+---
+
+# 17. Ghana-friendly address design
+
+Don't design the checkout around US/Canadian postal-address assumptions.
+
+Use:
+
+```text
+Full Name
+Phone Number
+Region
+City/Town
+Area/Suburb
+Street / Landmark
+GhanaPost GPS
+Delivery Instructions
+```
+
+Example:
+
+```text
+GhanaPost GPS
+GA-123-4567
+```
+
+Make **Phone Number** extremely important.
+
+---
+
+# 18. Delivery zone engine
+
+Database:
+
+```text
+delivery_zones
+
+id
+name
+region
+base_price
+free_shipping_threshold
+estimated_min_days
+estimated_max_days
+active
+```
+
+Initial zones could be:
+
+```text
+Accra Central
+Accra East
+Accra West
+Accra North
+Tema
+Tema Industrial Area
+Other Greater Accra
+Nationwide Request
+```
+
+Don't hard-code shipping values into components.
+
+Admin should be able to change them.
+
+---
+
+# 19. Product categories
+
+Your initial taxonomy could look like:
+
+### Paper
+
+* Copier Paper
+* Coloured Paper
+* Cardstock
+* Labels
+* Sticky Notes
+
+### Writing
+
+* Pens
+* Pencils
+* Markers
+* Highlighters
+* Correction Products
+
+### Filing & Organisation
+
+* Files
+* Folders
+* Binders
+* Document Wallets
+* Archive Boxes
+
+### Desk Essentials
+
+* Staplers
+* Punches
+* Tape
+* Scissors
+* Rulers
+* Calculators
+
+### Printing
+
+* Ink Cartridges
+* Toners
+* Printer Accessories
+
+### Office Technology
+
+* Keyboards
+* Mice
+* Flash Drives
+* Extension Boards
+* Headsets
+
+### School Supplies
+
+* Exercise Books
+* Geometry Sets
+* Art Supplies
+* Writing Materials
+
+### Workplace Essentials
+
+* Whiteboards
+* Notice Boards
+* Cleaning Supplies
+* Batteries
+* Storage
+
+Later:
+
+**Office Furniture** could become another major division.
+
+---
+
+# 20. Product attributes
+
+PaperSource cannot use one generic product schema.
+
+For paper:
+
+```text
+Size
+GSM
+Sheets
+Colour
+Finish
+Brightness
+Pack Size
+```
+
+Pens:
+
+```text
+Ink Colour
+Tip Size
+Type
+Pack Quantity
+```
+
+Toners:
+
+```text
+Brand
+Colour
+Yield
+Compatible Printer Models
+OEM / Compatible
+```
+
+Files:
+
+```text
+Size
+Colour
+Material
+Capacity
+Pack Quantity
+```
+
+Create flexible attributes rather than adding fifty columns to `products`.
+
+---
+
+# 21. Search will be extremely important
+
+Users frequently know exactly what they need:
+
+> HP 305 black
+
+or
+
+> A4 80gsm
+
+or
+
+> Canon 067 cyan
+
+Search should support:
+
+* product names
+* SKU
+* barcode
+* brands
+* categories
+* tags
+* compatibility
+* aliases
+
+Start with:
+
+**PostgreSQL full-text search + `pg_trgm`.**
+
+Do not introduce Algolia immediately.
+
+When the catalogue becomes very large, migrate search to:
+
+* Typesense
+* Algolia
+* Meilisearch
+
+---
+
+# 22. Quick Order
+
+A brilliant B2B feature:
+
+### Quick Order
+
+```text
+SKU / Product              Quantity
+
+DOUBLEA-A4-80              20
+BIC-BLUE-50                5
+HP-305-BLK                 2
+```
+
+Then:
+
+**Add all to Quote**
+
+Corporate procurement staff will appreciate this far more than animations.
+
+---
+
+# 23. Reorder
+
+Organisation accounts should eventually have:
+
+**Buy Again**
+
+```text
+Your previous orders
+
+Office Monthly Supplies
+June 2026
+
+[ Reorder All ]
+```
+
+Then quantities can be edited.
+
+Excellent recurring revenue feature.
+
+---
+
+# 24. PaperSource homepage
+
+I wouldn't use the standard:
+
+```text
+NAV
+GIANT HERO
+FEATURED PRODUCTS
+NEWSLETTER
+FOOTER
+```
+
+Instead:
+
+### Navigation
+
+```text
+PaperSource
+
+Shop
+Categories
+Brands
+Business
+Schools
+Bulk Orders
+
+Search...
+
+Request a Quote
+Account
+Cart
+```
+
+---
+
+## Hero
+
+Large editorial typography:
+
+# Everything your workplace needs.
+
+**Office stationery, paper, printing supplies and workplace essentials — delivered across Accra & Tema.**
+
+Buttons:
+
+**Shop Products**
+
+**Request Bulk Quote**
+
+Then:
+
+`Nationwide supply available on request.`
+
+---
+
+# 25. Second homepage section
+
+Make category navigation visually dominant.
+
+```text
+SHOP THE WORKPLACE
+
+Paper
+Writing
+Filing
+Printing
+Desk Essentials
+Technology
+School Supplies
+Workplace Essentials
+```
+
+Use product photography rather than generic icons everywhere.
+
+---
+
+# 26. Business section
+
+Large contrasting navy section:
+
+# Procurement without the paperwork headache.
+
+> Request bulk prices, upload your procurement list and receive a customised quotation from PaperSource.
+
+```text
+01
+Build your list
+
+02
+Request quotation
+
+03
+Approve pricing
+
+04
+We deliver
+```
+
+CTA:
+
+**Start a Quote**
+
+---
+
+# 27. Create Office Packs
+
+This is a potentially excellent PaperSource differentiator.
+
+Examples:
+
+### New Employee Starter Pack
+
+```text
+Notebook
+2 pens
+Pencil
+Highlighter
+Sticky notes
+File folder
+```
+
+### Small Office Starter Pack
+
+```text
+A4 paper
+Pens
+Staplers
+Files
+Markers
+Sticky notes
+Tape
+Scissors
+```
+
+### Classroom Pack
+
+### Reception Desk Pack
+
+### Meeting Room Pack
+
+### Remote Worker Pack
+
+These products increase average order size and differentiate PaperSource.
+
+---
+
+# 28. Admin dashboard
+
+Don't rely on Supabase dashboard to operate the business.
+
+Build:
+
+```text
+/admin
+```
+
+with PaperSource's own interface.
+
+Navigation:
+
+```text
+Dashboard
+
+Commerce
+├── Orders
+├── Quotes
+├── Customers
+└── Organisations
+
+Catalogue
+├── Products
+├── Categories
+├── Brands
+├── Inventory
+└── Pricing
+
+Marketing
+├── Promotions
+├── Banners
+└── Featured Products
+
+Operations
+├── Deliveries
+├── Payments
+└── Enquiries
+
+Website
+├── Pages
+├── FAQs
+└── Navigation
+
+System
+├── Users
+├── Roles
+├── Logs
+└── Settings
+```
+
+---
+
+# 29. Admin roles
+
+Build RBAC early.
+
+```text
+SUPER_ADMIN
+
+ADMIN
+
+SALES
+
+WAREHOUSE
+
+CONTENT_MANAGER
+```
+
+For example:
+
+**Sales**
+
+can modify quotes but shouldn't change database configuration.
+
+**Warehouse**
+
+can update inventory/order fulfilment but shouldn't edit prices.
+
+---
+
+# 30. Supabase
+
+Supabase is an excellent fit here for:
+
+* PostgreSQL
+* Auth
+* storage
+* RLS
+* database functions
+* backups
+* realtime features
+
+But use it as PostgreSQL infrastructure — **not as a replacement for application architecture**.
+
+Every exposed table should be protected properly by Row Level Security. Supabase specifically warns against treating mere authenticated access as authorization and recommends proper ownership/authorization policies. ([Supabase][5])
+
+---
+
+# 31. Drizzle ORM
+
+I recommend:
+
+**Drizzle + Supabase Postgres.**
+
+Use:
+
+```text
+Supabase
+     ↓
+PostgreSQL
+     ↑
+Drizzle
+     ↑
+Next.js
+```
+
+Advantages for Cursor:
+
+* schema is visible in TypeScript
+* migrations are trackable
+* strongly typed queries
+* AI can reason about relationships
+* easier code reviews
+
+---
+
+# 32. Media
+
+I recommend **Cloudinary for public product media**.
+
+You will eventually have thousands of images.
+
+Cloudinary gives you:
+
+* resizing
+* cropping
+* optimisation
+* transformations
+* responsive delivery
+* modern formats
+* CDN
+
+Cloudinary also now provides official AI-agent/MCP tooling and skills that work with Cursor. ([Cloudinary][6])
+
+Use **Supabase Storage** instead for private documents:
+
+```text
+RFQs
+Purchase Orders
+Procurement spreadsheets
+Invoices
+Internal documents
+```
+
+---
+
+# 33. Emails
+
+Use:
+
+**Resend + React Email**
+
+Templates:
+
+```text
+Welcome
+Order Confirmation
+Payment Confirmation
+Quote Received
+Quote Ready
+Quote Revised
+Quote Accepted
+Quote Expiring
+Order Processing
+Out for Delivery
+Delivered
+Password Reset
+Admin New Order
+Admin New RFQ
+```
+
+Resend now has an official MCP server that supports Cursor and covers email, contacts, domains, webhooks and related resources. ([Resend][7])
+
+---
+
+# 34. SEO
+
+PaperSource should target searches such as:
+
+```text
+office stationery Ghana
+stationery suppliers Accra
+office supplies Accra
+A4 paper Ghana
+printer toner Ghana
+bulk stationery Ghana
+school stationery supplier Ghana
+office supplies Tema
+corporate stationery Ghana
+```
+
+Create indexable category routes:
+
+```text
+/shop/paper
+/shop/writing
+/shop/printer-supplies
+/shop/files-folders
+```
+
+And brand pages:
+
+```text
+/brands/hp
+/brands/canon
+/brands/double-a
+```
+
+---
+
+# 35. Product schema
+
+Every product page should generate:
+
+* canonical metadata
+* OpenGraph
+* Product JSON-LD
+* Offer information
+* breadcrumbs
+* availability
+* brand
+* SKU
+* images
+
+This matters for Google Shopping/search visibility later.
+
+---
+
+# 36. Analytics
+
+Install from the beginning:
+
+### Vercel Analytics
+
+and ideally:
+
+### PostHog
+
+Track:
+
+```text
+product_viewed
+search_performed
+add_to_cart
+add_to_quote
+quote_started
+quote_submitted
+checkout_started
+payment_started
+purchase_completed
+product_not_found
+```
+
+The interesting PaperSource metric isn't only conversion.
+
+Track:
+
+> **Product → Quote conversion**
+
+and:
+
+> **Quote → Accepted conversion**
+
+---
+
+# 37. Error monitoring
+
+Use:
+
+**Sentry**
+
+Track:
+
+* checkout failures
+* failed webhooks
+* database exceptions
+* image errors
+* server-action failures
+* email failures
+
+---
+
+# 38. Testing
+
+Use three levels.
+
+### Unit
+
+**Vitest**
+
+### Component
+
+**React Testing Library**
+
+### E2E
+
+**Playwright**
+
+Critical E2E flows:
+
+```text
+Search → Product → Cart
+
+Product → Quote Basket → RFQ
+
+Guest checkout
+
+User checkout
+
+Paystack initialization
+
+Webhook processing
+
+Admin creates product
+
+Admin responds to quote
+
+Quote acceptance
+
+Quote → order conversion
+
+Delivery calculation
+```
+
+---
+
+# 39. Cursor MCP stack
+
+This is where your vibecoding workflow gets powerful.
+
+I would install approximately **6–8 highly useful MCPs**, not 30.
+
+Too many MCP servers add noise.
+
+## Tier 1 — essential
+
+### 1. Supabase MCP
+
+**Must have.**
+
+Cursor can inspect:
+
+* database
+* tables
+* SQL
+* RLS
+* migrations
+* logs
+* schema
+
+Supabase provides an official remote MCP and allows you to scope access to a specific project. ([Supabase][5])
+
+For production, use restricted/read-only access whenever possible.
+
+---
+
+### 2. Playwright MCP
+
+**Must have.**
+
+Cursor can literally open PaperSource and test:
+
+> Go to `/shop`, search A4 paper, add 10 units to the quote basket, submit the RFQ and report any UX problems.
+
+Playwright officially supports Cursor through its MCP server. ([GitHub][8])
+
+This is hugely valuable for vibecoding.
+
+---
+
+### 3. shadcn MCP
+
+**Must have for UI development.**
+
+Run:
+
+```bash
+pnpm dlx shadcn@latest mcp init
+```
+
+shadcn recommends connecting its MCP server so AI assistants can access its registry, documentation and component search. ([Shadcn UI][9])
+
+---
+
+### 4. Vercel MCP
+
+**Must have once deployment starts.**
+
+Cursor can inspect:
+
+* deployments
+* logs
+* project information
+* documentation
+
+Vercel has an official remote MCP server for those workflows. ([Vercel][10])
+
+---
+
+### 5. GitHub MCP
+
+Use for:
+
+* issues
+* PRs
+* code review
+* repository information
+* actions
+
+GitHub provides an official MCP server and specific Cursor setup guidance. ([GitHub][11])
+
+---
+
+# 40. Tier 2 MCP
+
+### 6. Context7
+
+This is extremely valuable.
+
+Its job is essentially:
+
+> Give Cursor **current library documentation** rather than letting the model guess APIs from old training knowledge.
+
+Useful for:
+
+```text
+Next.js
+Supabase
+Drizzle
+Tailwind
+React
+Zod
+Paystack SDKs
+```
+
+Context7 currently provides dedicated integration for Cursor and other coding agents. ([Context7][12])
+
+---
+
+### 7. Resend MCP
+
+Once email work begins.
+
+Use Cursor to:
+
+* verify PaperSource's domain
+* inspect email logs
+* check bounced messages
+* configure webhooks
+* test transactional mail
+
+Official support is available. ([Resend][7])
+
+---
+
+### 8. Cloudinary MCP
+
+Once the product catalogue/media workflow begins.
+
+Useful for:
+
+* media management
+* image transformations
+* configuration
+* optimisation workflows
+
+Cloudinary has first-party MCP and Agent Skills support as of August 2026. ([Cloudinary][6])
+
+---
+
+# 41. My exact MCP priority
+
+Install them in this order:
+
+| Priority | MCP        | Need                 |
+| -------- | ---------- | -------------------- |
+| ⭐⭐⭐⭐⭐    | Supabase   | Essential            |
+| ⭐⭐⭐⭐⭐    | Playwright | Essential            |
+| ⭐⭐⭐⭐⭐    | shadcn     | Essential            |
+| ⭐⭐⭐⭐⭐    | Context7   | Essential            |
+| ⭐⭐⭐⭐     | GitHub     | Strongly recommended |
+| ⭐⭐⭐⭐     | Vercel     | Strongly recommended |
+| ⭐⭐⭐      | Resend     | Development phase    |
+| ⭐⭐⭐      | Cloudinary | Media phase          |
+
+And stop there initially.
+
+Cursor supports both Marketplace-installed MCPs and project configuration through `mcp.json`. ([Cursor][13])
+
+---
+
+# 42. Cursor Agent Skills
+
+This is different from MCP.
+
+MCP gives Cursor **tools/access**.
+
+Skills teach Cursor **how PaperSource should be built**.
+
+Cursor now supports repository-based skills under locations including:
+
+```text
+.cursor/skills/
+```
+
+with each skill containing a `SKILL.md`. ([Cursor][14])
+
+For PaperSource I would create:
+
+```text
+.cursor/
+└── skills/
+    ├── papersource-architecture/
+    ├── papersource-design-system/
+    ├── ecommerce-domain/
+    ├── b2b-quotations/
+    ├── supabase-security/
+    ├── paystack-payments/
+    ├── product-catalogue/
+    ├── admin-dashboard/
+    ├── playwright-testing/
+    ├── seo-accessibility/
+    ├── performance/
+    └── deployment/
+```
+
+---
+
+# 43. Skill 1 — `papersource-architecture`
+
+Teach Cursor:
+
+```text
+- Next.js App Router
+- Server Components by default
+- TypeScript strict mode
+- feature-based architecture
+- avoid unnecessary useEffect
+- business logic outside UI
+- Zod validation at trust boundaries
+- Drizzle for DB operations
+- Supabase RLS
+- integer currency
+- server-authoritative pricing
+- no duplicated pricing logic
+```
+
+---
+
+# 44. Skill 2 — `papersource-design-system`
+
+This is perhaps the most important for preventing a generic site.
+
+Tell Cursor:
+
+```text
+PaperSource should feel like a premium modern
+workplace-supply house.
+
+Do not produce generic SaaS interfaces.
+
+Do not use excessive rounded cards.
+
+Do not use gradients unless specifically requested.
+
+Use editorial grids.
+
+Use generous whitespace.
+
+Use strong typographic hierarchy.
+
+Use Paper Cream backgrounds.
+
+Use Ink Navy as primary.
+
+Use Paper Green sparingly.
+
+Use Golden Ochre for accents.
+
+Product imagery should dominate catalogue pages.
+
+Desktop and mobile must be equally considered.
+```
+
+This single skill will improve consistency dramatically.
+
+---
+
+# 45. Skill 3 — `ecommerce-domain`
+
+Teach Cursor rules for:
+
+```text
+products
+variants
+inventory
+prices
+cart
+checkout
+orders
+discounts
+payments
+refunds
+delivery
+```
+
+Especially:
+
+> Never calculate final prices exclusively in the client.
+
+---
+
+# 46. Skill 4 — `b2b-quotations`
+
+Teach Cursor the PaperSource-specific business model:
+
+```text
+Retail Cart != Quote Basket.
+
+A user may have both.
+
+Quotes have statuses.
+
+Quote items snapshot product information.
+
+Quote pricing is server controlled.
+
+Accepted quotes can generate orders.
+
+Quote revisions are retained.
+
+Corporate metadata belongs to organisations.
+```
+
+---
+
+# 47. Skill 5 — `supabase-security`
+
+Rules:
+
+```text
+RLS by default
+
+never expose service role
+
+never trust user metadata for authorization
+
+admin roles use app metadata/database permissions
+
+validate storage paths
+
+signed URLs for private files
+
+server-side authorization for admin routes
+```
+
+Cursor's own rules system can also persist coding requirements across the project through `.cursor/rules`. ([Cursor][15])
+
+---
+
+# 48. Skill 6 — `paystack-payments`
+
+Tell Cursor:
+
+```text
+Payments are server authoritative.
+
+Never trust query parameters.
+
+Verify Paystack events.
+
+Webhook handlers must be idempotent.
+
+Never create duplicate payments.
+
+Never fulfill unpaid orders.
+
+Persist external reference IDs.
+
+Log payment state transitions.
+```
+
+---
+
+# 49. Skill 7 — `playwright-testing`
+
+Every major feature must:
+
+```text
+implement
+↓
+test
+↓
+open in browser
+↓
+verify mobile
+↓
+verify desktop
+↓
+check console
+```
+
+Not:
+
+```text
+implement
+↓
+looks good in code
+↓
+DONE
+```
+
+That is how vibecoded projects become unreliable.
+
+---
+
+# 50. Cursor Project Rules
+
+In addition to Skills, create:
+
+```text
+.cursor/rules/
+```
+
+Suggested:
+
+```text
+00-project.mdc
+10-typescript.mdc
+20-nextjs.mdc
+30-database.mdc
+40-security.mdc
+50-design-system.mdc
+60-commerce.mdc
+70-testing.mdc
+80-accessibility.mdc
+90-performance.mdc
+```
+
+Cursor specifically supports project rules stored in `.cursor/rules` and keeps them version-controlled with your codebase. ([Cursor][15])
+
+---
+
+# 51. Tools I would install
+
+Development tools:
+
+```text
+Cursor
+Git
+GitHub
+Node.js
+pnpm
+Docker Desktop
+Supabase CLI
+Vercel CLI
+Playwright
+Postman / Bruno
+TablePlus / DBeaver
+```
+
+Design:
+
+```text
+Figma
+Coolors
+Google Fonts
+Lucide
+Cloudinary
+```
+
+Testing:
+
+```text
+Playwright
+Lighthouse
+axe
+Vitest
+React Testing Library
+```
+
+Management:
+
+```text
+GitHub Issues
+GitHub Projects
+```
+
+You do not need Jira for this startup project.
+
+---
+
+# 52. Recommended frontend libraries
+
+Keep dependencies controlled.
+
+### Core
+
+```text
+next
+react
+typescript
+tailwindcss
+```
+
+### UI
+
+```text
+shadcn/ui
+base-ui
+lucide-react
+motion
+```
+
+### Forms
+
+```text
+react-hook-form
+zod
+```
+
+Although many forms can use Server Actions directly.
+
+### Database
+
+```text
+drizzle-orm
+postgres
+```
+
+### Utilities
+
+```text
+date-fns
+clsx
+tailwind-merge
+```
+
+### Email
+
+```text
+resend
+@react-email/components
+```
+
+### Images
+
+```text
+cloudinary
+next-cloudinary
+```
+
+Don't install 80 libraries because Cursor suggests them.
+
+---
+
+# 53. Animation
+
+Use **Motion**, but sparingly.
+
+Good:
+
+* category hover
+* cart drawer
+* quote basket
+* navigation
+* image transitions
+* scroll reveals
+* number counters
+
+Bad:
+
+* every element flying onto the page
+* product cards bouncing
+* giant WebGL scene
+* endless parallax
+
+PaperSource is selling **trust**, not animation.
+
+---
+
+# 54. Fonts
+
+My first combination would be:
+
+### Headings
+
+**Manrope**
+
+### Body/interface
+
+**Inter**
+
+Alternative premium combination:
+
+**DM Sans + Inter**
+
+The PaperSource wordmark can eventually use custom lettering.
+
+---
+
+# 55. Mobile matters enormously
+
+Design mobile first for:
+
+```text
+WhatsApp visitors
+Instagram referrals
+Google search
+individual shoppers
+small business buyers
+```
+
+Mobile navigation:
+
+```text
+Home
+Shop
+Search
+Quote
+Cart
+```
+
+I would consider a persistent mobile bottom navigation for those major actions.
+
+---
+
+# 56. WhatsApp
+
+PaperSource should have WhatsApp.
+
+But do not turn the website into:
+
+**“Click WhatsApp to buy.”**
+
+Use WhatsApp for:
+
+* product questions
+* quote discussion
+* delivery questions
+* sales support
+
+The website should still handle orders professionally.
+
+---
+
+# 57. Important non-generic UX elements
+
+These are features I specifically want for PaperSource:
+
+### 1. Universal search
+
+Large search bar:
+
+> Search paper, toner, pens, brands or SKU...
+
+---
+
+### 2. Mega menu
+
+Not a tiny dropdown.
+
+```text
+SHOP
+
+Paper                  Printing
+Writing                Filing
+Desk                    Technology
+Schools                 Workplace
+```
+
+---
+
+### 3. Bulk price matrix
+
+Visible directly on products.
+
+---
+
+### 4. Dual purchasing
+
+```text
+Add to Cart
+Add to Quote
+```
+
+---
+
+### 5. Quote basket
+
+Persistent throughout browsing.
+
+---
+
+### 6. Product compatibility
+
+For ink/toner:
+
+> Compatible with HP DeskJet 2700 Series
+
+---
+
+### 7. Quick order
+
+SKU-driven procurement.
+
+---
+
+### 8. Upload procurement list
+
+Possibly one of your strongest features.
+
+---
+
+### 9. Office bundles
+
+Differentiated merchandising.
+
+---
+
+### 10. Reordering
+
+Powerful later for B2B.
+
+---
+
+# 58. Homepage route architecture
+
+```text
+/
+```
+
+Commerce:
+
+```text
+/shop
+/shop/[category]
+/product/[slug]
+/brands
+/brands/[slug]
+/search
+/cart
+/checkout
+/order/[id]
+```
+
+B2B:
+
+```text
+/business
+/bulk-orders
+/request-quote
+/quote
+/quote/[id]
+/corporate-accounts
+/schools
+```
+
+Company:
+
+```text
+/about
+/delivery
+/contact
+/faq
+/terms
+/privacy
+/returns
+```
+
+Account:
+
+```text
+/account
+/account/orders
+/account/quotes
+/account/addresses
+/account/organisation
+```
+
+Admin:
+
+```text
+/admin
+/admin/products
+/admin/inventory
+/admin/orders
+/admin/quotes
+/admin/customers
+/admin/organisations
+/admin/delivery
+/admin/content
+/admin/settings
+```
+
+---
+
+# 59. PaperSource architecture
+
+Conceptually:
+
+```text
+                 PAPERSOURCEGH.COM
+                         │
+                    Next.js 16
+                         │
+         ┌───────────────┼──────────────┐
+         │               │              │
+     Storefront       Corporate       Admin
+         │               │              │
+       Cart         Quote Engine     Operations
+         │               │              │
+         └─────────── Application ───────┘
+                         │
+                    Drizzle ORM
+                         │
+                  Supabase/Postgres
+                         │
+       ┌─────────────────┼───────────────────┐
+       │                 │                   │
+    Paystack          Resend             Cloudinary
+   Payments           Email                Media
+       │
+    MoMo/Card
+```
+
+---
+
+# 60. Development environments
+
+Use:
+
+```text
+Local
+↓
+Preview
+↓
+Production
+```
+
+Never build directly against the production database.
+
+Have:
+
+```text
+PaperSource Local
+
+PaperSource Staging
+
+PaperSource Production
+```
+
+---
+
+# 61. Git workflow
+
+Keep it simple:
+
+```text
+main
+develop
+feature/*
+fix/*
+```
+
+Or for a solo developer:
+
+```text
+main
+feature/*
+```
+
+Every feature should go through a Vercel Preview deployment.
+
+---
+
+# 62. Environment variables
+
+Example:
+
+```text
+NEXT_PUBLIC_SITE_URL
+
+NEXT_PUBLIC_SUPABASE_URL
+NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY
+
+SUPABASE_SERVICE_ROLE_KEY
+
+DATABASE_URL
+
+PAYSTACK_SECRET_KEY
+NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY
+
+RESEND_API_KEY
+
+CLOUDINARY_CLOUD_NAME
+CLOUDINARY_API_KEY
+CLOUDINARY_API_SECRET
+
+SENTRY_DSN
+```
+
+Never place secrets in:
+
+```text
+NEXT_PUBLIC_*
+```
+
+unless they are actually designed to be public.
+
+---
+
+# 63. What I would NOT use
+
+For this specific project, I would avoid:
+
+### WordPress/WooCommerce
+
+You can build PaperSource much better with your current Cursor/Next.js workflow.
+
+### Firebase
+
+Supabase/Postgres fits the relational commerce model better.
+
+### MongoDB
+
+Orders, variants, organisations, quotes and inventory are relational.
+
+### Redux
+
+You almost certainly don't need it.
+
+### Microservices
+
+Definitely not.
+
+### Kubernetes
+
+Absolutely unnecessary.
+
+### GraphQL
+
+Not currently necessary.
+
+### Elasticsearch
+
+Overkill at startup.
+
+### Shopify headless
+
+Excellent platform, but the custom quotation/procurement system will eventually fight Shopify assumptions unless you want to invest heavily in its ecosystem.
+
+---
+
+# 64. Phase plan
+
+I would build PaperSource in roughly this order.
+
+### Phase 0 — Product specification
+
+Before Cursor writes serious code:
+
+```text
+PRODUCT.md
+ARCHITECTURE.md
+DESIGN-SYSTEM.md
+DATABASE.md
+SECURITY.md
+ECOMMERCE.md
+RFQ.md
+ADMIN.md
+SEO.md
+TESTING.md
+```
+
+This is extremely important.
+
+---
+
+### Phase 1 — Foundation
+
+```text
+Next.js
+Tailwind
+shadcn
+Supabase
+Drizzle
+Auth
+Cursor rules
+Cursor skills
+CI
+Vercel
+```
+
+---
+
+### Phase 2 — Design System
+
+Build:
+
+```text
+Typography
+Colours
+Spacing
+Buttons
+Forms
+Cards
+Product components
+Navigation
+Drawers
+Modals
+Tables
+```
+
+Before building pages.
+
+---
+
+### Phase 3 — Catalogue
+
+```text
+Categories
+Brands
+Products
+Variants
+Media
+Inventory
+Search
+Filters
+```
+
+---
+
+### Phase 4 — Retail Commerce
+
+```text
+Cart
+Checkout
+Addresses
+Delivery
+Orders
+Paystack
+MoMo
+Emails
+```
+
+---
+
+### Phase 5 — B2B
+
+```text
+Quote Basket
+RFQ
+Document Upload
+Organisations
+Quote Admin
+Revisions
+Acceptance
+Quote → Order
+```
+
+---
+
+### Phase 6 — Admin
+
+```text
+Products
+Stock
+Orders
+Quotes
+Customers
+Organisations
+Site Settings
+Delivery
+Promotions
+```
+
+---
+
+### Phase 7 — Polish
+
+```text
+SEO
+Accessibility
+Performance
+Responsive
+Error monitoring
+Analytics
+Security
+```
+
+---
+
+### Phase 8 — Production
+
+```text
+Production Supabase
+Production Paystack
+Resend domain
+Cloudinary
+Vercel
+papersourcegh.com
+Backups
+Monitoring
+```
+
+---
+
+# 65. Final recommended PaperSource stack
+
+If I were starting the repository today, this would be my locked stack:
+
+| Area            | Choice                               |
+| --------------- | ------------------------------------ |
+| Framework       | **Next.js 16.x**                     |
+| Language        | **TypeScript**                       |
+| Styling         | **Tailwind CSS 4.3**                 |
+| UI              | **shadcn/ui + Base UI**              |
+| Icons           | **Lucide**                           |
+| Animation       | **Motion**                           |
+| Database        | **Supabase PostgreSQL**              |
+| ORM             | **Drizzle**                          |
+| Authentication  | **Supabase Auth**                    |
+| Validation      | **Zod**                              |
+| Forms           | **React Hook Form + Server Actions** |
+| Payments        | **Paystack**                         |
+| Media           | **Cloudinary**                       |
+| Documents       | **Supabase Storage**                 |
+| Email           | **Resend + React Email**             |
+| Hosting         | **Vercel**                           |
+| Monitoring      | **Sentry**                           |
+| Analytics       | **Vercel Analytics + PostHog**       |
+| Unit Tests      | **Vitest**                           |
+| UI Tests        | **React Testing Library**            |
+| E2E             | **Playwright**                       |
+| Package manager | **pnpm**                             |
+| Repository      | **GitHub**                           |
+| Coding agent    | **Cursor**                           |
+
+### Cursor MCPs
+
+```text
+1. Supabase
+2. Context7
+3. shadcn
+4. Playwright
+5. GitHub
+6. Vercel
+7. Resend
+8. Cloudinary
+```
+
+### PaperSource-specific Cursor skills
+
+```text
+1. papersource-architecture
+2. papersource-design-system
+3. ecommerce-domain
+4. product-catalogue
+5. b2b-quotations
+6. supabase-security
+7. paystack-payments
+8. admin-dashboard
+9. playwright-testing
+10. seo-accessibility
+11. performance
+12. deployment
+```
+
+## Most important principle
+
+Don't ask Cursor:
+
+> “Build me a modern stationery ecommerce website.”
+
+That is precisely how you end up with a generic AI-generated website.
+
+Instead, we're going to give Cursor **PaperSource's product specification, architecture, design system, database model, business rules, security rules, quotation workflow, coding standards and testing requirements**. Cursor's current Agent Skills and project Rules are designed exactly for this type of persistent repository-level guidance. ([Cursor][14])
+
+And I would lock the initial delivery rule as:
+
+> **PaperSource provides direct delivery across Accra and Tema. Orders outside these areas are supported through nationwide delivery arranged on request.**
+
+That should become a configurable rule in the database rather than simply text hard-coded into the homepage.
+
+**The best next step is to create the PaperSource master product document for Cursor** — `PRODUCT.md` — covering every public page, user role, retail checkout, quotation/RFQ system, product catalogue, admin dashboard, database entities, design language, delivery logic and MVP acceptance criteria. That document can then become the source of truth Cursor follows throughout the entire build.
+
+[1]: https://nextjs.org/blog/next-16-2?utm_source=chatgpt.com "Next.js 16.2 | Next.js"
+[2]: https://nextjs.org/blog/next-16?utm_source=chatgpt.com "Next.js 16 | Next.js"
+[3]: https://ui.shadcn.com/docs?utm_source=chatgpt.com "Introduction - shadcn/ui"
+[4]: https://paystack.com/docs/payments/payment-channels/?utm_source=chatgpt.com "Payment Channels | Paystack Developer Documentation"
+[5]: https://supabase.com/docs/guides/ai-tools/mcp?utm_source=chatgpt.com "Supabase MCP Server | Supabase Docs"
+[6]: https://cloudinary.com/documentation/cloudinary_llm_mcp?utm_source=chatgpt.com "Cloudinary AI Agent Tools and MCP Servers | Documentation"
+[7]: https://resend.com/changelog/mcp?utm_source=chatgpt.com "Official Resend MCP Server · Resend"
+[8]: https://github.com/microsoft/playwright/blob/main/docs/src/getting-started-mcp.md?utm_source=chatgpt.com "playwright/docs/src/getting-started-mcp.md at main · microsoft/playwright · GitHub"
+[9]: https://ui.shadcn.com/docs/new?utm_source=chatgpt.com "Your project is ready! - shadcn/ui"
+[10]: https://vercel.com/docs/agent-resources/vercel-mcp?utm_source=chatgpt.com "Use Vercel's MCP server"
+[11]: https://github.com/github/github-mcp-server/blob/main/docs/installation-guides/install-cursor.md?utm_source=chatgpt.com "github-mcp-server/docs/installation-guides/install-cursor.md at main · github/github-mcp-server · GitHub"
+[12]: https://context7.com/?utm_source=chatgpt.com "Context7 - Up-to-date documentation for LLMs and AI code editors"
+[13]: https://prod.cursor.com/docs/mcp?utm_source=chatgpt.com "Model Context Protocol (MCP) | Cursor Docs"
+[14]: https://prod.cursor.com/docs/skills?utm_source=chatgpt.com "Agent Skills | Cursor Docs"
+[15]: https://prod.cursor.com/docs/rules?utm_source=chatgpt.com "Rules | Cursor Docs"
