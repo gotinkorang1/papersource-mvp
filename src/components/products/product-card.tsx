@@ -35,11 +35,11 @@ export function ProductCard({
   return (
     <PaperCard className={cn("flex flex-col overflow-hidden", className)}>
       <div
-        className="relative aspect-[4/3] border-b border-border bg-cream"
+        className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream"
         role="img"
         aria-label={product.imageAlt}
       >
-        <div className="absolute inset-6 border border-border bg-card shadow-[2px_2px_0_0_rgba(16,42,67,0.06)]" />
+        <div className="absolute inset-6 border border-border bg-card shadow-[2px_2px_0_0_rgba(16,42,67,0.06)] transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.025]" />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>

@@ -4,6 +4,12 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { shopMegaColumns } from "@/features/catalogue/local-data";
 
+const shopTools = [
+  ["Brands", "/brands"],
+  ["Bulk orders", "/bulk-orders"],
+  ["Quick order", "/quick-order"],
+] as const;
+
 export function ShopMegaMenu() {
   const [open, setOpen] = useState(false);
   const menuId = useId();
@@ -35,7 +41,7 @@ export function ShopMegaMenu() {
           className="absolute top-full left-0 z-30 mt-3 w-[min(36rem,calc(100vw-2rem))] border border-border bg-card p-6 shadow-md"
         >
           <p className="text-xs tracking-[0.16em] text-slate uppercase">Shop</p>
-          <div className="mt-4 grid grid-cols-2 gap-8">
+          <div className="mt-4 grid gap-6 sm:grid-cols-3">
             {shopMegaColumns.map((column) => (
               <div key={column.title}>
                 <p className="text-sm font-medium text-ink">{column.title}</p>
@@ -55,6 +61,18 @@ export function ShopMegaMenu() {
                 </ul>
               </div>
             ))}
+            <div>
+              <p className="text-sm font-medium text-ink">Ways to shop</p>
+              <ul className="mt-2 space-y-1">
+                {shopTools.map(([label, href]) => (
+                  <li key={href}>
+                    <Link href={href} role="menuitem" className="text-sm text-slate transition-colors hover:text-ink" onClick={() => setOpen(false)}>
+                      {label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
       ) : null}

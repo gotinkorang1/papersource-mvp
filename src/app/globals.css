@@ -142,6 +142,16 @@
 
   body {
     @apply bg-background text-foreground;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: color-mix(in srgb, var(--ps-ochre) 35%, transparent);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--ps-ink);
+    outline-offset: 3px;
   }
 
   h1,
