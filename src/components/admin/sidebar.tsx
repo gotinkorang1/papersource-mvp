@@ -10,14 +10,14 @@ import { ADMIN_NAV } from "./nav";
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   return (
-    <aside className="flex w-64 shrink-0 flex-col bg-ink text-white">
+    <aside className="flex max-h-72 w-full shrink-0 flex-col bg-ink text-white md:max-h-none md:w-64">
       <div className="border-b border-white/10 px-5 py-6">
         <p className="text-xs tracking-[0.16em] text-white/60 uppercase">
           PaperSource
         </p>
         <p className="mt-1 font-heading text-lg">Operations</p>
       </div>
-      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-5" aria-label="Admin">
+      <nav className="flex-1 space-y-6 overflow-y-auto px-3 py-4 md:py-5" aria-label="Admin">
         {ADMIN_NAV.map((group) => {
           if ("href" in group) {
             if (!canAccessAdmin(actor.role, group.area, "read")) {
