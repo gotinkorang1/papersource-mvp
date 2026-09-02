@@ -15,7 +15,7 @@
   --color-ochre: #e6a329;
   --color-cream: #f8f6f1;
   --color-graphite: #20262e;
-  --color-slate: #667085;
+  --color-slate: #52606d;
   --color-success: #15803d;
   --color-error: #b42318;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -63,8 +63,8 @@
   --ps-cream: #f8f6f1;
   --ps-surface: #ffffff;
   --ps-graphite: #20262e;
-  --ps-slate: #667085;
-  --ps-border: #e4e7ec;
+  --ps-slate: #52606d;
+  --ps-border: #d8dee6;
   --ps-success: #15803d;
   --ps-error: #b42318;
 
@@ -79,7 +79,7 @@
   --secondary: #1f6b57;
   --secondary-foreground: #ffffff;
   --muted: #f1eee7;
-  --muted-foreground: #667085;
+  --muted-foreground: #52606d;
   --accent: #e6a329;
   --accent-foreground: #102a43;
   --destructive: #b42318;
@@ -143,6 +143,8 @@
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
+    font-variation-settings: "slnt" 0;
+    line-height: 1.55;
   }
 
   ::selection {
@@ -159,6 +161,22 @@
   h3,
   h4 {
     font-family: var(--font-heading);
+    letter-spacing: -0.02em;
+    line-height: 1.15;
+    text-wrap: balance;
+  }
+
+  h1 {
+    font-weight: 700;
+  }
+
+  h2 {
+    font-weight: 650;
+  }
+
+  h3,
+  h4 {
+    font-weight: 600;
   }
 
   @media (prefers-reduced-motion: reduce) {
