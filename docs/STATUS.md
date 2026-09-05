@@ -21,7 +21,7 @@ The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Re
 ## Remaining MVP work, in order
 
 1. Launch verification: confirm hosted Supabase/Vercel environment variables and verify the hosted flows, including customer account and admin journeys.
-2. Review RLS policies and Supabase security advisor findings, not only RLS enablement.
+2. Apply and verify `drizzle/0011_rls_child_record_ownership.sql`, then review hosted RLS policies and Supabase security advisor findings, not only RLS enablement.
 3. Configure and verify the production Sentry DSN; confirm no runtime errors and no sensitive data capture.
 4. Run the complete Playwright suite against production-safe test data and perform mobile/desktop smoke checks.
 5. Final legal/content review of Terms, Privacy and Returns pages.
