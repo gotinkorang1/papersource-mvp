@@ -31,9 +31,11 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en-GH"
+      suppressHydrationWarning
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
+        <script dangerouslySetInnerHTML={{ __html: `(() => { const saved = localStorage.getItem("papersource-theme"); const dark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches); document.documentElement.classList.toggle("dark", dark); })()` }} />
         {children}
         <Analytics />
       </body>

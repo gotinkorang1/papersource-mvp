@@ -4,6 +4,8 @@ import { paperButton } from "@/components/commerce/paper-button";
 import { CorporateBanner } from "@/components/marketing/corporate-banner";
 import { CategoryTile } from "@/components/products/category-tile";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { Testimonials } from "@/components/marketing/testimonials";
+import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
 import {
   listDivisionCategories,
   listFeaturedProductCards,
@@ -43,6 +45,7 @@ export default async function HomePage() {
         <p className="mt-6 text-sm text-slate">
           Nationwide supply available on request.
         </p>
+        <LiveDeliveryStatus />
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(16,42,67,0.12)]">
             <Image src="/images/top-view-colorful-pencils-wih-copy-space.jpg" alt="Colourful pencils arranged on a desk" fill priority sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
@@ -102,6 +105,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <Testimonials />
 
       <CorporateBanner
         title="Procurement without the paperwork headache."

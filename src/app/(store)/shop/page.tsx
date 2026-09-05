@@ -3,6 +3,7 @@ import { ProductGridList } from "@/components/products/product-grid-list";
 import { CatalogueToolbar } from "@/components/products/catalogue-toolbar";
 import { listBrands, listDivisionCategories, listProductCards } from "@/features/catalogue";
 import type { ProductCardModel } from "@/types/catalogue";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Shop workplace supplies in Ghana",
@@ -32,6 +33,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
+      <Breadcrumbs items={[{ label: "Shop" }]} />
       <h1 className="text-3xl text-ink">Shop</h1>
       <p className="mt-3 max-w-2xl text-slate">
         One catalogue for retail checkout and bulk quotation. Add to Cart and

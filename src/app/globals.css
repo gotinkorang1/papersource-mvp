@@ -10,12 +10,12 @@
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
   --font-heading: var(--font-manrope), ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, "Cascadia Code", "SF Mono", Menlo, monospace;
-  --color-ink: #102a43;
-  --color-paper-green: #1f6b57;
-  --color-ochre: #e6a329;
-  --color-cream: #f8f6f1;
-  --color-graphite: #20262e;
-  --color-slate: #52606d;
+  --color-ink: var(--ps-ink);
+  --color-paper-green: var(--ps-paper-green);
+  --color-ochre: var(--ps-ochre);
+  --color-cream: var(--ps-cream);
+  --color-graphite: var(--ps-graphite);
+  --color-slate: var(--ps-slate);
   --color-success: #15803d;
   --color-error: #b42318;
   --color-sidebar-ring: var(--sidebar-ring);
@@ -103,6 +103,12 @@
 }
 
 .dark {
+  --ps-ink: #f8f6f1;
+  --ps-paper-green: #74c7a7;
+  --ps-ochre: #f3bd4e;
+  --ps-cream: #132f48;
+  --ps-graphite: #f8f6f1;
+  --ps-slate: #b0b7c3;
   --background: #102a43;
   --foreground: #f8f6f1;
   --card: #1a3a56;
@@ -138,6 +144,7 @@
 
   html {
     @apply font-sans;
+    scroll-behavior: smooth;
   }
 
   body {

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { HeaderSearch } from "@/components/navigation/header-search";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { listProductCards } from "@/features/catalogue";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -18,6 +19,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
+      <Breadcrumbs items={[{ label: "Search" }]} />
       <h1 className="text-3xl text-ink">Search</h1>
       <p className="mt-3 text-slate">
         Search paper, toner, pens, brands or SKU.

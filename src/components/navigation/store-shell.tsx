@@ -7,6 +7,7 @@ import { StoreHeader } from "@/components/navigation/store-header";
 import { loadGuestDualPath } from "@/features/preview/actions";
 import { DualPathPreviewProvider } from "@/features/preview/dual-path-preview";
 import { isDatabaseConfigured } from "@/lib/db/client";
+import { AnnouncementBanner } from "@/components/navigation/announcement-banner";
 
 export async function StoreShell({ children }: { children: ReactNode }) {
   const persist = isDatabaseConfigured();
@@ -25,6 +26,7 @@ export async function StoreShell({ children }: { children: ReactNode }) {
       initialCartLines={initial.cartLines}
       initialQuoteLines={initial.quoteLines}
     >
+      <AnnouncementBanner />
       <StoreHeader />
       <div className="flex flex-1 flex-col pb-16 md:pb-0">{children}</div>
       <StoreFooter />
