@@ -32,7 +32,7 @@ export default async function ShopCategoryPage({ params }: PageProps) {
     notFound();
   }
 
-  const products = await listProductCards({ categorySlug: slug });
+  const products = await listProductCards({ categorySlug: category.slug });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">

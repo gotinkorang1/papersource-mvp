@@ -27,6 +27,19 @@ import type {
 
 export { getShopMegaColumns, listProductCardsFromSeed };
 
+// Compatibility aliases keep indexable and previously shared category URLs
+// working even when the imported catalogue uses broader divisions.
+const CATEGORY_SLUG_ALIASES: Record<string, string> = {
+  paper: "stationery",
+  writing: "stationery",
+  "school-supplies": "stationery",
+  "office-supplies": "stationery",
+  "printer-supplies": "others",
+  toner: "others",
+  ink: "others",
+  "desk-essentials": "others",
+};
+
 type ProductFilter = {
   categorySlug?: string;
   brandSlug?: string;
@@ -44,7 +57,10 @@ export async function getCategoryBySlug(
   slug: string,
 ): Promise<CatalogueCategoryView | null> {
   if (isDatabaseConfigured()) {
-    return getCategoryBySlugFromDb(slug);
+    const category = await getCategoryBySlugFromDb(slug);
+    if (category) return category;
+    const alias = CATEGORY_SLUG_ALIASES[slug];
+    return alias ? getCategoryBySlugFromDb(alias) : null;
   }
   return getCategoryBySlugFromSeed(slug);
 }
