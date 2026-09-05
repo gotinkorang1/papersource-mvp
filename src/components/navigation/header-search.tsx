@@ -25,7 +25,7 @@ export function HeaderSearch({
   return (
     <form
       onSubmit={onSubmit}
-      className={cn("hidden min-w-0 flex-1 md:block", className)}
+      className={cn("hidden min-w-0 flex-1 lg:block", className)}
     >
       <label htmlFor={inputId} className="sr-only">
         Search products

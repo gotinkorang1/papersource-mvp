@@ -12,7 +12,7 @@ export function StoreHeader() {
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3 sm:gap-5 sm:px-6 lg:px-8">
         <Wordmark />
         <nav
-          className="hidden items-center gap-4 text-sm text-graphite lg:flex"
+          className="hidden items-center gap-3 text-sm text-graphite md:flex lg:gap-4"
           aria-label="Primary"
         >
           <ShopMegaMenu />
@@ -21,7 +21,7 @@ export function StoreHeader() {
             Request a Quote
           </Link>
         </nav>
-        <HeaderSearch className="lg:max-w-md" />
+        <HeaderSearch className="hidden lg:block lg:max-w-md" />
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
           <AccountLink />
           <DualPathCounts />
