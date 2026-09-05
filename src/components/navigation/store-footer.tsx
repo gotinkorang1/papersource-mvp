@@ -7,6 +7,7 @@ export function StoreFooter() {
         <div>
           <p className="font-heading text-base font-semibold text-ink">PaperSource</p>
           <p className="mt-2">Accra &amp; Tema delivery. Nationwide supply on request.</p>
+          <p className="mt-3 flex gap-3"><Link href="/about" className="text-ink underline underline-offset-2">About us</Link><Link href="/contact" className="text-ink underline underline-offset-2">Contact</Link></p>
         </div>
         <div>
           <p className="font-medium text-ink">Visit us</p>
