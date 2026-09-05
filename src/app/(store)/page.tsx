@@ -56,7 +56,7 @@ export default async function HomePage() {
           <h2 className="text-sm tracking-[0.16em] text-slate uppercase">
             Shop the workplace
           </h2>
-          <div className="mt-8 grid grid-cols-2 gap-px bg-border md:grid-cols-4">
+          <div className="mt-8 grid grid-cols-2 gap-3 md:grid-cols-4">
             {categories.map((category) => (
               <CategoryTile
                 key={category.slug}
@@ -67,6 +67,23 @@ export default async function HomePage() {
                 imageAlt={`${category.name} supplies`}
               />
             ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16 lg:px-8">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_16px_40px_rgba(16,42,67,0.1)]">
+          <Image src="/images/aerial-view-african-descent-woman-working-computer-white-table-office.jpg" alt="Organised workplace desk with stationery and computer" fill sizes="(max-width: 1024px) 100vw, 42vw" className="object-cover" />
+          <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
+        </div>
+        <div>
+          <p className="text-sm tracking-[0.16em] text-slate uppercase">Made for the workday</p>
+          <h2 className="mt-3 max-w-xl text-3xl text-ink md:text-4xl">A simpler way to keep your workplace moving.</h2>
+          <p className="mt-4 max-w-xl text-slate">Choose a published-price item for quick checkout, or build a quote list when your team needs volume, options or a tailored delivery plan.</p>
+          <div className="mt-8 grid gap-5 sm:grid-cols-3 lg:grid-cols-1">
+            <div><p className="font-medium text-ink">One catalogue</p><p className="mt-1 text-sm text-slate">Paper, stationery, toner and everyday essentials in one place.</p></div>
+            <div><p className="font-medium text-ink">Two clear paths</p><p className="mt-1 text-sm text-slate">Cart for retail. Quote for procurement. Always kept separate.</p></div>
+            <div><p className="font-medium text-ink">Human support</p><p className="mt-1 text-sm text-slate">Our team helps with bulk requirements and nationwide delivery.</p></div>
           </div>
         </div>
       </section>
