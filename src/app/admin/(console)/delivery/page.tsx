@@ -37,7 +37,21 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
       {zones.map((zone) => <section key={zone.id} className="rounded-md border border-border bg-white p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-3"><h2 className="font-heading text-xl text-ink">{zone.name}</h2><p className="text-sm text-slate">{zone.active ? "Active" : "Inactive"} · {zone.feeMode === "on_request" ? "Fee on request" : formatGhs(zone.basePrice)}</p></div>
         <p className="mt-1 text-sm text-slate">{zone.region} · <span className="font-mono">{zone.code}</span> · {zone.estimatedMinDays}–{zone.estimatedMaxDays} days</p>
-        {canWrite ? <form action="/admin/delivery/mutate" method="post" className="mt-4 grid gap-3 sm:grid-cols-2"><input type="hidden" name="intent" value="update-zone" /><input type="hidden" name="zoneId" value={zone.id} /><ZoneFields zone={zone} /><div className="flex flex-wrap gap-3 sm:col-span-2"><button type="submit" className={paperButton()}>Save zone</button><button type="submit" name="intent" value="delete-zone" formAction="/admin/delivery/mutate" className={paperButton({ variant: "ghost" })}>Delete zone</button></div></form> : null}
+        {canWrite ? <>
+          <form action="/admin/delivery/mutate" method="post" className="mt-4 grid gap-3 sm:grid-cols-2">
+            <input type="hidden" name="intent" value="update-zone" />
+            <input type="hidden" name="zoneId" value={zone.id} />
+            <ZoneFields zone={zone} />
+            <div className="flex flex-wrap gap-3 sm:col-span-2">
+              <button type="submit" className={paperButton()}>Save zone</button>
+            </div>
+          </form>
+          <form action="/admin/delivery/mutate" method="post" className="mt-2">
+            <input type="hidden" name="intent" value="delete-zone" />
+            <input type="hidden" name="zoneId" value={zone.id} />
+            <button type="submit" className={paperButton({ variant: "ghost" })}>Delete zone</button>
+          </form>
+        </> : null}
       </section>)}
     </div>
     {canWrite ? <form action="/admin/delivery/mutate" method="post" className="mt-8 grid max-w-3xl gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-2"><h2 className="font-heading text-xl text-ink sm:col-span-2">New zone</h2><input type="hidden" name="intent" value="create-zone" /><ZoneFields /><button type="submit" className={`${paperButton({ variant: "secondary" })} sm:col-span-2 sm:justify-self-start`}>Create zone</button></form> : null}

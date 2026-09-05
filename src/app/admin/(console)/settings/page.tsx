@@ -23,9 +23,11 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <input type="hidden" name="intent" value="save-settings" />
         <AdminField label="VAT rate (basis points)">
           <input name="vatRateBps" inputMode="numeric" required defaultValue={settings.vatRateBps} className={adminFieldClass} disabled={!canWrite} />
+          <span className="mt-1 block text-xs text-slate">Example: 1500 means 15%. Prices remain VAT-inclusive.</span>
         </AdminField>
         <AdminField label="Default quote expiry (days)">
           <input name="quoteExpiryDays" inputMode="numeric" required defaultValue={settings.quoteExpiryDays} className={adminFieldClass} disabled={!canWrite} />
+          <span className="mt-1 block text-xs text-slate">Customers receive a reminder 48 hours before expiry.</span>
         </AdminField>
         <AdminField label="WhatsApp business number">
           <input name="whatsappBusinessNumber" placeholder="+233201234567" defaultValue={settings.whatsappBusinessNumber ?? ""} className={adminFieldClass} disabled={!canWrite} />
