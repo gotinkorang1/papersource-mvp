@@ -43,15 +43,14 @@ export function ProductCard({
 
   return (
     <PaperCard className={cn("flex flex-col overflow-hidden", className)}>
-      <div
-        className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream"
-      >
+      <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
         <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
+        <div className="absolute left-3 top-3"><StockBadge level={product.stock} /></div>
       </div>
-      <div className="flex flex-1 flex-col gap-3 p-4">
+      <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="text-base font-medium text-ink">
+          <h3 className="text-base font-semibold leading-snug text-ink">
             <Link
               href={`/product/${product.slug}`}
               className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
@@ -64,9 +63,10 @@ export function ProductCard({
         <PriceDisplay
           pesewas={product.unitPricePesewas}
           unitLabel={product.unitLabel}
+          className="text-xl font-semibold"
         />
-        <BulkPriceTable tiers={product.tiers} unitLabel={product.unitLabel} />
-        <StockBadge level={product.stock} />
+        {product.tiers.length > 0 ? <div className="rounded-lg border border-border/70 bg-cream/60 px-3 py-2"><BulkPriceTable tiers={product.tiers} unitLabel={product.unitLabel} /></div> : null}
+        <p className="text-xs text-slate">{product.deliveryBadge.label}</p>
         <QuantitySelector
           value={quantity}
           onChange={setQuantity}
