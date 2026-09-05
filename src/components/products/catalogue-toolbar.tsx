@@ -23,8 +23,8 @@ export function CatalogueToolbar({
   zone?: string;
 }) {
   return (
-    <section className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5" aria-label="Catalogue filters">
-      <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(15rem,1fr)_12rem_12rem_12rem_12rem_12rem_auto] lg:items-end">
+    <section className="rounded-2xl border border-border/80 bg-card p-4 shadow-[0_8px_28px_rgba(16,42,67,0.06)] sm:p-5" aria-label="Catalogue filters">
+      <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-[minmax(15rem,1.4fr)_repeat(5,minmax(8rem,1fr))_auto] xl:items-end">
         <label className="grid gap-1.5 text-xs font-medium tracking-[0.08em] text-slate uppercase">
           Find in catalogue
           <input
@@ -69,7 +69,7 @@ export function CatalogueToolbar({
             <option value="price-desc">Price: high to low</option>
           </select>
         </label>
-        <button type="submit" className="h-11 rounded-lg bg-ink px-5 text-sm font-semibold text-white transition hover:-translate-y-0.5 hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+        <button type="submit" className="h-11 rounded-lg bg-ink px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(16,42,67,0.14)] transition hover:-translate-y-0.5 hover:bg-ink/90 hover:shadow-[0_8px_18px_rgba(16,42,67,0.2)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
           Apply
         </button>
       </form>

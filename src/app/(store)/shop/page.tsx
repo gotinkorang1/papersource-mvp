@@ -40,10 +40,10 @@ export default async function ShopPage({ searchParams }: PageProps) {
   const visibleProducts = filteredProducts.slice((Math.min(page, totalPages) - 1) * pageSize, Math.min(page, totalPages) * pageSize);
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-16">
+    <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
       <Breadcrumbs items={[{ label: "Shop" }]} />
-      <h1 className="text-3xl text-ink">Shop</h1>
-      <p className="mt-3 max-w-2xl text-slate">
+      <h1 className="mt-5 text-4xl text-ink md:text-5xl">Shop workplace essentials</h1>
+      <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate md:text-lg">
         One catalogue for retail checkout and bulk quotation. Add to Cart and
         Add to Quote are independent.
       </p>
