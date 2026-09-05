@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { ProductGridList } from "@/components/products/product-grid-list";
-import { listProductCards } from "@/features/catalogue";
+import { CatalogueToolbar } from "@/components/products/catalogue-toolbar";
+import { listBrands, listDivisionCategories, listProductCards } from "@/features/catalogue";
+import type { ProductCardModel } from "@/types/catalogue";
 
 export const metadata: Metadata = {
   title: "Shop workplace supplies in Ghana",
@@ -8,8 +10,25 @@ export const metadata: Metadata = {
     "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
 };
 
-export default async function ShopPage() {
-  const products = await listProductCards();
+type PageProps = { searchParams: Promise<{ q?: string; category?: string; brand?: string; sort?: string }> };
+
+export default async function ShopPage({ searchParams }: PageProps) {
+  const params = await searchParams;
+  const query = params.q?.trim() ?? "";
+  const category = params.category ?? "";
+  const brand = params.brand ?? "";
+  const sort = ["featured", "name-asc", "price-asc", "price-desc"].includes(params.sort ?? "") ? params.sort! : "featured";
+  const [products, categories, brands] = await Promise.all([
+    listProductCards({ query, categorySlug: category, brandSlug: brand }),
+    listDivisionCategories(),
+    listBrands(),
+  ]);
+  const sortedProducts = [...products].sort((a: ProductCardModel, b: ProductCardModel) => {
+    if (sort === "name-asc") return a.name.localeCompare(b.name);
+    if (sort === "price-asc") return a.unitPricePesewas - b.unitPricePesewas;
+    if (sort === "price-desc") return b.unitPricePesewas - a.unitPricePesewas;
+    return 0;
+  });
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
@@ -18,8 +37,11 @@ export default async function ShopPage() {
         One catalogue for retail checkout and bulk quotation. Add to Cart and
         Add to Quote are independent.
       </p>
-      <div className="mt-10">
-        <ProductGridList products={products} />
+      <div className="mt-8">
+        <CatalogueToolbar count={sortedProducts.length} query={query} category={category} brand={brand} sort={sort} categories={categories} brands={brands} />
+      </div>
+      <div className="mt-8">
+        <ProductGridList products={sortedProducts} />
       </div>
     </main>
   );

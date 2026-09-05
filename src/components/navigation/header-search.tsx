@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { cn } from "@/lib/utils";
 
 export function HeaderSearch({
@@ -15,17 +15,40 @@ export function HeaderSearch({
 }) {
   const router = useRouter();
   const [query, setQuery] = useState(defaultQuery);
+  const [suggestions, setSuggestions] = useState<Array<{ slug: string; name: string; sku: string; specLine: string }>>([]);
+  const [active, setActive] = useState(-1);
+  const [open, setOpen] = useState(false);
+  const requestRef = useRef<AbortController | null>(null);
+
+  useEffect(() => {
+    const value = query.trim();
+    if (value.length < 2) return;
+    const timer = window.setTimeout(async () => {
+      requestRef.current?.abort();
+      const controller = new AbortController();
+      requestRef.current = controller;
+      try {
+        const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(value)}`, { signal: controller.signal });
+        if (!response.ok) return;
+        const data = await response.json() as { suggestions?: typeof suggestions };
+        setSuggestions(data.suggestions ?? []); setActive(-1); setOpen(true);
+      } catch { /* Ignore aborted or transient suggestion requests. */ }
+    }, 180);
+    return () => window.clearTimeout(timer);
+  }, [query]);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
     const next = query.trim();
+    if (active >= 0 && suggestions[active]) { router.push(`/product/${suggestions[active].slug}`); setOpen(false); return; }
     router.push(next ? `/search?q=${encodeURIComponent(next)}` : "/search");
   }
 
   return (
     <form
       onSubmit={onSubmit}
-      className={cn("hidden min-w-0 flex-1 lg:block", className)}
+      className={cn("relative hidden min-w-0 flex-1 lg:block", className)}
+      role="search"
     >
       <label htmlFor={inputId} className="sr-only">
         Search products
@@ -34,10 +57,33 @@ export function HeaderSearch({
         id={inputId}
         type="search"
         value={query}
-        onChange={(event) => setQuery(event.target.value)}
+        onChange={(event) => { const next = event.target.value; setQuery(next); setOpen(next.trim().length >= 2); if (next.trim().length < 2) setSuggestions([]); }}
+        onFocus={() => { if (suggestions.length) setOpen(true); }}
+        onKeyDown={(event) => {
+          if (!open || !suggestions.length) return;
+          if (event.key === "ArrowDown") { event.preventDefault(); setActive((index) => (index + 1) % suggestions.length); }
+          if (event.key === "ArrowUp") { event.preventDefault(); setActive((index) => (index - 1 + suggestions.length) % suggestions.length); }
+          if (event.key === "Escape") { setOpen(false); setActive(-1); }
+        }}
+        role="combobox"
+        aria-autocomplete="list"
+        aria-expanded={open && suggestions.length > 0}
+        aria-controls={`${inputId}-suggestions`}
+        autoComplete="off"
         placeholder="Search paper, toner, pens, brands or SKU..."
         className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink transition-[background-color,border-color,box-shadow] duration-200 placeholder:text-slate focus-visible:border-ink focus-visible:bg-card focus-visible:shadow-[0_0_0_3px_rgba(16,42,67,0.08)] focus-visible:outline-none"
       />
+      {open && query.trim().length >= 2 && suggestions.length > 0 ? (
+        <div id={`${inputId}-suggestions`} role="listbox" className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-border bg-card p-1 shadow-xl">
+          {suggestions.map((suggestion, index) => (
+            <button key={suggestion.slug} type="button" role="option" aria-selected={index === active} onMouseDown={(event) => event.preventDefault()} onClick={() => { router.push(`/product/${suggestion.slug}`); setOpen(false); }} className={cn("flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left transition", index === active ? "bg-cream" : "hover:bg-cream")}>
+              <span className="min-w-0"><span className="block truncate text-sm font-medium text-ink">{suggestion.name}</span><span className="block truncate text-xs text-slate">{suggestion.specLine}</span></span>
+              <span className="shrink-0 text-[11px] text-slate">{suggestion.sku}</span>
+            </button>
+          ))}
+          <button type="submit" className="mt-1 w-full border-t border-border/70 px-3 py-2 text-left text-xs font-semibold text-ink hover:bg-cream">View all results for “{query.trim()}”</button>
+        </div>
+      ) : null}
     </form>
   );
 }
