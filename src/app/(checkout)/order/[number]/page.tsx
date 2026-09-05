@@ -11,6 +11,7 @@ import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { documentOwner } from "@/lib/customer/commerce-identity";
+import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
 
 export const metadata: Metadata = {
   title: "Order received",
@@ -91,6 +92,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               ? "Confirming payment… Mobile Money can complete after you leave Paystack. This page does not mark the order paid from the URL."
               : "Your order is recorded. Payment has not been taken yet — Paystack card and MoMo will charge this pending total."}
       </p>
+      <OrderStatusTimeline status={order.status} />
       <dl className="mt-8 space-y-2 text-sm">
         <div className="flex justify-between">
           <dt className="text-slate">Status</dt>

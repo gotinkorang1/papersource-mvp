@@ -79,6 +79,7 @@ export const quotes = pgTable(
       .default("calculated"),
     grandTotal: integer("grand_total").notNull().default(0),
     expiresAt: timestamp("expires_at", { withTimezone: true }),
+    expiryReminderSentAt: timestamp("expiry_reminder_sent_at", { withTimezone: true }),
     parentQuoteId: uuid("parent_quote_id").references((): AnyPgColumn => quotes.id),
     ...timestamps,
   },

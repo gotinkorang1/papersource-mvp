@@ -38,9 +38,9 @@ export async function removeCartLineAction(formData: FormData) {
 }
 
 export async function placeRetailOrderAction(
-  _prev: { error: string } | null,
+  _prev: { error: string; fieldErrors?: Record<string, string[]> } | null,
   formData: FormData,
-): Promise<{ error: string } | null> {
+): Promise<{ error: string; fieldErrors?: Record<string, string[]> } | null> {
   const identity = await readCommerceIdentity();
   if (!identity.profileId && !identity.sessionId) {
     return { error: "Your session expired. Add items to the cart and try again." };
@@ -59,7 +59,7 @@ export async function placeRetailOrderAction(
       return { error: error.message };
     }
     if (error instanceof z.ZodError) {
-      return { error: error.issues[0]?.message ?? "Check the delivery details." };
+      return { error: "Check the highlighted delivery details.", fieldErrors: error.flatten().fieldErrors as Record<string, string[]> };
     }
     throw error;
   }

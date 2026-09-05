@@ -10,6 +10,7 @@ import { QuoteAcceptedEmail } from "@/lib/email/templates/quote-accepted";
 import { QuoteReadyEmail } from "@/lib/email/templates/quote-ready";
 import { QuoteReceivedEmail } from "@/lib/email/templates/quote-received";
 import { QuoteRevisedEmail } from "@/lib/email/templates/quote-revised";
+import { QuoteExpiringEmail } from "@/lib/email/templates/quote-expiring";
 
 function greetingName(value: string | null | undefined) {
   const trimmed = value?.trim();
@@ -98,6 +99,11 @@ export async function notifyQuoteRevised(input: {
       quoteUrl: absoluteUrl(`/quote/${input.token}`),
     }),
   });
+}
+
+export async function notifyQuoteExpiring(input: { quoteId: string; number: string; token: string | null; email: string | null; contactName: string | null }) {
+  if (!input.token) return;
+  await sendTransactional({ event: "quote-expiring", entityId: input.quoteId, to: input.email, subject: `${input.number} expires soon`, react: createElement(QuoteExpiringEmail, { contactName: greetingName(input.contactName), quoteNumber: input.number, quoteUrl: absoluteUrl(`/quote/${input.token}`) }) });
 }
 
 export async function notifyQuoteAccepted(input: {

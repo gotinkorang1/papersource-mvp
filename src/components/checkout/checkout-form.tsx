@@ -13,10 +13,12 @@ export function CheckoutForm({
   canPlaceOrder = true,
   defaultEmail,
   defaultAddress,
+  savedAddresses,
 }: {
   canPlaceOrder?: boolean;
   defaultEmail?: string;
   defaultAddress?: Partial<GhanaAddressValues>;
+  savedAddresses?: Array<{ id: string; label: string; values: Partial<GhanaAddressValues> }>;
 }) {
   const [state, action, pending] = useActionState(placeRetailOrderAction, null);
 
@@ -30,6 +32,8 @@ export function CheckoutForm({
       <GhanaAddressForm
         action={canPlaceOrder ? action : undefined}
         defaultValues={defaultAddress}
+        savedAddresses={savedAddresses}
+        fieldErrors={state?.fieldErrors}
         submitLabel={
           canPlaceOrder ? (pending ? "Placing order…" : "Place order") : undefined
         }

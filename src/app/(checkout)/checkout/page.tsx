@@ -84,6 +84,7 @@ export default async function CheckoutPage() {
                 ? { fullName: customer.fullName, phone: customer.phone ?? "" }
                 : undefined
           }
+          savedAddresses={saved.map((address) => ({ id: address.id, label: `${address.fullName} · ${address.cityTown}`, values: { fullName: address.fullName, phone: address.phone, region: address.region, cityTown: address.cityTown, areaSuburb: address.areaSuburb ?? "", streetLandmark: address.streetLandmark ?? "", ghanapostGps: address.ghanapostGps ?? "", deliveryInstructions: address.deliveryInstructions ?? "", deliveryArea: address.deliveryArea === "tema" || address.deliveryArea === "other" ? address.deliveryArea : "accra" } }))}
         />
       </div>
     </main>

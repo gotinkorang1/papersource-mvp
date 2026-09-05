@@ -65,6 +65,7 @@ export function GhanaAddressForm({
   submitLabel,
   submitDisabled,
   fieldErrors,
+  savedAddresses,
 }: {
   id?: string;
   defaultValues?: Partial<GhanaAddressValues>;
@@ -73,6 +74,7 @@ export function GhanaAddressForm({
   submitLabel?: string;
   submitDisabled?: boolean;
   fieldErrors?: Record<string, string[] | undefined>;
+  savedAddresses?: Array<{ id: string; label: string; values: Partial<GhanaAddressValues> }>;
 }) {
   const [values, setValues] = useState<GhanaAddressValues>({
     ...empty,
@@ -83,6 +85,11 @@ export function GhanaAddressForm({
     () => true,
     () => false,
   );
+
+  function applySavedAddress(id: string) {
+    const address = savedAddresses?.find((entry) => entry.id === id);
+    if (address) setValues((current) => ({ ...current, ...address.values }));
+  }
 
   function patch<K extends keyof GhanaAddressValues>(
     key: K,
@@ -108,6 +115,7 @@ export function GhanaAddressForm({
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
       <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
+      {savedAddresses?.length ? <Field id={`${id}-saved`} label="Saved address"><select id={`${id}-saved`} defaultValue="" onChange={(event) => applySavedAddress(event.target.value)} className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm text-ink"><option value="">Enter a new address</option>{savedAddresses.map((address) => <option key={address.id} value={address.id}>{address.label}</option>)}</select></Field> : null}
       <Field id={`${id}-name`} label="Full Name" required>
         <Input
           id={`${id}-name`}
