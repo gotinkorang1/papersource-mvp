@@ -138,6 +138,14 @@
   --sidebar-accent-foreground: #f8f6f1;
   --sidebar-border: #2a4a66;
   --sidebar-ring: #e6a329;
+  color-scheme: dark;
+}
+
+/* Legacy utility classes are kept for light mode compatibility. In dark mode,
+   panels and form surfaces must follow the themed card token instead of
+   rendering as stark white blocks. */
+.dark .bg-white {
+  background-color: var(--card) !important;
 }
 
 @layer base {
