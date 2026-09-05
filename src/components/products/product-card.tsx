@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { PaperCard } from "@/components/commerce/paper-card";
@@ -13,6 +14,14 @@ import { ProductQuickView } from "@/components/products/product-quick-view";
 import { useOptionalDualPathPreview } from "@/features/preview/dual-path-preview";
 import { cn } from "@/lib/utils";
 import type { ProductCardModel } from "@/types/catalogue";
+
+function catalogueImage(product: ProductCardModel) {
+  if (product.imageSrc) return product.imageSrc;
+  const name = `${product.name} ${product.specLine}`.toLowerCase();
+  if (name.includes("book") || name.includes("novel")) return "/images/stack-books-with-library-scene.jpg";
+  if (name.includes("toner") || name.includes("printer") || name.includes("ink")) return "/images/home-printer-based-toner.jpg";
+  return "/images/set-school-stationery.jpg";
+}
 
 export function ProductCard({
   product,
@@ -36,10 +45,9 @@ export function ProductCard({
     <PaperCard className={cn("flex flex-col overflow-hidden", className)}>
       <div
         className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream"
-        role="img"
-        aria-label={product.imageAlt}
       >
-        <div className="absolute inset-6 border border-border bg-card shadow-[2px_2px_0_0_rgba(16,42,67,0.06)] transition-transform duration-300 ease-out motion-safe:group-hover:scale-[1.025]" />
+        <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
+        <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
       </div>
       <div className="flex flex-1 flex-col gap-3 p-4">
         <div>

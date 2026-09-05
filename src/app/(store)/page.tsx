@@ -15,7 +15,7 @@ export default async function HomePage() {
 
   return (
     <main>
-      <section className="relative isolate mx-auto max-w-6xl overflow-hidden px-4 py-16 md:py-24">
+      <section className="paper-grain relative isolate mx-auto max-w-6xl overflow-hidden rounded-b-2xl px-4 py-16 md:py-24">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-ochre/10 blur-3xl" />
         <div className="grid items-center gap-10 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16">
           <div>

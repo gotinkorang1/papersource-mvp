@@ -151,6 +151,10 @@
     background: color-mix(in srgb, var(--ps-ochre) 35%, transparent);
   }
 
+  .paper-grain {
+    background-image: radial-gradient(circle at 20% 10%, rgb(230 163 41 / 0.08), transparent 32%), radial-gradient(circle at 90% 80%, rgb(31 107 87 / 0.06), transparent 28%);
+  }
+
   :focus-visible {
     outline: 2px solid var(--ps-ink);
     outline-offset: 3px;
