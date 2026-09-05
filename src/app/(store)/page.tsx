@@ -48,7 +48,7 @@ export default async function HomePage() {
         <LiveDeliveryStatus />
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(16,42,67,0.12)]">
-            <Image src="/images/top-view-colorful-pencils-wih-copy-space.jpg" alt="Colourful pencils arranged on a desk" fill priority sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
+            <Image src="/images/top-view-colorful-pencils-wih-copy-space.jpg" alt="Colourful pencils arranged on a desk" fill priority fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
           </div>
         </div>

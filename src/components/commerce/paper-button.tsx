@@ -7,12 +7,12 @@ export const paperButton = cva(
   {
     variants: {
       variant: {
-        primary: "bg-ink text-white hover:bg-ink/90",
+        primary: "bg-primary text-primary-foreground hover:bg-primary/90",
         secondary:
           "border border-ink bg-transparent text-ink hover:bg-ink hover:text-white",
         quote:
           "border border-paper-green text-paper-green hover:bg-paper-green hover:text-white",
-        accent: "bg-ochre text-ink hover:bg-ochre/90",
+        accent: "bg-ochre text-accent-foreground hover:bg-ochre/90",
         ghost: "text-ink hover:bg-cream",
       },
     },
