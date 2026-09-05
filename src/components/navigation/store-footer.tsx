@@ -8,6 +8,7 @@ export function StoreFooter() {
           <p className="font-heading text-base font-semibold text-ink">PaperSource</p>
           <p className="mt-2">Accra &amp; Tema delivery. Nationwide supply on request.</p>
           <p className="mt-3 flex gap-3"><Link href="/about" className="text-ink underline underline-offset-2">About us</Link><Link href="/contact" className="text-ink underline underline-offset-2">Contact</Link></p>
+          <p className="mt-2 flex flex-wrap gap-x-3 gap-y-1"><Link href="/delivery" className="text-ink underline underline-offset-2">Delivery</Link><Link href="/faq" className="text-ink underline underline-offset-2">FAQ</Link><Link href="/returns" className="text-ink underline underline-offset-2">Returns</Link><Link href="/privacy" className="text-ink underline underline-offset-2">Privacy</Link><Link href="/terms" className="text-ink underline underline-offset-2">Terms</Link></p>
         </div>
         <div>
           <p className="font-medium text-ink">Visit us</p>
