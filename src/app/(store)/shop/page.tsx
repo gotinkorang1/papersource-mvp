@@ -4,6 +4,7 @@ import { CatalogueToolbar } from "@/components/products/catalogue-toolbar";
 import { listBrands, listDivisionCategories, listProductCards } from "@/features/catalogue";
 import type { ProductCardModel } from "@/types/catalogue";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { CataloguePagination } from "@/components/products/catalogue-pagination";
 
 export const metadata: Metadata = {
   title: "Shop workplace supplies in Ghana",
@@ -11,7 +12,7 @@ export const metadata: Metadata = {
     "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
 };
 
-type PageProps = { searchParams: Promise<{ q?: string; category?: string; brand?: string; sort?: string }> };
+type PageProps = { searchParams: Promise<{ q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string }> };
 
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -19,6 +20,9 @@ export default async function ShopPage({ searchParams }: PageProps) {
   const category = params.category ?? "";
   const brand = params.brand ?? "";
   const sort = ["featured", "name-asc", "price-asc", "price-desc"].includes(params.sort ?? "") ? params.sort! : "featured";
+  const availability = ["in_stock", "low", "out"].includes(params.availability ?? "") ? params.availability! : "";
+  const zone = ["accra", "tema", "nationwide"].includes(params.zone ?? "") ? params.zone! : "";
+  const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const [products, categories, brands] = await Promise.all([
     listProductCards({ query, categorySlug: category, brandSlug: brand }),
     listDivisionCategories(),
@@ -30,6 +34,10 @@ export default async function ShopPage({ searchParams }: PageProps) {
     if (sort === "price-desc") return b.unitPricePesewas - a.unitPricePesewas;
     return 0;
   });
+  const filteredProducts = sortedProducts.filter((product) => (!availability || product.stock === availability) && (!zone || (zone === "nationwide" ? product.deliveryBadge.feeMode === "on_request" : product.deliveryBadge.label.toLowerCase().includes(zone))));
+  const pageSize = 24;
+  const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
+  const visibleProducts = filteredProducts.slice((Math.min(page, totalPages) - 1) * pageSize, Math.min(page, totalPages) * pageSize);
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
@@ -40,10 +48,11 @@ export default async function ShopPage({ searchParams }: PageProps) {
         Add to Quote are independent.
       </p>
       <div className="mt-8">
-        <CatalogueToolbar count={sortedProducts.length} query={query} category={category} brand={brand} sort={sort} categories={categories} brands={brands} />
+        <CatalogueToolbar count={filteredProducts.length} query={query} category={category} brand={brand} sort={sort} availability={availability} zone={zone} categories={categories} brands={brands} />
       </div>
       <div className="mt-8">
-        <ProductGridList products={sortedProducts} />
+        <ProductGridList products={visibleProducts} />
+        <CataloguePagination page={Math.min(page, totalPages)} totalPages={totalPages} query={{ q: query, category, brand, sort, availability, zone }} />
       </div>
     </main>
   );

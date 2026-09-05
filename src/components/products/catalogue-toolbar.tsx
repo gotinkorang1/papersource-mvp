@@ -7,6 +7,8 @@ export function CatalogueToolbar({
   category = "",
   brand = "",
   sort = "featured",
+  availability = "",
+  zone = "",
   categories,
   brands,
 }: {
@@ -17,10 +19,12 @@ export function CatalogueToolbar({
   sort?: string;
   categories: CatalogueCategoryView[];
   brands: CatalogueBrandView[];
+  availability?: string;
+  zone?: string;
 }) {
   return (
     <section className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-5" aria-label="Catalogue filters">
-      <form method="get" className="grid gap-3 lg:grid-cols-[minmax(15rem,1fr)_12rem_12rem_12rem_auto] lg:items-end">
+      <form method="get" className="grid gap-3 sm:grid-cols-2 lg:grid-cols-[minmax(15rem,1fr)_12rem_12rem_12rem_12rem_12rem_auto] lg:items-end">
         <label className="grid gap-1.5 text-xs font-medium tracking-[0.08em] text-slate uppercase">
           Find in catalogue
           <input
@@ -29,6 +33,18 @@ export function CatalogueToolbar({
             placeholder="Paper, pens, SKU..."
             className="h-11 rounded-lg border border-border bg-cream px-3 text-sm font-normal normal-case tracking-normal text-ink outline-none transition focus:border-ink focus:bg-card focus:ring-2 focus:ring-ink/10"
           />
+        </label>
+        <label className="grid gap-1.5 text-xs font-medium tracking-[0.08em] text-slate uppercase">
+          Availability
+          <select name="availability" defaultValue={availability} className="h-11 rounded-lg border border-border bg-cream px-3 text-sm font-normal normal-case tracking-normal text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10">
+            <option value="">Any stock level</option><option value="in_stock">In stock</option><option value="low">Low stock</option><option value="out">Out of stock</option>
+          </select>
+        </label>
+        <label className="grid gap-1.5 text-xs font-medium tracking-[0.08em] text-slate uppercase">
+          Delivery zone
+          <select name="zone" defaultValue={zone} className="h-11 rounded-lg border border-border bg-cream px-3 text-sm font-normal normal-case tracking-normal text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10">
+            <option value="">All zones</option><option value="accra">Accra</option><option value="tema">Tema</option><option value="nationwide">Nationwide on request</option>
+          </select>
         </label>
         <label className="grid gap-1.5 text-xs font-medium tracking-[0.08em] text-slate uppercase">
           Category
@@ -59,7 +75,7 @@ export function CatalogueToolbar({
       </form>
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-4 text-sm text-slate">
         <p><span className="font-semibold text-ink">{count}</span> {count === 1 ? "product" : "products"}</p>
-        {query || category || brand || sort !== "featured" ? <Link href="/shop" className="font-medium text-ink underline-offset-4 hover:underline">Clear filters</Link> : null}
+        {query || category || brand || sort !== "featured" || availability || zone ? <Link href="/shop" className="font-medium text-ink underline-offset-4 hover:underline">Clear filters</Link> : null}
       </div>
     </section>
   );
