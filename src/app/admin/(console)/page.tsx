@@ -44,7 +44,7 @@ export default async function AdminDashboardPage() {
           <Link
             key={row.status}
             href="/admin/quotes"
-            className="rounded-md border border-border bg-white p-4 hover:border-ink"
+            className="group rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           >
             <p className="text-xs tracking-[0.14em] text-slate uppercase">
               {row.status.replaceAll("_", " ")}
@@ -56,7 +56,7 @@ export default async function AdminDashboardPage() {
         ))}
         <Link
           href="/admin/orders"
-          className="rounded-md border border-border bg-white p-4 hover:border-ink"
+          className="group rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
             Awaiting Paystack
@@ -67,7 +67,7 @@ export default async function AdminDashboardPage() {
         </Link>
         <Link
           href="/admin/orders"
-          className="rounded-md border border-border bg-white p-4 hover:border-ink"
+          className="group rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
             Nationwide arranging
