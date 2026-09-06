@@ -39,12 +39,12 @@ export default async function AdminDashboardPage() {
         Quote queue, unpaid orders, and catalogue desks. Do not operate this
         business from Supabase Studio.
       </p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {openQuotes.map((row) => (
           <Link
             key={row.status}
             href="/admin/quotes"
-            className="group rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+            className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           >
             <p className="text-xs tracking-[0.14em] text-slate uppercase">
               {row.status.replaceAll("_", " ")}
@@ -56,7 +56,7 @@ export default async function AdminDashboardPage() {
         ))}
         <Link
           href="/admin/orders"
-          className="group rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
             Awaiting Paystack
@@ -67,7 +67,7 @@ export default async function AdminDashboardPage() {
         </Link>
         <Link
           href="/admin/orders"
-          className="group rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
             Nationwide arranging
