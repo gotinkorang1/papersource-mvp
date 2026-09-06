@@ -5,6 +5,9 @@ const databaseUrl = process.env.DATABASE_URL;
 if (!databaseUrl) {
   throw new Error("DATABASE_URL is required. Set it only for this command; it is never logged.");
 }
+if (!databaseUrl.startsWith("postgres://") && !databaseUrl.startsWith("postgresql://")) {
+  throw new Error("DATABASE_URL must be a PostgreSQL connection string from Supabase Connect (postgresql://...), not the project HTTPS URL.");
+}
 
 const sql = postgres(databaseUrl, { prepare: false, max: 1 });
 try {
