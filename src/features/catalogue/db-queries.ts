@@ -7,6 +7,7 @@ import {
   stockLevelFromQuantity,
 } from "@/features/inventory/stock";
 import { getDb } from "@/lib/db/client";
+import { cloudinaryImageUrl } from "@/lib/cloudinary";
 import {
   brands,
   categories,
@@ -15,6 +16,7 @@ import {
   priceTiers,
   productAliases,
   productAttributes,
+  productImages,
   products,
   productVariants,
 } from "@/lib/db/schema";
@@ -57,7 +59,7 @@ function descendantIds(
 
 async function loadCatalogueContext() {
   const db = getDb();
-  const [categoryRows, brandRows, zoneRows] = await Promise.all([
+  const [categoryRows, brandRows, zoneRows, imageRows] = await Promise.all([
     db
       .select()
       .from(categories)
@@ -67,12 +69,14 @@ async function loadCatalogueContext() {
       .from(brands)
       .where(and(eq(brands.active, true), isNull(brands.deletedAt))),
     db.select().from(deliveryZones).where(eq(deliveryZones.active, true)),
+    db.select().from(productImages).orderBy(productImages.position),
   ]);
 
   return {
     categoryRows,
     brandRows,
     deliveryBadge: storefrontDeliveryBadge(zoneRows),
+    imageRows,
   };
 }
 
@@ -234,6 +238,7 @@ function toCardFromRow(
   const onHand = row.stock?.onHand ?? 0;
   const reserved = row.stock?.reserved ?? 0;
   const lowStockThreshold = row.stock?.lowStockThreshold ?? 5;
+  const image = ctx.imageRows.find((entry) => entry.productId === row.product.id);
 
   return {
     id: row.product.id,
@@ -244,7 +249,8 @@ function toCardFromRow(
     specLine: buildSpecLine(attributes) || row.product.name,
     unitLabel: row.variant.unitLabel,
     unitPricePesewas: list.unitPricePesewas ?? row.variant.baseUnitPrice,
-    imageAlt: row.product.name,
+    imageAlt: image?.alt ?? row.product.name,
+    imageSrc: image ? cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? undefined : undefined,
     stock: stockLevelFromQuantity(
       sellableQuantity(onHand, reserved),
       lowStockThreshold,

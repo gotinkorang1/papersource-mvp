@@ -1,13 +1,16 @@
 "use client";
 
 import { useState } from "react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 
 export function ProductGallery({
   alt,
+  src,
   frames = 3,
 }: {
   alt: string;
+  src?: string;
   frames?: number;
 }) {
   const [active, setActive] = useState(0);
@@ -15,11 +18,11 @@ export function ProductGallery({
   return (
     <div>
       <div
-        className="aspect-square border border-border bg-cream"
+        className="relative aspect-square overflow-hidden border border-border bg-cream"
         role="img"
         aria-label={alt}
       >
-        <div className="m-8 h-[calc(100%-4rem)] border border-border bg-card" />
+        {src ? <Image src={src} alt={alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain p-6" /> : <div className="m-8 h-[calc(100%-4rem)] border border-border bg-card" />}
       </div>
       <ul className="mt-3 flex gap-2">
         {Array.from({ length: frames }, (_, index) => (

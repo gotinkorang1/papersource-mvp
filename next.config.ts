@@ -1,6 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
+  },
   allowedDevOrigins: ["127.0.0.1", "localhost"],
   serverExternalPackages: ["react-email", "resend"],
   // Auth actions contain passwords; confirmation URLs contain one-time tokens.
