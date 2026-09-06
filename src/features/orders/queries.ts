@@ -1,6 +1,6 @@
 import { desc, eq } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { orderItems, orders } from "@/lib/db/schema";
+import { orderItems, orders, payments } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffRole } from "@/lib/staff/types";
 
@@ -28,9 +28,9 @@ export async function getAdminOrder(role: StaffRole, orderId: string) {
   if (!order) {
     return null;
   }
-  const lines = await db
-    .select()
-    .from(orderItems)
-    .where(eq(orderItems.orderId, order.id));
-  return { ...order, lines };
+  const [lines, paymentRows] = await Promise.all([
+    db.select().from(orderItems).where(eq(orderItems.orderId, order.id)),
+    db.select({ id: payments.id, provider: payments.provider, status: payments.status, amount: payments.amount, reference: payments.paystackReference, createdAt: payments.createdAt }).from(payments).where(eq(payments.orderId, order.id)).orderBy(desc(payments.createdAt)),
+  ]);
+  return { ...order, lines, payments: paymentRows };
 }
