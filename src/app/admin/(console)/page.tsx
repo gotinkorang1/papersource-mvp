@@ -32,14 +32,14 @@ export default async function AdminDashboardPage() {
     .where(eq(orders.status, "awaiting_terms"));
 
   return (
-    <main>
+    <main className="min-w-0">
       <p className="text-sm tracking-[0.16em] text-slate uppercase">Operations</p>
-      <h1 className="mt-2 font-heading text-3xl text-ink">Dashboard</h1>
-      <p className="mt-3 max-w-2xl text-slate">
+      <h1 className="mt-2 font-heading text-3xl leading-tight text-ink sm:text-4xl">Dashboard</h1>
+      <p className="mt-3 max-w-2xl text-sm leading-6 text-slate sm:text-base">
         Quote queue, unpaid orders, and catalogue desks. Do not operate this
         business from Supabase Studio.
       </p>
-      <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
         {openQuotes.map((row) => (
           <Link
             key={row.status}

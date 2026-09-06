@@ -28,7 +28,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
               <Link
                 key={group.href}
                 href={group.href}
-                className={`block rounded-md px-3 py-2 text-sm ${
+                className={`flex min-h-11 items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${
                   current ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                 }`}
                 aria-current={current ? "page" : undefined}
@@ -58,7 +58,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`block rounded-md px-3 py-1.5 text-sm ${
+                        className={`flex min-h-11 items-center rounded-md px-3 py-2 text-sm md:min-h-0 md:py-1.5 ${
                           current
                             ? "bg-sidebar-accent text-sidebar-accent-foreground"
                             : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
