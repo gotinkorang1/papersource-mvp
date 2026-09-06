@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { recordAdminAudit } from "@/features/admin/audit";
 import { CatalogueAdminError, saveCategory } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -20,8 +21,9 @@ export async function POST(request: Request) {
 
   try {
     const formData = await request.formData();
+    const intent = String(formData.get("intent"));
     const parentRaw = String(formData.get("parentId") ?? "").trim();
-    await saveCategory({
+    const saved = await saveCategory({
       role: actor.role,
       categoryId:
         String(formData.get("intent")) === "save-category"
@@ -34,6 +36,7 @@ export async function POST(request: Request) {
       position: Number(formData.get("position") ?? 0),
       active: String(formData.get("active") ?? "true") === "true",
     });
+    await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "save-category" ? "category_updated" : "category_created", resourceType: "category", resourceId: saved.id });
   } catch (error) {
     const message =
       error instanceof CatalogueAdminError || error instanceof Error

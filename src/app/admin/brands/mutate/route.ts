@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { recordAdminAudit } from "@/features/admin/audit";
 import { CatalogueAdminError, saveBrand } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -20,7 +21,8 @@ export async function POST(request: Request) {
 
   try {
     const formData = await request.formData();
-    await saveBrand({
+    const intent = String(formData.get("intent"));
+    const saved = await saveBrand({
       role: actor.role,
       brandId:
         String(formData.get("intent")) === "save-brand"
@@ -30,6 +32,7 @@ export async function POST(request: Request) {
       slug: String(formData.get("slug") ?? ""),
       active: String(formData.get("active") ?? "true") === "true",
     });
+    await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "save-brand" ? "brand_updated" : "brand_created", resourceType: "brand", resourceId: saved.id });
   } catch (error) {
     const message =
       error instanceof CatalogueAdminError || error instanceof Error
