@@ -1,6 +1,5 @@
 import { AccountLink } from "@/components/navigation/account-link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
-import { HeaderSearch } from "@/components/navigation/header-search";
 import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
 import { BusinessMenu } from "@/components/navigation/business-menu";
 import { Wordmark } from "@/components/marketing/wordmark";
@@ -18,7 +17,6 @@ export function StoreHeader() {
           <ShopMegaMenu />
           <BusinessMenu />
         </nav>
-        <HeaderSearch className="hidden lg:block lg:max-w-md" />
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
           <AccountLink />
           <ThemeToggle />
