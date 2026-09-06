@@ -5,6 +5,7 @@ import { getDb } from "@/lib/db/client";
 import { adminRoles, profiles } from "@/lib/db/schema";
 import { readStaffActor } from "@/lib/staff/require";
 import { canAccessAdmin } from "@/lib/staff/rbac";
+import { recordAdminAudit } from "@/features/admin/audit";
 
 const roleSchema = z.enum(["super_admin", "admin", "sales", "warehouse", "content_manager"]);
 
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
     const [profile] = await db.select({ id: profiles.id }).from(profiles).where(eq(profiles.id, profileId)).limit(1);
     if (!profile) throw new Error("Staff profile not found.");
     await db.insert(adminRoles).values({ profileId, role }).onConflictDoUpdate({ target: adminRoles.profileId, set: { role } });
+    await recordAdminAudit({ actorProfileId: actor.profileId, action: "role_updated", resourceType: "profile", resourceId: profileId, metadata: { role } });
     next.searchParams.set("success", "1");
     return NextResponse.redirect(next, 303);
   } catch (error) {
