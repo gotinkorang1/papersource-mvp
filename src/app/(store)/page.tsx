@@ -6,6 +6,7 @@ import { CategoryTile } from "@/components/products/category-tile";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { Testimonials } from "@/components/marketing/testimonials";
 import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
+import { WorkdayCarousel } from "@/components/marketing/workday-carousel";
 import {
   listDivisionCategories,
   listFeaturedProductCards,
@@ -63,6 +64,8 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      <WorkdayCarousel />
 
       <section className="border-y border-border/80 bg-card py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-4">
