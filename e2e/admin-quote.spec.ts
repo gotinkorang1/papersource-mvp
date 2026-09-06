@@ -6,12 +6,13 @@ test("sales prices a guest RFQ and the customer accepts it into a quote-sourced 
 }) => {
   test.setTimeout(240_000);
   await page.goto("/");
-  await expect(page.getByTestId("add-to-quote-double-a-premium-a4")).toBeEnabled();
+  const quoteButton = page.locator('[data-testid^="add-to-quote-"]').first();
+  await expect(quoteButton).toBeEnabled();
   const persisted = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },
   );
-  await Promise.all([persisted, page.getByTestId("add-to-quote-double-a-premium-a4").click()]);
+  await Promise.all([persisted, quoteButton.click()]);
   await expect(page.getByRole("button", { name: "Quote list, 1 item" }).first()).toBeVisible({
     timeout: 45_000,
   });
@@ -19,7 +20,8 @@ test("sales prices a guest RFQ and the customer accepts it into a quote-sourced 
   await page.getByLabel("Full Name").fill("Kojo Boateng");
   await page.getByLabel(/Phone Number/).fill("0202000000");
   await page.getByRole("textbox", { name: "Region *" }).fill("Greater Accra");
-  await page.getByLabel("City / Town").fill("Tema");
+  await page.getByLabel("City / Town").fill("Accra");
+  await page.getByRole("radio", { name: "Accra" }).check();
   await page.getByLabel("Organisation name").fill("Tema Ridge School");
   await page.getByLabel("Organisation type").selectOption("school");
   await page.getByLabel("Contact person").fill("Kojo Boateng");
