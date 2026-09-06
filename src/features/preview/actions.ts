@@ -2,7 +2,8 @@
 
 import { z } from "zod";
 import { addVariantToCart, listCartLines } from "@/features/cart/repository";
-import { addVariantToQuote, listQuoteLines } from "@/features/quotations/repository";
+import { addVariantToQuote, clearQuote, listQuoteLines } from "@/features/quotations/repository";
+import { clearCart } from "@/features/cart/repository";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import type { CartLinePreview, QuoteLinePreview } from "@/types/catalogue";
@@ -63,4 +64,16 @@ export async function addToQuoteAction(input: {
   );
   const cartLines = await listCartLines(sessionId);
   return { cartLines, quoteLines };
+}
+
+export async function clearCartAction(): Promise<DualPathState> {
+  const sessionId = await readCommerceIdentity(true);
+  await clearCart(sessionId);
+  return { cartLines: [], quoteLines: await listQuoteLines(sessionId) };
+}
+
+export async function clearQuoteAction(): Promise<DualPathState> {
+  const sessionId = await readCommerceIdentity(true);
+  await clearQuote(sessionId);
+  return { cartLines: await listCartLines(sessionId), quoteLines: [] };
 }

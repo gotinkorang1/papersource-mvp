@@ -7,7 +7,7 @@ import { formatGhs } from "@/lib/money";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 
 export function QuoteBasket() {
-  const { quoteLines, quoteOpen, setQuoteOpen } = useDualPathPreview();
+  const { quoteLines, quoteOpen, setQuoteOpen, clearQuote } = useDualPathPreview();
   const previewTotal = quoteLines.reduce(
     (sum, line) => sum + (line.unitPricePesewas ?? 0) * line.quantity,
     0,
@@ -22,11 +22,12 @@ export function QuoteBasket() {
       footer={
         <>
           {quoteLines.length > 0 && previewTotal > 0 ? (
-            <p className="text-xs text-slate">
-              Preview {formatGhs(previewTotal)} — final quote prices are set by
-              PaperSource.
-            </p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-xs text-slate">Preview {formatGhs(previewTotal)} — final quote prices are set by PaperSource.</p>
+              <button type="button" onClick={clearQuote} className="shrink-0 text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear quote</button>
+            </div>
           ) : null}
+          {quoteLines.length > 0 && previewTotal === 0 ? <button type="button" onClick={clearQuote} className="self-end text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear quote</button> : null}
           <div className="flex flex-col gap-2">
             <Link
               href="/quote"

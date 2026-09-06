@@ -7,7 +7,7 @@ import { formatGhs } from "@/lib/money";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 
 export function CartDrawer() {
-  const { cartLines, cartOpen, setCartOpen } = useDualPathPreview();
+  const { cartLines, cartOpen, setCartOpen, clearCart } = useDualPathPreview();
   const subtotal = cartLines.reduce(
     (sum, line) => sum + line.unitPricePesewas * line.quantity,
     0,
@@ -22,9 +22,10 @@ export function CartDrawer() {
       footer={
         <>
           {cartLines.length > 0 ? (
-            <p className="text-sm text-ink">
-              Subtotal (preview) {formatGhs(subtotal)}
-            </p>
+            <div className="flex items-center justify-between gap-3">
+              <p className="text-sm text-ink">Subtotal (preview) {formatGhs(subtotal)}</p>
+              <button type="button" onClick={clearCart} className="text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear cart</button>
+            </div>
           ) : null}
           <div className="flex flex-col gap-2">
             <Link

@@ -8,7 +8,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
-import { addToCartAction, addToQuoteAction } from "@/features/preview/actions";
+import { addToCartAction, addToQuoteAction, clearCartAction, clearQuoteAction } from "@/features/preview/actions";
 import type {
   CartLinePreview,
   ProductCardModel,
@@ -24,6 +24,8 @@ type DualPathPreview = {
   setQuoteOpen: (open: boolean) => void;
   addToCart: (product: ProductCardModel, quantity: number) => void;
   addToQuote: (product: ProductCardModel, quantity: number) => void;
+  clearCart: () => void;
+  clearQuote: () => void;
 };
 
 const DualPathPreviewContext = createContext<DualPathPreview | null>(null);
@@ -153,6 +155,26 @@ export function DualPathPreviewProvider({
     [persist],
   );
 
+  const clearCart = useCallback(() => {
+    setCartLines([]);
+    if (persist) {
+      void clearCartAction().then((state) => {
+        setCartLines(state.cartLines);
+        setQuoteLines(state.quoteLines);
+      }).catch((error) => console.error("Could not clear the retail cart", error));
+    }
+  }, [persist]);
+
+  const clearQuote = useCallback(() => {
+    setQuoteLines([]);
+    if (persist) {
+      void clearQuoteAction().then((state) => {
+        setCartLines(state.cartLines);
+        setQuoteLines(state.quoteLines);
+      }).catch((error) => console.error("Could not clear the quote basket", error));
+    }
+  }, [persist]);
+
   const value = useMemo(
     () => ({
       cartLines,
@@ -163,10 +185,14 @@ export function DualPathPreviewProvider({
       setQuoteOpen: setQuoteOpenExclusive,
       addToCart,
       addToQuote,
+      clearCart,
+      clearQuote,
     }),
     [
       addToCart,
       addToQuote,
+      clearCart,
+      clearQuote,
       cartLines,
       cartOpen,
       quoteLines,

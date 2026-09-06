@@ -64,3 +64,16 @@ export async function setQuoteLineQuantity(identity: CommerceInput, variantId: s
 export async function removeQuoteLine(identity: CommerceInput, variantId: string) {
   return writeQuoteLine(identity, variantId, 0, "remove");
 }
+
+export async function clearQuote(identity: CommerceInput) {
+  await getDb().transaction(async (tx) => {
+    await lockCommerce(tx, identity);
+    const [draft] = await tx.select().from(quotes)
+      .where(and(commerceOwner(quotes, identity), eq(quotes.status, "draft"))).limit(1);
+    if (!draft) return;
+    await tx.delete(quoteItems).where(eq(quoteItems.quoteId, draft.id));
+    await tx.update(quotes).set({ updatedAt: new Date() })
+      .where(and(eq(quotes.id, draft.id), commerceOwner(quotes, identity)));
+  });
+  return [];
+}
