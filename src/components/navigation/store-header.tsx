@@ -4,6 +4,7 @@ import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
 import { BusinessMenu } from "@/components/navigation/business-menu";
 import { Wordmark } from "@/components/marketing/wordmark";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
+import Link from "next/link";
 
 export function StoreHeader() {
   return (
@@ -16,6 +17,8 @@ export function StoreHeader() {
         >
           <ShopMegaMenu />
           <BusinessMenu />
+          <Link href="/about" className="border-b-2 border-transparent text-sm font-medium text-graphite transition-[color,border-color] hover:border-ochre hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">About</Link>
+          <Link href="/contact" className="border-b-2 border-transparent text-sm font-medium text-graphite transition-[color,border-color] hover:border-ochre hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">Contact</Link>
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
           <AccountLink />

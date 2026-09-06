@@ -14,6 +14,16 @@ import {
 export default async function HomePage() {
   const categories = await listDivisionCategories();
   const featured = await listFeaturedProductCards();
+  const categoryImages: Record<string, { src: string; alt: string }> = {
+    paper: { src: "/images/close-up-view-back-school-concept.jpg", alt: "Paper, notebooks and colourful stationery" },
+    writing: { src: "/images/extreme-close-up-pen-taken-by-person-from-desk-organizer.jpg", alt: "Pens arranged in a desk organiser" },
+    filing: { src: "/images/ring-binder-used-stored-documents.jpg", alt: "Ring binder holding organised documents" },
+    "desk-essentials": { src: "/images/lightbox-still-life-arrangement.jpg", alt: "Everyday desk essentials arranged neatly" },
+    printing: { src: "/images/home-printer-based-toner.jpg", alt: "Home printer and printing supplies" },
+    technology: { src: "/images/female-graphic-designer-writing-diary.jpg", alt: "Creative professional working with office technology" },
+    "school-supplies": { src: "/images/school-stationery-with-accessories.jpg", alt: "School stationery and learning accessories" },
+    workplace: { src: "/images/still-life-documents-stack.jpg", alt: "Workplace documents and office supplies" },
+  };
 
   return (
     <main>
@@ -66,8 +76,8 @@ export default async function HomePage() {
                 name={category.name}
                 href={`/shop/${category.slug}`}
                 caption={category.caption}
-                imageSrc={category.slug === "paper-printing" ? "/images/close-up-view-back-school-concept.jpg" : category.slug === "writing-marking" ? "/images/extreme-close-up-pen-taken-by-person-from-desk-organizer.jpg" : category.slug === "books-notebooks" ? "/images/stack-books-with-library-scene.jpg" : category.slug === "school-supplies" ? "/images/boy-holding-white-paper-school.jpg" : "/images/lightbox-still-life-arrangement.jpg"}
-                imageAlt={`${category.name} supplies`}
+                imageSrc={categoryImages[category.slug]?.src}
+                imageAlt={categoryImages[category.slug]?.alt ?? `${category.name} supplies`}
               />
             ))}
           </div>
