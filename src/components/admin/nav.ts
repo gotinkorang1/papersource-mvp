@@ -52,6 +52,10 @@ export const ADMIN_NAV = [
     ],
   },
   {
+    label: "Engagement",
+    items: [{ label: "Reviews", href: "/admin/reviews", area: "reviews" as const }],
+  },
+  {
     label: "System",
     items: [
       { label: "Users & roles", href: "/admin/users", area: "users" as const },

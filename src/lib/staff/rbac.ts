@@ -24,7 +24,8 @@ export type AdminArea =
   | "users"
   | "roles"
   | "logs"
-  | "settings";
+  | "settings"
+  | "reviews";
 
 export type AdminAction = "read" | "write";
 
@@ -58,6 +59,7 @@ const MATRIX: Record<StaffRole, Record<AdminArea, AdminAction[]>> = {
     roles: FULL,
     logs: FULL,
     settings: FULL,
+    reviews: FULL,
   },
   admin: {
     dashboard: FULL,
@@ -84,6 +86,7 @@ const MATRIX: Record<StaffRole, Record<AdminArea, AdminAction[]>> = {
     roles: NONE,
     logs: FULL,
     settings: FULL,
+    reviews: FULL,
   },
   sales: {
     dashboard: READ,
@@ -110,6 +113,7 @@ const MATRIX: Record<StaffRole, Record<AdminArea, AdminAction[]>> = {
     roles: NONE,
     logs: READ,
     settings: NONE,
+    reviews: NONE,
   },
   warehouse: {
     dashboard: READ,
@@ -136,6 +140,7 @@ const MATRIX: Record<StaffRole, Record<AdminArea, AdminAction[]>> = {
     roles: NONE,
     logs: READ,
     settings: NONE,
+    reviews: NONE,
   },
   content_manager: {
     dashboard: READ,
@@ -162,6 +167,7 @@ const MATRIX: Record<StaffRole, Record<AdminArea, AdminAction[]>> = {
     roles: NONE,
     logs: NONE,
     settings: NONE,
+    reviews: NONE,
   },
 };
 
