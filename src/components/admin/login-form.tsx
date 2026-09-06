@@ -4,7 +4,6 @@ import { useFormStatus } from "react-dom";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { paperButton } from "@/components/commerce/paper-button";
-import { STAFF_DEV_EMAIL } from "@/lib/staff/constants";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -30,15 +29,14 @@ export function StaffLoginForm({ error }: { error?: string }) {
           name="email"
           type="email"
           autoComplete="username"
-          defaultValue={STAFF_DEV_EMAIL}
           required
         />
       </div>
       <div className="space-y-1.5">
-        <Label htmlFor="staff-secret">Staff secret</Label>
+        <Label htmlFor="staff-password">Password</Label>
         <Input
-          id="staff-secret"
-          name="secret"
+          id="staff-password"
+          name="password"
           type="password"
           autoComplete="current-password"
           required

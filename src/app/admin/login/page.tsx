@@ -29,9 +29,8 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
         <p className="text-sm tracking-[0.16em] text-slate uppercase">PaperSource</p>
         <h1 className="mt-2 font-heading text-2xl text-ink">Staff sign in</h1>
         <p className="mt-3 text-sm text-slate">
-          Local operations login. Roles come from <code>admin_roles</code>, not
-          user-editable metadata. Seeded desks: sales@, admin@, warehouse@, and
-          content@ papersource.test. Supabase Auth for staff is a later phase.
+          Sign in with your PaperSource Supabase account. Access is granted only
+          to profiles assigned an entry in <code>admin_roles</code>.
         </p>
         <div className="mt-6">
           <StaffLoginForm error={error} />

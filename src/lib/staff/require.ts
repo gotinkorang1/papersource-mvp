@@ -1,24 +1,18 @@
-import { cookies } from "next/headers";
 import { eq } from "drizzle-orm";
 import { notFound, redirect } from "next/navigation";
 import { getDb } from "@/lib/db/client";
 import { adminRoles, profiles } from "@/lib/db/schema";
-import {
-  STAFF_SESSION_COOKIE,
-  staffSessionCookieOptions,
-} from "@/lib/staff/constants";
 import { canAccessAdmin, type AdminAction, type AdminArea } from "@/lib/staff/rbac";
-import { readStaffCookie, signStaffCookie } from "@/lib/staff/session";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { StaffActor } from "@/lib/staff/types";
 
 export type { StaffActor };
 
 export async function readStaffActor(): Promise<StaffActor | null> {
-  const jar = await cookies();
-  const parsed = readStaffCookie(jar.get(STAFF_SESSION_COOKIE)?.value);
-  if (!parsed) {
-    return null;
-  }
+  const supabase = await createSupabaseServerClient();
+  const { data, error } = await supabase.auth.getUser();
+  const email = data.user?.email?.trim().toLowerCase();
+  if (error || !email) return null;
 
   const db = getDb();
   const [row] = await db
@@ -30,7 +24,7 @@ export async function readStaffActor(): Promise<StaffActor | null> {
     })
     .from(adminRoles)
     .innerJoin(profiles, eq(profiles.id, adminRoles.profileId))
-    .where(eq(adminRoles.profileId, parsed.profileId))
+    .where(eq(profiles.email, email))
     .limit(1);
 
   return row ?? null;
@@ -52,12 +46,3 @@ export async function requireStaffArea(area: AdminArea, action: AdminAction) {
   return actor;
 }
 
-export async function setStaffSessionCookie(profileId: string) {
-  const jar = await cookies();
-  jar.set(STAFF_SESSION_COOKIE, signStaffCookie(profileId), staffSessionCookieOptions());
-}
-
-export async function clearStaffSessionCookie() {
-  const jar = await cookies();
-  jar.set(STAFF_SESSION_COOKIE, "", { ...staffSessionCookieOptions(), maxAge: 0 });
-}

@@ -1,14 +1,9 @@
 import { NextResponse } from "next/server";
-import {
-  STAFF_SESSION_COOKIE,
-  staffSessionCookieOptions,
-} from "@/lib/staff/constants";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function POST(request: Request) {
+  const supabase = await createSupabaseServerClient();
+  await supabase.auth.signOut();
   const response = NextResponse.redirect(new URL("/admin/login", request.url), 303);
-  response.cookies.set(STAFF_SESSION_COOKIE, "", {
-    ...staffSessionCookieOptions(),
-    maxAge: 0,
-  });
   return response;
 }
