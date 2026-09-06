@@ -41,7 +41,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
           Not found: {unknown}
         </p>
       ) : null}
-      {notice ? <p className="mt-3 text-sm text-slate">{notice}</p> : null}
+      {notice ? <p role="status" className="mt-3 text-sm text-paper-green">{notice === "updated" ? "Quantity updated." : notice}</p> : null}
       {lines.length === 0 ? (
         <p className="mt-8 text-slate">
           No items on this quotation yet.{" "}

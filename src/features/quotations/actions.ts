@@ -25,6 +25,7 @@ export async function updateQuoteQuantityAction(formData: FormData) {
   revalidatePath("/", "layout");
   revalidatePath("/quote");
   revalidatePath("/request-quote");
+  redirect("/quote?notice=updated");
 }
 
 export async function removeQuoteLineAction(formData: FormData) {
