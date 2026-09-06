@@ -61,7 +61,7 @@ export default async function ProductPage({ params }: PageProps) {
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
-          __html: JSON.stringify(productJsonLd(product, canonical)),
+          __html: JSON.stringify(productJsonLd(product, canonical, reviews)),
         }}
       />
       <script

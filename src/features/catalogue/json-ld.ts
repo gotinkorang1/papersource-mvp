@@ -1,7 +1,11 @@
 import { pesewasToMajor } from "@/lib/money";
 import type { ProductDetailModel } from "@/types/catalogue";
 
-export function productJsonLd(product: ProductDetailModel, canonical: string) {
+export function productJsonLd(
+  product: ProductDetailModel,
+  canonical: string,
+  reviews: { rating: number }[] = [],
+) {
   const availability =
     product.stock === "out"
       ? "https://schema.org/OutOfStock"
@@ -23,6 +27,17 @@ export function productJsonLd(product: ProductDetailModel, canonical: string) {
     category: product.categoryName,
     ...(product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode)
       ? { gtin: product.barcode }
+      : {}),
+    ...(reviews.length
+      ? {
+          aggregateRating: {
+            "@type": "AggregateRating",
+            ratingValue: (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1),
+            reviewCount: reviews.length,
+            bestRating: 5,
+            worstRating: 1,
+          },
+        }
       : {}),
     offers: {
       "@type": "Offer",

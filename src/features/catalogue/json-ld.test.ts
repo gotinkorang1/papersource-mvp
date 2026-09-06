@@ -19,6 +19,12 @@ describe("productJsonLd", () => {
     expect(json.offers.price).toBe(pesewasToMajor(7800));
   });
 
+  it("includes aggregate ratings only for approved reviews", () => {
+    const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4", [{ rating: 5 }, { rating: 4 }]);
+    expect(json.aggregateRating).toEqual(expect.objectContaining({ ratingValue: "4.5", reviewCount: 2 }));
+    expect(productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4").aggregateRating).toBeUndefined();
+  });
+
   it("includes image when Cloudinary (or other) URL is present", () => {
     const json = productJsonLd(
       { ...product, imageSrc: "https://res.cloudinary.com/demo/image.jpg" },
