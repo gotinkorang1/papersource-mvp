@@ -13,7 +13,7 @@ export default async function AccountOrganisationPage() {
       <h1 className="text-3xl text-ink">Organisation</h1>
       <p className="mt-3 text-slate">Optional. Keep one organisation for quotations and orders. You choose when to submit a request on its behalf.</p>
       {org?.role === "member" ? (
-        <section className="mt-8 space-y-3 rounded-md border border-border bg-white p-5" aria-label="Organisation details">
+        <section className="mt-8 space-y-3 rounded-xl border border-border bg-surface p-5 shadow-sm" aria-label="Organisation details">
           <h2 className="font-heading text-xl text-ink">{org.name}</h2>
           <p className="capitalize">{org.type}</p>
           {org.email ? <p>{org.email}</p> : null}
