@@ -9,7 +9,7 @@ test("home shows dual-path chrome and Accra & Tema delivery", async ({
   page,
 }) => {
   await gotoReady(page);
-  await expect(page.getByRole("link", { name: "PAPERSOURCE" })).toBeVisible();
+  await expect(page.getByRole("banner").getByRole("link", { name: "PaperSource home", exact: true })).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Quote list, 0 items" }).first(),
   ).toBeVisible();
@@ -20,7 +20,7 @@ test("home shows dual-path chrome and Accra & Tema delivery", async ({
     page.getByRole("heading", { name: "Everything your workplace needs." }),
   ).toBeVisible();
   await expect(
-    page.getByRole("contentinfo").getByText(/Accra & Tema/),
+    page.getByText("Workplace essentials, delivered across Accra & Tema.", { exact: true }),
   ).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Add to Cart" }).first(),
@@ -36,7 +36,7 @@ test("add to quote does not fill the retail cart", async ({ page }) => {
   await expect(page.getByTestId("paper-drawer-quote-list")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Quote list" })).toBeVisible();
   await expect(page.getByText("Procurement basket")).toBeVisible();
-  await page.getByRole("button", { name: "Close Quote list" }).click();
+  await page.getByRole("dialog", { name: "Quote list" }).getByRole("button", { name: "Close Quote list", exact: true }).click();
   await expect(
     page.getByRole("button", { name: "Quote list, 1 item" }).first(),
   ).toBeVisible();

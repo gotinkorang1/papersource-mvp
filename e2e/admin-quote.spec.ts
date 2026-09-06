@@ -1,10 +1,13 @@
 import { expect, test } from "@playwright/test";
-import { STAFF_DEV_EMAIL, STAFF_DEV_SECRET } from "../src/lib/staff/constants";
+
+const staffEmail = process.env.STAFF_E2E_EMAIL;
+const staffPassword = process.env.STAFF_E2E_PASSWORD;
 
 test("sales prices a guest RFQ and the customer accepts it into a quote-sourced order", async ({
   page,
 }) => {
   test.setTimeout(240_000);
+  test.skip(!staffEmail || !staffPassword, "Set STAFF_E2E_EMAIL and STAFF_E2E_PASSWORD for the staff journey.");
   await page.goto("/");
   const quoteButton = page.locator('[data-testid^="add-to-quote-"]').first();
   await expect(quoteButton).toBeEnabled();
@@ -34,8 +37,8 @@ test("sales prices a guest RFQ and the customer accepts it into a quote-sourced 
   expect(quoteNumber).toBeTruthy();
 
   await page.goto("/admin/login");
-  await page.getByLabel("Email").fill(STAFF_DEV_EMAIL);
-  await page.getByLabel("Staff secret").fill(STAFF_DEV_SECRET);
+  await page.getByLabel("Email").fill(staffEmail!);
+  await page.getByLabel("Password").fill(staffPassword!);
   await page.getByRole("button", { name: "Sign in" }).click({ noWaitAfter: true });
   await page.waitForURL("**/admin", { timeout: 60_000 });
   await expect(page.getByRole("heading", { name: "Dashboard" })).toBeVisible({

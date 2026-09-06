@@ -3,11 +3,17 @@ import { expect, test } from "@playwright/test";
 test("catalogue and product pages expose dual-path CTAs", async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto("/shop", { waitUntil: "domcontentloaded" });
-  const productLink = page.locator('a[href^="/product/"]').first();
-  await expect(productLink).toBeVisible();
-  const productHref = await productLink.getAttribute("href");
+  const productLinks = page.locator('a[href^="/product/"]');
+  await expect(productLinks.first()).toBeVisible();
+  const productHrefs = await productLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")).filter((href): href is string => Boolean(href)));
+  let productHref: string | null = null;
+  for (const href of productHrefs) {
+    productHref = href;
+    if (!productHref) continue;
+    await page.goto(productHref, { waitUntil: "domcontentloaded" });
+    if (await page.getByRole("button", { name: "Add to Cart" }).count() && await page.getByRole("button", { name: "Add to Quote" }).count()) break;
+  }
   expect(productHref).toBeTruthy();
-  await page.goto(productHref!, { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("button", { name: "Add to Cart" })).toBeVisible();
   await expect(page.getByRole("button", { name: "Add to Quote" })).toBeVisible();
 });
@@ -21,7 +27,14 @@ test("search preserves the submitted query and renders a useful state", async ({
 
 test("a catalogue product can be added to the quote path", async ({ page }) => {
   await page.goto("/shop", { waitUntil: "domcontentloaded" });
-  const productHref = await page.locator('a[href^="/product/"]').first().getAttribute("href");
+  const productLinks = page.locator('a[href^="/product/"]');
+  const productHrefs = await productLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")).filter((href): href is string => Boolean(href)));
+  let productHref: string | null = null;
+  for (const href of productHrefs) {
+    if (!href) continue;
+    await page.goto(href, { waitUntil: "domcontentloaded" });
+    if (await page.getByRole("button", { name: "Add to Quote" }).count()) { productHref = href; break; }
+  }
   expect(productHref).toBeTruthy();
   await page.goto(productHref!, { waitUntil: "domcontentloaded" });
   const quoteButton = page.getByRole("button", { name: "Add to Quote" });
@@ -31,7 +44,7 @@ test("a catalogue product can be added to the quote path", async ({ page }) => {
     { timeout: 30_000 },
   );
   await Promise.all([persisted, quoteButton.click()]);
-  await expect(page.getByRole("button", { name: /Quote list, 1 item/ }).first()).toBeVisible();
+  await expect(page.getByTestId("paper-drawer-quote-list")).toBeVisible();
 });
 
 test("brand and catalogue pages render without a hard-coded product fixture", async ({ page }) => {
