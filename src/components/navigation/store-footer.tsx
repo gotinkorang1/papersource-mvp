@@ -1,8 +1,11 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/marketing/wordmark";
 import { SocialLinks } from "@/components/navigation/social-links";
+import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 
-export function StoreFooter() {
+export async function StoreFooter() {
+  const managedLinks = await listActiveNavigation("footer");
+  const exploreLinks = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.footer;
   return (
     <footer className="mt-auto border-t border-border bg-card">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-sm leading-relaxed text-slate sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
@@ -15,10 +18,7 @@ export function StoreFooter() {
         <div>
           <p className="font-semibold text-ink">Explore</p>
           <nav className="mt-3 grid gap-2" aria-label="Explore">
-            <Link href="/shop" className="w-fit hover:text-ink hover:underline underline-offset-4">Shop products</Link>
-            <Link href="/brands" className="w-fit hover:text-ink hover:underline underline-offset-4">Brands</Link>
-            <Link href="/quick-order" className="w-fit hover:text-ink hover:underline underline-offset-4">Quick Order</Link>
-            <Link href="/business" className="w-fit hover:text-ink hover:underline underline-offset-4">Business accounts</Link>
+            {exploreLinks.map((link) => <Link key={link.href} href={link.href} className="w-fit hover:text-ink hover:underline underline-offset-4">{link.label}</Link>)}
           </nav>
         </div>
         <div>
