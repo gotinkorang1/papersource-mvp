@@ -29,7 +29,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
   return (
     <main className="flex min-h-full items-center justify-center bg-cream px-4 py-16">
       <div className="w-full max-w-md rounded-lg border border-border bg-white p-8">
-        <Wordmark />
+        <Wordmark shrinkOnScroll={false} />
         <h1 className="mt-2 font-heading text-2xl text-ink">Staff sign in</h1>
         <p className="mt-3 text-sm text-slate">
           Sign in with your PaperSource Supabase account. Access is granted only
