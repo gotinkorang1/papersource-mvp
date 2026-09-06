@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { paperButton } from "@/components/commerce/paper-button";
+import { Wordmark } from "@/components/marketing/wordmark";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffActor } from "@/lib/staff/types";
 import { ADMIN_NAV } from "./nav";
@@ -12,9 +13,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   return (
     <aside className="sticky top-0 z-20 flex max-h-[42vh] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:h-screen md:max-h-none md:w-64">
       <div className="border-b border-sidebar-border px-4 py-4 sm:px-5 sm:py-6">
-        <p className="text-xs tracking-[0.16em] text-sidebar-foreground/60 uppercase">
-          PaperSource
-        </p>
+        <Wordmark href="/admin" inverted className="max-w-fit" />
         <p className="mt-1 font-heading text-lg">Operations</p>
       </div>
       <nav className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-3 py-4 md:py-5" aria-label="Admin">

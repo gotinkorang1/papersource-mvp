@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { StaffLoginForm } from "@/components/admin/login-form";
+import { Wordmark } from "@/components/marketing/wordmark";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -28,7 +29,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
   return (
     <main className="flex min-h-full items-center justify-center bg-cream px-4 py-16">
       <div className="w-full max-w-md rounded-lg border border-border bg-white p-8">
-        <p className="text-sm tracking-[0.16em] text-slate uppercase">PaperSource</p>
+        <Wordmark />
         <h1 className="mt-2 font-heading text-2xl text-ink">Staff sign in</h1>
         <p className="mt-3 text-sm text-slate">
           Sign in with your PaperSource Supabase account. Access is granted only
