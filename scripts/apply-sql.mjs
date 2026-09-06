@@ -15,6 +15,7 @@ const files = [
   "drizzle/0008_customer_accounts.sql",
   "drizzle/0009_rls_hardening.sql",
   "drizzle/0010_store_settings.sql",
+  "drizzle/0011_audit_logs.sql",
 ];
 
 function run(command, args) {
