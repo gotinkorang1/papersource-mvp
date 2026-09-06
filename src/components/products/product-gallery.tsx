@@ -33,10 +33,12 @@ export function ProductGallery({
               aria-current={active === index}
               onClick={() => setActive(index)}
               className={cn(
-                "h-14 w-14 border bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
+                "relative h-14 w-14 overflow-hidden border bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink",
                 active === index ? "border-ink" : "border-border",
               )}
-            />
+            >
+              {src ? <Image src={src} alt="" fill sizes="56px" className="object-cover" /> : <span className="sr-only">Image {index + 1}</span>}
+            </button>
           </li>
         ))}
       </ul>
