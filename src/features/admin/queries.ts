@@ -1,6 +1,6 @@
 import { asc, desc, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { addresses, adminRoles, organizationMembers, organizations, payments, orders, profiles, quotes, deliveryZones } from "@/lib/db/schema";
+import { addresses, adminRoles, auditLogs, organizationMembers, organizations, payments, orders, profiles, quotes, deliveryZones } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffRole } from "@/lib/staff/types";
 
@@ -84,4 +84,9 @@ export async function getAdminOrganisation(role: StaffRole, organisationId: stri
     db.select({ id: quotes.id, number: quotes.number, status: quotes.status, grandTotal: quotes.grandTotal, createdAt: quotes.createdAt }).from(quotes).where(eq(quotes.organizationId, organisationId)).orderBy(desc(quotes.createdAt)).limit(20),
   ]);
   return { ...organisation, members, addresses: organisationAddresses, orders: organisationOrders, quotes: organisationQuotes };
+}
+
+export async function listAdminAuditLogs(role: StaffRole) {
+  if (!canAccessAdmin(role, "logs", "read")) throw new AdminReadError("This role cannot view audit logs.");
+  return getDb().select({ id: auditLogs.id, action: auditLogs.action, resourceType: auditLogs.resourceType, resourceId: auditLogs.resourceId, actorEmail: profiles.email, actorName: profiles.fullName, createdAt: auditLogs.createdAt }).from(auditLogs).leftJoin(profiles, eq(profiles.id, auditLogs.actorProfileId)).orderBy(desc(auditLogs.createdAt)).limit(100);
 }
