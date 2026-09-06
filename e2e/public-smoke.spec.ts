@@ -1,0 +1,21 @@
+import { expect, test } from "@playwright/test";
+
+test("public storefront routes respond successfully", async ({ request }) => {
+  test.setTimeout(180_000);
+  const routes = [
+    "/",
+    "/shop",
+    "/search",
+    "/cart",
+    "/quote",
+    "/checkout",
+    "/login",
+    "/api/health",
+    "/api/search/suggestions?q=pen",
+  ];
+
+  for (const route of routes) {
+    const response = await request.get(route);
+    expect(response.ok(), `${route} should respond successfully`).toBe(true);
+  }
+});
