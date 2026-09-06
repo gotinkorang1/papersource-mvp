@@ -31,6 +31,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html
       lang="en-GH"
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className={`${inter.variable} ${manrope.variable} h-full antialiased`}
     >
