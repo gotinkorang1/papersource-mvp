@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { HeaderSearch } from "@/components/navigation/header-search";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { listProductCards } from "@/features/catalogue";
@@ -22,13 +23,16 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const recommendations = q && products.length === 0 ? await listFeaturedProductCards() : [];
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
+    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
       <Breadcrumbs items={[{ label: "Search" }]} />
-      <h1 className="text-3xl text-ink">Search</h1>
-      <p className="mt-3 text-slate">
+      <div className="mt-8 max-w-2xl">
+        <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate">Catalogue search</p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Find supplies that keep work moving.</h1>
+      </div>
+      <p className="mt-4 max-w-2xl text-base text-slate sm:text-lg">
         Search paper, toner, pens, brands or SKU.
       </p>
-      <div className="mt-6">
+      <div className="mt-7 max-w-3xl rounded-2xl border border-border/80 bg-card p-3 shadow-[0_8px_28px_rgba(16,42,67,0.06)] sm:p-4">
         <HeaderSearch
           key={q}
           className="block w-full"
@@ -39,12 +43,15 @@ export default async function SearchPage({ searchParams }: PageProps) {
       <RecentSearches query={q} />
       {!q ? <PopularCategories categories={categories} /> : null}
       {q ? (
-        <div className="mt-10">
-          <h2 className="text-sm tracking-[0.16em] text-slate uppercase">
-            Results for {q}
-          </h2>
+        <div className="mt-12">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 className="text-sm font-semibold uppercase tracking-[0.16em] text-slate">
+              Results for <span className="text-ink">{q}</span>
+            </h2>
+            {products.length ? <p className="text-sm text-slate">{products.length} {products.length === 1 ? "product" : "products"}</p> : null}
+          </div>
           <div className="mt-6">
-            {products.length ? <ProductGridList products={products} /> : <div className="rounded-2xl border border-border bg-cream/60 p-6"><h3 className="text-xl text-ink">No exact matches yet</h3><p className="mt-2 text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8"><ProductGridList products={recommendations} /></div></div>}
+            {products.length ? <ProductGridList products={products} /> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
           </div>
         </div>
       ) : null}
