@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import { Check } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { PaperCard } from "@/components/commerce/paper-card";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -39,7 +40,13 @@ export function ProductCard({
   const addToQuote = onAddToQuote ?? preview?.addToQuote;
   const [quantity, setQuantity] = useState(1);
   const [quickOpen, setQuickOpen] = useState(false);
+  const [addedTo, setAddedTo] = useState<"cart" | "quote" | null>(null);
   const out = product.stock === "out";
+
+  const confirmAdded = (destination: "cart" | "quote") => {
+    setAddedTo(destination);
+    window.setTimeout(() => setAddedTo((current) => current === destination ? null : current), 1800);
+  };
 
   return (
     <PaperCard className={cn("flex flex-col overflow-hidden", className)}>
@@ -77,17 +84,18 @@ export function ProductCard({
             type="button"
             className={paperButton({ variant: "primary" })}
             disabled={out}
-            onClick={() => addToCart?.(product, quantity)}
+            onClick={() => { addToCart?.(product, quantity); confirmAdded("cart"); }}
           >
-            Add to Cart
+            {addedTo === "cart" ? <><Check className="mr-1.5 size-4" aria-hidden />Added to Cart</> : "Add to Cart"}
           </button>
           <QuoteButton
             data-testid={`add-to-quote-${product.slug}`}
-            onClick={() => addToQuote?.(product, quantity)}
+            onClick={() => { addToQuote?.(product, quantity); confirmAdded("quote"); }}
           >
-            Add to Quote
+            {addedTo === "quote" ? <><Check className="mr-1.5 size-4" aria-hidden />Added to Quote</> : "Add to Quote"}
           </QuoteButton>
         </div>
+        <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>
         <button
           type="button"
           className="self-start text-sm text-slate underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
