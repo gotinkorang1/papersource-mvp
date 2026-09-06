@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { recordAdminAudit } from "@/features/admin/audit";
 import {
   addBundleItem,
   addPriceTier,
@@ -74,6 +75,7 @@ export async function POST(request: Request) {
         unitLabel: String(formData.get("unitLabel") ?? "each"),
         baseUnitPricePesewas: parseRequiredPesewas(formData.get("baseUnitPrice")),
       });
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "catalogue_product_created", resourceType: "product", resourceId: created.id });
       return NextResponse.redirect(new URL(`/admin/products/${created.id}`, origin), 303);
     }
 
@@ -178,6 +180,27 @@ export async function POST(request: Request) {
       });
     } else {
       next.searchParams.set("error", "Unknown catalogue action.");
+    }
+    if (!next.searchParams.has("error")) {
+      const resourceId = intent.includes("variant")
+        ? String(formData.get("variantId") ?? productId)
+        : intent.includes("tier")
+          ? String(formData.get("tierId") ?? formData.get("variantId") ?? productId)
+          : intent.includes("image")
+            ? String(formData.get("imageId") ?? productId)
+            : intent.includes("alias")
+              ? String(formData.get("aliasId") ?? productId)
+              : intent.includes("attribute")
+                ? String(formData.get("attributeId") ?? productId)
+                : intent.includes("bundle")
+                  ? String(formData.get("bundleItemId") ?? productId)
+                  : productId;
+      await recordAdminAudit({
+        actorProfileId: actor.profileId,
+        action: `catalogue_${intent.replaceAll("-", "_")}`,
+        resourceType: intent.includes("variant") ? "variant" : "product",
+        resourceId,
+      });
     }
   } catch (error) {
     return redirectWithError(next, error);
