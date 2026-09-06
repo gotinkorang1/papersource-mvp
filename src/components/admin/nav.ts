@@ -54,8 +54,7 @@ export const ADMIN_NAV = [
   {
     label: "System",
     items: [
-      { label: "Users", href: "/admin/users", area: "users" as const },
-      { label: "Roles", href: "/admin/roles", area: "roles" as const },
+      { label: "Users & roles", href: "/admin/users", area: "users" as const },
       { label: "Logs", href: "/admin/logs", area: "logs" as const },
       { label: "Settings", href: "/admin/settings", area: "settings" as const },
       {

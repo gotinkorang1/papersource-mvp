@@ -33,3 +33,22 @@ export async function listAdminDeliveries(role: StaffRole) {
   return getDb().select({ id: orders.id, number: orders.number, status: orders.status, source: orders.source, grandTotal: orders.grandTotal, zoneName: deliveryZones.name, zoneRegion: deliveryZones.region, customerEmail: profiles.email, updatedAt: orders.updatedAt })
     .from(orders).innerJoin(deliveryZones, eq(deliveryZones.id, orders.deliveryZoneId)).leftJoin(profiles, eq(profiles.id, orders.profileId)).orderBy(asc(orders.status), desc(orders.updatedAt));
 }
+
+export async function listAdminStaff(role: StaffRole) {
+  if (!canAccessAdmin(role, "users", "read")) {
+    throw new AdminReadError("This role cannot view staff users.");
+  }
+
+  return getDb()
+    .select({
+      id: profiles.id,
+      email: profiles.email,
+      fullName: profiles.fullName,
+      phone: profiles.phone,
+      role: adminRoles.role,
+      updatedAt: profiles.updatedAt,
+    })
+    .from(profiles)
+    .innerJoin(adminRoles, eq(adminRoles.profileId, profiles.id))
+    .orderBy(asc(profiles.fullName), asc(profiles.email));
+}
