@@ -10,9 +10,9 @@ import { ADMIN_NAV } from "./nav";
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   return (
-    <aside className="flex max-h-72 w-full shrink-0 flex-col bg-ink text-white md:max-h-none md:w-64">
-      <div className="border-b border-white/10 px-5 py-6">
-        <p className="text-xs tracking-[0.16em] text-white/60 uppercase">
+    <aside className="flex max-h-72 w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:max-h-none md:w-64">
+      <div className="border-b border-sidebar-border px-5 py-6">
+        <p className="text-xs tracking-[0.16em] text-sidebar-foreground/60 uppercase">
           PaperSource
         </p>
         <p className="mt-1 font-heading text-lg">Operations</p>
@@ -29,7 +29,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                 key={group.href}
                 href={group.href}
                 className={`block rounded-md px-3 py-2 text-sm ${
-                  current ? "bg-white/15 text-white" : "text-white/75 hover:bg-white/10"
+                  current ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                 }`}
                 aria-current={current ? "page" : undefined}
               >
@@ -47,7 +47,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
 
           return (
             <div key={group.label}>
-              <p className="px-3 text-[0.7rem] tracking-[0.16em] text-white/45 uppercase">
+              <p className="px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase">
                 {group.label}
               </p>
               <ul className="mt-2 space-y-0.5">
@@ -60,8 +60,8 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                         href={item.href}
                         className={`block rounded-md px-3 py-1.5 text-sm ${
                           current
-                            ? "bg-white/15 text-white"
-                            : "text-white/75 hover:bg-white/10"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                            : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                         }`}
                         aria-current={current ? "page" : undefined}
                       >
@@ -75,11 +75,11 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
           );
         })}
       </nav>
-      <div className="border-t border-white/10 px-4 py-4 text-sm">
-        <p className="text-white/80">{actor.fullName}</p>
-        <p className="text-xs text-white/50">{actor.role.replaceAll("_", " ")}</p>
+      <div className="border-t border-sidebar-border px-4 py-4 text-sm">
+        <p className="text-sidebar-foreground/80">{actor.fullName}</p>
+        <p className="text-xs text-sidebar-foreground/50">{actor.role.replaceAll("_", " ")}</p>
         <form action="/admin/logout" method="post" className="mt-3">
-          <button type="submit" className={`${paperButton({ variant: "ghost" })} px-0 text-white`}>
+          <button type="submit" className={`${paperButton({ variant: "ghost" })} px-0 text-sidebar-foreground`}>
             Sign out
           </button>
         </form>

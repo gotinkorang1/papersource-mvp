@@ -148,6 +148,23 @@
   background-color: var(--card) !important;
 }
 
+/* Admin data surfaces use a denser treatment while still following the
+   active theme. This keeps table rows, native controls, and alerts readable
+   when staff switch themes from the shared storefront header. */
+.admin-shell table tbody tr {
+  transition: background-color 160ms ease;
+}
+
+.admin-shell table tbody tr:hover {
+  background-color: color-mix(in srgb, var(--card-foreground) 5%, transparent);
+}
+
+.dark .admin-shell input,
+.dark .admin-shell select,
+.dark .admin-shell textarea {
+  color-scheme: dark;
+}
+
 @layer base {
   * {
     @apply border-border outline-ring/50;
