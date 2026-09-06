@@ -28,6 +28,7 @@
     "auth:test:profiles": "node --conditions=react-server --import tsx scripts/test-customer-profile.mjs",
     "auth:test:customer": "node --conditions=react-server --import tsx scripts/test-customer-auth.mjs",
     "security:test:rls": "node scripts/test-rls.mjs"
+    ,"auth:check-env": "node scripts/check-auth-env.mjs"
   },
   "dependencies": {
     "@base-ui/react": "^1.7.0",
