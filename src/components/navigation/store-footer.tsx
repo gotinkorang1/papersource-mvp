@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Wordmark } from "@/components/marketing/wordmark";
+import { SocialLinks } from "@/components/navigation/social-links";
 
 export function StoreFooter() {
   return (
@@ -9,6 +10,7 @@ export function StoreFooter() {
           <Wordmark shrinkOnScroll={false} className="max-w-fit" />
           <p className="mt-4 max-w-xs">Ghana&apos;s modern workplace supply partner. Accra and Tema delivery, with nationwide supply on request.</p>
           <Link href="/contact" className="mt-5 inline-flex min-h-10 items-center rounded-lg bg-ink px-4 py-2 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Talk to our team</Link>
+          <div className="mt-5"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate">Follow and connect</p><SocialLinks /></div>
         </div>
         <div>
           <p className="font-semibold text-ink">Explore</p>
