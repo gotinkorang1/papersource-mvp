@@ -11,6 +11,7 @@ export function MobileNav() {
     useDualPathPreview();
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+  const shopActive = isActive("/shop") || isActive("/product") || ["/brands", "/bulk-orders", "/quick-order"].includes(pathname);
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
 
@@ -33,8 +34,8 @@ export function MobileNav() {
         <li>
           <Link
             href="/shop"
-            aria-current={isActive("/shop") ? "page" : undefined}
-            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${isActive("/shop") ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            aria-current={shopActive ? "page" : undefined}
+            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${shopActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
             <Store className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden />
             Shop
