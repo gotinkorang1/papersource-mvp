@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 
@@ -48,13 +48,7 @@ export default async function ShopCategoryPage({ params }: PageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
-      <p className="text-sm text-slate">
-        <Link href="/shop" className="hover:text-ink">
-          Shop
-        </Link>
-        <span aria-hidden> / </span>
-        {category.name}
-      </p>
+      <Breadcrumbs items={[{ label: "Shop", href: "/shop" }, { label: category.name }]} />
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[1fr_16rem]">
         <div><h1 className="text-3xl text-ink md:text-4xl">{category.name}</h1><p className="mt-3 max-w-2xl text-slate">{category.caption}</p></div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
