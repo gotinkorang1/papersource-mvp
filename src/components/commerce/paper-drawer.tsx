@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useId, type ReactNode } from "react";
+import { useEffect, useId, useRef, type ReactNode } from "react";
 import { X } from "lucide-react";
 
 export function PaperDrawer({
@@ -20,21 +20,43 @@ export function PaperDrawer({
 }) {
   const titleId = useId();
   const descriptionId = useId();
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
     if (!open) {
+      previousFocus.current?.focus();
       return;
     }
+
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeRef.current?.focus();
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
         onClose();
+        return;
+      }
+      if (event.key === "Tab") {
+        const focusable = Array.from(document.querySelectorAll<HTMLElement>(
+          '[role="dialog"] button, [role="dialog"] a, [role="dialog"] input, [role="dialog"] select, [role="dialog"] textarea, [role="dialog"] [tabindex]:not([tabindex="-1"])',
+        )).filter((element) => !element.hasAttribute("disabled"));
+        if (focusable.length === 0) return;
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
       }
     }
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+    }, [open, onClose]);
 
   if (!open) {
     return null;
@@ -68,6 +90,7 @@ export function PaperDrawer({
           </div>
           <button
             type="button"
+            ref={closeRef}
             onClick={onClose}
             aria-label={`Close ${title}`}
             className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border text-slate transition-[background-color,color,transform] hover:-translate-y-0.5 hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0"

@@ -5,7 +5,7 @@ import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 import { itemCountLabel } from "@/lib/copy";
 
 export function DualPathCounts() {
-  const { cartLines, quoteLines, setCartOpen, setQuoteOpen } =
+  const { cartLines, quoteLines, cartOpen, quoteOpen, setCartOpen, setQuoteOpen } =
     useDualPathPreview();
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
@@ -16,6 +16,7 @@ export function DualPathCounts() {
         type="button"
         className="inline-flex items-center gap-1.5 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
         aria-label={itemCountLabel("Quote list", quoteCount)}
+        aria-expanded={quoteOpen}
         onClick={() => setQuoteOpen(true)}
       >
         <ClipboardList className="size-4" aria-hidden />
@@ -26,6 +27,7 @@ export function DualPathCounts() {
         type="button"
         className="inline-flex items-center gap-1.5 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
         aria-label={itemCountLabel("Cart", cartCount)}
+        aria-expanded={cartOpen}
         onClick={() => setCartOpen(true)}
       >
         <ShoppingBag className="size-4" aria-hidden />
