@@ -6,14 +6,14 @@ import { saveOrganisationAction } from "@/features/account/actions";
 import type { AccountActionState } from "@/features/account/actions-state";
 
 const types = [["business", "Business"], ["school", "School"], ["government", "Government"], ["ngo", "NGO"], ["hospital", "Hospital"], ["church", "Church"], ["university", "University"], ["retailer", "Retailer"], ["other", "Other"]];
-const fieldClass = "min-h-11 w-full rounded-md border border-border bg-white px-3 py-2 text-graphite focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink";
+const fieldClass = "min-h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20";
 
 export function OrganisationForm({ values }: { values: { name: string; type: string; email: string; phone: string } }) {
   const [state, action, pending] = useActionState(saveOrganisationAction, {} as AccountActionState);
   function errors(field: string) { return state.errors?.[field]; }
   function errorProps(field: string) { return { "aria-invalid": Boolean(errors(field)?.length), "aria-describedby": errors(field)?.length ? `org-${field}-error` : undefined }; }
   return (
-    <form action={action} className="mt-8 grid max-w-xl gap-4 rounded-md border border-border bg-white p-5">
+    <form action={action} className="mt-8 grid max-w-xl gap-4 rounded-xl border border-border bg-surface p-5 shadow-sm">
       <div className="space-y-1.5">
         <label htmlFor="org-name" className="block text-sm font-medium">Organisation name *</label>
         <input id="org-name" name="name" required maxLength={200} autoComplete="organization" defaultValue={values.name} className={fieldClass} {...errorProps("name")} />
