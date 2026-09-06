@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { getBrandBySlug, listProductCards } from "@/features/catalogue";
+import { pageMetadata } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -17,10 +18,11 @@ export async function generateMetadata({
     return { title: "Brand" };
   }
 
-  return {
+  return pageMetadata({
     title: `${brand.name} supplies in Ghana`,
     description: `${brand.name} workplace supplies from PaperSource. Accra and Tema delivery.`,
-  };
+    path: `/brands/${brand.slug}`,
+  });
 }
 
 export default async function BrandPage({ params }: PageProps) {

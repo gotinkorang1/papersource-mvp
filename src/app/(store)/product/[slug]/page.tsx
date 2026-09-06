@@ -10,6 +10,7 @@ import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
 import { breadcrumbJsonLd, getProductBySlug, productJsonLd } from "@/features/catalogue";
 import { publicEnv } from "@/lib/env";
+import { pageMetadata } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -29,19 +30,12 @@ export async function generateMetadata({
     return { title: "Product" };
   }
 
-  const canonical = `${siteOrigin()}/product/${product.slug}`;
-
-  return {
+  return pageMetadata({
     title: `${product.name} · ${product.specLine}`,
     description: product.description,
-    alternates: { canonical },
-    openGraph: {
-      title: product.name,
-      description: product.description,
-      url: canonical,
-      type: "website",
-    },
-  };
+    path: `/product/${product.slug}`,
+    image: product.imageSrc,
+  });
 }
 
 export default async function ProductPage({ params }: PageProps) {

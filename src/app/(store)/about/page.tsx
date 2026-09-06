@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { PaperCard } from "@/components/commerce/paper-card";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "About PaperSource",
   description:
     "Learn about PaperSource, a NiiPlants Group Ghana Limited subsidiary helping Ghanaian workplaces source supplies simply.",
-};
+  path: "/about",
+});
 
 const beliefs = [
   ["Make sourcing simple", "Clear products, practical guidance and a straightforward path to buy or request a quote."],

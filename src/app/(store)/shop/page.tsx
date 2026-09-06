@@ -5,12 +5,13 @@ import { listBrands, listDivisionCategories, listProductCards } from "@/features
 import type { ProductCardModel } from "@/types/catalogue";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Shop workplace supplies in Ghana",
-  description:
-    "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
-};
+  description: "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
+  path: "/shop",
+});
 
 type PageProps = { searchParams: Promise<{ q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string }> };
 

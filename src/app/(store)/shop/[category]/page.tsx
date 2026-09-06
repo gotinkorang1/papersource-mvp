@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
+import { pageMetadata } from "@/lib/seo";
 
 type PageProps = {
   params: Promise<{ category: string }>;
@@ -19,10 +20,11 @@ export async function generateMetadata({
     return { title: "Category" };
   }
 
-  return {
+  return pageMetadata({
     title: `${category.name} for Ghana workplaces`,
     description: `${category.caption}. Delivered across Accra and Tema. Nationwide supply on request.`,
-  };
+    path: `/shop/${category.slug}`,
+  });
 }
 
 export default async function ShopCategoryPage({ params }: PageProps) {

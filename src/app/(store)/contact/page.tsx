@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
+export const metadata: Metadata = pageMetadata({
   title: "Contact PaperSource",
   description: "Contact PaperSource in Ghana by phone, email or at our Kanda and Asylum Down locations.",
-};
+  path: "/contact",
+});
 
 export default function ContactPage() {
   return (
