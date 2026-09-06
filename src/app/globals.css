@@ -232,6 +232,8 @@
   a,
   button {
     -webkit-tap-highlight-color: transparent;
+    transition-property: color, background-color, border-color, text-decoration-color, transform, box-shadow;
+    transition-duration: 180ms;
   }
 
   a:active,
