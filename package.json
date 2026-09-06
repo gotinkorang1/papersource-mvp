@@ -19,6 +19,7 @@
     "db:reset": "docker compose up -d && node scripts/apply-sql.mjs && tsx scripts/seed-catalogue.ts",
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
+    "db:reviews": "node scripts/apply-product-reviews.mjs",
     "email": "email dev --dir src/lib/email/templates --port 3001",
     "auth:start": "node scripts/local-supabase.mjs start",
     "auth:stop": "node scripts/local-supabase.mjs stop",

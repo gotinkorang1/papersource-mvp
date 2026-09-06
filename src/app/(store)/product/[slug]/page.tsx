@@ -8,9 +8,10 @@ import { StockBadge } from "@/components/commerce/stock-badge";
 import { OfficeBundleCard } from "@/components/products/office-bundle-card";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
-import { breadcrumbJsonLd, getProductBySlug, productJsonLd } from "@/features/catalogue";
+import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, productJsonLd } from "@/features/catalogue";
 import { publicEnv } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
+import { ProductEngagement } from "@/components/products/product-engagement";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -47,6 +48,7 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const origin = siteOrigin();
+  const reviews = await listApprovedProductReviews(product.id);
   const canonical = `${origin}/product/${product.slug}`;
   const crumbs = [
     { name: "Shop", href: "/shop" },
@@ -124,6 +126,7 @@ export default async function ProductPage({ params }: PageProps) {
           ) : null}
         </div>
       </div>
+      <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} />
     </main>
   );
 }
