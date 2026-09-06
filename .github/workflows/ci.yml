@@ -20,4 +20,5 @@ jobs:
       - run: pnpm install --frozen-lockfile
       - run: pnpm lint
       - run: pnpm exec tsc --noEmit
-      - run: pnpm test
+      # Keep the jsdom/React suite deterministic on shared GitHub runners.
+      - run: pnpm test -- --pool=forks --maxWorkers=1
