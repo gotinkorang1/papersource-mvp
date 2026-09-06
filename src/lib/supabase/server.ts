@@ -4,8 +4,14 @@ import { cookies } from "next/headers";
 import { publicEnv } from "@/lib/env";
 
 export async function createSupabaseServerClient() {
-  const url = publicEnv.NEXT_PUBLIC_SUPABASE_URL;
-  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  // Prefer the public names used by browser clients, but also accept the
+  // server-scoped aliases configured in production. These values never leave
+  // this server-only module.
+  const url =
+    publicEnv.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL?.trim();
+  const key =
+    publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ||
+    process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
 
   if (!url || !key) {
     throw new Error("Supabase public env is not configured");
