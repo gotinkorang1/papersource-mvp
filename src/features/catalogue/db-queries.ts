@@ -155,7 +155,7 @@ export async function getBrandBySlugFromDb(
 
 async function loadActiveProducts() {
   const db = getDb();
-  const { categoryRows, brandRows, deliveryBadge } = await loadCatalogueContext();
+  const { categoryRows, brandRows, deliveryBadge, imageRows } = await loadCatalogueContext();
 
   const productRows = await db
     .select({
@@ -207,6 +207,7 @@ async function loadActiveProducts() {
     attributeRows,
     aliasRows,
     tierRows,
+    imageRows,
   };
 }
 
