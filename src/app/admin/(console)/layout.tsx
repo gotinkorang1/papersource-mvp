@@ -4,6 +4,10 @@ import { isDatabaseConfigured } from "@/lib/db/client";
 import { requireStaff } from "@/lib/staff/require";
 import { notFound } from "next/navigation";
 
+// Admin pages depend on the request's Supabase session and must never be
+// prerendered during a deployment build.
+export const dynamic = "force-dynamic";
+
 export default async function AdminConsoleLayout({
   children,
 }: {
