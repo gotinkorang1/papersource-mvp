@@ -8,6 +8,9 @@ if (!databaseUrl) {
 if (!databaseUrl.startsWith("postgres://") && !databaseUrl.startsWith("postgresql://")) {
   throw new Error("DATABASE_URL must be a PostgreSQL connection string from Supabase Connect (postgresql://...), not the project HTTPS URL.");
 }
+if (databaseUrl.includes("<region>") || databaseUrl.includes("\\@")) {
+  throw new Error("DATABASE_URL still contains a placeholder or escaped @. Copy the complete URI from Supabase Connect and replace only its password if needed.");
+}
 
 const sql = postgres(databaseUrl, { prepare: false, max: 1 });
 try {
