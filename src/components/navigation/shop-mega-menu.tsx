@@ -3,6 +3,7 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { shopMegaColumns } from "@/features/catalogue/local-data";
 
 const shopTools = [
@@ -14,6 +15,8 @@ const shopTools = [
 export function ShopMegaMenu() {
   const [open, setOpen] = useState(false);
   const menuId = useId();
+  const pathname = usePathname();
+  const active = pathname === "/shop" || pathname.startsWith("/product/") || pathname.startsWith("/brands/") || ["/brands", "/bulk-orders", "/quick-order"].includes(pathname);
 
   return (
     <div
@@ -27,7 +30,7 @@ export function ShopMegaMenu() {
     >
       <button
         type="button"
-        className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-graphite transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className={`inline-flex min-h-11 items-center gap-1 border-b-2 text-sm font-medium transition-[color,border-color] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${active ? "border-ochre text-ink" : "border-transparent text-graphite"}`}
         aria-expanded={open}
         aria-controls={menuId}
         aria-haspopup="menu"

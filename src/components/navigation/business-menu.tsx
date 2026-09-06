@@ -3,13 +3,16 @@
 import { useId, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
+import { usePathname } from "next/navigation";
 
 export function BusinessMenu() {
   const [open, setOpen] = useState(false);
   const menuId = useId();
+  const pathname = usePathname();
+  const active = ["/business", "/schools", "/corporate-accounts"].includes(pathname);
   return (
     <div className="group relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} onFocus={() => setOpen(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>
-      <button type="button" className="inline-flex min-h-11 items-center gap-1 text-sm font-medium text-graphite transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink" aria-expanded={open} aria-controls={menuId} aria-haspopup="menu" onClick={() => setOpen((value) => !value)} onKeyDown={(event) => event.key === "Escape" && setOpen(false)}>
+      <button type="button" className={`inline-flex min-h-11 items-center gap-1 border-b-2 text-sm font-medium transition-[color,border-color] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${active || open ? "border-ochre text-ink" : "border-transparent text-graphite"}`} aria-expanded={open} aria-controls={menuId} aria-haspopup="menu" onClick={() => setOpen((value) => !value)} onKeyDown={(event) => event.key === "Escape" && setOpen(false)}>
         Business <ChevronDown className={`size-3.5 transition-transform duration-200 ${open ? "rotate-180" : ""}`} aria-hidden />
       </button>
       {open ? (

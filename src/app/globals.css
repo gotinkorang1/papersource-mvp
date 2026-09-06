@@ -229,6 +229,16 @@
     transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
   }
 
+  a,
+  button {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  a:active,
+  button:not(:disabled):active {
+    transform: scale(0.98);
+  }
+
   .surface-lift {
     box-shadow: var(--ps-shadow-sm);
     transition: box-shadow 220ms ease, transform 220ms ease;
