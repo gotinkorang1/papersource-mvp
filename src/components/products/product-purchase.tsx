@@ -30,7 +30,6 @@ export function ProductPurchase({ product }: { product: ProductCardModel }) {
         </button>
         <QuoteButton
           data-testid={`add-to-quote-${product.slug}`}
-          disabled={out}
           onClick={() => addToQuote(product, quantity)}
         >
           Add to Quote

@@ -42,4 +42,11 @@ describe("ProductCard", () => {
     expect(onAddToQuote).toHaveBeenCalledTimes(1);
     expect(onAddToCart).not.toHaveBeenCalled();
   });
+
+  it("keeps quote requests available when stock is out", () => {
+    render(<ProductCard product={{ ...product, stock: "out" }} />);
+
+    expect(screen.getByRole("button", { name: "Add to Cart" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Add to Quote" })).toBeEnabled();
+  });
 });

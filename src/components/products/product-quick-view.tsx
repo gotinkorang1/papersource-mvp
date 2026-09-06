@@ -80,7 +80,6 @@ export function ProductQuickView({
             Add to Cart
           </button>
           <QuoteButton
-            disabled={out}
             onClick={() => {
               addToQuote?.(product, quantity);
               onClose();
