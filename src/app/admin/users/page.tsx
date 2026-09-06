@@ -5,6 +5,7 @@ import { requireStaffArea } from "@/lib/staff/require";
 import type { StaffRole } from "@/lib/staff/types";
 
 export const metadata: Metadata = { title: "Staff users" };
+export const dynamic = "force-dynamic";
 
 const roles: StaffRole[] = ["super_admin", "admin", "sales", "warehouse", "content_manager"];
 
