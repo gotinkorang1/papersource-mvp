@@ -18,7 +18,7 @@ export function StaffLoginForm({ error }: { error?: string }) {
   return (
     <form action="/admin/auth" method="post" className="space-y-4">
       {error ? (
-        <p role="alert" className="border border-error/40 bg-cream px-4 py-3 text-sm text-error">
+        <p role="alert" className="rounded-md border border-error/40 bg-error/10 px-4 py-3 text-sm text-error">
           {error}
         </p>
       ) : null}
