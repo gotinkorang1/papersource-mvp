@@ -178,8 +178,12 @@
   body {
     @apply bg-background text-foreground;
     text-rendering: optimizeLegibility;
+    font-kerning: normal;
+    font-optical-sizing: auto;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    letter-spacing: -0.005em;
     font-variation-settings: "slnt" 0;
-    line-height: 1.55;
+    line-height: 1.6;
     background-image: radial-gradient(circle at 15% 0%, rgb(230 163 41 / 0.045), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(31 107 87 / 0.035), transparent 24rem);
   }
 
