@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
+import { recordAdminAudit } from "@/features/admin/audit";
 import {
   addPriceTier,
   CatalogueAdminError,
@@ -27,21 +28,26 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const intent = String(formData.get("intent") ?? "");
     if (intent === "deactivate-tier") {
+      const tierId = uuid.parse(formData.get("tierId"));
       await deactivatePriceTier({
         role: actor.role,
-        tierId: uuid.parse(formData.get("tierId")),
+        tierId,
       });
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "price_tier_deactivated", resourceType: "price_tier", resourceId: tierId });
     } else if (intent === "add-tier") {
       const requestQuote = String(formData.get("requestQuote") ?? "") === "true";
       const maxRaw = String(formData.get("maximumQuantity") ?? "").trim();
+      const variantId = uuid.parse(formData.get("variantId"));
+      const minimumQuantity = Number(formData.get("minimumQuantity"));
       await addPriceTier({
         role: actor.role,
-        variantId: uuid.parse(formData.get("variantId")),
-        minimumQuantity: Number(formData.get("minimumQuantity")),
+        variantId,
+        minimumQuantity,
         maximumQuantity: maxRaw ? Number(maxRaw) : null,
         unitPricePesewas: requestQuote ? null : parseOptionalPesewas(formData.get("unitPrice")),
         requestQuote,
       });
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "price_tier_added", resourceType: "variant", resourceId: variantId, metadata: { minimumQuantity, requestQuote } });
     } else {
       next.searchParams.set("error", "Unknown pricing action.");
     }
