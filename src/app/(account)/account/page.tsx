@@ -21,8 +21,8 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       <p className="mt-3 text-slate">Signed in as {actor.fullName} · {actor.email}. Your retail cart and quote list stay separate.</p>
       {query.authError === "sign-out" ? <p role="alert" className="mt-4 text-error">We could not sign you out. Please try again.</p> : null}
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
-        <Link href="/account/addresses" className="rounded-md border border-border bg-white p-5 text-ink underline">{addresses.length} saved {addresses.length === 1 ? "address" : "addresses"}</Link>
-        <Link href="/account/organisation" className="rounded-md border border-border bg-white p-5 text-ink underline">{org ? org.name : "Add an organisation (optional)"}</Link>
+        <Link href="/account/addresses" className="rounded-xl border border-border bg-surface p-5 text-ink shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">{addresses.length} saved {addresses.length === 1 ? "address" : "addresses"}</Link>
+        <Link href="/account/organisation" className="rounded-xl border border-border bg-surface p-5 text-ink shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">{org ? org.name : "Add an organisation (optional)"}</Link>
       </div>
       <section className="mt-8" aria-labelledby="recent-orders">
         <h2 id="recent-orders" className="font-heading text-xl text-ink">Recent orders</h2>
