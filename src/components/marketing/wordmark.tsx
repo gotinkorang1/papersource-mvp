@@ -14,7 +14,7 @@ export function Wordmark({
     <Link
       href={href}
       className={cn(
-        "inline-flex items-center gap-2",
+        "group inline-flex items-center gap-2",
         inverted ? "text-cream" : "text-ink",
         className,
       )}
@@ -25,8 +25,8 @@ export function Wordmark({
         <span className="absolute bottom-1.5 left-2 h-px w-3 bg-current/50" />
         <span className="absolute bottom-2.5 left-2 h-px w-3 bg-current/50" />
       </span>
-      <span className="font-heading text-lg font-semibold tracking-[0.12em]">
-        PAPERSOURCE
+      <span className="font-heading text-[1.05rem] font-bold leading-none tracking-[0.16em] transition-colors group-hover:text-paper-green sm:text-lg">
+        <span>PAPER</span><span className={inverted ? "text-ochre" : "text-paper-green"}>SOURCE</span>
       </span>
     </Link>
   );
