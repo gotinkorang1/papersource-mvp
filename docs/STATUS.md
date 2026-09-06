@@ -10,6 +10,7 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 
 - Quick Order and office-pack bundle definitions are committed and pushed.
 - Catalogue enrichment is complete: all 305 active products have SEO-ready descriptions, practical categories, Cloudinary-backed imagery, and non-empty image alt text. The repeatable import and image-sync scripts are `scripts/import-catalogue.mjs` and `scripts/sync-catalogue-images.mjs`.
+- Delivery operations are seeded with eight standard Accra, Tema and nationwide zones, and public route smoke coverage is automated in `e2e/public-smoke.spec.ts`.
 - Local Supabase Auth test foundation is committed and pushed (`3e84853`). Confirmation, password login, recovery and refresh-token revocation are tested.
 - Canonical customer identity checkpoint: verified Supabase claims, subject-bound profile synchronization, rejection of the legacy application cookie, and SSR refresh composed with guest identity. Verification details are in [LOCAL_AUTH.md](LOCAL_AUTH.md).
 - Customer accounts: Supabase-backed registration/confirmation/login/recovery/sign-out, protected account histories, Ghana address book, one-organisation membership, actor-aware cart/quote merge, authenticated checkout/RFQ, and profile/organisation document access are implemented and verified locally.
