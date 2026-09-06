@@ -44,13 +44,13 @@ export function ProductCard({
   return (
     <PaperCard className={cn("flex flex-col overflow-hidden", className)}>
       <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
-        <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
+        <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
         <div className="absolute left-3 top-3"><StockBadge level={product.stock} /></div>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="text-base font-semibold leading-snug text-ink">
+          <h3 className="min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
             <Link
               href={`/product/${product.slug}`}
               className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
@@ -58,7 +58,7 @@ export function ProductCard({
               {product.name}
             </Link>
           </h3>
-          <p className="mt-1 text-sm text-slate">{product.specLine}</p>
+          <p className="mt-1 min-h-[2.5rem] text-sm leading-5 text-slate">{product.specLine}</p>
         </div>
         <PriceDisplay
           pesewas={product.unitPricePesewas}
