@@ -16,6 +16,7 @@ const files = [
   "drizzle/0009_rls_hardening.sql",
   "drizzle/0010_store_settings.sql",
   "drizzle/0011_audit_logs.sql",
+  "drizzle/0012_quote_expiry_reminders.sql",
 ];
 
 function run(command, args) {
@@ -23,6 +24,23 @@ function run(command, args) {
 }
 
 run("docker", ["exec", container, "pg_isready", "-U", "papersource", "-d", "papersource"]);
+
+// The local Postgres container does not ship with Supabase's API roles. Create
+// the no-login roles needed by the RLS grants so the same migrations can run
+// locally without weakening production permissions.
+run("docker", [
+  "exec",
+  container,
+  "psql",
+  "-U",
+  "papersource",
+  "-d",
+  "papersource",
+  "-v",
+  "ON_ERROR_STOP=1",
+  "-c",
+  "DO $$ BEGIN CREATE ROLE anon NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$; DO $$ BEGIN CREATE ROLE authenticated NOLOGIN; EXCEPTION WHEN duplicate_object THEN NULL; END $$;",
+]);
 
 for (const file of files) {
   const remote = `/tmp/${path.basename(file)}`;
