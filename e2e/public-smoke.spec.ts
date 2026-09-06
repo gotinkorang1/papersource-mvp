@@ -14,8 +14,8 @@ test("public storefront routes respond successfully", async ({ request }) => {
     "/api/search/suggestions?q=pen",
   ];
 
-  for (const route of routes) {
+  await Promise.all(routes.map(async (route) => {
     const response = await request.get(route);
     expect(response.ok(), `${route} should respond successfully`).toBe(true);
-  }
+  }));
 });
