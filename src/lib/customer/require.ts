@@ -15,7 +15,17 @@ export const readCustomerActor = cache(async (): Promise<CustomerActor | null> =
   const supabase = await createSupabaseServerClient();
   const identity = await readVerifiedCustomerIdentity(supabase.auth);
   if (!identity) return null;
-  return synchronizeCustomerProfile(identity);
+  try {
+    return await synchronizeCustomerProfile(identity);
+  } catch (error) {
+    // Staff profiles are provisioned separately from customer Auth profiles.
+    // If the same email belongs to that staff profile, do not let storefront
+    // chrome fail; the user can still browse as a guest.
+    if (error instanceof Error && error.message === "Customer profile unavailable.") {
+      return null;
+    }
+    throw error;
+  }
 });
 
 export async function requireCustomer(next: unknown = "/account"): Promise<CustomerActor> {

@@ -37,6 +37,11 @@ it("loads the stored actor only after verified Supabase identity", async () => {
   expect(await readCustomerActor()).toEqual(actor);
   expect(state.sync).toHaveBeenCalledWith({ ...actor, fullName: actor.email });
 });
+it("keeps staff profiles from breaking storefront browsing", async () => {
+  state.getClaims.mockResolvedValue({ data: { claims: { sub, email: actor.email, role: "authenticated" } }, error: null });
+  state.sync.mockRejectedValue(new Error("Customer profile unavailable."));
+  expect(await readCustomerActor()).toBeNull();
+});
 it("supports guest-only installations without falling back to custom auth", async () => {
   state.configured = false;
   expect(await readCustomerActor()).toBeNull();
