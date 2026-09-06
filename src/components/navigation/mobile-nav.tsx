@@ -20,7 +20,7 @@ export function MobileNav() {
         <li>
           <Link
             href="/"
-            className="flex min-h-14 flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
+            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink"
           >
             <House className="size-4" aria-hidden />
             Home
@@ -29,7 +29,7 @@ export function MobileNav() {
         <li>
           <Link
             href="/shop"
-            className="flex min-h-14 flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
+            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink"
           >
             <Store className="size-4" aria-hidden />
             Shop
@@ -38,7 +38,7 @@ export function MobileNav() {
         <li>
           <Link
             href="/search"
-            className="flex min-h-14 flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
+            className="flex min-h-14 flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink"
           >
             <Search className="size-4" aria-hidden />
             Search
@@ -47,22 +47,22 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className="flex min-h-14 w-full flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
+            className="flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink"
             aria-label={itemCountLabel("Quote list", quoteCount)}
             onClick={() => setQuoteOpen(true)}
           >
-            <ClipboardList className="size-4" aria-hidden />
+            <span className="relative"><ClipboardList className="size-4" aria-hidden />{quoteCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{quoteCount > 99 ? "99+" : quoteCount}</span> : null}</span>
             Quote
           </button>
         </li>
         <li>
           <button
             type="button"
-            className="flex min-h-14 w-full flex-col items-center justify-center gap-1 px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10"
+            className="flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md px-2 py-2 text-xs text-slate transition-colors hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink"
             aria-label={itemCountLabel("Cart", cartCount)}
             onClick={() => setCartOpen(true)}
           >
-            <ShoppingBag className="size-4" aria-hidden />
+            <span className="relative"><ShoppingBag className="size-4" aria-hidden />{cartCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{cartCount > 99 ? "99+" : cartCount}</span> : null}</span>
             Cart
           </button>
         </li>
