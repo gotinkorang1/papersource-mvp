@@ -78,9 +78,20 @@ const sql = postgres(process.env.DATABASE_URL, { ssl: "require", max: 10, prepar
 try {
     const [brand] = await sql`insert into brands (name, slug, active) values ('Imported Catalogue', 'imported-catalogue', true) on conflict (slug) do update set active = true returning id`;
     const categoryIds = new Map();
-    for (const category of ["Paper & Printing", "Writing & Marking", "Filing & Organisation", "Office Equipment", "School Supplies", "Books & Notebooks", "Arts & Crafts", "Desk Accessories", "General Supplies"]) {
+    const categoryDefinitions = [
+      ["Paper & Printing", "A4 paper, copier reams, toner and printing essentials for offices, schools and home workspaces."],
+      ["Writing & Marking", "Reliable pens, pencils, markers and highlighters for clear notes, planning and everyday work."],
+      ["Filing & Organisation", "Folders, binders and document storage essentials to keep workplace and school records organised."],
+      ["Office Equipment", "Practical calculators, laminators and office machines that keep daily document work efficient."],
+      ["School Supplies", "Classroom and study essentials selected for learners, teachers and Ghanaian schools."],
+      ["Books & Notebooks", "Notebooks, journals and books for study, planning, record keeping and creative thinking."],
+      ["Arts & Crafts", "Glue, colours, scissors and creative materials for classroom projects and hands-on making."],
+      ["Desk Accessories", "Desk organisers and everyday accessories for a tidy, focused and productive workspace."],
+      ["General Supplies", "Dependable workplace, school and home essentials available for quick order or bulk quotation."],
+    ];
+    for (const [category, description] of categoryDefinitions) {
       const slug = slugify(category);
-      const [saved] = await sql`insert into categories (name, slug, active) values (${category}, ${slug}, true) on conflict (slug) do update set name = excluded.name, active = true returning id`;
+      const [saved] = await sql`insert into categories (name, slug, description, active) values (${category}, ${slug}, ${description}, true) on conflict (slug) do update set name = excluded.name, description = excluded.description, active = true returning id`;
       categoryIds.set(category.toUpperCase(), saved.id);
     }
     // Retire the broad legacy buckets so empty categories do not appear in the storefront.
