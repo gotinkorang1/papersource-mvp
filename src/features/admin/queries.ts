@@ -1,6 +1,6 @@
 import { asc, desc, eq, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { adminRoles, organizationMembers, organizations, payments, orders, profiles, deliveryZones } from "@/lib/db/schema";
+import { addresses, adminRoles, organizationMembers, organizations, payments, orders, profiles, quotes, deliveryZones } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffRole } from "@/lib/staff/types";
 
@@ -51,4 +51,22 @@ export async function listAdminStaff(role: StaffRole) {
     .from(profiles)
     .innerJoin(adminRoles, eq(adminRoles.profileId, profiles.id))
     .orderBy(asc(profiles.fullName), asc(profiles.email));
+}
+
+export async function getAdminCustomer(role: StaffRole, profileId: string) {
+  assertRead(role, "customers");
+  const db = getDb();
+  const [profile] = await db
+    .select({ id: profiles.id, email: profiles.email, fullName: profiles.fullName, phone: profiles.phone, updatedAt: profiles.updatedAt })
+    .from(profiles)
+    .leftJoin(adminRoles, eq(adminRoles.profileId, profiles.id))
+    .where(sql`${profiles.id} = ${profileId} and ${adminRoles.profileId} is null`)
+    .limit(1);
+  if (!profile) return null;
+  const [customerAddresses, customerOrders, customerQuotes] = await Promise.all([
+    db.select().from(addresses).where(eq(addresses.ownerProfileId, profileId)).orderBy(desc(addresses.updatedAt)),
+    db.select({ id: orders.id, number: orders.number, status: orders.status, grandTotal: orders.grandTotal, createdAt: orders.createdAt }).from(orders).where(eq(orders.profileId, profileId)).orderBy(desc(orders.createdAt)).limit(20),
+    db.select({ id: quotes.id, number: quotes.number, status: quotes.status, grandTotal: quotes.grandTotal, createdAt: quotes.createdAt }).from(quotes).where(eq(quotes.profileId, profileId)).orderBy(desc(quotes.createdAt)).limit(20),
+  ]);
+  return { ...profile, addresses: customerAddresses, orders: customerOrders, quotes: customerQuotes };
 }
