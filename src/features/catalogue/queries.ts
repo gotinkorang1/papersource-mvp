@@ -30,14 +30,14 @@ export { getShopMegaColumns, listProductCardsFromSeed };
 // Compatibility aliases keep indexable and previously shared category URLs
 // working even when the imported catalogue uses broader divisions.
 const CATEGORY_SLUG_ALIASES: Record<string, string> = {
-  paper: "stationery",
-  writing: "stationery",
-  "school-supplies": "stationery",
-  "office-supplies": "stationery",
-  "printer-supplies": "others",
-  toner: "others",
-  ink: "others",
-  "desk-essentials": "others",
+  paper: "paper-printing",
+  writing: "writing-marking",
+  "school-supplies": "school-supplies",
+  "office-supplies": "office-equipment",
+  "printer-supplies": "paper-printing",
+  toner: "paper-printing",
+  ink: "paper-printing",
+  "desk-essentials": "desk-accessories",
 };
 
 type ProductFilter = {
