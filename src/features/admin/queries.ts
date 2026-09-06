@@ -1,4 +1,4 @@
-import { asc, desc, eq, isNull, sql } from "drizzle-orm";
+import { asc, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { addresses, adminRoles, auditLogs, organizationMembers, organizations, payments, orders, profiles, quotes, deliveryZones } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -86,7 +86,11 @@ export async function getAdminOrganisation(role: StaffRole, organisationId: stri
   return { ...organisation, members, addresses: organisationAddresses, orders: organisationOrders, quotes: organisationQuotes };
 }
 
-export async function listAdminAuditLogs(role: StaffRole) {
+export async function listAdminAuditLogs(role: StaffRole, filters: { action?: string; resourceType?: string } = {}) {
   if (!canAccessAdmin(role, "logs", "read")) throw new AdminReadError("This role cannot view audit logs.");
-  return getDb().select({ id: auditLogs.id, action: auditLogs.action, resourceType: auditLogs.resourceType, resourceId: auditLogs.resourceId, actorEmail: profiles.email, actorName: profiles.fullName, createdAt: auditLogs.createdAt }).from(auditLogs).leftJoin(profiles, eq(profiles.id, auditLogs.actorProfileId)).orderBy(desc(auditLogs.createdAt)).limit(100);
+  const conditions = [
+    filters.action?.trim() ? ilike(auditLogs.action, `%${filters.action.trim()}%`) : undefined,
+    filters.resourceType?.trim() ? eq(auditLogs.resourceType, filters.resourceType.trim()) : undefined,
+  ].filter((condition): condition is NonNullable<typeof condition> => Boolean(condition));
+  return getDb().select({ id: auditLogs.id, action: auditLogs.action, resourceType: auditLogs.resourceType, resourceId: auditLogs.resourceId, actorEmail: profiles.email, actorName: profiles.fullName, createdAt: auditLogs.createdAt }).from(auditLogs).leftJoin(profiles, eq(profiles.id, auditLogs.actorProfileId)).where(conditions.length ? sql.join(conditions, sql` and `) : undefined).orderBy(desc(auditLogs.createdAt)).limit(100);
 }
