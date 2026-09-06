@@ -48,7 +48,7 @@ export default async function HomePage() {
         <LiveDeliveryStatus />
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-cream shadow-[0_24px_60px_rgba(16,42,67,0.16)]">
-            <Image src="/images/top-view-colorful-pencils-wih-copy-space.jpg" alt="Colourful pencils arranged on a desk" fill priority fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
+            <Image src="/images/catalogue-stationery-generated.png" alt="Stationery, notebooks, paper and desk supplies arranged for a productive workday" fill priority fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
           </div>
         </div>
@@ -66,7 +66,7 @@ export default async function HomePage() {
                 name={category.name}
                 href={`/shop/${category.slug}`}
                 caption={category.caption}
-                imageSrc={category.slug === "stationery" ? "/images/set-school-stationery.jpg" : category.slug === "books" ? "/images/stack-books-with-library-scene.jpg" : "/images/home-printer-based-toner.jpg"}
+                imageSrc={category.slug === "paper-printing" ? "/images/close-up-view-back-school-concept.jpg" : category.slug === "writing-marking" ? "/images/extreme-close-up-pen-taken-by-person-from-desk-organizer.jpg" : category.slug === "books-notebooks" ? "/images/stack-books-with-library-scene.jpg" : category.slug === "school-supplies" ? "/images/boy-holding-white-paper-school.jpg" : "/images/lightbox-still-life-arrangement.jpg"}
                 imageAlt={`${category.name} supplies`}
               />
             ))}
