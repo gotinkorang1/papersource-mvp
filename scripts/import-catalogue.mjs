@@ -53,7 +53,7 @@ function classifyCategory(row) {
   return CATEGORY_RULES.find(([, pattern]) => pattern.test(name))?.[0] ?? "General Supplies";
 }
 
-function describeProduct(name, category) {
+function describeProduct(name, category, quoteOnly) {
   const cleanName = name.replace(/\s+/g, " ").trim();
   const descriptions = {
     "Books & Notebooks": `${cleanName} for organised notes, record keeping and everyday study.`,
@@ -66,7 +66,11 @@ function describeProduct(name, category) {
     "Desk Accessories": `${cleanName} for a tidier, more productive and better organised workspace.`,
     "General Supplies": `${cleanName} for dependable everyday use at work, school or home.`,
   };
-  return descriptions[category] ?? descriptions["General Supplies"];
+  const base = descriptions[category] ?? descriptions["General Supplies"];
+  const fulfilment = quoteOnly
+    ? "Request a tailored quotation for bulk quantities, options and delivery."
+    : "Order online for delivery across Accra and Tema, with nationwide supply available on request.";
+  return `${base} ${fulfilment}`;
 }
 
 const rows = parseCsv(await readFile(path.resolve(file), "utf8"));
@@ -91,7 +95,7 @@ try {
       const cedis = Number(row["Retail Price"] || 0);
       if (!Number.isFinite(cedis) || cedis < 0) throw new Error(`Invalid retail price on row ${index + 2}`);
       const price = Math.round(cedis * 100);
-      const description = describeProduct(name, categoryName);
+      const description = describeProduct(name, categoryName, cedis === 0);
       const [product] = await sql`insert into products (name, slug, brand_id, category_id, product_type, description, status) values (${name}, ${slug}, ${brand.id}, ${category}, 'standard', ${description}, 'active') on conflict (slug) do update set name = excluded.name, category_id = excluded.category_id, description = excluded.description, status = 'active', updated_at = now() returning id`;
       const [variant] = await sql`insert into product_variants (product_id, sku, name, unit_label, base_unit_price, currency, active) values (${product.id}, ${sku}, ${name}, 'each', ${price}, 'GHS', true) on conflict (sku) do update set product_id = excluded.product_id, name = excluded.name, base_unit_price = excluded.base_unit_price, active = true returning id`;
       await sql`insert into inventory (variant_id, on_hand, reserved, low_stock_threshold) values (${variant.id}, 0, 0, 0) on conflict (variant_id) do nothing`;
