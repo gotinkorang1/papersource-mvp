@@ -10,6 +10,9 @@ test("public storefront routes respond successfully", async ({ request }) => {
     "/quote",
     "/checkout",
     "/login",
+    "/faq",
+    "/robots.txt",
+    "/sitemap.xml",
     "/api/health",
     "/api/search/suggestions?q=pen",
   ];
