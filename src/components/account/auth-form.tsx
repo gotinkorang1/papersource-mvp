@@ -29,7 +29,7 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
     <form action={formAction} className="mt-8 grid gap-4" aria-label={labels[mode]} aria-busy={pending}>
       <input type="hidden" name="next" value={safeCustomerReturnPath(next)} />
       {state.message ? (
-        <p role={state.status === "error" ? "alert" : "status"} className={`rounded-md border bg-white px-4 py-3 text-sm ${state.status === "error" ? "border-error/40 text-error" : "border-paper-green/40 text-paper-green"}`}>
+        <p role={state.status === "error" ? "alert" : "status"} className={`rounded-md border bg-surface px-4 py-3 text-sm ${state.status === "error" ? "border-error/40 text-error" : "border-paper-green/40 text-paper-green"}`}>
           {state.message}
         </p>
       ) : null}
@@ -43,7 +43,7 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
             <label htmlFor={id} className="block text-sm text-ink">{label}</label>
             <input {...field} id={id} disabled={pending} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
               minLength={passwordHelp ? 8 : undefined}
-              className="mt-1 h-11 w-full rounded-md border border-border bg-white px-3 text-base text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:opacity-60" />
+              className="mt-1 h-11 w-full rounded-md border border-border bg-background px-3 text-base text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20 disabled:opacity-60" />
             {passwordHelp ? <p id={`${id}-help`} className="mt-1 text-xs text-slate">Use 8–128 characters.</p> : null}
             {error ? <p id={`${id}-error`} className="mt-1 text-sm text-error">{error}</p> : null}
           </div>
