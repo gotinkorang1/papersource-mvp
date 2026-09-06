@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { AccountLink } from "@/components/navigation/account-link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
 import { HeaderSearch } from "@/components/navigation/header-search";
@@ -18,9 +17,6 @@ export function StoreHeader() {
         >
           <ShopMegaMenu />
           <BusinessMenu />
-          <Link href="/request-quote" className="rounded-md bg-ochre px-3 py-2 text-sm font-semibold text-ink shadow-[0_4px_12px_rgba(230,163,41,0.2)] transition-all hover:-translate-y-px hover:bg-ochre/90 hover:shadow-[0_8px_18px_rgba(230,163,41,0.28)]">
-            Request a Quote
-          </Link>
         </nav>
         <HeaderSearch className="hidden lg:block lg:max-w-md" />
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
