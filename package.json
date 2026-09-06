@@ -20,6 +20,7 @@
     "db:generate": "drizzle-kit generate",
     "db:push": "drizzle-kit push",
     "db:reviews": "node scripts/apply-product-reviews.mjs",
+    "db:content": "node scripts/apply-content-migration.mjs",
     "email": "email dev --dir src/lib/email/templates --port 3001",
     "auth:start": "node scripts/local-supabase.mjs start",
     "auth:stop": "node scripts/local-supabase.mjs stop",

@@ -10,3 +10,4 @@ export * from "./documents";
 export * from "./settings";
 export * from "./audit";
 export * from "./reviews";
+export * from "./content";
