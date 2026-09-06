@@ -15,7 +15,7 @@ export default async function AccountAddressesPage() {
       {rows.length === 0 ? <p className="mt-6 text-slate">No saved addresses yet. Add your first address below.</p> : null}
       <ul className="mt-8 space-y-4">
         {rows.map((row) => (
-          <li key={row.id} className="rounded-md border border-border bg-white p-5 text-sm">
+          <li key={row.id} className="rounded-xl border border-border bg-surface p-5 text-sm shadow-sm transition-shadow hover:shadow-md">
             <p className="font-medium text-ink">{row.fullName}{row.isDefault ? " · Default" : ""}</p>
             <p className="text-slate">{row.phone} · {row.cityTown}, {row.region}</p>
             <p className="text-slate">{[row.areaSuburb, row.streetLandmark, row.ghanapostGps].filter(Boolean).join(" · ")}</p>
