@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 export function ProductGallery({
   alt,
   src,
-  frames = 3,
+  frames = 1,
 }: {
   alt: string;
   src?: string;
