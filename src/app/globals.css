@@ -184,6 +184,7 @@
     letter-spacing: -0.005em;
     font-variation-settings: "slnt" 0;
     line-height: 1.6;
+    overscroll-behavior-x: none;
     background-image: radial-gradient(circle at 15% 0%, rgb(230 163 41 / 0.045), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(31 107 87 / 0.035), transparent 24rem);
   }
 

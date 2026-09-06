@@ -18,7 +18,7 @@ export function MobileNav() {
   return (
     <nav
       aria-label="Mobile"
-      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-card/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_30px_rgba(16,42,67,0.1)] backdrop-blur-xl md:hidden"
+      className="fixed inset-x-0 bottom-0 z-40 border-t border-border/80 bg-card/90 pb-[env(safe-area-inset-bottom)] shadow-[0_-12px_30px_rgba(16,42,67,0.1)] backdrop-blur-xl [transform:translateZ(0)] md:hidden"
     >
       <ul className="grid grid-cols-5">
         <li>
