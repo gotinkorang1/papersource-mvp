@@ -70,3 +70,18 @@ export async function getAdminCustomer(role: StaffRole, profileId: string) {
   ]);
   return { ...profile, addresses: customerAddresses, orders: customerOrders, quotes: customerQuotes };
 }
+
+export async function getAdminOrganisation(role: StaffRole, organisationId: string) {
+  assertRead(role, "organisations");
+  const db = getDb();
+  const [organisation] = await db.select({ id: organizations.id, name: organizations.name, type: organizations.type, email: organizations.email, phone: organizations.phone, updatedAt: organizations.updatedAt })
+    .from(organizations).where(eq(organizations.id, organisationId)).limit(1);
+  if (!organisation) return null;
+  const [members, organisationAddresses, organisationOrders, organisationQuotes] = await Promise.all([
+    db.select({ id: organizationMembers.id, role: organizationMembers.role, email: profiles.email, fullName: profiles.fullName, phone: profiles.phone }).from(organizationMembers).innerJoin(profiles, eq(profiles.id, organizationMembers.profileId)).where(eq(organizationMembers.organizationId, organisationId)).orderBy(asc(profiles.fullName)),
+    db.select().from(addresses).where(eq(addresses.organizationId, organisationId)).orderBy(desc(addresses.updatedAt)),
+    db.select({ id: orders.id, number: orders.number, status: orders.status, grandTotal: orders.grandTotal, createdAt: orders.createdAt }).from(orders).where(eq(orders.organizationId, organisationId)).orderBy(desc(orders.createdAt)).limit(20),
+    db.select({ id: quotes.id, number: quotes.number, status: quotes.status, grandTotal: quotes.grandTotal, createdAt: quotes.createdAt }).from(quotes).where(eq(quotes.organizationId, organisationId)).orderBy(desc(quotes.createdAt)).limit(20),
+  ]);
+  return { ...organisation, members, addresses: organisationAddresses, orders: organisationOrders, quotes: organisationQuotes };
+}
