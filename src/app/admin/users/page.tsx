@@ -20,14 +20,14 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       <p className="text-sm tracking-[0.16em] text-slate uppercase">System</p>
       <h1 className="mt-2 font-heading text-3xl text-ink">Staff users</h1>
       <p className="mt-3 max-w-2xl text-slate">Staff access is granted by Supabase Auth email plus an entry in <code>admin_roles</code>. Passwords remain managed in Supabase Auth.</p>
-      {error ? <p role="alert" className="mt-4 border border-error/40 bg-white px-4 py-3 text-sm text-error">{error}</p> : null}
+      {error ? <p role="alert" className="mt-4 rounded-lg border border-error/40 bg-card px-4 py-3 text-sm text-error">{error}</p> : null}
       {success ? <p role="status" className="mt-4 border border-paper-green/40 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">Role updated.</p> : null}
       {rows.length === 0 ? <p className="mt-8 text-slate">No staff profiles have been assigned yet.</p> : (
-        <div className="mt-8 overflow-x-auto rounded-md border border-border bg-white">
+        <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
           <table className="w-full text-sm">
             <caption className="sr-only">Staff users and roles</caption>
             <thead><tr className="border-b border-border text-left text-slate"><th className="px-4 py-3 font-medium">Name</th><th className="px-4 py-3 font-medium">Email</th><th className="px-4 py-3 font-medium">Role</th><th className="px-4 py-3 font-medium">Access</th></tr></thead>
-            <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border last:border-0"><td className="px-4 py-3 font-medium text-ink">{row.fullName}</td><td className="px-4 py-3">{row.email}</td><td className="px-4 py-3 capitalize">{row.role.replaceAll("_", " ")}</td><td className="px-4 py-3">{canWrite ? <form action="/admin/users/mutate" method="post" className="flex items-center gap-2"><input type="hidden" name="profileId" value={row.id} /><select name="role" defaultValue={row.role} className="h-9 rounded-md border border-border bg-cream px-2 text-sm text-ink" aria-label={`Role for ${row.email}`}>{roles.map((role) => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}</select><button type="submit" className="rounded-md border border-ink px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-ink hover:text-white">Save</button></form> : <span className="text-slate">Read only</span>}</td></tr>)}</tbody>
+            <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="px-4 py-3 font-medium text-ink">{row.fullName}</td><td className="px-4 py-3">{row.email}</td><td className="px-4 py-3 capitalize">{row.role.replaceAll("_", " ")}</td><td className="px-4 py-3">{canWrite ? <form action="/admin/users/mutate" method="post" className="flex items-center gap-2"><input type="hidden" name="profileId" value={row.id} /><select name="role" defaultValue={row.role} className="h-9 rounded-md border border-border bg-background px-2 text-sm text-ink" aria-label={`Role for ${row.email}`}>{roles.map((role) => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}</select><button type="submit" className="rounded-md border border-ink px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-ink hover:text-white">Save</button></form> : <span className="text-slate">Read only</span>}</td></tr>)}</tbody>
           </table>
         </div>
       )}

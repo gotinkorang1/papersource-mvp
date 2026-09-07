@@ -19,7 +19,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
       <h1 className="mt-2 font-heading text-3xl text-ink">Store settings</h1>
       <p className="mt-3 text-slate">These values affect server-computed tax, quotation expiry and support links. Money remains VAT-inclusive integer pesewas.</p>
       <AdminError error={error} />
-      <form action="/admin/settings/mutate" method="post" className="mt-8 grid gap-4 rounded-md border border-border bg-white p-5 sm:grid-cols-2">
+      <form action="/admin/settings/mutate" method="post" className="mt-8 grid gap-4 rounded-xl border border-border bg-card p-5 sm:grid-cols-2">
         <input type="hidden" name="intent" value="save-settings" />
         <AdminField label="VAT rate (basis points)">
           <input name="vatRateBps" inputMode="numeric" required defaultValue={settings.vatRateBps} className={adminFieldClass} disabled={!canWrite} />

@@ -34,7 +34,7 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
     <p className="mt-3 max-w-2xl text-slate">Control the active Ghana delivery areas, fees and lead-time copy shown at checkout. Use on-request for locations whose fee is agreed by the desk.</p>
     <AdminError error={error} />
     <div className="mt-8 space-y-6">
-      {zones.map((zone) => <section key={zone.id} className="rounded-md border border-border bg-white p-5">
+      {zones.map((zone) => <section key={zone.id} className="rounded-xl border border-border bg-card p-5">
         <div className="flex flex-wrap items-baseline justify-between gap-3"><h2 className="font-heading text-xl text-ink">{zone.name}</h2><p className="text-sm text-slate">{zone.active ? "Active" : "Inactive"} · {zone.feeMode === "on_request" ? "Fee on request" : formatGhs(zone.basePrice)}</p></div>
         <p className="mt-1 text-sm text-slate">{zone.region} · <span className="font-mono">{zone.code}</span> · {zone.estimatedMinDays}–{zone.estimatedMaxDays} days</p>
         {canWrite ? <>
@@ -54,6 +54,6 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
         </> : null}
       </section>)}
     </div>
-    {canWrite ? <form action="/admin/delivery/mutate" method="post" className="mt-8 grid max-w-3xl gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-2"><h2 className="font-heading text-xl text-ink sm:col-span-2">New zone</h2><input type="hidden" name="intent" value="create-zone" /><ZoneFields /><button type="submit" className={`${paperButton({ variant: "secondary" })} sm:col-span-2 sm:justify-self-start`}>Create zone</button></form> : null}
+    {canWrite ? <form action="/admin/delivery/mutate" method="post" className="mt-8 grid max-w-3xl gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-2"><h2 className="font-heading text-xl text-ink sm:col-span-2">New zone</h2><input type="hidden" name="intent" value="create-zone" /><ZoneFields /><button type="submit" className={`${paperButton({ variant: "secondary" })} sm:col-span-2 sm:justify-self-start`}>Create zone</button></form> : null}
   </main>;
 }
