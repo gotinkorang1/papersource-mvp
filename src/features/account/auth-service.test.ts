@@ -31,7 +31,7 @@ describe("customer Auth operations", () => {
   it("normalizes registration display input but preserves password bytes and waits for confirmation", async () => {
     expect(await service().register(registration)).toEqual({ status: "email_sent" });
     expect(auth.signUp).toHaveBeenCalledWith({
-      email: "ama@example.test", password: "  password!  ",
+      email: "ama@example.test", password: registration.password,
       options: { data: { full_name: "Ama", phone: "0241234567" }, emailRedirectTo: "https://papersourcegh.com/auth/confirm?type=email&next=%2Fcheckout" },
     });
     expect(auth.getClaims).not.toHaveBeenCalled();

@@ -1,8 +1,19 @@
-import { desc, eq } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, or } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { orderItems, orders, payments } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffRole } from "@/lib/staff/types";
+
+const orderSourceValues = ["cart", "quote"] as const;
+const orderStatusValues = [
+  "pending_payment",
+  "awaiting_terms",
+  "paid",
+  "processing",
+  "out_for_delivery",
+  "delivered",
+  "cancelled",
+] as const;
 
 export class OrderAdminError extends Error {
   constructor(message: string) {
@@ -11,12 +22,19 @@ export class OrderAdminError extends Error {
   }
 }
 
-export async function listAdminOrders(role: StaffRole) {
+export async function listAdminOrders(role: StaffRole, filters?: { search?: string; status?: string; source?: string; sort?: string }) {
   if (!canAccessAdmin(role, "orders", "read")) {
     throw new OrderAdminError("This role cannot view orders.");
   }
   const db = getDb();
-  return db.select().from(orders).orderBy(desc(orders.createdAt));
+  const search = filters?.search?.trim();
+  const where = and(
+    search ? or(ilike(orders.number, `%${search}%`), ilike(orders.notes, `%${search}%`)) : undefined,
+    filters?.status && orderStatusValues.includes(filters.status as (typeof orderStatusValues)[number]) ? eq(orders.status, filters.status as (typeof orderStatusValues)[number]) : undefined,
+    filters?.source && orderSourceValues.includes(filters.source as (typeof orderSourceValues)[number]) ? eq(orders.source, filters.source as (typeof orderSourceValues)[number]) : undefined,
+  );
+  const order = filters?.sort === "total" ? desc(orders.grandTotal) : filters?.sort === "status" ? asc(orders.status) : desc(orders.updatedAt);
+  return db.select().from(orders).where(where).orderBy(order);
 }
 
 export async function getAdminOrder(role: StaffRole, orderId: string) {
