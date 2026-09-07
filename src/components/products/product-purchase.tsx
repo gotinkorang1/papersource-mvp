@@ -10,7 +10,13 @@ import type { ProductCardModel } from "@/types/catalogue";
 export function ProductPurchase({ product }: { product: ProductCardModel }) {
   const { addToCart, addToQuote } = useDualPathPreview();
   const [quantity, setQuantity] = useState(1);
+  const [addedTo, setAddedTo] = useState<"cart" | "quote" | null>(null);
   const out = product.stock === "out";
+
+  function confirmAdded(destination: "cart" | "quote") {
+    setAddedTo(destination);
+    window.setTimeout(() => setAddedTo((current) => current === destination ? null : current), 1800);
+  }
 
   return (
     <div className="space-y-4">
@@ -24,17 +30,18 @@ export function ProductPurchase({ product }: { product: ProductCardModel }) {
           type="button"
           className={paperButton({ variant: "primary" })}
           disabled={out}
-          onClick={() => addToCart(product, quantity)}
+          onClick={() => { addToCart(product, quantity); confirmAdded("cart"); }}
         >
-          Add to Cart
+          {addedTo === "cart" ? "Added to Cart" : "Add to Cart"}
         </button>
         <QuoteButton
           data-testid={`add-to-quote-${product.slug}`}
-          onClick={() => addToQuote(product, quantity)}
+          onClick={() => { addToQuote(product, quantity); confirmAdded("quote"); }}
         >
-          Add to Quote
+          {addedTo === "quote" ? "Added to Quote" : "Add to Quote"}
         </QuoteButton>
       </div>
+      <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>
     </div>
   );
 }
