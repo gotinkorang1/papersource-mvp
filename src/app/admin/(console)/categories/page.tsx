@@ -53,6 +53,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
         ? rows.map((row) => (
             <form
               key={row.id}
+              id={`category-${row.id}`}
               action="/admin/categories/mutate"
               method="post"
               className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-2"

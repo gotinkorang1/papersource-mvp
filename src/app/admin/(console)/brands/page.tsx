@@ -53,6 +53,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
         ? rows.map((row) => (
             <form
               key={row.id}
+              id={`brand-${row.id}`}
               action="/admin/brands/mutate"
               method="post"
               className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-3"

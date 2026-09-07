@@ -12,6 +12,8 @@ import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, product
 import { publicEnv } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
+import { canAccessAdmin } from "@/lib/staff/rbac";
+import { readStaffActor } from "@/lib/staff/require";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -48,6 +50,8 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const origin = siteOrigin();
+  const staff = await readStaffActor();
+  const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   const reviews = await listApprovedProductReviews(product.id);
   const canonical = `${origin}/product/${product.slug}`;
   const crumbs = [
@@ -95,7 +99,10 @@ export default async function ProductPage({ params }: PageProps) {
               {product.brandName}
             </Link>
           </p>
-          <h1 className="mt-2 text-3xl text-ink">{product.name}</h1>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <h1 className="mt-2 text-3xl text-ink">{product.name}</h1>
+            {canEdit ? <Link href={`/admin/products/${product.id}`} className="mt-2 inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit product</Link> : null}
+          </div>
           <p className="mt-2 text-slate">{product.specLine}</p>
           <p className="mt-4 font-mono text-sm text-slate">SKU {product.sku}</p>
           <div className="mt-6 space-y-3">
