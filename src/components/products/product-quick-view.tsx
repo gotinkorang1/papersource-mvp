@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { X } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { DeliveryBadge } from "@/components/commerce/delivery-badge";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -57,8 +58,16 @@ export function ProductQuickView({
         aria-label="Close quick view"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-lg rounded-md border border-border bg-card p-6 shadow-lg">
-        <h2 id="quick-view-title" className="text-xl text-ink">
+      <div className="relative z-10 w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6">
+        <button
+          type="button"
+          onClick={onClose}
+          aria-label="Close quick view"
+          className="absolute right-3 top-3 inline-flex size-10 items-center justify-center rounded-full border border-border text-slate transition hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        >
+          <X className="size-5" aria-hidden />
+        </button>
+        <h2 id="quick-view-title" className="pr-12 text-xl text-ink">
           {product.name}
         </h2>
         <p className="mt-1 text-sm text-slate">{product.specLine}</p>
