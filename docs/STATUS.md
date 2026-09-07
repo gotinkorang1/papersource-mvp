@@ -22,13 +22,13 @@ The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Re
 
 ## Remaining MVP work, in order
 
-1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; direct Vercel redeploys are temporarily blocked by the daily deployment quota.
+1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. Direct Vercel redeploys are temporarily blocked by the daily deployment quota.
 2. Review hosted RLS policies and Supabase security advisor findings, not only RLS enablement. The advisor MCP endpoint is not currently available in this session.
 3. Configure and verify the production Sentry DSN; confirm no runtime errors and no sensitive data capture.
-4. Run the complete Playwright suite against production-safe test data and perform mobile/desktop smoke checks.
+4. Run the complete Playwright suite against production-safe hosted test data and perform mobile/desktop smoke checks. The local suite is green (27/27).
 5. Final legal/content review of Terms, Privacy and Returns pages.
 6. Optional: quote-expiring reminders at T-48h.
 
-The local Playwright gate is not currently rerun in this workspace because the Vitest/JS DOM dependency cache is incomplete; production HTTP/browser smoke checks pass for the key public routes.
+Local Playwright verification is green: 27 tests passed with the dedicated local Supabase staff fixture and mock payment/email services. Hosted authenticated journeys and cross-device smoke checks remain outstanding.
 
 Reorder, credit ledgers, furniture, PostHog, search SaaS and a custom wordmark remain out of MVP.
