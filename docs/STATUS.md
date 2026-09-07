@@ -18,6 +18,8 @@ Storefront and separate retail/quote paths; catalogue and server pricing; guest 
 
 Customer accounts are merged into both branches. Hosted Supabase/Vercel connectivity is verified (`/api/health` reports database `ok`), and the audit log migration is applied and registered. Supabase reports 30 public tables with RLS enabled; service-only tables have no anon/authenticated grants. Staff login uses Supabase Auth with database-backed roles.
 
+The production catalogue route was rechecked after query deduplication: `/shop`, `/search`, `/about`, `/contact`, `/faq`, `/delivery`, `/api/health`, and search suggestions all returned HTTP 200 on the current Ready deployment.
+
 The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Returns pages. Security response headers and client-side Sentry route telemetry are configured; runtime activation still requires the production Sentry DSN.
 
 ## Remaining MVP work, in order
