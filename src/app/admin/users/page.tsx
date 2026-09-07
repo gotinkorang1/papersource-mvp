@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { listAdminStaff } from "@/features/admin/queries";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 import type { StaffRole } from "@/lib/staff/types";
@@ -27,7 +28,7 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
           <table className="w-full text-sm">
             <caption className="sr-only">Staff users and roles</caption>
             <thead><tr className="border-b border-border text-left text-slate"><th className="px-4 py-3 font-medium">Name</th><th className="px-4 py-3 font-medium">Email</th><th className="px-4 py-3 font-medium">Role</th><th className="px-4 py-3 font-medium">Access</th></tr></thead>
-            <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="px-4 py-3 font-medium text-ink">{row.fullName}</td><td className="px-4 py-3">{row.email}</td><td className="px-4 py-3 capitalize">{row.role.replaceAll("_", " ")}</td><td className="px-4 py-3">{canWrite ? <form action="/admin/users/mutate" method="post" className="flex items-center gap-2"><input type="hidden" name="profileId" value={row.id} /><select name="role" defaultValue={row.role} className="h-9 rounded-md border border-border bg-background px-2 text-sm text-ink" aria-label={`Role for ${row.email}`}>{roles.map((role) => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}</select><button type="submit" className="rounded-md border border-ink px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-ink hover:text-white">Save</button></form> : <span className="text-slate">Read only</span>}</td></tr>)}</tbody>
+            <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="px-4 py-3 font-medium text-ink">{row.fullName}</td><td className="px-4 py-3">{row.email}</td><td className="px-4 py-3 capitalize">{row.role.replaceAll("_", " ")}</td><td className="px-4 py-3">{canWrite ? <form action="/admin/users/mutate" method="post" className="flex items-center gap-2"><input type="hidden" name="profileId" value={row.id} /><select name="role" defaultValue={row.role} className="h-9 rounded-md border border-border bg-background px-2 text-sm text-ink" aria-label={`Role for ${row.email}`}>{roles.map((role) => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}</select><SubmitProgressButton idleLabel="Save" pendingLabel="Saving…" className="rounded-md border border-ink px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-ink hover:text-white" /></form> : <span className="text-slate">Read only</span>}</td></tr>)}</tbody>
           </table>
         </div>
       )}
