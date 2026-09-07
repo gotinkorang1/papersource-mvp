@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { X } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { DeliveryBadge } from "@/components/commerce/delivery-badge";
@@ -29,9 +29,16 @@ export function ProductQuickView({
   const addToCart = onAddToCart ?? preview?.addToCart;
   const addToQuote = onAddToQuote ?? preview?.addToQuote;
   const [quantity, setQuantity] = useState(1);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const previousFocus = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      previousFocus.current?.focus();
+      return;
+    }
+    previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") onClose();
     };
@@ -61,6 +68,7 @@ export function ProductQuickView({
       <div className="relative z-10 w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6">
         <button
           type="button"
+          ref={closeRef}
           onClick={onClose}
           aria-label="Close quick view"
           className="absolute right-3 top-3 inline-flex size-10 items-center justify-center rounded-full border border-border text-slate transition hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
