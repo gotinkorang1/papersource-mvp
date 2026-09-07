@@ -20,6 +20,8 @@ Customer accounts are merged into both branches. Hosted Supabase/Vercel connecti
 
 The production catalogue route was rechecked after query deduplication: `/shop`, `/search`, `/about`, `/contact`, `/faq`, `/delivery`, `/api/health`, and search suggestions all returned HTTP 200 on the current Ready deployment.
 
+The live health endpoint now reports both database and observability readiness; production currently reports `database: ok` and `observability: configured`. Supabase Advisor could not be queried in this session because the MCP OAuth token refresh failed, so policy findings still require a successful Supabase re-authentication.
+
 The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Returns pages. Security response headers and client-side Sentry route telemetry are configured; runtime activation still requires the production Sentry DSN.
 
 ## Remaining MVP work, in order
