@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { getStoreSettings } from "@/features/settings/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -35,7 +36,7 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <AdminField label="Public site URL">
           <input name="siteUrl" type="url" required defaultValue={settings.siteUrl} className={adminFieldClass} disabled={!canWrite} />
         </AdminField>
-        {canWrite ? <button type="submit" className={`${paperButton()} sm:col-span-2 sm:justify-self-start`}>Save settings</button> : null}
+        {canWrite ? <SubmitProgressButton idleLabel="Save settings" pendingLabel="Saving settings…" className={`${paperButton()} sm:col-span-2 sm:justify-self-start`} /> : null}
       </form>
       <p className="mt-4 text-xs text-slate">Last updated {settings.updatedAt ? new Date(settings.updatedAt).toLocaleString("en-GH") : "by the deployment defaults"}.</p>
     </main>
