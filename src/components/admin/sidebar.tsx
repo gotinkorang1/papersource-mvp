@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { paperButton } from "@/components/commerce/paper-button";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { Wordmark } from "@/components/marketing/wordmark";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffActor } from "@/lib/staff/types";
@@ -78,9 +79,11 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
         <p className="text-sidebar-foreground/80">{actor.fullName}</p>
         <p className="text-xs text-sidebar-foreground/50">{actor.role.replaceAll("_", " ")}</p>
         <form action="/admin/logout" method="post" className="mt-3">
-          <button type="submit" className={`${paperButton({ variant: "ghost" })} px-0 text-sidebar-foreground`}>
-            Sign out
-          </button>
+          <SubmitProgressButton
+            idleLabel="Sign out"
+            pendingLabel="Signing out…"
+            className={`${paperButton({ variant: "ghost" })} px-0 text-sidebar-foreground`}
+          />
         </form>
       </div>
     </aside>
