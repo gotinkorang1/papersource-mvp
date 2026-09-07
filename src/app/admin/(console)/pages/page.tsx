@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminPages } from "@/features/content/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -22,7 +23,7 @@ export default async function AdminPagesPage({ searchParams }: { searchParams: P
       <AdminField label="Description"><input name="description" required defaultValue={row?.description} className={adminFieldClass} /></AdminField>
       <AdminField label="Status"><select name="status" defaultValue={row?.status ?? "draft"} className={adminFieldClass}><option value="draft">Draft</option><option value="published">Published</option></select></AdminField>
       <AdminField label="Body"><textarea name="body" required defaultValue={row?.body} rows={8} className={`${adminAreaClass} sm:col-span-2`} /></AdminField>
-      {canWrite ? <div className="flex flex-wrap items-center gap-3 sm:col-span-2"><button className={paperButton()} type="submit">{row ? "Save page" : "Create page"}</button>{row?.status === "published" ? <Link href={`/pages/${row.slug}`} target="_blank" className="text-sm font-medium text-ink underline underline-offset-4">Preview public page</Link> : <span className="text-xs text-slate">Publish to make this page visible.</span>}</div> : null}
+      {canWrite ? <div className="flex flex-wrap items-center gap-3 sm:col-span-2"><SubmitProgressButton idleLabel={row ? "Save page" : "Create page"} pendingLabel={row ? "Saving page…" : "Creating page…"} className={paperButton()} />{row?.status === "published" ? <Link href={`/pages/${row.slug}`} target="_blank" className="text-sm font-medium text-ink underline underline-offset-4">Preview public page</Link> : <span className="text-xs text-slate">Publish to make this page visible.</span>}</div> : null}
     </form>
   );
 
