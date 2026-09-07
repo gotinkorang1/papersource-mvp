@@ -8,6 +8,7 @@ import {
   addProductAttribute,
   addProductImage,
   addVariant,
+  bulkUpdateProducts,
   CatalogueAdminError,
   createProduct,
   deactivatePriceTier,
@@ -61,6 +62,14 @@ export async function POST(request: Request) {
   }
 
   try {
+    if (intent === "bulk-update-products") {
+      const ids = formData.getAll("productId").map(String);
+      const status = productStatus.parse(formData.get("status") ?? "draft");
+      const count = await bulkUpdateProducts(actor.role, ids, status);
+      const productsUrl = new URL("/admin/products", origin);
+      productsUrl.searchParams.set("message", `${count} product${count === 1 ? "" : "s"} updated.`);
+      return NextResponse.redirect(productsUrl, 303);
+    }
     if (intent === "create-product") {
       const created = await createProduct({
         role: actor.role,

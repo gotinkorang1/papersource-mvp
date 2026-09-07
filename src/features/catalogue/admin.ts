@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
 import { refreshProductSearchDocument } from "@/features/catalogue/refresh-search";
 import { getDb } from "@/lib/db/client";
 import { parseGhsToPesewas } from "@/lib/money";
@@ -43,8 +43,15 @@ function assertTaxonomyWrite(role: StaffRole, area: "categories" | "brands") {
   }
 }
 
-export async function listAdminProducts() {
+export async function listAdminProducts(filters?: { search?: string; status?: string; sort?: string }) {
   const db = getDb();
+  const search = filters?.search?.trim();
+  const where = and(
+    isNull(products.deletedAt),
+    search ? or(ilike(products.name, `%${search}%`), ilike(products.slug, `%${search}%`), ilike(brands.name, `%${search}%`), ilike(categories.name, `%${search}%`)) : undefined,
+    filters?.status && ["draft", "active", "archived"].includes(filters.status) ? eq(products.status, filters.status as "draft" | "active" | "archived") : undefined,
+  );
+  const order = filters?.sort === "name" ? asc(products.name) : filters?.sort === "status" ? asc(products.status) : desc(products.updatedAt);
   return db
     .select({
       id: products.id,
@@ -59,8 +66,16 @@ export async function listAdminProducts() {
     .from(products)
     .innerJoin(brands, eq(brands.id, products.brandId))
     .innerJoin(categories, eq(categories.id, products.categoryId))
-    .where(isNull(products.deletedAt))
-    .orderBy(desc(products.updatedAt));
+    .where(where)
+    .orderBy(order);
+}
+
+export async function bulkUpdateProducts(role: StaffRole, productIds: string[], status: "draft" | "active" | "archived") {
+  assertProductsWrite(role);
+  const ids = [...new Set(productIds.filter((id) => /^[0-9a-f-]{36}$/i.test(id)))];
+  if (!ids.length) throw new CatalogueAdminError("Select at least one product.");
+  await getDb().update(products).set({ status, updatedAt: new Date() }).where(and(inArray(products.id, ids), isNull(products.deletedAt)));
+  return ids.length;
 }
 
 export async function listTaxonomyOptions() {
