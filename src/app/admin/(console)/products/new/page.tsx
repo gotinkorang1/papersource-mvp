@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listTaxonomyOptions } from "@/features/catalogue/admin";
 import { requireStaffArea } from "@/lib/staff/require";
@@ -30,7 +31,7 @@ export default async function AdminNewProductPage({ searchParams }: PageProps) {
         Creates a draft SKU. Set it active when it should appear on the shop.
       </p>
       <AdminError error={error} />
-      <form action="/admin/products/mutate" method="post" className="mt-8 grid max-w-2xl gap-4">
+      <form action="/admin/products/mutate" method="post" className="mt-8 grid max-w-2xl gap-4 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
         <input type="hidden" name="intent" value="create-product" />
         <AdminField label="Name *">
           <input name="name" required className={adminFieldClass} />
@@ -81,9 +82,11 @@ export default async function AdminNewProductPage({ searchParams }: PageProps) {
         <AdminField label="Base unit price (GHS) *">
           <input name="baseUnitPrice" required className={adminFieldClass} placeholder="78.99" />
         </AdminField>
-        <button type="submit" className={paperButton()}>
-          Create product
-        </button>
+        <SubmitProgressButton
+          idleLabel="Create product"
+          pendingLabel="Creating product…"
+          className={paperButton()}
+        />
       </form>
     </main>
   );
