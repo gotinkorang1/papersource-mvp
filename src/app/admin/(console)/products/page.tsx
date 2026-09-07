@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listAdminProducts } from "@/features/catalogue/admin";
 import { paperButton } from "@/components/commerce/paper-button";
+import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -49,7 +50,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             <caption className="sr-only">Catalogue products</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
-                {canWrite ? <th className="w-12 px-4 py-3"><span className="sr-only">Select</span></th> : null}
+                {canWrite ? <th className="w-12 px-4 py-3"><SelectAllCheckbox count={rows.length} /></th> : null}
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">Brand</th>
                 <th className="px-4 py-3 font-medium">Category</th>
