@@ -22,8 +22,8 @@ export default async function AdminQuotesPage() {
       {rows.length === 0 ? (
         <p className="mt-8 text-slate">No submitted quotations yet.</p>
       ) : (
-        <div className="mt-8 overflow-x-auto rounded-md border border-border bg-white">
-          <table className="w-full text-sm">
+        <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+          <table className="w-full min-w-[38rem] text-sm">
             <caption className="sr-only">Submitted quotations</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
