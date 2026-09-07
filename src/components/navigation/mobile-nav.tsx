@@ -78,6 +78,10 @@ export function MobileNav() {
           </button>
         </li>
       </ul>
+      <p className="sr-only" aria-live="polite" aria-atomic="true">
+        {cartCount > 0 ? `${cartCount} ${cartCount === 1 ? "item" : "items"} in cart.` : "Cart is empty."}{" "}
+        {quoteCount > 0 ? `${quoteCount} ${quoteCount === 1 ? "item" : "items"} in quote list.` : "Quote list is empty."}
+      </p>
     </nav>
   );
 }
