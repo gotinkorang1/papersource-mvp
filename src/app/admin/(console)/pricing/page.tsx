@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminPricingRows } from "@/features/catalogue/admin";
 import { formatGhs } from "@/lib/money";
@@ -31,7 +32,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
       <AdminError error={error} />
       <div className="mt-8 space-y-6">
         {rows.map((row) => (
-          <section key={row.variantId} className="rounded-md border border-border bg-white p-5">
+          <section key={row.variantId} className="rounded-xl border border-border bg-card p-5">
             <h2 className="font-heading text-lg text-ink">
               <Link href={`/admin/products/${row.productId}`} className="underline">
                 {row.productName}
@@ -63,9 +64,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
                       <form action="/admin/pricing/mutate" method="post">
                         <input type="hidden" name="intent" value="deactivate-tier" />
                         <input type="hidden" name="tierId" value={tier.id} />
-                        <button type="submit" className="underline">
-                          Deactivate
-                        </button>
+                        <SubmitProgressButton idleLabel="Deactivate" pendingLabel="Deactivating…" className="underline" />
                       </form>
                     ) : null}
                   </li>
@@ -94,9 +93,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
                   Request quote
                 </label>
                 <div className="sm:col-span-2">
-                  <button type="submit" className={paperButton({ variant: "secondary" })}>
-                    Add band for {row.sku}
-                  </button>
+                  <SubmitProgressButton idleLabel={`Add band for ${row.sku}`} pendingLabel="Adding band…" className={paperButton({ variant: "secondary" })} />
                 </div>
               </form>
             ) : null}

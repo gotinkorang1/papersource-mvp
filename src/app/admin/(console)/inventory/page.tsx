@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { sellableQuantity, stockLevelFromQuantity } from "@/features/inventory/stock";
 import { listInventoryRows } from "@/features/inventory/admin";
@@ -29,7 +30,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
         Adjust on-hand with a reason. Every change writes a movement row.
       </p>
       <AdminError error={error} />
-      <div className="mt-8 overflow-x-auto rounded-md border border-border bg-white">
+      <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <caption className="sr-only">Stock by variant</caption>
           <thead>
@@ -69,7 +70,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
         <form
           action="/admin/inventory/mutate"
           method="post"
-          className="mt-8 grid max-w-xl gap-3 rounded-md border border-border bg-white p-5"
+          className="mt-8 grid max-w-xl gap-3 rounded-xl border border-border bg-card p-5"
         >
           <h2 className="font-heading text-xl text-ink">Adjust stock</h2>
           <AdminField label="SKU">
@@ -90,9 +91,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
               <option value="adjust">Adjust</option>
             </select>
           </AdminField>
-          <button type="submit" className={paperButton()}>
-            Record movement
-          </button>
+          <SubmitProgressButton idleLabel="Record movement" pendingLabel="Recording movement…" className={paperButton()} />
         </form>
       ) : (
         <p className="mt-6 text-sm text-slate">This role can view stock but cannot adjust it.</p>
