@@ -69,6 +69,11 @@ test("sales prices a guest RFQ and the customer accepts it into a quote-sourced 
 
   const customerHref = await page.getByTestId("customer-quote-link").getAttribute("href");
   expect(customerHref).toBeTruthy();
+  // The customer opens the quote from their own device/session. Clear the
+  // staff Supabase session before following the customer access link so the
+  // guest order remains owned by its guest session rather than the staff
+  // profile used for review.
+  await page.context().clearCookies();
   await page.goto(customerHref!);
   await expect(page.getByRole("button", { name: "Accept Quote" })).toBeVisible({
     timeout: 45_000,

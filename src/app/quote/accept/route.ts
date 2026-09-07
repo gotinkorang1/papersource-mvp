@@ -2,6 +2,8 @@ import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { acceptQuoteByToken, QuoteAcceptError } from "@/features/quotations/accept";
+import { GUEST_SESSION_COOKIE } from "@/lib/session/guest";
+import { guestSessionCookieOptions } from "@/lib/session/constants";
 
 export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
@@ -12,7 +14,14 @@ export async function POST(request: Request) {
 
   try {
     const result = await acceptQuoteByToken({ token, ...identity });
-    return NextResponse.redirect(new URL(`/order/${result.orderNumber}`, origin), 303);
+    const response = NextResponse.redirect(new URL(`/order/${result.orderNumber}`, origin), 303);
+    // Preserve the guest identity used to create the order across the redirect.
+    // This keeps the order owner check working without exposing document numbers
+    // as credentials.
+    if (identity.sessionId) {
+      response.cookies.set(GUEST_SESSION_COOKIE, identity.sessionId, guestSessionCookieOptions());
+    }
+    return response;
   } catch (error) {
     const quoteUrl = new URL(`/quote/${token}`, origin);
     quoteUrl.searchParams.set(
