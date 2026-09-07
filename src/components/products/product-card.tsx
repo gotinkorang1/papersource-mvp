@@ -66,7 +66,7 @@ export function ProductCard({
             >
               {product.name}
             </Link>
-          </h3>{canEdit ? <Link href={`/admin/products/${product.id}`} className="shrink-0 text-[0.7rem] font-semibold text-ink underline underline-offset-2">Edit</Link> : null}</div>
+          </h3>{canEdit ? <Link href={`/admin/products/${product.id}`} className="inline-flex min-h-10 shrink-0 items-center text-[0.7rem] font-semibold text-ink underline underline-offset-2">Edit</Link> : null}</div>
           <p className="mt-1 min-h-[2.5rem] text-sm leading-5 text-slate">{product.specLine}</p>
         </div>
         <PriceDisplay
@@ -100,7 +100,7 @@ export function ProductCard({
         <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>
         <button
           type="button"
-          className="self-start text-sm text-slate underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+          className="inline-flex min-h-10 self-start items-center text-sm text-slate underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
           onClick={() => setQuickOpen(true)}
         >
           Quick view
