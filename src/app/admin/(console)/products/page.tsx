@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 export default async function AdminProductsPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; sort?: string; message?: string; error?: string }> }) {
   const actor = await requireStaffArea("products", "read");
   const filters = await searchParams;
-  const rows = await listAdminProducts(filters);
+  const rows = await listAdminProducts({ search: filters.q, status: filters.status, sort: filters.sort });
   const canWrite = canAccessAdmin(actor.role, "products", "write");
 
   return (
