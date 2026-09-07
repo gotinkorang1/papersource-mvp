@@ -105,7 +105,7 @@ export function PaperDrawer({
         </header>
         <div className="flex-1 overflow-y-auto px-5 py-4">{children}</div>
         {footer ? (
-          <footer className="mt-auto space-y-3 border-t border-border px-5 py-4">
+          <footer className="mt-auto space-y-3 border-t border-border px-5 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))]">
             {footer}
           </footer>
         ) : null}
