@@ -29,7 +29,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
       </p>
       <AdminError error={error} />
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
-        <table className="w-full text-sm">
+        <table className="w-full min-w-[38rem] text-sm">
           <caption className="sr-only">Brands</caption>
           <thead>
             <tr className="border-b border-border text-left text-slate">
