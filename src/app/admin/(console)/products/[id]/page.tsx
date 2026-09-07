@@ -319,9 +319,7 @@ export default async function AdminProductDetailPage({
                 Request quote (no unit price)
               </label>
               <div className="sm:col-span-2">
-                <button type="submit" className={paperButton({ variant: "secondary" })}>
-                  Add price band
-                </button>
+                <SubmitProgressButton idleLabel="Add price band" pendingLabel="Adding price band…" className={paperButton({ variant: "secondary" })} />
               </div>
             </form>
           ) : (
@@ -345,9 +343,7 @@ export default async function AdminProductDetailPage({
                     <input type="hidden" name="intent" value="remove-image" />
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="imageId" value={image.id} />
-                    <button type="submit" className="underline">
-                      Remove
-                    </button>
+                    <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
                   </form>
                 ) : null}
               </li>
@@ -366,9 +362,7 @@ export default async function AdminProductDetailPage({
               <AdminField label="Position">
                 <input name="position" defaultValue="0" className={adminFieldClass} />
               </AdminField>
-              <button type="submit" className={paperButton({ variant: "secondary" })}>
-                Add image
-              </button>
+              <SubmitProgressButton idleLabel="Add image" pendingLabel="Adding image…" className={paperButton({ variant: "secondary" })} />
             </form>
           ) : null}
         </div>
@@ -384,9 +378,7 @@ export default async function AdminProductDetailPage({
                     <input type="hidden" name="intent" value="remove-alias" />
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="aliasId" value={alias.id} />
-                    <button type="submit" className="underline">
-                      Remove
-                    </button>
+                    <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
                   </form>
                 ) : null}
               </li>
@@ -399,9 +391,7 @@ export default async function AdminProductDetailPage({
               <AdminField label="Alias">
                 <input name="alias" required className={adminFieldClass} />
               </AdminField>
-              <button type="submit" className={paperButton({ variant: "secondary" })}>
-                Add alias
-              </button>
+              <SubmitProgressButton idleLabel="Add alias" pendingLabel="Adding alias…" className={paperButton({ variant: "secondary" })} />
             </form>
           ) : null}
         </div>
@@ -421,9 +411,7 @@ export default async function AdminProductDetailPage({
                     <input type="hidden" name="intent" value="remove-attribute" />
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="attributeId" value={attribute.id} />
-                    <button type="submit" className="underline">
-                      Remove
-                    </button>
+                    <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
                   </form>
                 ) : null}
               </li>
@@ -442,9 +430,7 @@ export default async function AdminProductDetailPage({
               <AdminField label="Value">
                 <input name="valueText" required className={adminFieldClass} />
               </AdminField>
-              <button type="submit" className={paperButton({ variant: "secondary" })}>
-                Add attribute
-              </button>
+              <SubmitProgressButton idleLabel="Add attribute" pendingLabel="Adding attribute…" className={paperButton({ variant: "secondary" })} />
             </form>
           ) : null}
         </div>
@@ -463,9 +449,7 @@ export default async function AdminProductDetailPage({
                       <input type="hidden" name="intent" value="remove-bundle-item" />
                       <input type="hidden" name="productId" value={product.id} />
                       <input type="hidden" name="bundleItemId" value={item.id} />
-                      <button type="submit" className="underline">
-                        Remove
-                      </button>
+                      <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
                     </form>
                   ) : null}
                 </li>
@@ -481,9 +465,7 @@ export default async function AdminProductDetailPage({
                 <AdminField label="Quantity">
                   <input name="quantity" required defaultValue="1" className={adminFieldClass} />
                 </AdminField>
-                <button type="submit" className={paperButton({ variant: "secondary" })}>
-                  Add pack item
-                </button>
+                <SubmitProgressButton idleLabel="Add pack item" pendingLabel="Adding pack item…" className={paperButton({ variant: "secondary" })} />
               </form>
             ) : null}
           </div>
