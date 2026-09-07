@@ -11,12 +11,12 @@ import { ADMIN_NAV } from "./nav";
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-0 z-20 flex max-h-[42vh] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:h-screen md:max-h-none md:w-64">
+    <aside className="sticky top-0 z-20 flex max-h-[18rem] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:h-screen md:max-h-none md:w-64">
       <div className="border-b border-sidebar-border px-4 py-4 sm:px-5 sm:py-6">
         <Wordmark href="/admin" inverted shrinkOnScroll={false} className="max-w-fit" />
         <p className="mt-1 font-heading text-lg">Operations</p>
       </div>
-      <nav className="min-h-0 flex-1 space-y-6 overflow-y-auto overscroll-contain px-3 py-4 md:py-5" aria-label="Admin">
+      <nav className="flex min-h-0 flex-1 gap-4 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-3 [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5" aria-label="Admin">
         {ADMIN_NAV.map((group) => {
           if ("href" in group) {
             if (!canAccessAdmin(actor.role, group.area, "read")) {
@@ -45,11 +45,11 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
           }
 
           return (
-            <div key={group.label}>
+            <div key={group.label} className="min-w-max">
               <p className="px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase">
                 {group.label}
               </p>
-              <ul className="mt-2 space-y-0.5">
+              <ul className="mt-2 flex gap-1 md:block md:space-y-0.5">
                 {items.map((item) => {
                   const current =
                     pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -57,7 +57,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`flex min-h-11 items-center rounded-md px-3 py-2 text-sm md:min-h-0 md:py-1.5 ${
+                        className={`flex min-h-11 items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${
                           current
                             ? "bg-sidebar-accent text-sidebar-accent-foreground"
                             : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
