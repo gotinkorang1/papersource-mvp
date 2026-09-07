@@ -1,4 +1,4 @@
-import { asc, desc, eq, ilike, isNull, sql } from "drizzle-orm";
+import { and, asc, desc, eq, ilike, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { addresses, adminRoles, auditLogs, organizationMembers, organizations, payments, orders, profiles, quotes, deliveryZones } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -10,28 +10,39 @@ function assertRead(role: StaffRole, area: "customers" | "organisations" | "paym
   if (!canAccessAdmin(role, area, "read")) throw new AdminReadError("This role cannot view that desk.");
 }
 
-export async function listAdminCustomers(role: StaffRole) {
+export async function listAdminCustomers(role: StaffRole, search?: string) {
   assertRead(role, "customers");
+  const query = search?.trim();
   return getDb().select({ id: profiles.id, email: profiles.email, fullName: profiles.fullName, phone: profiles.phone, updatedAt: profiles.updatedAt })
-    .from(profiles).leftJoin(adminRoles, eq(adminRoles.profileId, profiles.id)).where(isNull(adminRoles.profileId)).orderBy(desc(profiles.updatedAt));
+    .from(profiles).leftJoin(adminRoles, eq(adminRoles.profileId, profiles.id)).where(and(isNull(adminRoles.profileId), query ? or(ilike(profiles.fullName, `%${query}%`), ilike(profiles.email, `%${query}%`), ilike(profiles.phone, `%${query}%`)) : undefined)).orderBy(desc(profiles.updatedAt));
 }
 
-export async function listAdminOrganisations(role: StaffRole) {
+export async function listAdminOrganisations(role: StaffRole, search?: string) {
   assertRead(role, "organisations");
+  const query = search?.trim();
   return getDb().select({ id: organizations.id, name: organizations.name, type: organizations.type, email: organizations.email, phone: organizations.phone, memberCount: sql<number>`count(${organizationMembers.id})::int`, updatedAt: organizations.updatedAt })
-    .from(organizations).leftJoin(organizationMembers, eq(organizationMembers.organizationId, organizations.id)).groupBy(organizations.id).orderBy(desc(organizations.updatedAt));
+    .from(organizations).leftJoin(organizationMembers, eq(organizationMembers.organizationId, organizations.id)).where(query ? or(ilike(organizations.name, `%${query}%`), ilike(organizations.email, `%${query}%`), ilike(organizations.phone, `%${query}%`)) : undefined).groupBy(organizations.id).orderBy(desc(organizations.updatedAt));
 }
 
-export async function listAdminPayments(role: StaffRole) {
+export async function listAdminPayments(role: StaffRole, filters: { search?: string; status?: string; provider?: string; sort?: string } = {}) {
   assertRead(role, "payments");
+  const query = filters.search?.trim();
+  const statuses = ["initialized", "pending", "success", "failed", "abandoned"] as const;
+  const providers = ["paystack", "bank_transfer", "purchase_order", "invoice_terms"] as const;
+  const where = and(query ? or(ilike(orders.number, `%${query}%`), ilike(payments.paystackReference, `%${query}%`), ilike(profiles.email, `%${query}%`)) : undefined, filters.status && statuses.includes(filters.status as (typeof statuses)[number]) ? eq(payments.status, filters.status as (typeof statuses)[number]) : undefined, filters.provider && providers.includes(filters.provider as (typeof providers)[number]) ? eq(payments.provider, filters.provider as (typeof providers)[number]) : undefined);
+  const order = filters.sort === "amount" ? desc(payments.amount) : asc(payments.createdAt);
   return getDb().select({ id: payments.id, provider: payments.provider, status: payments.status, amount: payments.amount, currency: payments.currency, reference: payments.paystackReference, orderNumber: orders.number, customerEmail: profiles.email, createdAt: payments.createdAt })
-    .from(payments).innerJoin(orders, eq(orders.id, payments.orderId)).leftJoin(profiles, eq(profiles.id, orders.profileId)).orderBy(desc(payments.createdAt));
+    .from(payments).innerJoin(orders, eq(orders.id, payments.orderId)).leftJoin(profiles, eq(profiles.id, orders.profileId)).where(where).orderBy(order);
 }
 
-export async function listAdminDeliveries(role: StaffRole) {
+export async function listAdminDeliveries(role: StaffRole, filters: { search?: string; status?: string; sort?: string } = {}) {
   assertRead(role, "deliveries");
+  const query = filters.search?.trim();
+  const statuses = ["pending_payment", "awaiting_terms", "paid", "processing", "out_for_delivery", "delivered", "cancelled"] as const;
+  const where = and(query ? or(ilike(orders.number, `%${query}%`), ilike(profiles.email, `%${query}%`), ilike(deliveryZones.name, `%${query}%`)) : undefined, filters.status && statuses.includes(filters.status as (typeof statuses)[number]) ? eq(orders.status, filters.status as (typeof statuses)[number]) : undefined);
+  const order = filters.sort === "status" ? asc(orders.status) : desc(orders.updatedAt);
   return getDb().select({ id: orders.id, number: orders.number, status: orders.status, source: orders.source, grandTotal: orders.grandTotal, zoneName: deliveryZones.name, zoneRegion: deliveryZones.region, customerEmail: profiles.email, updatedAt: orders.updatedAt })
-    .from(orders).innerJoin(deliveryZones, eq(deliveryZones.id, orders.deliveryZoneId)).leftJoin(profiles, eq(profiles.id, orders.profileId)).orderBy(asc(orders.status), desc(orders.updatedAt));
+    .from(orders).innerJoin(deliveryZones, eq(deliveryZones.id, orders.deliveryZoneId)).leftJoin(profiles, eq(profiles.id, orders.profileId)).where(where).orderBy(order);
 }
 
 export async function listAdminStaff(role: StaffRole) {
