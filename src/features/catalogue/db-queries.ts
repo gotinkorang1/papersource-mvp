@@ -1,4 +1,5 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
+import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { buildSpecLine, matchesCatalogueQuery } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
@@ -57,7 +58,7 @@ function descendantIds(
   return [...ids];
 }
 
-async function loadCatalogueContext() {
+const loadCatalogueContext = cache(async function loadCatalogueContext() {
   const db = getDb();
   const [categoryRows, brandRows, zoneRows, imageRows] = await Promise.all([
     db
@@ -78,7 +79,7 @@ async function loadCatalogueContext() {
     deliveryBadge: storefrontDeliveryBadge(zoneRows),
     imageRows,
   };
-}
+});
 
 export async function listDivisionCategoriesFromDb(): Promise<CatalogueCategoryView[]> {
   const { categoryRows } = await loadCatalogueContext();
