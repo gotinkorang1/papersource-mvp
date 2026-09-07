@@ -47,7 +47,7 @@ export default async function BrandPage({ params }: PageProps) {
         {brand.name} products in the PaperSource catalogue.
       </p>
       <div className="mt-10">
-        <ProductGridList products={products} />
+        <ProductGridList products={products} canEdit={canEdit} />
       </div>
     </main>
   );

@@ -61,7 +61,7 @@ export default async function ShopCategoryPage({ params }: PageProps) {
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
       </div>
       <div className="mt-10">
-        <ProductGridList products={products} />
+        <ProductGridList products={products} canEdit={canEdit} />
       </div>
     </main>
   );

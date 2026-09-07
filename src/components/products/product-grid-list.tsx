@@ -8,8 +8,10 @@ import type { ProductCardModel } from "@/types/catalogue";
 
 export function ProductGridList({
   products,
+  canEdit = false,
 }: {
   products: ProductCardModel[];
+  canEdit?: boolean;
 }) {
   const { addToCart, addToQuote } = useDualPathPreview();
 
@@ -37,6 +39,7 @@ export function ProductGridList({
           className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2"
           onAddToCart={addToCart}
           onAddToQuote={addToQuote}
+          canEdit={canEdit}
         />
       ))}
     </ProductGrid>

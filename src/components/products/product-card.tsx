@@ -29,11 +29,13 @@ export function ProductCard({
   onAddToCart,
   onAddToQuote,
   className,
+  canEdit = false,
 }: {
   product: ProductCardModel;
   onAddToCart?: (product: ProductCardModel, quantity: number) => void;
   onAddToQuote?: (product: ProductCardModel, quantity: number) => void;
   className?: string;
+  canEdit?: boolean;
 }) {
   const preview = useOptionalDualPathPreview();
   const addToCart = onAddToCart ?? preview?.addToCart;
@@ -57,14 +59,14 @@ export function ProductCard({
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <h3 className="min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
+          <div className="flex items-start justify-between gap-2"><h3 className="min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
             <Link
               href={`/product/${product.slug}`}
               className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
             >
               {product.name}
             </Link>
-          </h3>
+          </h3>{canEdit ? <Link href={`/admin/products/${product.id}`} className="shrink-0 text-[0.7rem] font-semibold text-ink underline underline-offset-2">Edit</Link> : null}</div>
           <p className="mt-1 min-h-[2.5rem] text-sm leading-5 text-slate">{product.specLine}</p>
         </div>
         <PriceDisplay
