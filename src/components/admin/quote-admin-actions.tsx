@@ -1,6 +1,7 @@
 "use client";
 
 import { paperButton } from "@/components/commerce/paper-button";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { pesewasToMajor } from "@/lib/money";
@@ -46,9 +47,7 @@ export function QuoteAdminActions({
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="start-review" />
-          <button type="submit" className={paperButton()}>
-            Start review
-          </button>
+          <SubmitProgressButton idleLabel="Start review" pendingLabel="Starting review…" className={paperButton()} />
         </form>
       ) : null}
 
@@ -104,9 +103,7 @@ export function QuoteAdminActions({
               inputMode="decimal"
             />
           </div>
-          <button type="submit" className={paperButton()}>
-            Save prices
-          </button>
+          <SubmitProgressButton idleLabel="Save prices" pendingLabel="Saving prices…" className={paperButton()} />
         </form>
       ) : null}
 
@@ -114,9 +111,7 @@ export function QuoteAdminActions({
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="send" />
-          <button type="submit" className={paperButton({ variant: "quote" })}>
-            Send quote
-          </button>
+          <SubmitProgressButton idleLabel="Send quote" pendingLabel="Sending quote…" className={paperButton({ variant: "quote" })} />
         </form>
       ) : null}
 
@@ -124,9 +119,7 @@ export function QuoteAdminActions({
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="decline" />
-          <button type="submit" className={paperButton({ variant: "secondary" })}>
-            Decline
-          </button>
+          <SubmitProgressButton idleLabel="Decline" pendingLabel="Declining…" className={paperButton({ variant: "secondary" })} />
         </form>
       ) : null}
 
@@ -134,9 +127,7 @@ export function QuoteAdminActions({
         <form action="/admin/quotes/mutate" method="post">
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="revise" />
-          <button type="submit" className={paperButton({ variant: "secondary" })}>
-            Revise quotation
-          </button>
+          <SubmitProgressButton idleLabel="Revise quotation" pendingLabel="Revising…" className={paperButton({ variant: "secondary" })} />
         </form>
       ) : null}
 
@@ -150,7 +141,7 @@ export function QuoteAdminActions({
               id="provider"
               name="provider"
               required
-              className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink"
+              className="h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-ink"
             >
               <option value="bank_transfer">Bank transfer</option>
               <option value="purchase_order">Purchase order</option>
@@ -161,9 +152,7 @@ export function QuoteAdminActions({
             <Label htmlFor="note">Reference / notes</Label>
             <Input id="note" name="note" placeholder="PO number or transfer ref" />
           </div>
-          <button type="submit" className={paperButton()}>
-            Confirm terms
-          </button>
+          <SubmitProgressButton idleLabel="Confirm terms" pendingLabel="Confirming terms…" className={paperButton()} />
         </form>
       ) : null}
     </div>
