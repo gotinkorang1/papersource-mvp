@@ -11,7 +11,7 @@ import { ADMIN_NAV } from "./nav";
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-0 z-20 flex max-h-[18rem] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground md:h-screen md:max-h-none md:w-64">
+    <aside className="sticky top-0 z-20 flex max-h-[18rem] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-screen md:max-h-none md:w-64 md:shadow-none">
       <div className="border-b border-sidebar-border px-4 py-4 sm:px-5 sm:py-6">
         <Wordmark href="/admin" inverted shrinkOnScroll={false} className="max-w-fit" />
         <p className="mt-1 font-heading text-lg">Operations</p>
@@ -46,7 +46,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
 
           return (
             <div key={group.label} className="min-w-max">
-              <p className="px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase">
+              <p className="hidden px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase md:block">
                 {group.label}
               </p>
               <ul className="mt-2 flex gap-1 md:block md:space-y-0.5">
