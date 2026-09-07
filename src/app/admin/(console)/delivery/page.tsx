@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminDeliveryZones } from "@/features/delivery/admin";
 import { formatGhs, pesewasToMajor } from "@/lib/money";
@@ -43,7 +44,7 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
             <input type="hidden" name="zoneId" value={zone.id} />
             <ZoneFields zone={zone} />
             <div className="flex flex-wrap gap-3 sm:col-span-2">
-              <button type="submit" className={paperButton()}>Save zone</button>
+              <SubmitProgressButton idleLabel="Save zone" pendingLabel="Saving zone…" className={paperButton()} />
             </div>
           </form>
           <form action="/admin/delivery/mutate" method="post" className="mt-2">
@@ -54,6 +55,6 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
         </> : null}
       </section>)}
     </div>
-    {canWrite ? <form action="/admin/delivery/mutate" method="post" className="mt-8 grid max-w-3xl gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-2"><h2 className="font-heading text-xl text-ink sm:col-span-2">New zone</h2><input type="hidden" name="intent" value="create-zone" /><ZoneFields /><button type="submit" className={`${paperButton({ variant: "secondary" })} sm:col-span-2 sm:justify-self-start`}>Create zone</button></form> : null}
+    {canWrite ? <form action="/admin/delivery/mutate" method="post" className="mt-8 grid max-w-3xl gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-2"><h2 className="font-heading text-xl text-ink sm:col-span-2">New zone</h2><input type="hidden" name="intent" value="create-zone" /><ZoneFields /><SubmitProgressButton idleLabel="Create zone" pendingLabel="Creating zone…" className={`${paperButton({ variant: "secondary" })} sm:col-span-2 sm:justify-self-start`} /></form> : null}
   </main>;
 }
