@@ -11,10 +11,14 @@ import {
   listDivisionCategories,
   listFeaturedProductCards,
 } from "@/features/catalogue";
+import { canAccessAdmin } from "@/lib/staff/rbac";
+import { readStaffActor } from "@/lib/staff/require";
 
 export default async function HomePage() {
   const categories = await listDivisionCategories();
   const featured = await listFeaturedProductCards();
+  const staff = await readStaffActor();
+  const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   const categoryImages: Record<string, { src: string; alt: string }> = {
     paper: { src: "/images/close-up-view-back-school-concept.jpg", alt: "Paper, notebooks and colourful stationery" },
     writing: { src: "/images/extreme-close-up-pen-taken-by-person-from-desk-organizer.jpg", alt: "Pens arranged in a desk organiser" },
@@ -114,7 +118,7 @@ export default async function HomePage() {
             Add to Cart and Add to Quote stay independent.
           </p>
           <div className="mt-8">
-            <ProductGridList products={featured} />
+            <ProductGridList products={featured} canEdit={canEdit} />
           </div>
         </div>
       </section>

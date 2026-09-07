@@ -7,6 +7,8 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { listDivisionCategories, listFeaturedProductCards } from "@/features/catalogue";
 import { PopularCategories } from "@/components/products/popular-categories";
 import { RecentSearches } from "@/components/products/recent-searches";
+import { canAccessAdmin } from "@/lib/staff/rbac";
+import { readStaffActor } from "@/lib/staff/require";
 
 export const metadata: Metadata = {
   title: "Search",
@@ -21,6 +23,8 @@ export default async function SearchPage({ searchParams }: PageProps) {
   const { q = "" } = await searchParams;
   const [products, categories] = await Promise.all([q ? listProductCards({ query: q }) : Promise.resolve([]), listDivisionCategories()]);
   const recommendations = q && products.length === 0 ? await listFeaturedProductCards() : [];
+  const staff = await readStaffActor();
+  const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 sm:py-14 lg:px-8">
@@ -51,7 +55,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
             {products.length ? <p className="text-sm text-slate">{products.length} {products.length === 1 ? "product" : "products"}</p> : null}
           </div>
           <div className="mt-6">
-            {products.length ? <ProductGridList products={products} /> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
+            {products.length ? <ProductGridList products={products} canEdit={canEdit} /> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
           </div>
         </div>
       ) : null}

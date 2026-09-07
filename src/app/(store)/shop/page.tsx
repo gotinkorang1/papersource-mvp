@@ -6,6 +6,8 @@ import type { ProductCardModel } from "@/types/catalogue";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { pageMetadata } from "@/lib/seo";
+import { canAccessAdmin } from "@/lib/staff/rbac";
+import { readStaffActor } from "@/lib/staff/require";
 
 export const metadata: Metadata = pageMetadata({
   title: "Shop workplace supplies in Ghana",
@@ -39,6 +41,8 @@ export default async function ShopPage({ searchParams }: PageProps) {
   const pageSize = 24;
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
   const visibleProducts = filteredProducts.slice((Math.min(page, totalPages) - 1) * pageSize, Math.min(page, totalPages) * pageSize);
+  const staff = await readStaffActor();
+  const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
@@ -52,7 +56,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
         <CatalogueToolbar count={filteredProducts.length} query={query} category={category} brand={brand} sort={sort} availability={availability} categories={categories} brands={brands} />
       </div>
       <div className="mt-8">
-        <ProductGridList products={visibleProducts} />
+        <ProductGridList products={visibleProducts} canEdit={canEdit} />
         <CataloguePagination page={Math.min(page, totalPages)} totalPages={totalPages} query={{ q: query, category, brand, sort, availability, zone }} />
       </div>
     </main>
