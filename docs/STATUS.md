@@ -22,6 +22,8 @@ The production catalogue route was rechecked after query deduplication: `/shop`,
 
 The live health endpoint now reports both database and observability readiness; production currently reports `database: ok` and `observability: configured`. Supabase Advisor could not be queried in this session because the MCP OAuth token refresh failed, so policy findings still require a successful Supabase re-authentication.
 
+Static RLS review identified and fixed an ownership gap in quote items, quote events, and order items (`drizzle/0015_rls_child_scope.sql`). Apply this migration to the hosted database after Supabase authentication is restored, then rerun the Advisor and authenticated account checks.
+
 The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Returns pages. Security response headers and client-side Sentry route telemetry are configured; runtime activation still requires the production Sentry DSN.
 
 ## Remaining MVP work, in order
