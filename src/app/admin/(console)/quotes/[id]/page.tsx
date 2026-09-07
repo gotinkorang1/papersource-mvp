@@ -48,7 +48,7 @@ export default async function AdminQuoteDetailPage({
         {quote.parentQuoteId ? " · Revision of an earlier quotation" : ""}
       </p>
       {error ? (
-        <p role="alert" className="mt-4 border border-error/40 bg-white px-4 py-3 text-sm text-error">
+        <p role="alert" className="mt-4 rounded-lg border border-error/40 bg-error/10 px-4 py-3 text-sm text-error">
           {error}
         </p>
       ) : null}
