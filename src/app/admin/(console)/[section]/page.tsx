@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ADMIN_PLACEHOLDER_SECTIONS } from "@/components/admin/nav";
 import { requireStaff } from "@/lib/staff/require";
@@ -39,14 +40,20 @@ export default async function AdminPlaceholderPage({ params }: PageProps) {
 
   return (
     <main>
-      <p className="text-sm tracking-[0.16em] text-slate uppercase">Coming next</p>
+      <p className="text-sm tracking-[0.16em] text-slate uppercase">Admin desk</p>
       <h1 className="mt-2 font-heading text-3xl text-ink">
         {TITLES[section] ?? section}
       </h1>
+      <span className="mt-4 inline-flex rounded-full border border-ochre/40 bg-ochre/10 px-3 py-1 text-xs font-semibold tracking-[0.12em] text-ink uppercase">
+        Planned
+      </span>
       <p className="mt-4 max-w-xl text-slate">
-        This desk is in the admin tree so staff never need Supabase Studio.
-        Quote review and orders are live; this section is not operational yet.
+        This desk is visible in the admin navigation while its workflow is being prepared.
+        It is not available for live operations yet.
       </p>
+      <Link href="/admin" className="mt-6 inline-flex min-h-11 items-center rounded-lg bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:-translate-y-0.5 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ring">
+        Back to dashboard
+      </Link>
     </main>
   );
 }
