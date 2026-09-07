@@ -50,7 +50,7 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
           <form action="/admin/delivery/mutate" method="post" className="mt-2">
             <input type="hidden" name="intent" value="delete-zone" />
             <input type="hidden" name="zoneId" value={zone.id} />
-            <button type="submit" className={paperButton({ variant: "ghost" })}>Delete zone</button>
+            <SubmitProgressButton idleLabel="Delete zone" pendingLabel="Deleting zone…" className={paperButton({ variant: "ghost" })} />
           </form>
         </> : null}
       </section>)}
