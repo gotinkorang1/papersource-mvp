@@ -22,7 +22,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
         <p className="mt-8 text-slate">No orders yet.</p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full text-sm">
+          <table className="w-full min-w-[48rem] text-sm">
             <caption className="sr-only">Orders</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
