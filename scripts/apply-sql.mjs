@@ -20,6 +20,7 @@ const files = [
   "drizzle/0013_product_reviews.sql",
   "drizzle/0014_content_management.sql",
   "drizzle/0015_rls_child_scope.sql",
+  "drizzle/0016_move_pg_trgm_to_extensions.sql",
 ];
 
 function run(command, args) {
