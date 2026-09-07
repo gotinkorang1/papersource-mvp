@@ -8,7 +8,7 @@ export async function StoreFooter() {
   const exploreLinks = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.footer;
   return (
     <footer className="mt-auto border-t border-border bg-card">
-      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-sm leading-relaxed text-slate sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
+      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-sm leading-relaxed text-slate sm:grid-cols-2 sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
         <div>
           <Wordmark shrinkOnScroll={false} className="max-w-fit" />
           <p className="mt-4 max-w-xs">Ghana&apos;s modern workplace supply partner. Accra and Tema delivery, with nationwide supply on request.</p>
