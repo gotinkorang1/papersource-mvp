@@ -8,8 +8,12 @@ export const dynamic = "force-dynamic";
 
 export async function GET(request: Request) {
   const startedAt = Date.now();
-  const checks: { database: "ok" | "not_configured" | "error" } = {
+  const checks: {
+    database: "ok" | "not_configured" | "error";
+    observability: "configured" | "not_configured";
+  } = {
     database: "not_configured",
+    observability: process.env.SENTRY_DSN ? "configured" : "not_configured",
   };
 
   if (isDatabaseConfigured()) {
