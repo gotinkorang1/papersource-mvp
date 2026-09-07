@@ -19,7 +19,7 @@ const profileId = "18cc3e14-1525-4b7f-b4bd-174d5518461d";
 const guestId = "28cc3e14-1525-4b7f-b4bd-174d5518461d";
 function form(values: Record<string, string> = {}) {
   const data = new FormData();
-  for (const [key, value] of Object.entries({ email: "ama@example.test", password: "password!", ...values })) data.set(key, value);
+  for (const [key, value] of Object.entries({ email: "ama@example.test", password: "password!1234", ...values })) data.set(key, value);
   return data;
 }
 beforeEach(() => {
@@ -89,12 +89,12 @@ describe("customer auth Server Actions", () => {
     expect(await updateCustomerPasswordAction({}, form({ confirmPassword: "different" }))).toMatchObject({ status: "error", fieldErrors: { confirmPassword: expect.any(Array) } });
     expect(boundary.auth.updateUser).not.toHaveBeenCalled();
     boundary.auth.getClaims.mockResolvedValue({ data: null, error: null });
-    expect(await updateCustomerPasswordAction({}, form({ confirmPassword: "password!" }))).toMatchObject({ status: "error" });
+    expect(await updateCustomerPasswordAction({}, form({ confirmPassword: "password!1234" }))).toMatchObject({ status: "error" });
     expect(boundary.auth.updateUser).not.toHaveBeenCalled();
   });
   it("confirms password update without returning tokens or identity", async () => {
     boundary.auth.updateUser.mockResolvedValue({ data: { user: { id: profileId } }, error: null });
-    expect(await updateCustomerPasswordAction({}, form({ confirmPassword: "password!" }))).toMatchObject({ status: "success", message: expect.stringMatching(/updated/i) });
+    expect(await updateCustomerPasswordAction({}, form({ confirmPassword: "password!1234" }))).toMatchObject({ status: "success", message: expect.stringMatching(/updated/i) });
   });
   it("signs out through Supabase, refreshes navigation and preserves the guest cookie", async () => {
     await expect(signOutCustomerAction()).rejects.toThrow("REDIRECT:/login");

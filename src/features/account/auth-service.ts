@@ -13,7 +13,9 @@ export type CustomerAuthResult =
   | { status: "signed_in"; customer: CustomerActor; next: string };
 
 const email = z.string().trim().max(254).email().toLowerCase();
-const newPassword = z.string().min(8, "Use at least 8 characters.").max(128, "Use no more than 128 characters.");
+// Free-plan safeguard: require stronger new credentials without breaking
+// sign-in for existing customers whose password predates this policy.
+const newPassword = z.string().min(12, "Use at least 12 characters.").max(128, "Use no more than 128 characters.");
 const loginSchema = z.object({ email, password: z.string().min(1).max(128), next: z.unknown().optional() });
 const registerSchema = loginSchema.extend({
   password: newPassword,

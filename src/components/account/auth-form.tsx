@@ -21,8 +21,8 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
       { name: "phone", label: "Phone (optional)", type: "tel", autoComplete: "tel", required: false, maxLength: 30 },
     ] : []),
     ...(mode !== "reset" ? [{ name: "email", label: "Email", type: "email", autoComplete: mode === "login" ? "username" : "email", required: true, maxLength: 254 }] : []),
-    ...(mode !== "forgot" ? [{ name: "password", label: "Password", type: "password", autoComplete: mode === "login" ? "current-password" : "new-password", required: true, maxLength: 128 }] : []),
-    ...(mode === "reset" ? [{ name: "confirmPassword", label: "Confirm password", type: "password", autoComplete: "new-password", required: true, maxLength: 128 }] : []),
+    ...(mode !== "forgot" ? [{ name: "password", label: "Password", type: "password", autoComplete: mode === "login" ? "current-password" : "new-password", required: true, minLength: mode === "login" ? undefined : 12, maxLength: 128 }] : []),
+    ...(mode === "reset" ? [{ name: "confirmPassword", label: "Confirm password", type: "password", autoComplete: "new-password", required: true, minLength: 12, maxLength: 128 }] : []),
   ];
 
   return (

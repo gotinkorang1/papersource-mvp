@@ -4,7 +4,7 @@ vi.mock("server-only", () => ({}));
 import { createCustomerAuthService } from "./auth-service";
 
 const actor = { profileId: "18cc3e14-1525-4b7f-b4bd-174d5518461d", email: "ama@example.test", fullName: "Ama", phone: null };
-const registration = { email: " AMA@EXAMPLE.TEST ", password: "  password!  ", fullName: " Ama ", phone: " 0241234567 ", next: "/checkout" };
+const registration = { email: " AMA@EXAMPLE.TEST ", password: "  password!1234  ", fullName: " Ama ", phone: " 0241234567 ", next: "/checkout" };
 const claims = { sub: actor.profileId, email: actor.email, role: "authenticated", is_anonymous: false, user_metadata: { full_name: "Ama" } };
 const auth = {
   signUp: vi.fn(), signInWithPassword: vi.fn(), verifyOtp: vi.fn(),
