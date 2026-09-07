@@ -126,7 +126,7 @@ export default async function ProductPage({ params }: PageProps) {
           ) : null}
         </div>
       </div>
-      <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} />
+      <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} nextPath={`/product/${product.slug}`} />
     </main>
   );
 }
