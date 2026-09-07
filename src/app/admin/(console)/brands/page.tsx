@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminBrands } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -27,7 +28,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
         Brand pages use these slugs. Keep PaperSource and supplier names here.
       </p>
       <AdminError error={error} />
-      <div className="mt-8 overflow-x-auto rounded-md border border-border bg-white">
+      <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <caption className="sr-only">Brands</caption>
           <thead>
@@ -54,7 +55,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
               key={row.id}
               action="/admin/brands/mutate"
               method="post"
-              className="mt-4 grid gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-3"
+              className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-3"
             >
               <input type="hidden" name="intent" value="save-brand" />
               <input type="hidden" name="brandId" value={row.id} />
@@ -75,9 +76,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
                 </select>
               </AdminField>
               <div className="sm:col-span-3">
-                <button type="submit" className={paperButton()}>
-                  Save {row.name}
-                </button>
+                <SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving brand…" className={paperButton()} />
               </div>
             </form>
           ))
@@ -86,7 +85,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
         <form
           action="/admin/brands/mutate"
           method="post"
-          className="mt-8 grid max-w-xl gap-3 rounded-md border border-border bg-white p-5"
+          className="mt-8 grid max-w-xl gap-3 rounded-xl border border-border bg-card p-5"
         >
           <h2 className="font-heading text-xl text-ink">New brand</h2>
           <input type="hidden" name="intent" value="create-brand" />
@@ -96,9 +95,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
           <AdminField label="Slug (optional)">
             <input name="slug" className={adminFieldClass} />
           </AdminField>
-          <button type="submit" className={paperButton({ variant: "secondary" })}>
-            Create brand
-          </button>
+          <SubmitProgressButton idleLabel="Create brand" pendingLabel="Creating brand…" className={paperButton({ variant: "secondary" })} />
         </form>
       ) : null}
     </main>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminCategories } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -27,7 +28,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
         Shop routes follow these slugs. Keep names operational, not decorative.
       </p>
       <AdminError error={error} />
-      <div className="mt-8 overflow-x-auto rounded-md border border-border bg-white">
+      <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <caption className="sr-only">Categories</caption>
           <thead>
@@ -54,7 +55,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
               key={row.id}
               action="/admin/categories/mutate"
               method="post"
-              className="mt-4 grid gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-2"
+              className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-2"
             >
               <input type="hidden" name="intent" value="save-category" />
               <input type="hidden" name="categoryId" value={row.id} />
@@ -101,9 +102,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 />
               </AdminField>
               <div className="sm:col-span-2">
-                <button type="submit" className={paperButton()}>
-                  Save {row.name}
-                </button>
+                <SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving category…" className={paperButton()} />
               </div>
             </form>
           ))
@@ -112,7 +111,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
         <form
           action="/admin/categories/mutate"
           method="post"
-          className="mt-8 grid max-w-2xl gap-3 rounded-md border border-border bg-white p-5"
+          className="mt-8 grid max-w-2xl gap-3 rounded-xl border border-border bg-card p-5"
         >
           <h2 className="font-heading text-xl text-ink">New category</h2>
           <input type="hidden" name="intent" value="create-category" />
@@ -138,9 +137,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           <AdminField label="Description">
             <textarea name="description" className={adminAreaClass} />
           </AdminField>
-          <button type="submit" className={paperButton({ variant: "secondary" })}>
-            Create category
-          </button>
+          <SubmitProgressButton idleLabel="Create category" pendingLabel="Creating category…" className={paperButton({ variant: "secondary" })} />
         </form>
       ) : null}
     </main>
