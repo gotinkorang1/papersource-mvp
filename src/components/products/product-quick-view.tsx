@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { DeliveryBadge } from "@/components/commerce/delivery-badge";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -28,6 +28,15 @@ export function ProductQuickView({
   const addToCart = onAddToCart ?? preview?.addToCart;
   const addToQuote = onAddToQuote ?? preview?.addToQuote;
   const [quantity, setQuantity] = useState(1);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") onClose();
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, onClose]);
 
   if (!open || !product) {
     return null;
