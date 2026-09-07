@@ -24,6 +24,8 @@ const ids = {
   orgQuote: "90000000-0000-4000-8000-000000000003",
   ownerOrder: "a0000000-0000-4000-8000-000000000001",
   outsiderOrder: "a0000000-0000-4000-8000-000000000002",
+  ownerQuoteItem: "a1000000-0000-4000-8000-000000000001",
+  ownerOrderItem: "a2000000-0000-4000-8000-000000000001",
   zone: "b0000000-0000-4000-8000-000000000001",
   payment: "c0000000-0000-4000-8000-000000000001",
   token: "d0000000-0000-4000-8000-000000000001",
@@ -84,6 +86,10 @@ async function seed(sql) {
   await sql`insert into orders (id, number, source, profile_id, status, goods_total, tax_total, delivery_fee_status, grand_total, address_snapshot, delivery_zone_id) values
     (${ids.ownerOrder}, 'RLS-O-OWNER', 'cart', ${ids.owner}, 'pending_payment', 1000, 130, 'calculated', 1000, ${sql.json(address)}, ${ids.zone}),
     (${ids.outsiderOrder}, 'RLS-O-OUTSIDER', 'cart', ${ids.outsider}, 'pending_payment', 1000, 130, 'calculated', 1000, ${sql.json(address)}, ${ids.zone})`;
+  await sql`insert into quote_items (id, quote_id, name_snapshot, sku_snapshot, quantity)
+    values (${ids.ownerQuoteItem}, ${ids.ownerQuote}, 'Owner item', 'RLS-Q-ITEM', 1)`;
+  await sql`insert into order_items (id, order_id, name_snapshot, sku_snapshot, quantity, unit_price, line_total, tax_total)
+    values (${ids.ownerOrderItem}, ${ids.ownerOrder}, 'Owner item', 'RLS-O-ITEM', 1, 1000, 1000, 130)`;
   await sql`insert into payments (id, order_id, provider, status, amount, raw_init)
     values (${ids.payment}, ${ids.ownerOrder}, 'paystack', 'initialized', 1000, ${sql.json({ secret: "must-not-leak" })})`;
   await sql`insert into quote_access_tokens (id, quote_id, token) values (${ids.token}, ${ids.ownerQuote}, 'rls-secret-token')`;
@@ -108,6 +114,8 @@ async function verifyPolicies(sql) {
     assert.deepEqual((await sql`select id from carts where id = ${ids.ownerCart}`).map((row) => row.id), [ids.ownerCart]);
     assert.deepEqual((await sql`select id from quotes where id in (${ids.ownerQuote}, ${ids.outsiderQuote}, ${ids.orgQuote}) order by id`).map((row) => row.id), [ids.ownerQuote, ids.orgQuote]);
     assert.deepEqual((await sql`select id from orders where id in (${ids.ownerOrder}, ${ids.outsiderOrder}) order by id`).map((row) => row.id), [ids.ownerOrder]);
+    assert.equal((await sql`select id from quote_items where id = ${ids.ownerQuoteItem}`).length, 1);
+    assert.equal((await sql`select id from order_items where id = ${ids.ownerOrderItem}`).length, 1);
     assert.equal((await sql`update profiles set full_name = 'Updated RLS Owner' where id = ${ids.owner} returning id`).length, 1);
     await expectDenied(sql, () => sql`update profiles set email = 'changed@rls.test' where id = ${ids.owner} returning id`, "profile owners cannot change identity columns through the Data API");
     assert.equal((await sql`insert into addresses (id, owner_profile_id, full_name, phone, region, city_town, delivery_area)
@@ -124,6 +132,8 @@ async function verifyPolicies(sql) {
     assert.equal((await sql`select id from addresses where id = ${ids.ownerAddress}`).length, 0);
     assert.equal((await sql`select id from quotes where id = ${ids.ownerQuote}`).length, 0);
     assert.equal((await sql`select id from orders where id = ${ids.ownerOrder}`).length, 0);
+    assert.equal((await sql`select id from quote_items where id = ${ids.ownerQuoteItem}`).length, 0);
+    assert.equal((await sql`select id from order_items where id = ${ids.ownerOrderItem}`).length, 0);
     assert.equal((await sql`update addresses set city_town = 'Tamale' where id = ${ids.ownerAddress} returning id`).length, 0);
     assert.equal((await sql`update carts set updated_at = now() where id = ${ids.ownerCart} returning id`).length, 0);
   });
