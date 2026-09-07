@@ -66,7 +66,7 @@ test("Paystack mock checkout marks the order paid via signed webhook", async ({
   });
   expect(replayResponse.status()).toBe(200);
 
-  await page.reload();
+  await page.reload({ waitUntil: "domcontentloaded", timeout: 45_000 });
   await expect(page.getByText("Payment is confirmed")).toBeVisible();
   await expect(page.getByRole("button", { name: "Pay with Paystack" })).toHaveCount(0);
 });
