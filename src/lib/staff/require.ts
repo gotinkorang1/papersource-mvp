@@ -9,7 +9,18 @@ import type { StaffActor } from "@/lib/staff/types";
 export type { StaffActor };
 
 export async function readStaffActor(): Promise<StaffActor | null> {
-  const supabase = await createSupabaseServerClient();
+  let supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
+  try {
+    supabase = await createSupabaseServerClient();
+  } catch (error) {
+    // Public storefront pages also call this helper to show staff-only edit
+    // links. Missing optional auth configuration must not take the storefront
+    // down; protected admin routes still fail closed through requireStaff.
+    if (error instanceof Error && error.message === "Supabase public env is not configured") {
+      return null;
+    }
+    throw error;
+  }
   const { data, error } = await supabase.auth.getUser();
   const email = data.user?.email?.trim().toLowerCase();
   if (error || !email) return null;
