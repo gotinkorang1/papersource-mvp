@@ -47,7 +47,7 @@ export default async function AdminProductDetailPage({
       </p>
       <AdminError error={error} />
 
-      <section className="mt-8 max-w-2xl rounded-md border border-border bg-white p-5">
+      <section className="mt-8 max-w-2xl rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h2 className="font-heading text-xl text-ink">Copy</h2>
         {canWrite ? (
           <form action="/admin/products/mutate" method="post" className="mt-4 grid gap-4">
@@ -111,8 +111,8 @@ export default async function AdminProductDetailPage({
 
       <section className="mt-8">
         <h2 className="font-heading text-xl text-ink">Variants</h2>
-        <div className="mt-4 overflow-x-auto rounded-md border border-border bg-white">
-          <table className="w-full text-sm">
+        <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+          <table className="w-full min-w-[34rem] text-sm">
             <caption className="sr-only">Product variants</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
@@ -145,7 +145,7 @@ export default async function AdminProductDetailPage({
                 key={variant.id}
                 action="/admin/products/mutate"
                 method="post"
-                className="mt-4 grid gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-2"
+                className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:grid-cols-2 sm:p-5"
               >
                 <input type="hidden" name="intent" value="save-variant" />
                 <input type="hidden" name="productId" value={product.id} />
@@ -191,9 +191,11 @@ export default async function AdminProductDetailPage({
                   </select>
                 </AdminField>
                 <div className="sm:col-span-2">
-                  <button type="submit" className={paperButton()}>
-                    Save {variant.sku}
-                  </button>
+                  <SubmitProgressButton
+                    idleLabel={`Save ${variant.sku}`}
+                    pendingLabel={`Saving ${variant.sku}…`}
+                    className={paperButton()}
+                  />
                 </div>
               </form>
             ))
@@ -203,7 +205,7 @@ export default async function AdminProductDetailPage({
           <form
             action="/admin/products/mutate"
             method="post"
-            className="mt-4 grid gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-3"
+            className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:grid-cols-3 sm:p-5"
           >
             <input type="hidden" name="intent" value="add-variant" />
             <input type="hidden" name="productId" value={product.id} />
@@ -217,9 +219,11 @@ export default async function AdminProductDetailPage({
               <input name="baseUnitPrice" required className={adminFieldClass} placeholder="78.99" />
             </AdminField>
             <div className="sm:col-span-3">
-              <button type="submit" className={paperButton({ variant: "secondary" })}>
-                Add variant
-              </button>
+              <SubmitProgressButton
+                idleLabel="Add variant"
+                pendingLabel="Adding variant…"
+                className={paperButton({ variant: "secondary" })}
+              />
             </div>
           </form>
         ) : null}
@@ -231,8 +235,8 @@ export default async function AdminProductDetailPage({
           <p className="mt-2 text-sm text-slate">
             Server-authoritative bands. Request-quote is for open-ended volume.
           </p>
-          <div className="mt-4 overflow-x-auto rounded-md border border-border bg-white">
-            <table className="w-full text-sm">
+          <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+            <table className="w-full min-w-[34rem] text-sm">
               <caption className="sr-only">Price tiers</caption>
               <thead>
                 <tr className="border-b border-border text-left text-slate">
@@ -268,9 +272,11 @@ export default async function AdminProductDetailPage({
                             <input type="hidden" name="intent" value="deactivate-tier" />
                             <input type="hidden" name="productId" value={product.id} />
                             <input type="hidden" name="tierId" value={tier.id} />
-                            <button type="submit" className="text-sm underline">
-                              Deactivate
-                            </button>
+                            <SubmitProgressButton
+                              idleLabel="Deactivate"
+                              pendingLabel="Deactivating…"
+                              className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent"
+                            />
                           </form>
                         </td>
                       ) : canPrice ? (
@@ -286,7 +292,7 @@ export default async function AdminProductDetailPage({
             <form
               action="/admin/products/mutate"
               method="post"
-              className="mt-4 grid gap-3 rounded-md border border-border bg-white p-5 sm:grid-cols-2"
+              className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:grid-cols-2 sm:p-5"
             >
               <input type="hidden" name="intent" value="add-tier" />
               <input type="hidden" name="productId" value={product.id} />
@@ -325,7 +331,7 @@ export default async function AdminProductDetailPage({
       ) : null}
 
       <section className="mt-8 grid gap-8 lg:grid-cols-2">
-        <div className="rounded-md border border-border bg-white p-5">
+        <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Images</h2>
           <p className="mt-2 text-sm text-slate">Cloudinary public IDs. The shop uses these, not private storage.</p>
           <ul className="mt-4 space-y-2 text-sm">
@@ -367,7 +373,7 @@ export default async function AdminProductDetailPage({
           ) : null}
         </div>
 
-        <div className="rounded-md border border-border bg-white p-5">
+        <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Search aliases</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {product.aliases.map((alias) => (
@@ -402,7 +408,7 @@ export default async function AdminProductDetailPage({
       </section>
 
       <section className="mt-8 grid gap-8 lg:grid-cols-2">
-        <div className="rounded-md border border-border bg-white p-5">
+        <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Attributes</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {product.attributes.map((attribute) => (
@@ -444,7 +450,7 @@ export default async function AdminProductDetailPage({
         </div>
 
         {product.productType === "bundle" ? (
-          <div className="rounded-md border border-border bg-white p-5">
+          <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
             <h2 className="font-heading text-xl text-ink">Office pack items</h2>
             <ul className="mt-4 space-y-2 text-sm">
               {product.bundleItems.map((item) => (
