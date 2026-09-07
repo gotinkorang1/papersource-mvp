@@ -159,6 +159,23 @@
   background-color: color-mix(in srgb, var(--card-foreground) 5%, transparent);
 }
 
+.admin-shell .overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+}
+
+.admin-shell table thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background-color: var(--card);
+}
+
+.admin-shell table th,
+.admin-shell table td {
+  vertical-align: middle;
+}
+
 .dark .admin-shell input,
 .dark .admin-shell select,
 .dark .admin-shell textarea {
