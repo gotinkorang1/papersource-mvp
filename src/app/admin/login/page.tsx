@@ -27,8 +27,8 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
   const { error } = await searchParams;
 
   return (
-    <main className="flex min-h-full items-center justify-center bg-cream px-4 py-16">
-      <div className="w-full max-w-md rounded-lg border border-border bg-white p-8">
+    <main className="flex min-h-screen items-center justify-center bg-cream px-4 py-10 sm:py-16">
+      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-6 shadow-[var(--ps-shadow-md)] sm:p-8">
         <Wordmark shrinkOnScroll={false} />
         <h1 className="mt-2 font-heading text-2xl text-ink">Staff sign in</h1>
         <p className="mt-3 text-sm text-slate">
