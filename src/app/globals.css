@@ -176,6 +176,11 @@
   text-wrap: balance;
 }
 
+.admin-shell nav a {
+  line-height: 1.35;
+  letter-spacing: -0.005em;
+}
+
 .admin-shell main > h1 {
   line-height: 1.1;
 }
