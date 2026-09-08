@@ -180,6 +180,16 @@
 }
 
 @media (max-width: 639px) {
+  .admin-shell main > h1 {
+    font-size: clamp(1.75rem, 8vw, 2.25rem);
+    line-height: 1.12;
+  }
+
+  .admin-shell main > p {
+    max-width: 42rem;
+    line-height: 1.6;
+  }
+
   .admin-shell .admin-responsive-table {
     display: block;
     min-width: 0 !important;
