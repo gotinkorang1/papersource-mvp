@@ -46,6 +46,12 @@ export const metadata: Metadata = {
     icon: [{ url: "/icons/papersource-192.svg", type: "image/svg+xml" }],
     apple: "/icons/papersource-192.svg",
   },
+  appleWebApp: {
+    capable: true,
+    title: "PaperSource",
+    statusBarStyle: "black-translucent",
+  },
+  formatDetection: { telephone: false },
   robots: {
     index: true,
     follow: true,
