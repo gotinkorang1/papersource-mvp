@@ -3,7 +3,7 @@ import { ArrowUpRight, Sparkles } from "lucide-react";
 
 export function AnnouncementBanner() {
   return (
-    <div className="bg-ink px-4 py-2.5 text-center text-xs text-cream sm:text-sm">
+    <div role="region" aria-label="Delivery announcement" className="bg-ink px-4 py-2.5 text-center text-xs text-cream sm:text-sm">
       <div className="mx-auto flex max-w-7xl items-center justify-center gap-2">
         <Sparkles className="size-3.5 shrink-0 text-ochre" aria-hidden />
         <span className="sm:hidden">Work essentials in Accra &amp; Tema.</span>
