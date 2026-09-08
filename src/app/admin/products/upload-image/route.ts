@@ -70,11 +70,14 @@ export async function POST(request: Request) {
     });
     const payload = (await response.json()) as { public_id?: string; secure_url?: string; error?: { message?: string } };
     if (!response.ok || !payload.public_id) {
-      return NextResponse.json({ error: payload.error?.message ?? "Cloudinary could not process that image." }, { status: 502 });
+      // Provider responses can contain account or configuration details; keep
+      // those out of the browser response and server logs.
+      console.error("[product-image-upload] provider rejected image", response.status);
+      return NextResponse.json({ error: "The image service could not process that file. Try another image." }, { status: 502 });
     }
     return NextResponse.json({ publicId: payload.public_id, secureUrl: payload.secure_url });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Image upload failed.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("[product-image-upload] upload failed", error instanceof Error ? error.name : "unknown");
+    return NextResponse.json({ error: "Image upload failed. Please try again." }, { status: 500 });
   }
 }
