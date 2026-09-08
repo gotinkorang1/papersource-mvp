@@ -589,7 +589,7 @@ export async function addProductImage(input: {
   position: number;
 }) {
   assertProductsWrite(input.role);
-  const publicId = input.cloudinaryPublicId.trim();
+  const publicId = normalizeCloudinaryPublicId(input.cloudinaryPublicId);
   const alt = input.alt.trim();
   if (!publicId || !alt) {
     throw new CatalogueAdminError("Cloudinary public ID and alt text are required.");
@@ -615,6 +615,24 @@ export async function addProductImage(input: {
     throw new CatalogueAdminError("Could not add that image.");
   }
   return image;
+}
+
+/** Accept the Cloudinary URL shown in the dashboard as well as a raw public ID. */
+function normalizeCloudinaryPublicId(value: string) {
+  const raw = value.trim();
+  if (!raw) return "";
+  try {
+    const parsed = new URL(raw);
+    if (!parsed.hostname.endsWith("cloudinary.com")) return raw;
+    const marker = "/image/upload/";
+    const index = parsed.pathname.indexOf(marker);
+    if (index === -1) return raw;
+    const segments = parsed.pathname.slice(index + marker.length).split("/").filter(Boolean);
+    while (segments.length && /^(?:f_|q_|w_|h_|c_|g_|e_|fl_|dpr_|ar_)/.test(segments[0])) segments.shift();
+    return segments.join("/").replace(/\.[a-z0-9]{2,5}$/i, "");
+  } catch {
+    return raw;
+  }
 }
 
 export async function removeProductImage(input: { role: StaffRole; imageId: string }) {

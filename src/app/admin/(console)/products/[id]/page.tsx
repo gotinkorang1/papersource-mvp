@@ -3,6 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { ProductImageManager } from "@/components/admin/product-image-manager";
 import { paperButton } from "@/components/commerce/paper-button";
 import { getAdminProduct, listTaxonomyOptions } from "@/features/catalogue/admin";
 import { formatGhs, pesewasToMajor } from "@/lib/money";
@@ -351,20 +352,7 @@ export default async function AdminProductDetailPage({
             ))}
           </ul>
           {canWrite && product.images.length < 4 ? (
-            <form action="/admin/products/mutate" method="post" className="mt-4 grid gap-3">
-              <input type="hidden" name="intent" value="add-image" />
-              <input type="hidden" name="productId" value={product.id} />
-              <AdminField label="Cloudinary public ID">
-                <input name="cloudinaryPublicId" required className={adminFieldClass} />
-              </AdminField>
-              <AdminField label="Alt text">
-                <input name="alt" required className={adminFieldClass} />
-              </AdminField>
-              <AdminField label="Position">
-                <input name="position" defaultValue="0" className={adminFieldClass} />
-              </AdminField>
-              <SubmitProgressButton idleLabel="Add image" pendingLabel="Adding image…" className={paperButton({ variant: "secondary" })} />
-            </form>
+            <ProductImageManager productId={product.id} imageCount={product.images.length} />
           ) : canWrite ? <p className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Image limit reached. Remove an image before adding another.</p> : null}
         </div>
 
