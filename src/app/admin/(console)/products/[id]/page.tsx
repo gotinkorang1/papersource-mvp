@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { ProductImageManager } from "@/components/admin/product-image-manager";
+import { ProductTaxonomyPicker } from "@/components/admin/product-taxonomy-picker";
 import { paperButton } from "@/components/commerce/paper-button";
 import { getAdminProduct, listTaxonomyOptions } from "@/features/catalogue/admin";
 import { formatGhs, pesewasToMajor } from "@/lib/money";
@@ -61,27 +62,10 @@ export default async function AdminProductDetailPage({
               <input name="slug" required defaultValue={product.slug} className={adminFieldClass} />
             </AdminField>
             <AdminField label="Brand *">
-              <select name="brandId" required defaultValue={product.brandId} className={adminFieldClass}>
-                {brands.map((brand) => (
-                  <option key={brand.id} value={brand.id}>
-                    {brand.name}
-                  </option>
-                ))}
-              </select>
+              <ProductTaxonomyPicker kind="brand" name="brandId" options={brands} value={product.brandId} />
             </AdminField>
             <AdminField label="Category *">
-              <select
-                name="categoryId"
-                required
-                defaultValue={product.categoryId}
-                className={adminFieldClass}
-              >
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
+              <ProductTaxonomyPicker kind="category" name="categoryId" options={categories} value={product.categoryId} />
             </AdminField>
             <AdminField label="Type">
               <select name="productType" defaultValue={product.productType} className={adminFieldClass}>

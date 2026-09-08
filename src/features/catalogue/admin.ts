@@ -489,6 +489,23 @@ export async function saveCategory(input: {
   }
   const slug = input.slug?.trim() ? slugify(input.slug) : slugify(input.name);
   const db = getDb();
+  if (input.parentId) {
+    if (input.parentId === input.categoryId) {
+      throw new CatalogueAdminError("A category cannot be its own parent.");
+    }
+    const [parent] = await db.select({ id: categories.id }).from(categories).where(eq(categories.id, input.parentId));
+    if (!parent) throw new CatalogueAdminError("Choose an existing parent category.");
+    if (input.categoryId) {
+      const visited = new Set<string>();
+      let ancestorId: string | null = input.parentId;
+      while (ancestorId && !visited.has(ancestorId)) {
+        if (ancestorId === input.categoryId) throw new CatalogueAdminError("A category cannot be moved beneath one of its descendants.");
+        visited.add(ancestorId);
+        const [ancestor] = await db.select({ parentId: categories.parentId }).from(categories).where(eq(categories.id, ancestorId));
+        ancestorId = ancestor?.parentId ?? null;
+      }
+    }
+  }
   if (input.categoryId) {
     const [updated] = await db
       .update(categories)

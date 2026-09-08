@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { ProductTaxonomyPicker } from "@/components/admin/product-taxonomy-picker";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listTaxonomyOptions } from "@/features/catalogue/admin";
 import { requireStaffArea } from "@/lib/staff/require";
@@ -40,22 +41,10 @@ export default async function AdminNewProductPage({ searchParams }: PageProps) {
           <input name="slug" className={adminFieldClass} placeholder="auto from name" />
         </AdminField>
         <AdminField label="Brand *">
-          <select name="brandId" required className={adminFieldClass}>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
+          <ProductTaxonomyPicker kind="brand" name="brandId" options={brands} />
         </AdminField>
         <AdminField label="Category *">
-          <select name="categoryId" required className={adminFieldClass}>
-            {categories.map((category) => (
-              <option key={category.id} value={category.id}>
-                {category.name}
-              </option>
-            ))}
-          </select>
+          <ProductTaxonomyPicker kind="category" name="categoryId" options={categories} />
         </AdminField>
         <AdminField label="Type">
           <select name="productType" className={adminFieldClass} defaultValue="standard">
