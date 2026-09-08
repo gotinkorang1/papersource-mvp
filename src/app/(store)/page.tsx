@@ -29,6 +29,11 @@ export default async function HomePage() {
     "school-supplies": { src: "/images/school-stationery-with-accessories.jpg", alt: "School stationery and learning accessories" },
     workplace: { src: "/images/still-life-documents-stack.jpg", alt: "Workplace documents and office supplies" },
   };
+  const categoryImageFor = (category: (typeof categories)[number]) => {
+    const key = `${category.slug} ${category.name}`.toLocaleLowerCase();
+    const match = Object.entries(categoryImages).find(([alias]) => key.includes(alias));
+    return match?.[1] ?? { src: "/images/catalogue-stationery-generated.png", alt: `${category.name} workplace supplies` };
+  };
 
   return (
     <main className="overflow-hidden">
@@ -87,8 +92,8 @@ export default async function HomePage() {
                 name={category.name}
                 href={`/shop/${category.slug}`}
                 caption={category.caption}
-                imageSrc={categoryImages[category.slug]?.src}
-                imageAlt={categoryImages[category.slug]?.alt ?? `${category.name} supplies`}
+                imageSrc={categoryImageFor(category).src}
+                imageAlt={categoryImageFor(category).alt}
               />
             ))}
           </div>
