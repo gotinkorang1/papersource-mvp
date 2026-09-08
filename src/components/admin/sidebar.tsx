@@ -12,10 +12,12 @@ import { ADMIN_NAV } from "./nav";
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const [navOpen, setNavOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
   useEffect(() => {
     activeLinkRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    setNavOpen(false);
   }, [pathname]);
 
   return (
@@ -30,11 +32,12 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
         <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate">Signed in as</p><p className="mt-2 font-heading text-xl">{actor.fullName}</p><p className="mt-1 text-sm capitalize text-slate">{actor.role.replaceAll("_", " ")}</p></div><button type="button" aria-label="Close account panel" onClick={() => setAccountOpen(false)} className="min-h-11 min-w-11 rounded-md text-2xl text-slate hover:bg-muted hover:text-ink">×</button></div>
         <div className="mt-auto border-t border-border pt-5"><Link href="/admin/profile" onClick={() => setAccountOpen(false)} className="inline-flex min-h-11 w-full items-center rounded-md px-3 text-sm font-semibold text-ink underline underline-offset-4 hover:bg-muted">My profile</Link><form action="/admin/logout" method="post" className="mt-2"><SubmitProgressButton idleLabel="Sign out" pendingLabel="Signing out…" className={`${paperButton({ variant: "ghost" })} min-h-11 w-full justify-start px-3 text-ink`} /></form></div>
       </section>
-      <aside className="sticky top-0 z-20 flex max-h-[min(18rem,calc(100svh-4.5rem))] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-[100svh] md:max-h-none md:w-64 md:shadow-none">
-      <div className="border-b border-sidebar-border px-4 py-4 sm:px-5 sm:py-6">
-        <Link href="/admin" aria-label="PaperSource admin dashboard" className="inline-flex size-12 items-center justify-center rounded-lg border-2 border-ochre bg-cream font-heading text-lg font-bold tracking-[0.12em] text-ink shadow-[3px_3px_0_#e6a329] transition-transform hover:-translate-y-0.5">PS</Link>
+      <aside className="sticky top-0 z-20 flex max-h-[calc(100svh-4.5rem)] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-[100svh] md:max-h-none md:w-64 md:shadow-none">
+      <div className="flex items-center justify-between border-b border-sidebar-border px-4 py-3 sm:px-5 sm:py-4">
+        <Link href="/admin" aria-label="PaperSource admin dashboard" className="inline-flex size-10 items-center justify-center rounded-md border-2 border-ochre bg-cream font-heading text-sm font-bold tracking-[0.12em] text-ink shadow-[2px_2px_0_#e6a329] transition-transform hover:-translate-y-0.5 md:size-11">PS</Link>
+        <button type="button" aria-expanded={navOpen} aria-controls="admin-navigation" onClick={() => setNavOpen((open) => !open)} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-sidebar-border px-3 text-sm font-semibold text-sidebar-foreground transition hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring md:hidden"><span>{navOpen ? "Close" : "Menu"}</span><span aria-hidden="true">{navOpen ? "×" : "☰"}</span></button>
       </div>
-      <nav className="flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-3 [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5" aria-label="Admin">
+      <nav id="admin-navigation" className={`${navOpen ? "max-h-[calc(100svh-8rem)] opacity-100" : "max-h-0 overflow-hidden opacity-0 md:max-h-none md:opacity-100"} flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-3 transition-[max-height,opacity] duration-300 [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5`} aria-label="Admin">
         {ADMIN_NAV.map((group) => {
           if ("href" in group) {
             if (!canAccessAdmin(actor.role, group.area, "read")) {
