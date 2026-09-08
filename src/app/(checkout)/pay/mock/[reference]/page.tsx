@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { and, eq } from "drizzle-orm";
 import { paperButton } from "@/components/commerce/paper-button";
 import { simulateMockPaystackSuccessAction } from "@/features/payments/actions";
-import { isLivePaystack } from "@/lib/paystack/signature";
+import { getStoreSettings } from "@/features/settings/admin";
 import { formatGhs } from "@/lib/money";
 import { getDb } from "@/lib/db/client";
 import { orders, payments } from "@/lib/db/schema";
@@ -20,7 +20,7 @@ type PageProps = {
 };
 
 export default async function MockPaystackPage({ params }: PageProps) {
-  if (isLivePaystack()) {
+  if ((await getStoreSettings()).paymentMode === "live") {
     notFound();
   }
 

@@ -1,8 +1,9 @@
 import { eq } from "drizzle-orm";
 import { fulfillSuccessfulPayment } from "@/features/payments/fulfill";
-import { isLivePaystack, paystackSignatureValid } from "@/lib/paystack/signature";
+import { paystackSignatureValid } from "@/lib/paystack/signature";
 import { verifyPaystackTransaction } from "@/lib/paystack/client";
 import { getDb } from "@/lib/db/client";
+import { getStoreSettings } from "@/features/settings/admin";
 import { paymentEvents, payments } from "@/lib/db/schema";
 
 export class WebhookSignatureError extends Error {
@@ -59,8 +60,9 @@ export async function processPaystackWebhook(rawBody: string, signature: string)
     return { duplicate: true as const };
   }
 
-  if (isLivePaystack()) {
-    const verified = await verifyPaystackTransaction(event.data.reference);
+  const settings = await getStoreSettings();
+  if (settings.paymentMode === "live") {
+    const verified = await verifyPaystackTransaction(event.data.reference, settings.paymentMode);
     if (verified.status !== "success") {
       return { pending: true as const };
     }

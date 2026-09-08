@@ -91,6 +91,8 @@ export const paymentProviderEnum = pgEnum("payment_provider", [
   "invoice_terms",
 ]);
 
+export const paymentModeEnum = pgEnum("payment_mode", ["test", "live"]);
+
 export const paymentStatusEnum = pgEnum("payment_status", [
   "initialized",
   "pending",

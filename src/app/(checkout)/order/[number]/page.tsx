@@ -5,7 +5,6 @@ import { and, eq } from "drizzle-orm";
 import { PayNowButton } from "@/components/checkout/pay-now-button";
 import { fulfillSuccessfulPayment } from "@/features/payments/fulfill";
 import { verifyPaystackTransaction } from "@/lib/paystack/client";
-import { isLivePaystack } from "@/lib/paystack/signature";
 import { formatGhs } from "@/lib/money";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { orders } from "@/lib/db/schema";
@@ -13,6 +12,7 @@ import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { documentOwner } from "@/lib/customer/commerce-identity";
 import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
 import { PrintReceiptButton } from "@/components/orders/print-receipt-button";
+import { getStoreSettings } from "@/features/settings/admin";
 
 export const metadata: Metadata = {
   title: "Order received",
@@ -48,12 +48,13 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   }
 
   const returnReference = query.reference ?? query.trxref;
+  const settings = await getStoreSettings();
   if (
     returnReference &&
-    isLivePaystack() &&
+    settings.paymentMode === "live" &&
     found.status === "pending_payment"
   ) {
-    const verified = await verifyPaystackTransaction(returnReference);
+    const verified = await verifyPaystackTransaction(returnReference, settings.paymentMode);
     if (verified.status === "success") {
       await fulfillSuccessfulPayment({
         reference: verified.reference,
@@ -76,7 +77,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   const nationwide = order.deliveryFeeStatus === "pending_nationwide";
   const awaitingPaystack = order.status === "pending_payment" && !nationwide;
   const confirming =
-    Boolean(returnReference) && order.status === "pending_payment" && isLivePaystack();
+    Boolean(returnReference) && order.status === "pending_payment" && settings.paymentMode === "live";
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">

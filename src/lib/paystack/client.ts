@@ -14,15 +14,18 @@ export type PaystackVerifyResult = {
   currency: string;
 };
 
+export type PaystackMode = "test" | "live";
+
 export async function initializePaystackTransaction(input: {
   email: string;
   amountPesewas: number;
   reference: string;
   callbackUrl: string;
+  mode?: PaystackMode;
 }): Promise<PaystackInitResult> {
   const amount = pesewasToPaystackAmount(input.amountPesewas);
 
-  if (!isLivePaystack()) {
+  if ((input.mode ?? (isLivePaystack() ? "live" : "test")) !== "live") {
     return {
       authorizationUrl: `/pay/mock/${input.reference}`,
       reference: input.reference,
@@ -65,8 +68,9 @@ export async function initializePaystackTransaction(input: {
 
 export async function verifyPaystackTransaction(
   reference: string,
+  mode?: PaystackMode,
 ): Promise<PaystackVerifyResult> {
-  if (!isLivePaystack()) {
+  if ((mode ?? (isLivePaystack() ? "live" : "test")) !== "live") {
     return {
       status: "pending",
       amount: 0,

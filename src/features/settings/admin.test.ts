@@ -14,6 +14,8 @@ describe("parseStoreSettings", () => {
       quoteExpiryDays: 14,
       whatsappBusinessNumber: "+233201234567",
       siteUrl: "https://papersourcegh.com",
+      paymentsEnabled: false,
+      paymentMode: "test",
     });
   });
 

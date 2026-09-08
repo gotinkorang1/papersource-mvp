@@ -4,6 +4,7 @@ import { initializePaystackTransaction } from "@/lib/paystack/client";
 import { pesewasToPaystackAmount } from "@/lib/paystack/amount";
 import { publicEnv } from "@/lib/env";
 import { getDb } from "@/lib/db/client";
+import { getStoreSettings } from "@/features/settings/admin";
 import { orders, payments } from "@/lib/db/schema";
 import type { AddressSnapshot } from "@/lib/db/schema/identity";
 
@@ -46,6 +47,11 @@ export async function initializeOrderPayment(input: {
     );
   }
 
+  const settings = await getStoreSettings();
+  if (!settings.paymentsEnabled) {
+    throw new PaymentError("Online payments are temporarily unavailable. Please contact us to complete your order.");
+  }
+
   const address = order.addressSnapshot as AddressSnapshot;
   if (!address.email) {
     throw new PaymentError("Email is required to start Paystack.");
@@ -71,6 +77,7 @@ export async function initializeOrderPayment(input: {
     amountPesewas: amount,
     reference,
     callbackUrl,
+    mode: settings.paymentMode,
   });
 
   if (open) {

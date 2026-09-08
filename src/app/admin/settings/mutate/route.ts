@@ -10,13 +10,13 @@ export async function POST(request: Request) {
   if (!actor) return NextResponse.redirect(new URL("/admin/login", origin), 303);
   const form = await request.formData();
   try {
-    await saveStoreSettings({ role: actor.role, actorId: actor.profileId, vatRateBps: String(form.get("vatRateBps") ?? ""), quoteExpiryDays: String(form.get("quoteExpiryDays") ?? ""), whatsappBusinessNumber: String(form.get("whatsappBusinessNumber") ?? ""), siteUrl: String(form.get("siteUrl") ?? "") });
+    await saveStoreSettings({ role: actor.role, actorId: actor.profileId, vatRateBps: String(form.get("vatRateBps") ?? ""), quoteExpiryDays: String(form.get("quoteExpiryDays") ?? ""), whatsappBusinessNumber: String(form.get("whatsappBusinessNumber") ?? ""), siteUrl: String(form.get("siteUrl") ?? ""), paymentsEnabled: String(form.get("paymentsEnabled") ?? "false"), paymentMode: String(form.get("paymentMode") ?? "test") });
     await recordAdminAudit({
       actorProfileId: actor.profileId,
       action: "settings_updated",
       resourceType: "store_settings",
       resourceId: "store",
-      metadata: { fields: ["vatRateBps", "quoteExpiryDays", "whatsappBusinessNumber", "siteUrl"] },
+      metadata: { fields: ["vatRateBps", "quoteExpiryDays", "whatsappBusinessNumber", "siteUrl", "paymentsEnabled", "paymentMode"] },
     });
   } catch (error) {
     next.searchParams.set("error", error instanceof SettingsAdminError || error instanceof Error ? error.message : "Could not save settings.");

@@ -11,6 +11,8 @@ export const DEFAULT_STORE_SETTINGS = {
   quoteExpiryDays: 14,
   whatsappBusinessNumber: null as string | null,
   siteUrl: "http://localhost:3000",
+  paymentsEnabled: true,
+  paymentMode: "test" as const,
   updatedAt: null as Date | null,
 };
 
@@ -26,6 +28,8 @@ export type StoreSettingsForm = {
   quoteExpiryDays: string;
   whatsappBusinessNumber: string;
   siteUrl: string;
+  paymentsEnabled?: string;
+  paymentMode?: string;
 };
 
 export function parseStoreSettings(input: StoreSettingsForm) {
@@ -50,12 +54,16 @@ export function parseStoreSettings(input: StoreSettingsForm) {
     throw new SettingsAdminError("Site URL must be an http or https URL.");
   }
   const siteUrl = parsedUrl.data.replace(/\/$/, "");
+  const paymentMode: "test" | "live" = input.paymentMode === "live" ? "live" : "test";
+  if (!paymentMode) throw new SettingsAdminError("Payment mode must be test or live.");
 
   return {
     vatRateBps: wholeNumber(input.vatRateBps, "VAT basis points", 0, 10_000),
     quoteExpiryDays: wholeNumber(input.quoteExpiryDays, "Quote expiry days", 1, 90),
     whatsappBusinessNumber: whatsapp || null,
     siteUrl,
+    paymentsEnabled: input.paymentsEnabled === "true",
+    paymentMode,
   };
 }
 

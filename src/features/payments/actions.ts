@@ -4,12 +4,13 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { initializeOrderPayment, PaymentError } from "@/features/payments/initialize";
 import { processPaystackWebhook } from "@/features/payments/webhook";
-import { isLivePaystack, signPaystackBody } from "@/lib/paystack/signature";
+import { signPaystackBody } from "@/lib/paystack/signature";
 import { getDb } from "@/lib/db/client";
 import { orders, payments } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { documentOwner } from "@/lib/customer/commerce-identity";
+import { getStoreSettings } from "@/features/settings/admin";
 
 export async function startPaystackPaymentAction(
   _prev: { error: string } | null,
@@ -38,7 +39,7 @@ export async function startPaystackPaymentAction(
 }
 
 export async function simulateMockPaystackSuccessAction(formData: FormData) {
-  if (isLivePaystack()) {
+  if ((await getStoreSettings()).paymentMode === "live") {
     throw new Error("Mock Paystack is disabled when live keys are configured.");
   }
 

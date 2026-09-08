@@ -36,6 +36,19 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
         <AdminField label="Public site URL">
           <input name="siteUrl" type="url" required defaultValue={settings.siteUrl} className={adminFieldClass} disabled={!canWrite} />
         </AdminField>
+        <AdminField label="Payment gateway">
+          <label className="flex min-h-11 items-center gap-3 rounded-lg border border-border bg-background px-3 text-sm text-ink">
+            <input name="paymentsEnabled" type="checkbox" value="true" defaultChecked={settings.paymentsEnabled} disabled={!canWrite} className="size-4 accent-primary" />
+            Enable Paystack checkout
+          </label>
+        </AdminField>
+        <AdminField label="Payment mode">
+          <select name="paymentMode" defaultValue={settings.paymentMode} disabled={!canWrite} className={adminFieldClass}>
+            <option value="test">Test mode</option>
+            <option value="live">Live mode</option>
+          </select>
+          <span className="mt-1 block text-xs text-slate">Live mode requires the server-side PAYSTACK_SECRET_KEY.</span>
+        </AdminField>
         {canWrite ? <SubmitProgressButton idleLabel="Save settings" pendingLabel="Saving settings…" className={`${paperButton()} sm:col-span-2 sm:justify-self-start`} /> : null}
       </form>
       <p className="mt-4 text-xs text-slate">Last updated {settings.updatedAt ? new Date(settings.updatedAt).toLocaleString("en-GH") : "by the deployment defaults"}.</p>
