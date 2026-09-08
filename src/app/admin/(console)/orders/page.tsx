@@ -23,7 +23,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
         <p className="mt-8 text-slate">No orders yet.</p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
-          <table className="w-full min-w-[48rem] text-sm">
+          <table className="admin-responsive-table w-full min-w-[48rem] text-sm">
             <caption className="sr-only">Orders</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
@@ -36,14 +36,14 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
             <tbody>
               {filteredRows.map((row) => (
                 <tr key={row.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" data-label="Number">
                     <Link href={`/admin/orders/${row.id}`} className="underline">
                       {row.number}
                     </Link>
                   </td>
-                  <td className="px-4 py-3">{row.source}</td>
-                  <td className="px-4 py-3"><AdminStatusBadge status={row.status} /></td>
-                  <td className="px-4 py-3 tabular-nums">{formatGhs(row.grandTotal)}</td>
+                  <td className="px-4 py-3" data-label="Source">{row.source}</td>
+                  <td className="px-4 py-3" data-label="Status"><AdminStatusBadge status={row.status} /></td>
+                  <td className="px-4 py-3 tabular-nums" data-label="Total">{formatGhs(row.grandTotal)}</td>
                 </tr>
               ))}
             </tbody>

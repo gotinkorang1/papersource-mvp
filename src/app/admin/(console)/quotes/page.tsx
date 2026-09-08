@@ -24,7 +24,7 @@ export default async function AdminQuotesPage() {
         <p className="mt-8 text-slate">No submitted quotations yet.</p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full min-w-[38rem] text-sm">
+          <table className="admin-responsive-table w-full min-w-[38rem] text-sm">
             <caption className="sr-only">Submitted quotations</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
@@ -37,14 +37,14 @@ export default async function AdminQuotesPage() {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" data-label="Number">
                     <Link href={`/admin/quotes/${row.id}`} className="underline">
                       {row.number ?? "Unnumbered"}
                     </Link>
                   </td>
-                  <td className="px-4 py-3">{row.organizationName ?? "—"}</td>
-                  <td className="px-4 py-3"><AdminStatusBadge status={row.status} /></td>
-                  <td className="px-4 py-3 tabular-nums">{formatGhs(row.grandTotal)}</td>
+                  <td className="px-4 py-3" data-label="Organisation">{row.organizationName ?? "—"}</td>
+                  <td className="px-4 py-3" data-label="Status"><AdminStatusBadge status={row.status} /></td>
+                  <td className="px-4 py-3 tabular-nums" data-label="Total">{formatGhs(row.grandTotal)}</td>
                 </tr>
               ))}
             </tbody>
