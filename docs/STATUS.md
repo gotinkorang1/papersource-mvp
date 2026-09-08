@@ -26,11 +26,13 @@ Static RLS review identified and fixed an ownership gap in quote items, quote ev
 
 The hosted RLS migration has now been applied and verified. Security Advisor no longer reports `pg_trgm` in `public`; the remaining notices are intentional no-policy service tables, plus a warning to enable Supabase Auth leaked-password protection in the dashboard.
 
+Hosted Performance Advisor now reports zero unindexed foreign keys after the additive index migrations (`20260908051115`, `20260908051923`, and `20260908052153`). It still reports informational unused-index notices; these are retained because the indexes cover expected production joins, referential deletes, and admin lookups and the database is not yet carrying representative production traffic.
+
 The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Returns pages. Security response headers and client-side Sentry route telemetry are configured; runtime activation still requires the production Sentry DSN.
 
 ## Remaining MVP work, in order
 
-1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. Direct Vercel redeploys are temporarily blocked by the daily deployment quota.
+1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. The latest Vitest suite is also green (43 files, 271 tests). Direct Vercel redeploys are temporarily blocked by the daily deployment quota.
 2. Review the hosted RLS policies and the current Advisor findings during launch sign-off; enable Supabase Auth leaked-password protection.
 3. Verify Sentry through the Sentry API with a read-only auth token, then confirm no runtime errors and no sensitive data capture. Vercel production already has the DSN and trace-rate variables configured, and `/api/health` reports observability as configured.
 4. Run the complete Playwright suite against production-safe hosted test data and perform mobile/desktop smoke checks. The local suite is green (27/27).
