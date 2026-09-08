@@ -59,7 +59,8 @@
 :root {
   --ps-ink: #102a43;
   --ps-paper-green: #1f6b57;
-  --ps-ochre: #e6a329;
+  /* Darkened for WCAG AA contrast when used as text on cream surfaces. */
+  --ps-ochre: #9a6700;
   --ps-cream: #f8f6f1;
   --ps-surface: #ffffff;
   --ps-graphite: #20262e;
