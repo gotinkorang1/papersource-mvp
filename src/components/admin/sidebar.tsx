@@ -17,7 +17,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
         <Wordmark href="/admin" inverted shrinkOnScroll={false} className="max-w-fit" />
         <p className="mt-1 font-heading text-lg">Operations</p>
       </div>
-      <nav className="flex min-h-0 flex-1 gap-4 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-3 [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5" aria-label="Admin">
+      <nav className="flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-3 [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5" aria-label="Admin">
         {ADMIN_NAV.map((group) => {
           if ("href" in group) {
             if (!canAccessAdmin(actor.role, group.area, "read")) {
@@ -28,8 +28,8 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
               <Link
                 key={group.href}
                 href={group.href}
-                className={`flex min-h-11 items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${
-                  current ? "bg-sidebar-accent text-sidebar-accent-foreground" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
+                className={`flex min-h-11 snap-start items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${ 
+                  current ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                 }`}
                 aria-current={current ? "page" : undefined}
               >
@@ -58,9 +58,9 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                     <li key={item.href}>
                       <Link
                         href={item.href}
-                        className={`flex min-h-11 items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${
+                        className={`flex min-h-11 snap-start items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${ 
                           current
-                            ? "bg-sidebar-accent text-sidebar-accent-foreground"
+                            ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50"
                             : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                         }`}
                         aria-current={current ? "page" : undefined}
