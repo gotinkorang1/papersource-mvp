@@ -84,7 +84,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
           );
         })}
       </nav>
-      <div className="border-t border-sidebar-border px-4 py-4 text-sm">
+      <div className="border-t border-sidebar-border px-4 py-4 pb-[calc(1rem+env(safe-area-inset-bottom))] text-sm">
         <p className="text-sidebar-foreground/80">{actor.fullName}</p>
         <p className="text-xs text-sidebar-foreground/50">{actor.role.replaceAll("_", " ")}</p>
         <Link href="/admin/profile" className="mt-2 inline-block text-xs text-sidebar-foreground/70 underline underline-offset-2 hover:text-sidebar-foreground">My profile</Link>
