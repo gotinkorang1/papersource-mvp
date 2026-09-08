@@ -1,4 +1,6 @@
-const CACHE_NAME = "papersource-shell-v1";
+// Bump the shell version whenever the offline document or icons change so
+// installed clients do not keep an obsolete app chrome indefinitely.
+const CACHE_NAME = "papersource-shell-v2";
 const SHELL = ["/", "/offline.html", "/icons/papersource-192.svg", "/icons/papersource-512.svg"];
 
 self.addEventListener("install", (event) => {
