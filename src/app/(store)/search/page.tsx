@@ -9,11 +9,9 @@ import { PopularCategories } from "@/components/products/popular-categories";
 import { RecentSearches } from "@/components/products/recent-searches";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Search",
-  robots: { index: false, follow: true },
-};
+export const metadata: Metadata = { ...pageMetadata({ title: "Search office supplies and stationery", description: "Search PaperSource Ghana for paper, pens, toner, printing materials and workplace essentials.", path: "/search" }), robots: { index: false, follow: true } };
 
 type PageProps = {
   searchParams: Promise<{ q?: string }>;

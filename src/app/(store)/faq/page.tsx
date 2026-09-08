@@ -3,8 +3,9 @@ import Link from "next/link";
 import { FALLBACK_FAQS, faqJsonLd, listPublishedFaqs } from "@/features/content";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = { title: "Frequently asked questions", description: "Answers about PaperSource products, quotations, delivery and payment." };
+export const metadata: Metadata = pageMetadata({ title: "Stationery, delivery and quote FAQs", description: "Answers about PaperSource products, Ghana delivery zones, quotations, checkout, payment and returns.", path: "/faq" });
 
 export default async function FaqPage() {
   const managed = await listPublishedFaqs();

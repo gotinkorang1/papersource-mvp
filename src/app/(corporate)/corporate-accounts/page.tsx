@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Organisation accounts | PaperSource Ghana",
-  description:
-    "Create a PaperSource account to keep Ghana addresses, quotations and orders for your school or business.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Organisation accounts for Ghana schools and businesses", description: "Create a PaperSource account to keep Ghana addresses, quotations and orders for your school or business.", path: "/corporate-accounts" });
 
 export default function CorporateAccountsPage() {
   return (

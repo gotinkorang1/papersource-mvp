@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Workplace supplies for Ghanaian businesses | PaperSource",
-  description:
-    "PaperSource supplies Accra and Tema offices with paper, toner and stationery. Build a quote list, request pricing, and keep retail checkout separate.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Workplace supplies for Ghanaian businesses", description: "PaperSource supplies Accra and Tema offices with paper, toner and stationery. Build a quote list, request pricing, and keep retail checkout separate.", path: "/business" });
 
 export default function BusinessPage() {
   return (

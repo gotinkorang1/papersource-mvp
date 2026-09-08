@@ -7,11 +7,9 @@ import { listCustomerAddresses } from "@/features/account/addresses";
 import { listQuoteLines } from "@/features/quotations/repository";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Request a quote",
-  robots: { index: false, follow: true },
-};
+export const metadata: Metadata = { ...pageMetadata({ title: "Request a stationery quote", description: "Send PaperSource Ghana your product list, quantities and delivery requirements for a tailored quotation.", path: "/request-quote" }), robots: { index: false, follow: true } };
 
 export default async function RequestQuotePage() {
   const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;

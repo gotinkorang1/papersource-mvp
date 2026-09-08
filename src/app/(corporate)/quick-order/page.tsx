@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { QuickOrderForm } from "@/components/quotes/quick-order-form";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Quick Order | PaperSource Ghana",
-  description:
-    "Paste SKUs and quantities to build a PaperSource quotation for Accra and Tema offices. Add the list to quote, or to cart when published prices apply.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Quick Order by SKU", description: "Paste product SKUs and quantities to build a PaperSource Ghana quotation for Accra and Tema offices.", path: "/quick-order" });
 
 type PageProps = {
   searchParams: Promise<{ error?: string }>;

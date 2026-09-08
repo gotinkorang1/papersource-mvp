@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "School stationery supplier in Ghana | PaperSource",
-  description:
-    "Classroom packs and bulk stationery for Ghanaian schools. Request a quotation as a guest — accounts are optional.",
-};
+export const metadata: Metadata = pageMetadata({ title: "School stationery supplier in Ghana", description: "Classroom packs and bulk stationery for Ghanaian schools. Request a quotation as a guest; accounts are optional.", path: "/schools" });
 
 export default function SchoolsPage() {
   return (

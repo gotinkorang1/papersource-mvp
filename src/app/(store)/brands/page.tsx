@@ -2,18 +2,21 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listBrands } from "@/features/catalogue";
 import { BrandLogo } from "@/components/marketing/brand-logo";
+import { pageMetadata } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 
-export const metadata: Metadata = {
-  title: "Brands",
-  description:
-    "HP, Canon, Double A, BIC and PaperSource packs for Ghana workplaces.",
-};
+export const metadata: Metadata = pageMetadata({
+  title: "Office stationery brands in Ghana",
+  description: "Browse trusted paper, printer, writing and workplace supply brands available through PaperSource Ghana.",
+  path: "/brands",
+});
 
 export default async function BrandsPage() {
   const brands = await listBrands();
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
+      <Breadcrumbs items={[{ label: "Brands" }]} />
       <h1 className="text-3xl text-ink">Brands</h1>
       <p className="mt-3 max-w-2xl text-slate">
         Workplace supplies from brands Ghanaian offices already specify.

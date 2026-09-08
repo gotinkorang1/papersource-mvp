@@ -1,12 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
+import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Bulk stationery orders in Ghana | PaperSource",
-  description:
-    "Request bulk paper, toner and workplace packs for Accra and Tema. Nationwide supply is arranged on request — we never invent a delivery fee.",
-};
+export const metadata: Metadata = pageMetadata({ title: "Bulk stationery orders in Ghana", description: "Request bulk paper, toner and workplace packs for Accra and Tema. Nationwide supply is arranged on request with delivery confirmed before charging.", path: "/bulk-orders" });
 
 export default function BulkOrdersPage() {
   return (
