@@ -331,7 +331,8 @@ export default async function AdminProductDetailPage({
       <section className="mt-8 grid gap-8 lg:grid-cols-2">
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Images</h2>
-          <p className="mt-2 text-sm text-slate">Cloudinary public IDs. The shop uses these, not private storage.</p>
+          <p className="mt-2 text-sm text-slate">Add up to 4 optimized Cloudinary images. The first image is the primary product image.</p>
+          <p className="mt-2 text-xs font-semibold tracking-[0.12em] text-paper-green uppercase">{product.images.length}/4 images used</p>
           <ul className="mt-4 space-y-2 text-sm">
             {product.images.map((image) => (
               <li key={image.id} className="flex items-center justify-between gap-3">
@@ -349,7 +350,7 @@ export default async function AdminProductDetailPage({
               </li>
             ))}
           </ul>
-          {canWrite ? (
+          {canWrite && product.images.length < 4 ? (
             <form action="/admin/products/mutate" method="post" className="mt-4 grid gap-3">
               <input type="hidden" name="intent" value="add-image" />
               <input type="hidden" name="productId" value={product.id} />
@@ -364,7 +365,7 @@ export default async function AdminProductDetailPage({
               </AdminField>
               <SubmitProgressButton idleLabel="Add image" pendingLabel="Adding image…" className={paperButton({ variant: "secondary" })} />
             </form>
-          ) : null}
+          ) : canWrite ? <p className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Image limit reached. Remove an image before adding another.</p> : null}
         </div>
 
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">

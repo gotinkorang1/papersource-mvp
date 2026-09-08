@@ -1,4 +1,4 @@
-import { and, asc, desc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
 import { refreshProductSearchDocument } from "@/features/catalogue/refresh-search";
 import { getDb } from "@/lib/db/client";
 import { parseGhsToPesewas } from "@/lib/money";
@@ -595,6 +595,13 @@ export async function addProductImage(input: {
     throw new CatalogueAdminError("Cloudinary public ID and alt text are required.");
   }
   const db = getDb();
+  const [{ imageCount }] = await db
+    .select({ imageCount: count(productImages.id) })
+    .from(productImages)
+    .where(eq(productImages.productId, input.productId));
+  if (Number(imageCount) >= 4) {
+    throw new CatalogueAdminError("A product can have up to 4 images.");
+  }
   const [image] = await db
     .insert(productImages)
     .values({
