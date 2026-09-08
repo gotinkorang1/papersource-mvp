@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 import { pageMetadata } from "@/lib/seo";
+import { cloudinaryImageUrl } from "@/lib/cloudinary";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -51,7 +52,13 @@ export default async function ShopCategoryPage({ params }: PageProps) {
     "school-supplies": { src: "/images/school-stationery-with-accessories.jpg", alt: "School stationery and learning accessories" },
     workplace: { src: "/images/still-life-documents-stack.jpg", alt: "Workplace documents and supplies" },
   };
-  const image = categoryImage[category.slug] ?? categoryImage.workplace;
+  const fallbackImage = "/images/catalogue-stationery-generated.png";
+  const uploadedImage = category.imagePublicId ? cloudinaryImageUrl(category.imagePublicId, 1000) : null;
+  const categoryKey = `${category.slug} ${category.name}`.toLowerCase();
+  const aliasedImage = Object.entries(categoryImage).find(([alias]) => categoryKey.includes(alias))?.[1];
+  const image = uploadedImage
+    ? { src: uploadedImage, alt: `${category.name} workplace supplies` }
+    : aliasedImage ?? { src: fallbackImage, alt: `${category.name} workplace supplies` };
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
