@@ -4,3 +4,5 @@ allowBuilds:
   unrs-resolver: false
   supabase: true
   '@sentry/cli': true
+overrides:
+  qs: 6.16.0
