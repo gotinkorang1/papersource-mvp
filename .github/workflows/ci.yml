@@ -23,5 +23,9 @@ jobs:
       - run: pnpm audit --prod --audit-level=moderate
       - run: pnpm lint
       - run: pnpm exec tsc --noEmit
+      # Keep the deploy artifact itself covered, not just its source checks.
+      - run: pnpm run build
+        env:
+          NEXT_PUBLIC_SITE_URL: https://www.papersourcegh.com
       # Keep the jsdom/React suite deterministic on shared GitHub runners.
       - run: pnpm test -- --pool=forks --maxWorkers=1
