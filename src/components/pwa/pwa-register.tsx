@@ -10,7 +10,7 @@ export function PwaRegister() {
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
     let registration: ServiceWorkerRegistration | undefined;
-    void navigator.serviceWorker.register("/sw.js").then((nextRegistration) => {
+    void navigator.serviceWorker.register("/sw.js", { updateViaCache: "none" }).then((nextRegistration) => {
       registration = nextRegistration;
       if (registration.waiting) window.setTimeout(() => setUpdateAvailable(true), 0);
       registration.addEventListener("updatefound", () => {
@@ -31,9 +31,14 @@ export function PwaRegister() {
     };
     window.addEventListener("beforeinstallprompt", onInstall);
     window.addEventListener("appinstalled", onInstalled);
+    const onVisibilityChange = () => {
+      if (document.visibilityState === "visible") void registration?.update();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange, { passive: true });
     return () => {
       window.removeEventListener("beforeinstallprompt", onInstall);
       window.removeEventListener("appinstalled", onInstalled);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, []);
 
