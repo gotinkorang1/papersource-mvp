@@ -31,6 +31,7 @@ export async function readStaffActor(): Promise<StaffActor | null> {
       profileId: profiles.id,
       email: profiles.email,
       fullName: profiles.fullName,
+      phone: profiles.phone,
       role: adminRoles.role,
     })
     .from(adminRoles)

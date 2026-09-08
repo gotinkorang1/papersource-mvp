@@ -78,6 +78,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
       <div className="border-t border-sidebar-border px-4 py-4 text-sm">
         <p className="text-sidebar-foreground/80">{actor.fullName}</p>
         <p className="text-xs text-sidebar-foreground/50">{actor.role.replaceAll("_", " ")}</p>
+        <Link href="/admin/profile" className="mt-2 inline-block text-xs text-sidebar-foreground/70 underline underline-offset-2 hover:text-sidebar-foreground">My profile</Link>
         <form action="/admin/logout" method="post" className="mt-3">
           <SubmitProgressButton
             idleLabel="Sign out"
