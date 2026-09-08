@@ -13,16 +13,17 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; message?: string; sort?: string }>;
 };
 
 export default async function AdminCategoriesPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("categories", "read");
   const allRows = await listAdminCategories();
   const canWrite = canAccessAdmin(actor.role, "categories", "write");
-  const { error, q = "", message } = await searchParams;
+  const { error, q = "", message, sort = "position" } = await searchParams;
   const query = q.trim().toLocaleLowerCase();
-  const rows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
+  const filteredRows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
+  const rows = [...filteredRows].sort((a, b) => sort === "name" ? a.name.localeCompare(b.name) : a.position - b.position || a.name.localeCompare(b.name));
   const categoryById = new Map(allRows.map((row) => [row.id, row]));
   const categoryPath = (row: (typeof allRows)[number]) => {
     const parts: string[] = [];
@@ -45,7 +46,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
       </p>
       <AdminError error={error} />
       {message ? <p role="status" className="mt-4 rounded-md border border-paper-green/30 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">{message}</p> : null}
-      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="category-search">Search categories</label><input id="category-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search categories or slugs" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/categories" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="category-search">Search categories</label><input id="category-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search categories or slugs" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="position">Sort: position</option><option value="name">Sort: name</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "position" ? <Link href="/admin/categories" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       {canWrite ? <form id="bulk-categories" action="/admin/categories/mutate" method="post" className="mt-6 flex flex-wrap items-center gap-3 rounded-t-xl border border-border bg-muted/30 p-3"><input type="hidden" name="intent" value="bulk-active" /><SelectAllCheckbox count={rows.length} name="categoryId" label="categories" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><button className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply to selected</button><span className="text-xs text-slate">Bulk updates only change visibility.</span></form> : null}
       <div className={`overflow-x-auto rounded-b-xl border border-border bg-card ${canWrite ? "border-t-0" : "mt-8 rounded-xl"}`}>
         <table className="w-full min-w-[42rem] text-sm">

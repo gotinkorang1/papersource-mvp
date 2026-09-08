@@ -13,16 +13,17 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string; message?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; message?: string; sort?: string }>;
 };
 
 export default async function AdminBrandsPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("brands", "read");
   const allRows = await listAdminBrands();
   const canWrite = canAccessAdmin(actor.role, "brands", "write");
-  const { error, q = "", message } = await searchParams;
+  const { error, q = "", message, sort = "name" } = await searchParams;
   const query = q.trim().toLocaleLowerCase();
-  const rows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
+  const filteredRows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
+  const rows = [...filteredRows].sort((a, b) => sort === "slug" ? a.slug.localeCompare(b.slug) : a.name.localeCompare(b.name));
 
   return (
     <main>
@@ -33,7 +34,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
       </p>
       <AdminError error={error} />
       {message ? <p role="status" className="mt-4 rounded-md border border-paper-green/30 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">{message}</p> : null}
-      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="brand-search">Search brands</label><input id="brand-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search brands or slugs" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/brands" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="brand-search">Search brands</label><input id="brand-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search brands or slugs" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="name">Sort: name</option><option value="slug">Sort: slug</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "name" ? <Link href="/admin/brands" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <form action="/admin/brands/mutate" method="post" className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">{canWrite ? <><input type="hidden" name="intent" value="bulk-active" /><div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><SelectAllCheckbox count={rows.length} name="brandId" label="brands" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><button className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply to selected</button><span className="text-xs text-slate">Bulk updates only change visibility.</span></div></> : null}
         <table className="w-full min-w-[38rem] text-sm">
           <caption className="sr-only">Brands</caption>

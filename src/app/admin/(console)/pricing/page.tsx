@@ -13,16 +13,17 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; sort?: string }>;
 };
 
 export default async function AdminPricingPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("pricing", "read");
   const allRows = await listAdminPricingRows();
   const canWrite = canAccessAdmin(actor.role, "pricing", "write");
-  const { error, q = "" } = await searchParams;
+  const { error, q = "", sort = "product" } = await searchParams;
   const query = q.trim().toLocaleLowerCase();
-  const rows = query ? allRows.filter((row) => `${row.productName} ${row.sku}`.toLocaleLowerCase().includes(query)) : allRows;
+  const filteredRows = query ? allRows.filter((row) => `${row.productName} ${row.sku}`.toLocaleLowerCase().includes(query)) : allRows;
+  const rows = [...filteredRows].sort((a, b) => sort === "sku" ? a.sku.localeCompare(b.sku) : a.productName.localeCompare(b.productName) || a.sku.localeCompare(b.sku));
 
   return (
     <main>
@@ -32,7 +33,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
         Tiers are per variant, in integer pesewas. Request-quote is for volume the desk must price.
       </p>
       <AdminError error={error} />
-      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="pricing-search">Search pricing</label><input id="pricing-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/pricing" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="pricing-search">Search pricing</label><input id="pricing-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="product">Sort: product</option><option value="sku">Sort: SKU</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "product" ? <Link href="/admin/pricing" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 space-y-6">
         {rows.length === 0 ? <div className="rounded-xl border border-dashed border-border bg-card px-5 py-10 text-center text-sm text-slate">{q ? "No pricing rows match this search." : "No pricing rows yet."}</div> : rows.map((row) => (
           <section key={row.variantId} className="rounded-xl border border-border bg-card p-5">
