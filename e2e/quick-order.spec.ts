@@ -1,4 +1,5 @@
 import { expect, test as base } from "@playwright/test";
+import { catalogueName, catalogueSku, hostedFixtureMissing } from "./test-data";
 
 const test = base.extend<{ consoleGuard: void }>({
   consoleGuard: [async ({ page }, use) => {
@@ -11,6 +12,8 @@ const test = base.extend<{ consoleGuard: void }>({
     expect(errors).toEqual([]);
   }, { auto: true }],
 });
+
+test.beforeEach(() => test.skip(hostedFixtureMissing, "Set E2E_CATALOGUE_SKU for hosted fixture journeys."));
 
 test("cross-site Quick Order submissions cannot replace the guest basket cookie", async ({ request }) => {
   const response = await request.post("/quick-order/add", {
@@ -26,7 +29,7 @@ test("Quick Order adds two SKUs to the quote basket only", async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto("/quick-order", { waitUntil: "domcontentloaded" });
   await expect(page.getByRole("heading", { name: "Quick Order" })).toBeVisible();
-  await page.locator("#quick-sku-0").fill("DA-A4-80-500");
+  await page.locator("#quick-sku-0").fill(catalogueSku);
   await page.locator("#quick-qty-0").fill("10");
   await page.locator("#quick-sku-1").fill("HP-305-BLK");
   await page.locator("#quick-qty-1").fill("2");
@@ -34,7 +37,7 @@ test("Quick Order adds two SKUs to the quote basket only", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Quote list" })).toBeVisible({
     timeout: 45_000,
   });
-  await expect(page.getByText("Double A Premium A4 Paper")).toBeVisible();
+  await expect(page.getByText(catalogueName)).toBeVisible();
   await expect(page.getByText("HP 305 Black Ink Cartridge")).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Quote list, 12 items" }).first(),
@@ -46,7 +49,7 @@ test("Quick Order adds two SKUs to the quote basket only", async ({ page }) => {
 
 test("Quick Order adds published-price lines to cart without changing quote", async ({ page }) => {
   await page.goto("/quick-order");
-  await page.getByLabel("SKU 1", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 1", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("2");
   await page.getByRole("button", { name: "Add all to Cart" }).click();
   await expect(page).toHaveURL(/\/cart\?/);
@@ -70,12 +73,12 @@ test("unknown and empty SKU submissions leave both baskets empty", async ({ page
 
 test("quote-only quantities cannot be added to cart but can be quoted", async ({ page }) => {
   await page.goto("/quick-order");
-  await page.getByLabel("SKU 1", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 1", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("50");
   await page.getByRole("button", { name: "Add all to Cart" }).click();
-  await expect(page.getByRole("alert")).toContainText("request-quote");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("request-quote");
   await expect(page.getByRole("button", { name: "Cart, 0 items" }).first()).toBeVisible();
-  await page.getByLabel("SKU 1", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 1", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("50");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
   await expect(page.getByRole("button", { name: "Quote list, 50 items" }).first()).toBeVisible();
@@ -84,12 +87,12 @@ test("quote-only quantities cannot be added to cart but can be quoted", async ({
 
 test("Quick Order considers existing cart quantity before crossing a quote-only tier", async ({ page }) => {
   await page.goto("/quick-order");
-  await page.getByLabel("SKU 1", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 1", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("49");
   await page.getByRole("button", { name: "Add all to Cart" }).click();
   await expect(page.getByRole("button", { name: "Cart, 49 items" }).first()).toBeVisible();
   await page.goto("/quick-order");
-  await page.getByLabel("SKU 1", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 1", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("1");
   await page.getByRole("button", { name: "Add all to Cart" }).click();
   await expect(page.getByRole("main").getByRole("alert")).toContainText("request-quote");
@@ -99,9 +102,9 @@ test("Quick Order considers existing cart quantity before crossing a quote-only 
 
 test("duplicate quantity overflow reports an error without creating a quote line", async ({ page }) => {
   await page.goto("/quick-order");
-  await page.getByLabel("SKU 1", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 1", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("9999");
-  await page.getByLabel("SKU 2", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 2", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 2", { exact: true }).fill("1");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
   await expect(page.getByRole("alert")).toContainText("combined quantity");
@@ -112,10 +115,10 @@ test("cart partial success reports a rejected SKU row instead of silently droppi
   await page.goto("/quick-order");
   await page.getByLabel("SKU 1", { exact: true }).fill("HP-305-BLK");
   await page.getByLabel("Quantity 1", { exact: true }).fill("2");
-  await page.getByLabel("SKU 2", { exact: true }).fill("DA-A4-80-500");
+  await page.getByLabel("SKU 2", { exact: true }).fill(catalogueSku);
   await page.getByRole("button", { name: "Add all to Cart" }).click();
   await expect(page).toHaveURL(/\/cart\?/);
-  await expect(page.getByRole("main").getByRole("alert")).toContainText("DA-A4-80-500");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText(catalogueSku);
   await expect(page.getByRole("button", { name: "Cart, 2 items" }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Quote list, 0 items" }).first()).toBeVisible();
 });

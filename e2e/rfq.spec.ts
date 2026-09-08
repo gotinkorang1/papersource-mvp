@@ -1,14 +1,17 @@
 import { expect, test } from "@playwright/test";
+import { catalogueName, catalogueSlug, hostedFixtureMissing } from "./test-data";
+
+test.beforeEach(() => test.skip(hostedFixtureMissing, "Set E2E_CATALOGUE_SKU for hosted fixture journeys."));
 
 test("guest RFQ submit assigns a quote number", async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto("/");
-  await expect(page.getByTestId("add-to-quote-double-a-premium-a4")).toBeEnabled();
+  await expect(page.getByTestId(`add-to-quote-${catalogueSlug}`)).toBeEnabled();
   const persisted = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.ok(),
     { timeout: 30_000 },
   );
-  await page.getByTestId("add-to-quote-double-a-premium-a4").click();
+  await page.getByTestId(`add-to-quote-${catalogueSlug}`).click();
   await persisted;
   await expect(
     page.getByRole("button", { name: "Quote list, 1 item" }).first(),
@@ -17,7 +20,7 @@ test("guest RFQ submit assigns a quote number", async ({ page }) => {
     page.getByRole("button", { name: "Cart, 0 items" }).first(),
   ).toBeVisible();
   await page.goto("/request-quote");
-  await expect(page.getByText("Double A Premium A4 Paper")).toBeVisible();
+  await expect(page.getByText(catalogueName)).toBeVisible();
   await page.getByLabel("Full Name").fill("Kojo Boateng");
   await page.getByLabel(/Phone Number/).fill("0202000000");
   await page.getByRole("textbox", { name: "Region *" }).fill("Greater Accra");

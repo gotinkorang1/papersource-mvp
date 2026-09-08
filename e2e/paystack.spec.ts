@@ -1,9 +1,12 @@
 import { expect, test, type Page } from "@playwright/test";
 import { PAYSTACK_MOCK_SECRET, signPaystackBody } from "../src/lib/paystack/signature";
+import { catalogueSlug, hostedFixtureMissing } from "./test-data";
+
+test.beforeEach(() => test.skip(hostedFixtureMissing, "Set E2E_CATALOGUE_SKU for hosted fixture journeys."));
 
 async function placeAccraOrder(page: Page) {
   await page.goto("/");
-  await expect(page.getByTestId("add-to-quote-double-a-premium-a4")).toBeEnabled();
+  await expect(page.getByTestId(`add-to-quote-${catalogueSlug}`)).toBeEnabled();
   const persisted = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },
