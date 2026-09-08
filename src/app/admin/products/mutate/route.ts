@@ -29,10 +29,11 @@ const productType = z.enum(["standard", "bundle"]);
 const productStatus = z.enum(["draft", "active", "archived"]);
 
 function redirectWithError(url: URL, error: unknown) {
-  const message =
-    error instanceof CatalogueAdminError || error instanceof Error
-      ? error.message
-      : "Could not update the catalogue.";
+  // Only expose deliberately user-facing catalogue errors. Database/provider
+  // errors may contain schema or infrastructure details and must stay server-side.
+  const message = error instanceof CatalogueAdminError
+    ? error.message
+    : "Could not update the catalogue. Please check the fields and try again.";
   url.searchParams.set("error", message);
   return NextResponse.redirect(url, 303);
 }
