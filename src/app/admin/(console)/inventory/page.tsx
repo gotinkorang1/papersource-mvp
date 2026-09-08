@@ -47,7 +47,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => {
+            {rows.length === 0 ? <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-slate">{q ? "No inventory rows match this search." : "No inventory rows yet."}</td></tr> : rows.map((row) => {
               const sellable = sellableQuantity(row.onHand, row.reserved);
               return (
                 <tr key={row.inventoryId} className="border-b border-border last:border-0">

@@ -44,7 +44,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
             </tr>
           </thead>
           <tbody>
-            {rows.map((row) => (
+            {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No categories match this search." : "No categories yet."}</td></tr> : rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0 align-top">
                 <td className="px-4 py-3">{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>

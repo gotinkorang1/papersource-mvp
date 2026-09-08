@@ -34,7 +34,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
       <AdminError error={error} />
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="pricing-search">Search pricing</label><input id="pricing-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/pricing" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 space-y-6">
-        {rows.map((row) => (
+        {rows.length === 0 ? <div className="rounded-xl border border-dashed border-border bg-card px-5 py-10 text-center text-sm text-slate">{q ? "No pricing rows match this search." : "No pricing rows yet."}</div> : rows.map((row) => (
           <section key={row.variantId} className="rounded-xl border border-border bg-card p-5">
             <h2 className="font-heading text-lg text-ink">
               <Link href={`/admin/products/${row.productId}`} className="underline">
