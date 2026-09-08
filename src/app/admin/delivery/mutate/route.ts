@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     }
     await recordAdminAudit({ actorProfileId: actor.profileId, action: auditAction!, resourceType: "delivery_zone", resourceId: auditResourceId, metadata: auditMetadata });
   } catch (error) {
-    next.searchParams.set("error", error instanceof DeliveryAdminError || error instanceof Error ? error.message : "Could not update delivery zones.");
+    next.searchParams.set("error", error instanceof DeliveryAdminError ? error.message : "Could not update delivery zones. Please check the fields and try again.");
   }
   return NextResponse.redirect(next, 303);
 }

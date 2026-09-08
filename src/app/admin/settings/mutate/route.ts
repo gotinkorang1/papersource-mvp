@@ -19,7 +19,7 @@ export async function POST(request: Request) {
       metadata: { fields: ["vatRateBps", "quoteExpiryDays", "whatsappBusinessNumber", "siteUrl", "paymentsEnabled", "paymentMode"] },
     });
   } catch (error) {
-    next.searchParams.set("error", error instanceof SettingsAdminError || error instanceof Error ? error.message : "Could not save settings.");
+    next.searchParams.set("error", error instanceof SettingsAdminError ? error.message : "Could not save settings. Please check the fields and try again.");
   }
   return NextResponse.redirect(next, 303);
 }
