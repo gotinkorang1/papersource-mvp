@@ -64,7 +64,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
         <Link href="/admin" aria-label="PaperSource admin dashboard" className="inline-flex size-10 items-center justify-center rounded-md border-2 border-ochre bg-cream font-heading text-sm font-bold tracking-[0.12em] text-ink shadow-[2px_2px_0_#e6a329] transition-transform hover:-translate-y-0.5 md:size-11">PS</Link>
         <button type="button" aria-expanded={navOpen} aria-controls="admin-navigation" onClick={() => setNavOpen((open) => !open)} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-sidebar-border px-3 text-sm font-semibold text-sidebar-foreground transition hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring md:hidden"><span>{navOpen ? "Close" : "Menu"}</span><span aria-hidden="true">{navOpen ? "×" : "☰"}</span></button>
       </div>
-      <nav id="admin-navigation" className={`${navOpen ? "max-h-[calc(100svh-8rem)] opacity-100" : "max-h-0 overflow-hidden opacity-0 md:max-h-none md:opacity-100"} flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-x-auto overflow-y-auto overscroll-contain px-3 py-3 transition-[max-height,opacity] duration-300 motion-reduce:transition-none [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5`} aria-label="Admin">
+      <nav id="admin-navigation" className={`${navOpen ? "max-h-[calc(100svh-8rem)] overflow-x-hidden opacity-100" : "max-h-0 overflow-hidden opacity-0 md:max-h-none md:opacity-100"} flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-y-auto overscroll-contain px-3 py-3 transition-[max-height,opacity] duration-300 motion-reduce:transition-none [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5`} aria-label="Admin">
         {ADMIN_NAV.map((group) => {
           if ("href" in group) {
             if (!canAccessAdmin(actor.role, group.area, "read")) {
@@ -76,7 +76,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                 key={group.href}
                 href={group.href}
                 ref={current ? activeLinkRef : undefined}
-                className={`flex min-h-11 snap-start items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${ 
+                className={`flex min-h-11 w-full snap-start items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${ 
                   current ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                 }`}
                 aria-current={current ? "page" : undefined}
@@ -98,7 +98,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
               <p className={`${navOpen ? "block" : "hidden"} px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase md:block`}>
                 {group.label}
               </p>
-              <ul className="mt-2 flex gap-1 md:block md:space-y-0.5">
+              <ul className={`${navOpen ? "flex-col" : "flex"} mt-2 gap-1 md:block md:space-y-0.5`}>
                 {items.map((item) => {
                   const current =
                     pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -107,7 +107,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                       <Link
                         href={item.href}
                         ref={current ? activeLinkRef : undefined}
-                        className={`flex min-h-11 snap-start items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${ 
+                        className={`flex min-h-11 w-full snap-start items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${ 
                           current
                             ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50"
                             : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
