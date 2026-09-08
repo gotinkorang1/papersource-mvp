@@ -46,7 +46,8 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
       <AdminError error={error} />
       {message ? <p role="status" className="mt-4 rounded-md border border-paper-green/30 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">{message}</p> : null}
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="category-search">Search categories</label><input id="category-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search categories or slugs" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/categories" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
-      {canWrite ? <form action="/admin/categories/mutate" method="post" className="mt-6 overflow-x-auto rounded-xl border border-border bg-card"><input type="hidden" name="intent" value="bulk-active" /><div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><SelectAllCheckbox count={rows.length} name="categoryId" label="categories" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><button className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply to selected</button><span className="text-xs text-slate">Bulk updates only change visibility.</span></div>
+      {canWrite ? <form id="bulk-categories" action="/admin/categories/mutate" method="post" className="mt-6 flex flex-wrap items-center gap-3 rounded-t-xl border border-border bg-muted/30 p-3"><input type="hidden" name="intent" value="bulk-active" /><SelectAllCheckbox count={rows.length} name="categoryId" label="categories" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><button className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply to selected</button><span className="text-xs text-slate">Bulk updates only change visibility.</span></form> : null}
+      <div className={`overflow-x-auto rounded-b-xl border border-border bg-card ${canWrite ? "border-t-0" : "mt-8 rounded-xl"}`}>
         <table className="w-full min-w-[42rem] text-sm">
           <caption className="sr-only">Categories</caption>
           <thead>
@@ -60,7 +61,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No categories match this search." : "No categories yet."}</td></tr> : rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0 align-top">
-                <td className="px-4 py-3">{canWrite ? <input type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
+                <td className="px-4 py-3">{canWrite ? <input form="bulk-categories" type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
                 <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
                 <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
                 {canWrite ? <td className="px-4 py-3"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
@@ -68,7 +69,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
             ))}
           </tbody>
         </table>
-      </form> : <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card"><table className="w-full min-w-[42rem] text-sm"><tbody>{rows.map((row) => <tr key={row.id}><td className="px-4 py-3">{row.name}</td><td className="px-4 py-3 font-mono text-xs">{row.slug}</td><td className="px-4 py-3">{row.active ? "Yes" : "No"}</td></tr>)}</tbody></table></div>}
+      </div>
       {canWrite
         ? rows.map((row) => (
             <form

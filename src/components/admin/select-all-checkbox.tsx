@@ -10,7 +10,7 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
     const form = inputRef.current?.form;
     if (!form) return;
     const sync = () => {
-      const boxes = Array.from(form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`));
+      const boxes = Array.from(form.elements).filter((element): element is HTMLInputElement => element instanceof HTMLInputElement && element.name === name);
       setSelected(boxes.filter((box) => box.checked).length);
     };
     form.addEventListener("change", sync);
@@ -32,7 +32,7 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
         onChange={(event) => {
           const form = event.currentTarget.form;
           if (!form) return;
-          form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`).forEach((box) => {
+          Array.from(form.elements).filter((element): element is HTMLInputElement => element instanceof HTMLInputElement && element.name === name).forEach((box) => {
             box.checked = event.currentTarget.checked;
           });
           setSelected(event.currentTarget.checked ? count : 0);
