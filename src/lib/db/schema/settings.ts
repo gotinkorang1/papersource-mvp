@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { profiles } from "./identity";
 
 export const storeSettings = pgTable("store_settings", {
@@ -9,4 +9,4 @@ export const storeSettings = pgTable("store_settings", {
   siteUrl: text("site_url").notNull().default("http://localhost:3000"),
   updatedBy: uuid("updated_by").references(() => profiles.id, { onDelete: "set null" }),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
-});
+}, (table) => [index("store_settings_updated_by_idx").on(table.updatedBy)]);

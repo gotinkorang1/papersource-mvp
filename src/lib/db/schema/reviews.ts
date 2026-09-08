@@ -16,4 +16,5 @@ export const productReviews = pgTable("product_reviews", {
 }, (table) => [
   uniqueIndex("product_reviews_profile_product_unique").on(table.productId, table.profileId),
   index("product_reviews_product_status_idx").on(table.productId, table.status),
+  index("product_reviews_profile_idx").on(table.profileId),
 ]);
