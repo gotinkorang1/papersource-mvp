@@ -14,11 +14,17 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
   const [alt, setAlt] = useState("");
   const [url, setUrl] = useState("");
   const [urlAlt, setUrlAlt] = useState("");
+  const [notice, setNotice] = useState<string | null>(null);
 
   function addFiles(files: FileList | null) {
     if (!files) return;
     const remaining = Math.max(0, 4 - imageCount - items.length);
-    const next = Array.from(files).slice(0, remaining).map((file) => ({ file, preview: URL.createObjectURL(file), status: "ready" as const }));
+    const selectedFiles = Array.from(files);
+    const eligible = selectedFiles.filter((file) => file.size <= 2 * 1024 * 1024 && ["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type));
+    const rejected = selectedFiles.length - eligible.length;
+    const next = eligible.slice(0, remaining).map((file) => ({ file, preview: URL.createObjectURL(file), status: "ready" as const }));
+    if (rejected || eligible.length > remaining) setNotice(`${rejected ? `${rejected} file${rejected === 1 ? "" : "s"} skipped: use JPG, PNG, WebP or AVIF under 2 MB. ` : ""}${eligible.length > remaining ? `Only ${remaining} image${remaining === 1 ? "" : "s"} can be added because the product limit is 4.` : ""}`);
+    else setNotice(null);
     setItems((current) => [...current, ...next]);
   }
 
@@ -53,6 +59,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
           <button type="button" className={paperButton({ variant: "secondary", className: "min-h-10" })} onClick={() => inputRef.current?.click()} disabled={!canAdd}>Choose images</button>
         </div>
         <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple className="sr-only" onChange={(event) => addFiles(event.target.files)} />
+        {notice ? <p className="mt-3 text-xs text-paper-green" role="status">{notice}</p> : null}
         {items.length > 0 ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{items.map((item, index) => <div key={`${item.file.name}-${index}`} className="flex gap-3 rounded-lg border border-border bg-card p-2">
           <Image src={item.preview} alt="" width={64} height={64} unoptimized className="h-16 w-16 rounded-md object-cover" />
           <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-ink">{item.file.name}</p><p className="text-xs text-slate">{(item.file.size / 1024 / 1024).toFixed(2)} MB · {item.status === "uploading" ? "Uploading…" : item.status === "done" ? "Ready to add" : item.status === "error" ? item.error : "Not uploaded"}</p><div className="mt-2 flex gap-3">{item.status === "ready" || item.status === "error" ? <button type="button" className="text-xs font-semibold text-paper-green underline" onClick={() => upload(item, index)}>Upload</button> : null}<button type="button" className="text-xs text-slate underline" onClick={() => remove(index)}>Remove</button></div></div>
