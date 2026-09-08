@@ -1,0 +1,5 @@
+.codex-local-preserve
+.playwright-cli
+.git
+node_modules
+.next
