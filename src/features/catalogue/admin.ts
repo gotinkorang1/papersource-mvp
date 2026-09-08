@@ -650,6 +650,24 @@ export async function addProductImage(input: {
   return image;
 }
 
+export async function savePriceTier(input: {
+  role: StaffRole;
+  tierId: string;
+  minimumQuantity: number;
+  maximumQuantity: number | null;
+  unitPricePesewas: number | null;
+  requestQuote: boolean;
+}) {
+  assertPricingWrite(input.role);
+  if (!Number.isInteger(input.minimumQuantity) || input.minimumQuantity < 1) throw new CatalogueAdminError("Minimum quantity must be a whole number of at least 1.");
+  if (input.maximumQuantity !== null && (!Number.isInteger(input.maximumQuantity) || input.maximumQuantity < input.minimumQuantity)) throw new CatalogueAdminError("Maximum quantity must be at or above the minimum.");
+  if (input.requestQuote && input.unitPricePesewas !== null) throw new CatalogueAdminError("A request-quote tier cannot also have a unit price.");
+  if (!input.requestQuote && (input.unitPricePesewas === null || !Number.isInteger(input.unitPricePesewas) || input.unitPricePesewas < 0)) throw new CatalogueAdminError("Set a unit price in pesewas, or mark request quote.");
+  const [updated] = await getDb().update(priceTiers).set({ minimumQuantity: input.minimumQuantity, maximumQuantity: input.maximumQuantity, unitPrice: input.requestQuote ? null : input.unitPricePesewas, requestQuote: input.requestQuote }).where(eq(priceTiers.id, input.tierId)).returning();
+  if (!updated) throw new CatalogueAdminError("That price band was not found.");
+  return updated;
+}
+
 /** Accept the Cloudinary URL shown in the dashboard as well as a raw public ID. */
 function normalizeCloudinaryPublicId(value: string) {
   const raw = value.trim();

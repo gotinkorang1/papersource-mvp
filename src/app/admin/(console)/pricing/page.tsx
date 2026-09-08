@@ -65,11 +65,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
                       {tier.active ? "" : " (inactive)"}
                     </span>
                     {canWrite && tier.active ? (
-                      <form action="/admin/pricing/mutate" method="post">
-                        <input type="hidden" name="intent" value="deactivate-tier" />
-                        <input type="hidden" name="tierId" value={tier.id} />
-                        <SubmitProgressButton idleLabel="Deactivate" pendingLabel="Deactivating…" className="underline" />
-                      </form>
+                      <div className="flex flex-wrap items-center justify-end gap-2"><form action="/admin/pricing/mutate" method="post" className="flex items-center gap-2"><input type="hidden" name="intent" value="save-tier" /><input type="hidden" name="tierId" value={tier.id} /><label className="sr-only" htmlFor={`tier-min-${tier.id}`}>Minimum quantity</label><input id={`tier-min-${tier.id}`} name="minimumQuantity" defaultValue={tier.minimumQuantity} className="h-8 w-16 rounded border border-border bg-background px-2 text-xs text-ink" /><span className="text-xs text-slate">to</span><label className="sr-only" htmlFor={`tier-max-${tier.id}`}>Maximum quantity</label><input id={`tier-max-${tier.id}`} name="maximumQuantity" defaultValue={tier.maximumQuantity ?? ""} placeholder="+" className="h-8 w-16 rounded border border-border bg-background px-2 text-xs text-ink" /><label className="sr-only" htmlFor={`tier-price-${tier.id}`}>Unit price</label><input id={`tier-price-${tier.id}`} name="unitPrice" defaultValue={tier.unitPrice === null ? "" : (tier.unitPrice / 100).toFixed(2)} placeholder="GHS" className="h-8 w-20 rounded border border-border bg-background px-2 text-xs text-ink" /><label className="flex items-center gap-1 text-xs text-slate"><input type="checkbox" name="requestQuote" value="true" defaultChecked={tier.requestQuote} />Quote</label><SubmitProgressButton idleLabel="Save" pendingLabel="…" className="h-8 min-h-0 px-2 text-xs" /></form><form action="/admin/pricing/mutate" method="post"><input type="hidden" name="intent" value="deactivate-tier" /><input type="hidden" name="tierId" value={tier.id} /><SubmitProgressButton idleLabel="Deactivate" pendingLabel="…" className="h-8 min-h-0 px-2 text-xs underline" /></form></div>
                     ) : null}
                   </li>
                 ))

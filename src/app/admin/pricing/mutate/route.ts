@@ -6,6 +6,7 @@ import {
   CatalogueAdminError,
   deactivatePriceTier,
   parseOptionalPesewas,
+  savePriceTier,
 } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -34,6 +35,13 @@ export async function POST(request: Request) {
         tierId,
       });
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "price_tier_deactivated", resourceType: "price_tier", resourceId: tierId });
+    } else if (intent === "save-tier") {
+      const tierId = uuid.parse(formData.get("tierId"));
+      const requestQuote = String(formData.get("requestQuote") ?? "") === "true";
+      const maxRaw = String(formData.get("maximumQuantity") ?? "").trim();
+      const minimumQuantity = Number(formData.get("minimumQuantity"));
+      await savePriceTier({ role: actor.role, tierId, minimumQuantity, maximumQuantity: maxRaw ? Number(maxRaw) : null, unitPricePesewas: requestQuote ? null : parseOptionalPesewas(formData.get("unitPrice")), requestQuote });
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "price_tier_updated", resourceType: "price_tier", resourceId: tierId, metadata: { minimumQuantity, requestQuote } });
     } else if (intent === "add-tier") {
       const requestQuote = String(formData.get("requestQuote") ?? "") === "true";
       const maxRaw = String(formData.get("maximumQuantity") ?? "").trim();
