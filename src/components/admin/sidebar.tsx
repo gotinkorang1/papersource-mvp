@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useEffect, useRef } from "react";
 import { paperButton } from "@/components/commerce/paper-button";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { Wordmark } from "@/components/marketing/wordmark";
@@ -11,6 +12,12 @@ import { ADMIN_NAV } from "./nav";
 
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
+  const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
+
+  useEffect(() => {
+    activeLinkRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+  }, [pathname]);
+
   return (
     <aside className="sticky top-0 z-20 flex max-h-[min(18rem,calc(100svh-4.5rem))] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-[100svh] md:max-h-none md:w-64 md:shadow-none">
       <div className="border-b border-sidebar-border px-4 py-4 sm:px-5 sm:py-6">
@@ -28,6 +35,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
               <Link
                 key={group.href}
                 href={group.href}
+                ref={current ? activeLinkRef : undefined}
                 className={`flex min-h-11 snap-start items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${ 
                   current ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                 }`}
@@ -58,6 +66,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                     <li key={item.href}>
                       <Link
                         href={item.href}
+                        ref={current ? activeLinkRef : undefined}
                         className={`flex min-h-11 snap-start items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${ 
                           current
                             ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50"
