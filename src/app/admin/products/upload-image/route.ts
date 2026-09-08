@@ -14,13 +14,18 @@ function cloudinaryCredentials() {
   if (!raw && splitCloudName && splitApiKey && splitApiSecret) {
     return { cloudName: splitCloudName, apiKey: splitApiKey, apiSecret: splitApiSecret };
   }
-  if (!raw) throw new Error("Cloudinary server credentials are missing. Set CLOUDINARY_URL or CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET.");
-  const parsed = new URL(raw);
-  const cloudName = parsed.hostname;
-  const apiKey = decodeURIComponent(parsed.username);
-  const apiSecret = decodeURIComponent(parsed.password);
-  if (!cloudName || !apiKey || !apiSecret) throw new Error("Cloudinary is not configured on the server.");
-  return { cloudName, apiKey, apiSecret };
+  if (!raw) throw new Error("Cloudinary server credentials are missing. Set CLOUDINARY_URL or the split Cloudinary variables in Vercel Production.");
+  try {
+    const parsed = new URL(raw);
+    const cloudName = parsed.hostname;
+    const apiKey = decodeURIComponent(parsed.username);
+    const apiSecret = decodeURIComponent(parsed.password);
+    if (cloudName && apiKey && apiSecret) return { cloudName, apiKey, apiSecret };
+  } catch {
+    // Fall through to split credentials below when the combined URL is malformed.
+  }
+  if (splitCloudName && splitApiKey && splitApiSecret) return { cloudName: splitCloudName, apiKey: splitApiKey, apiSecret: splitApiSecret };
+  throw new Error("Cloudinary credentials are invalid. Check CLOUDINARY_URL or the split Cloudinary variables in Vercel Production.");
 }
 
 function signature(params: Record<string, string>, apiSecret: string) {
