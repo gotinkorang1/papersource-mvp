@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
+import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminBrands } from "@/features/catalogue/admin";
@@ -12,14 +13,14 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; message?: string }>;
 };
 
 export default async function AdminBrandsPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("brands", "read");
   const allRows = await listAdminBrands();
   const canWrite = canAccessAdmin(actor.role, "brands", "write");
-  const { error, q = "" } = await searchParams;
+  const { error, q = "", message } = await searchParams;
   const query = q.trim().toLocaleLowerCase();
   const rows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
 
@@ -31,8 +32,9 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
         Brand pages use these slugs. Keep PaperSource and supplier names here.
       </p>
       <AdminError error={error} />
+      {message ? <p role="status" className="mt-4 rounded-md border border-paper-green/30 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">{message}</p> : null}
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="brand-search">Search brands</label><input id="brand-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search brands or slugs" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/brands" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
-      <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
+      <form action="/admin/brands/mutate" method="post" className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">{canWrite ? <><input type="hidden" name="intent" value="bulk-active" /><div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><SelectAllCheckbox count={rows.length} name="brandId" label="brands" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><button className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Apply to selected</button><span className="text-xs text-slate">Bulk updates only change visibility.</span></div></> : null}
         <table className="w-full min-w-[38rem] text-sm">
           <caption className="sr-only">Brands</caption>
           <thead>
@@ -46,7 +48,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No brands match this search." : "No brands yet."}</td></tr> : rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0">
-                <td className="px-4 py-3">{row.name}</td>
+                <td className="px-4 py-3">{canWrite ? <input type="checkbox" name="brandId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
                 <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
                 {canWrite ? <td className="px-4 py-3"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
@@ -54,7 +56,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
             ))}
           </tbody>
         </table>
-      </div>
+      </form>
       {canWrite
         ? rows.map((row) => (
             <form

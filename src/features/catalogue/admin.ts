@@ -78,6 +78,22 @@ export async function bulkUpdateProducts(role: StaffRole, productIds: string[], 
   return ids.length;
 }
 
+export async function bulkSetCategoriesActive(role: StaffRole, categoryIds: string[], active: boolean) {
+  assertTaxonomyWrite(role, "categories");
+  const ids = [...new Set(categoryIds.filter((id) => /^[0-9a-f-]{36}$/i.test(id)))];
+  if (!ids.length) throw new CatalogueAdminError("Select at least one category.");
+  await getDb().update(categories).set({ active, updatedAt: new Date() }).where(inArray(categories.id, ids));
+  return ids.length;
+}
+
+export async function bulkSetBrandsActive(role: StaffRole, brandIds: string[], active: boolean) {
+  assertTaxonomyWrite(role, "brands");
+  const ids = [...new Set(brandIds.filter((id) => /^[0-9a-f-]{36}$/i.test(id)))];
+  if (!ids.length) throw new CatalogueAdminError("Select at least one brand.");
+  await getDb().update(brands).set({ active, updatedAt: new Date() }).where(inArray(brands.id, ids));
+  return ids.length;
+}
+
 export async function listTaxonomyOptions() {
   const db = getDb();
   const [brandRows, categoryRows] = await Promise.all([

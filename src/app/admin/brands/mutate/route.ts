@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
-import { CatalogueAdminError, saveBrand } from "@/features/catalogue/admin";
+import { bulkSetBrandsActive, CatalogueAdminError, saveBrand } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -24,6 +24,11 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const intent = String(formData.get("intent"));
+    if (intent === "bulk-active") {
+      const count = await bulkSetBrandsActive(actor.role, formData.getAll("brandId").map(String), String(formData.get("active")) === "true");
+      next.searchParams.set("message", `${count} brand${count === 1 ? "" : "s"} updated.`);
+      return NextResponse.redirect(next, 303);
+    }
     const saved = await saveBrand({
       role: actor.role,
       brandId:

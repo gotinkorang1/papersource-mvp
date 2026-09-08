@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SelectAllCheckbox({ count }: { count: number }) {
+export function SelectAllCheckbox({ count, name = "productId", label = "products" }: { count: number; name?: string; label?: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState(0);
 
@@ -10,13 +10,13 @@ export function SelectAllCheckbox({ count }: { count: number }) {
     const form = inputRef.current?.form;
     if (!form) return;
     const sync = () => {
-      const boxes = Array.from(form.querySelectorAll<HTMLInputElement>('input[name="productId"]'));
+      const boxes = Array.from(form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`));
       setSelected(boxes.filter((box) => box.checked).length);
     };
     form.addEventListener("change", sync);
     sync();
     return () => form.removeEventListener("change", sync);
-  }, []);
+  }, [name]);
 
   useEffect(() => {
     if (inputRef.current) inputRef.current.indeterminate = selected > 0 && selected < count;
@@ -27,12 +27,12 @@ export function SelectAllCheckbox({ count }: { count: number }) {
       <input
         ref={inputRef}
         type="checkbox"
-        aria-label={selected === count ? "Deselect all products" : "Select all products"}
+        aria-label={selected === count ? `Deselect all ${label}` : `Select all ${label}`}
         checked={count > 0 && selected === count}
         onChange={(event) => {
           const form = event.currentTarget.form;
           if (!form) return;
-          form.querySelectorAll<HTMLInputElement>('input[name="productId"]').forEach((box) => {
+          form.querySelectorAll<HTMLInputElement>(`input[name="${name}"]`).forEach((box) => {
             box.checked = event.currentTarget.checked;
           });
           setSelected(event.currentTarget.checked ? count : 0);

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
-import { CatalogueAdminError, saveCategory } from "@/features/catalogue/admin";
+import { bulkSetCategoriesActive, CatalogueAdminError, saveCategory } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -24,6 +24,11 @@ export async function POST(request: Request) {
   try {
     const formData = await request.formData();
     const intent = String(formData.get("intent"));
+    if (intent === "bulk-active") {
+      const count = await bulkSetCategoriesActive(actor.role, formData.getAll("categoryId").map(String), String(formData.get("active")) === "true");
+      next.searchParams.set("message", `${count} categor${count === 1 ? "y" : "ies"} updated.`);
+      return NextResponse.redirect(next, 303);
+    }
     const parentRaw = String(formData.get("parentId") ?? "").trim();
     const saved = await saveCategory({
       role: actor.role,
