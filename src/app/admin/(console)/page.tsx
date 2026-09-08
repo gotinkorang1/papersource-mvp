@@ -13,27 +13,45 @@ export const metadata: Metadata = {
 export default async function AdminDashboardPage() {
   const actor = await requireStaffArea("dashboard", "read");
   const db = getDb();
+  const canReadQuotes = canAccessAdmin(actor.role, "quotes", "read");
+  const canReadOrders = canAccessAdmin(actor.role, "orders", "read");
+  const canReadReviews = canAccessAdmin(actor.role, "reviews", "read");
 
-  const openQuotes = await db
-    .select({ status: quotes.status, total: count() })
-    .from(quotes)
-    .where(
-      inArray(quotes.status, ["submitted", "under_review", "priced", "sent"]),
-    )
-    .groupBy(quotes.status);
+  const openQuotes = canReadQuotes
+    ? await db
+        .select({ status: quotes.status, total: count() })
+        .from(quotes)
+        .where(
+          inArray(quotes.status, ["submitted", "under_review", "priced", "sent"]),
+        )
+        .groupBy(quotes.status)
+    : [];
 
-  const [pendingPay] = await db
-    .select({ total: count() })
-    .from(orders)
-    .where(eq(orders.status, "pending_payment"));
+  const [pendingPay] = canReadOrders
+    ? await db
+        .select({ total: count() })
+        .from(orders)
+        .where(eq(orders.status, "pending_payment"))
+    : [{ total: 0 }];
 
-  const [nationwide] = await db
-    .select({ total: count() })
-    .from(orders)
-    .where(eq(orders.status, "awaiting_terms"));
+  const [nationwide] = canReadOrders
+    ? await db
+        .select({ total: count() })
+        .from(orders)
+        .where(eq(orders.status, "awaiting_terms"))
+    : [{ total: 0 }];
 
-  const [pendingReviews] = await db.select({ total: count() }).from(productReviews).where(eq(productReviews.status, "pending"));
-  const recentOrders = await db.select({ id: orders.id, number: orders.number, status: orders.status, customerEmail: profiles.email, updatedAt: orders.updatedAt }).from(orders).leftJoin(profiles, eq(profiles.id, orders.profileId)).orderBy(desc(orders.updatedAt)).limit(6);
+  const [pendingReviews] = canReadReviews
+    ? await db.select({ total: count() }).from(productReviews).where(eq(productReviews.status, "pending"))
+    : [{ total: 0 }];
+  const recentOrders = canReadOrders
+    ? await db
+        .select({ id: orders.id, number: orders.number, status: orders.status, customerEmail: profiles.email, updatedAt: orders.updatedAt })
+        .from(orders)
+        .leftJoin(profiles, eq(profiles.id, orders.profileId))
+        .orderBy(desc(orders.updatedAt))
+        .limit(6)
+    : [];
 
   return (
     <main className="min-w-0">
@@ -44,7 +62,7 @@ export default async function AdminDashboardPage() {
         business from Supabase Studio.
       </p>
       <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
-        {openQuotes.map((row) => (
+        {canReadQuotes ? openQuotes.map((row) => (
           <Link
             key={row.status}
             href="/admin/quotes"
@@ -57,8 +75,8 @@ export default async function AdminDashboardPage() {
               {row.total}
             </p>
           </Link>
-        ))}
-        <Link
+        )) : null}
+        {canReadOrders ? <Link
           href="/admin/orders"
           className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
@@ -68,8 +86,8 @@ export default async function AdminDashboardPage() {
           <p className="mt-2 font-heading text-3xl tabular-nums text-ink">
             {pendingPay?.total ?? 0}
           </p>
-        </Link>
-        <Link
+        </Link> : null}
+        {canReadOrders ? <Link
           href="/admin/orders"
           className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
@@ -79,10 +97,10 @@ export default async function AdminDashboardPage() {
           <p className="mt-2 font-heading text-3xl tabular-nums text-ink">
             {nationwide?.total ?? 0}
           </p>
-        </Link>
-        {canAccessAdmin(actor.role, "reviews", "read") ? <Link href="/admin/reviews" className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"><p className="text-xs tracking-[0.14em] text-slate uppercase">Pending reviews</p><p className="mt-2 font-heading text-3xl tabular-nums text-ink">{pendingReviews?.total ?? 0}</p><p className="mt-1 text-xs text-slate">Moderation queue</p></Link> : null}
+        </Link> : null}
+        {canReadReviews ? <Link href="/admin/reviews" className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"><p className="text-xs tracking-[0.14em] text-slate uppercase">Pending reviews</p><p className="mt-2 font-heading text-3xl tabular-nums text-ink">{pendingReviews?.total ?? 0}</p><p className="mt-1 text-xs text-slate">Moderation queue</p></Link> : null}
       </div>
-      <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="recent-orders-heading"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Live queue</p><h2 id="recent-orders-heading" className="mt-1 font-heading text-xl text-ink">Recently updated orders</h2></div><Link href="/admin/orders" className="text-sm font-medium text-ink underline underline-offset-4">View all</Link></div>{recentOrders.length ? <div className="mt-5 overflow-x-auto"><table className="w-full min-w-[38rem] text-sm"><thead><tr className="border-b border-border text-left text-xs uppercase tracking-[0.12em] text-slate"><th className="px-2 py-3 font-medium">Order</th><th className="px-2 py-3 font-medium">Customer</th><th className="px-2 py-3 font-medium">Status</th><th className="px-2 py-3 font-medium">Updated</th></tr></thead><tbody>{recentOrders.map((order) => <tr key={order.id} className="border-b border-border last:border-0"><td className="px-2 py-3 font-medium text-ink"><Link href={`/admin/orders/${order.id}`} className="underline underline-offset-4">{order.number ?? "Draft order"}</Link></td><td className="px-2 py-3 text-slate">{order.customerEmail ?? "Guest checkout"}</td><td className="px-2 py-3 capitalize text-slate">{order.status.replaceAll("_", " ")}</td><td className="px-2 py-3 text-slate">{new Date(order.updatedAt).toLocaleDateString("en-GH")}</td></tr>)}</tbody></table></div> : <p className="mt-5 text-sm text-slate">No orders have been updated yet.</p>}</section>
+      {canReadOrders ? <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="recent-orders-heading"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Live queue</p><h2 id="recent-orders-heading" className="mt-1 font-heading text-xl text-ink">Recently updated orders</h2></div><Link href="/admin/orders" className="text-sm font-medium text-ink underline underline-offset-4">View all</Link></div>{recentOrders.length ? <div className="mt-5 overflow-x-auto"><table className="w-full min-w-[38rem] text-sm"><thead><tr className="border-b border-border text-left text-xs uppercase tracking-[0.12em] text-slate"><th className="px-2 py-3 font-medium">Order</th><th className="px-2 py-3 font-medium">Customer</th><th className="px-2 py-3 font-medium">Status</th><th className="px-2 py-3 font-medium">Updated</th></tr></thead><tbody>{recentOrders.map((order) => <tr key={order.id} className="border-b border-border last:border-0"><td className="px-2 py-3 font-medium text-ink"><Link href={`/admin/orders/${order.id}`} className="underline underline-offset-4">{order.number ?? "Draft order"}</Link></td><td className="px-2 py-3 text-slate">{order.customerEmail ?? "Guest checkout"}</td><td className="px-2 py-3 capitalize text-slate">{order.status.replaceAll("_", " ")}</td><td className="px-2 py-3 text-slate">{new Date(order.updatedAt).toLocaleDateString("en-GH")}</td></tr>)}</tbody></table></div> : <p className="mt-5 text-sm text-slate">No orders have been updated yet.</p>}</section> : null}
     </main>
   );
 }
