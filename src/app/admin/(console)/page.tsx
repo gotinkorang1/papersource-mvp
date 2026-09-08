@@ -68,7 +68,7 @@ export default async function AdminDashboardPage() {
     : [];
 
   return (
-    <main className="min-w-0">
+    <main className="mx-auto min-w-0 max-w-7xl">
       <p className="text-sm tracking-[0.16em] text-slate uppercase">Operations</p>
       <h1 className="mt-2 font-heading text-3xl leading-tight text-ink sm:text-4xl">Dashboard</h1>
       <p className="mt-3 max-w-2xl text-sm leading-6 text-slate sm:text-base">
@@ -94,7 +94,14 @@ export default async function AdminDashboardPage() {
           </div>
         </section>
       ) : null}
-      <div className="mt-6 grid gap-3 sm:mt-8 sm:grid-cols-2 sm:gap-4 lg:grid-cols-5">
+      <div className="mt-8 flex items-center justify-between gap-3">
+        <div>
+          <p className="text-xs font-semibold tracking-[0.14em] text-slate uppercase">At a glance</p>
+          <h2 className="mt-1 font-heading text-xl text-ink">Today&apos;s workload</h2>
+        </div>
+        <span className="hidden text-xs text-slate sm:inline">Live operational counts</span>
+      </div>
+      <div className="mt-4 grid gap-3 sm:grid-cols-2 sm:gap-4 lg:grid-cols-3 xl:grid-cols-5">
         {canReadQuotes ? openQuotes.map((row) => (
           <Link
             key={row.status}
