@@ -12,7 +12,7 @@ import { ADMIN_NAV } from "./nav";
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   return (
-    <aside className="sticky top-0 z-20 flex max-h-[18rem] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-screen md:max-h-none md:w-64 md:shadow-none">
+    <aside className="sticky top-0 z-20 flex max-h-[min(18rem,calc(100svh-4.5rem))] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-[100svh] md:max-h-none md:w-64 md:shadow-none">
       <div className="border-b border-sidebar-border px-4 py-4 sm:px-5 sm:py-6">
         <Wordmark href="/admin" inverted shrinkOnScroll={false} className="max-w-fit" />
         <p className="mt-1 font-heading text-lg">Operations</p>
