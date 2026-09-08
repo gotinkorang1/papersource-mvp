@@ -215,6 +215,10 @@
     text-transform: uppercase;
   }
 
+  .admin-shell .admin-responsive-table td:has(form)::before {
+    content: "Action";
+  }
+
   .admin-shell .admin-responsive-table td:first-child {
     justify-content: flex-start;
     padding-bottom: 0.35rem !important;

@@ -36,7 +36,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
       {message ? <p role="status" className="mt-4 rounded-md border border-paper-green/30 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">{message}</p> : null}
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="brand-search">Search brands</label><input id="brand-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search brands or slugs" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="name">Sort: name</option><option value="slug">Sort: slug</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "name" ? <Link href="/admin/brands" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <form action="/admin/brands/mutate" method="post" className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">{canWrite ? <><input type="hidden" name="intent" value="bulk-active" /><div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><SelectAllCheckbox count={rows.length} name="brandId" label="brands" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating brands…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /><span className="text-xs text-slate" aria-live="polite">Bulk updates only change visibility.</span></div></> : null}
-        <table className="w-full min-w-[38rem] text-sm">
+        <table className="admin-responsive-table w-full min-w-[38rem] text-sm">
           <caption className="sr-only">Brands</caption>
           <thead>
             <tr className="border-b border-border text-left text-slate">
@@ -49,10 +49,10 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No brands match this search." : "No brands yet."}</td></tr> : rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0">
-                <td className="px-4 py-3">{canWrite ? <input type="checkbox" name="brandId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
-                <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
-                <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
-                {canWrite ? <td className="px-4 py-3"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
+                <td className="px-4 py-3" data-label="Name">{canWrite ? <input type="checkbox" name="brandId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
+                <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
+                <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>
+                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
               </tr>
             ))}
           </tbody>

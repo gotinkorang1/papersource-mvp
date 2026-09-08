@@ -35,7 +35,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
       <AdminError error={error} />
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="inventory-search">Search inventory</label><input id="inventory-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="product">Sort: product</option><option value="sku">Sort: SKU</option><option value="sellable">Sort: sellable stock</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "product" ? <Link href="/admin/inventory" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
-        <table className="w-full text-sm">
+        <table className="admin-responsive-table w-full min-w-[48rem] text-sm">
           <caption className="sr-only">Stock by variant</caption>
           <thead>
             <tr className="border-b border-border text-left text-slate">
@@ -53,16 +53,16 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
               const sellable = sellableQuantity(row.onHand, row.reserved);
               return (
                 <tr key={row.inventoryId} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" data-label="Product">
                     <Link href={`/admin/products/${row.productId}`} className="underline">
                       {row.productName}
                     </Link>
                   </td>
-                  <td className="px-4 py-3 font-mono text-xs">{row.sku}</td>
-                  <td className="px-4 py-3 tabular-nums">{row.onHand}</td>
-                  <td className="px-4 py-3 tabular-nums">{row.reserved}</td>
-                  <td className="px-4 py-3 tabular-nums">{sellable}</td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 font-mono text-xs" data-label="SKU">{row.sku}</td>
+                  <td className="px-4 py-3 tabular-nums" data-label="On hand">{row.onHand}</td>
+                  <td className="px-4 py-3 tabular-nums" data-label="Reserved">{row.reserved}</td>
+                  <td className="px-4 py-3 tabular-nums" data-label="Sellable">{sellable}</td>
+                  <td className="px-4 py-3" data-label="Level">
                     {stockLevelFromQuantity(sellable, row.lowStockThreshold).replaceAll("_", " ")}
                   </td>
                   {canWrite ? <td className="px-4 py-3"><form action="/admin/inventory/mutate" method="post" className="flex min-w-[17rem] items-center gap-2"><input type="hidden" name="variantId" value={row.variantId} /><label className="sr-only" htmlFor={`delta-${row.variantId}`}>Stock change for {row.sku}</label><input id={`delta-${row.variantId}`} name="delta" required className="h-9 w-20 rounded-md border border-border bg-background px-2 text-sm text-ink" placeholder="+/-" /><label className="sr-only" htmlFor={`reason-${row.variantId}`}>Reason for {row.sku}</label><select id={`reason-${row.variantId}`} name="reason" defaultValue="receive" className="h-9 rounded-md border border-border bg-background px-2 text-xs text-ink"><option value="receive">Receive</option><option value="adjust">Adjust</option></select><SubmitProgressButton idleLabel="Apply" pendingLabel="…" className="h-9 min-h-0 px-2 text-xs" /></form></td> : null}
