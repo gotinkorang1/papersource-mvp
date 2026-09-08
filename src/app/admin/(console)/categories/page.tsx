@@ -23,6 +23,18 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
   const { error, q = "", message } = await searchParams;
   const query = q.trim().toLocaleLowerCase();
   const rows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
+  const categoryById = new Map(allRows.map((row) => [row.id, row]));
+  const categoryPath = (row: (typeof allRows)[number]) => {
+    const parts: string[] = [];
+    const seen = new Set<string>();
+    let current: (typeof allRows)[number] | undefined = row;
+    while (current && !seen.has(current.id)) {
+      seen.add(current.id);
+      parts.unshift(current.name);
+      current = current.parentId ? categoryById.get(current.parentId) : undefined;
+    }
+    return parts.join(" › ");
+  };
 
   return (
     <main>
@@ -48,7 +60,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No categories match this search." : "No categories yet."}</td></tr> : rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0 align-top">
-                <td className="px-4 py-3">{canWrite ? <input type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
+                <td className="px-4 py-3">{canWrite ? <input type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
                 <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
                 <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
                 {canWrite ? <td className="px-4 py-3"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
@@ -81,7 +93,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                     .filter((candidate) => candidate.id !== row.id)
                     .map((candidate) => (
                       <option key={candidate.id} value={candidate.id}>
-                        {candidate.name}
+                        {categoryPath(candidate)}
                       </option>
                     ))}
                 </select>
@@ -135,7 +147,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
               <option value="">None (division)</option>
               {allRows.map((row) => (
                 <option key={row.id} value={row.id}>
-                  {row.name}
+                  {categoryPath(row)}
                 </option>
               ))}
             </select>
