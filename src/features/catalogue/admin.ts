@@ -663,14 +663,23 @@ export async function addProductAlias(input: {
   productId: string;
   alias: string;
 }) {
+  return addProductAliases(input);
+}
+
+export async function addProductAliases(input: {
+  role: StaffRole;
+  productId: string;
+  alias: string;
+}) {
   assertProductsWrite(input.role);
-  const alias = input.alias.trim();
-  if (!alias) {
-    throw new CatalogueAdminError("Enter a search alias.");
-  }
+  const aliases = [...new Map(input.alias.split(/[\n,]+/).map((value) => value.trim()).filter(Boolean).map((value) => [value.toLocaleLowerCase(), value])).values()];
+  if (!aliases.length) throw new CatalogueAdminError("Enter at least one search alias.");
+  if (aliases.length > 50) throw new CatalogueAdminError("Add up to 50 aliases at a time.");
+  if (aliases.some((alias) => alias.length > 120)) throw new CatalogueAdminError("Each alias must be 120 characters or fewer.");
   const db = getDb();
-  await db.insert(productAliases).values({ productId: input.productId, alias });
+  await db.insert(productAliases).values(aliases.map((alias) => ({ productId: input.productId, alias })));
   await refreshProductSearchDocument(input.productId);
+  return aliases.length;
 }
 
 export async function removeProductAlias(input: { role: StaffRole; aliasId: string }) {

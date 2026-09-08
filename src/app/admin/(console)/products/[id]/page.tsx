@@ -361,10 +361,11 @@ export default async function AdminProductDetailPage({
             <form action="/admin/products/mutate" method="post" className="mt-4 grid gap-3">
               <input type="hidden" name="intent" value="add-alias" />
               <input type="hidden" name="productId" value={product.id} />
-              <AdminField label="Alias">
-                <input name="alias" required className={adminFieldClass} />
+              <AdminField label="Aliases">
+                <textarea name="alias" required className={adminAreaClass} placeholder="A4 paper, copier paper\n80gsm office paper" />
               </AdminField>
-              <SubmitProgressButton idleLabel="Add alias" pendingLabel="Adding alias…" className={paperButton({ variant: "secondary" })} />
+              <p className="text-xs text-slate">Paste multiple aliases separated by commas or line breaks. Duplicate entries are collapsed automatically.</p>
+              <SubmitProgressButton idleLabel="Add aliases" pendingLabel="Adding aliases…" className={paperButton({ variant: "secondary" })} />
             </form>
           ) : null}
         </div>
