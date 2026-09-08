@@ -12,6 +12,7 @@ import { orders } from "@/lib/db/schema";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { documentOwner } from "@/lib/customer/commerce-identity";
 import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
+import { PrintReceiptButton } from "@/components/orders/print-receipt-button";
 
 export const metadata: Metadata = {
   title: "Order received",
@@ -93,6 +94,9 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               : "Your order is recorded. Payment has not been taken yet — Paystack card and MoMo will charge this pending total."}
       </p>
       <OrderStatusTimeline status={order.status} />
+      <div className="mt-6 print:hidden">
+        <PrintReceiptButton />
+      </div>
       <dl className="mt-8 space-y-2 text-sm">
         <div className="flex justify-between">
           <dt className="text-slate">Status</dt>

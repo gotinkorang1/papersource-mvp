@@ -288,3 +288,18 @@
     }
   }
 }
+
+@media print {
+  body {
+    background: #fff !important;
+    color: #111827 !important;
+  }
+
+  header,
+  footer,
+  nav[aria-label="Primary navigation"],
+  [data-mobile-nav],
+  .print\:hidden {
+    display: none !important;
+  }
+}
