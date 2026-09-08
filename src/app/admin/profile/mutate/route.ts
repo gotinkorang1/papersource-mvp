@@ -37,7 +37,16 @@ export async function POST(request: Request) {
       destination.searchParams.set("success", "profile");
     }
   } catch (error) {
-    destination.searchParams.set("error", error instanceof Error ? error.message : "Unable to update your account.");
+    const message = error instanceof Error && [
+      "Enter your full name.",
+      "Use at least 12 characters.",
+      "Passwords must match.",
+      "Could not update your password. Try again.",
+      "Could not update your profile. Try again.",
+    ].includes(error.message)
+      ? error.message
+      : "Unable to update your account. Please check the fields and try again.";
+    destination.searchParams.set("error", message);
   }
   return NextResponse.redirect(destination, 303);
 }

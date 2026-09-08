@@ -37,10 +37,9 @@ export async function POST(request: Request) {
       metadata: { delta, reason },
     });
   } catch (error) {
-    const message =
-      error instanceof InventoryAdminError || error instanceof Error
-        ? error.message
-        : "Could not adjust stock.";
+    const message = error instanceof InventoryAdminError
+      ? error.message
+      : "Could not adjust stock. Please check the fields and try again.";
     next.searchParams.set("error", message);
   }
 

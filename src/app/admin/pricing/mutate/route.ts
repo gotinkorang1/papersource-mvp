@@ -60,10 +60,9 @@ export async function POST(request: Request) {
       next.searchParams.set("error", "Unknown pricing action.");
     }
   } catch (error) {
-    const message =
-      error instanceof CatalogueAdminError || error instanceof Error
-        ? error.message
-        : "Could not update pricing.";
+    const message = error instanceof CatalogueAdminError
+      ? error.message
+      : "Could not update pricing. Please check the fields and try again.";
     next.searchParams.set("error", message);
   }
 

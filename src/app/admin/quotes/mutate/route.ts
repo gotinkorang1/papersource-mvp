@@ -104,10 +104,9 @@ export async function POST(request: Request) {
       });
     }
   } catch (error) {
-    const message =
-      error instanceof QuoteAdminError || error instanceof Error
-        ? error.message
-        : "Could not update this quotation.";
+    const message = error instanceof QuoteAdminError
+      ? error.message
+      : "Could not update this quotation. Please check the fields and try again.";
     detail.searchParams.set("error", message);
   }
 

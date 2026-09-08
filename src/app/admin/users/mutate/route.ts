@@ -65,7 +65,15 @@ export async function POST(request: Request) {
     next.searchParams.set("success", "1");
     return NextResponse.redirect(next, 303);
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unable to update staff role.";
+    const allowedMessages = new Set([
+      "A profile already exists for that email. Update its role below instead.",
+      "Could not send the staff invitation. Check the email and try again.",
+      "You cannot remove your own super admin access.",
+      "Staff profile not found.",
+    ]);
+    const message = error instanceof Error && allowedMessages.has(error.message)
+      ? error.message
+      : "Unable to update staff role. Please check the fields and try again.";
     next.searchParams.set("error", message);
     return NextResponse.redirect(next, 303);
   }

@@ -45,10 +45,9 @@ export async function POST(request: Request) {
     await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "save-brand" ? "brand_updated" : "brand_created", resourceType: "brand", resourceId: saved.id });
     if (wantsJson) return NextResponse.json({ item: { id: saved.id, name: saved.name } });
   } catch (error) {
-    const message =
-      error instanceof CatalogueAdminError || error instanceof Error
-        ? error.message
-        : "Could not save that brand.";
+    const message = error instanceof CatalogueAdminError
+      ? error.message
+      : "Could not save that brand. Please check the fields and try again.";
     next.searchParams.set("error", message);
     if (wantsJson) return NextResponse.json({ error: message }, { status: 400 });
   }
