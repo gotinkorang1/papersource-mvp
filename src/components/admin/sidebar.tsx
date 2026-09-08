@@ -21,6 +21,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   useEffect(() => {
     activeLinkRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
     setNavOpen(false);
+    setAccountOpen(false);
   }, [pathname]);
 
   useEffect(() => {
