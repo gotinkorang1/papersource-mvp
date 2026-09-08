@@ -95,7 +95,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
 
           return (
             <div key={group.label} className="min-w-max">
-              <p className="hidden px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase md:block">
+              <p className={`${navOpen ? "block" : "hidden"} px-3 text-[0.7rem] tracking-[0.16em] text-sidebar-foreground/45 uppercase md:block`}>
                 {group.label}
               </p>
               <ul className="mt-2 flex gap-1 md:block md:space-y-0.5">
