@@ -13,6 +13,8 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
   const accountCloseRef = useRef<HTMLButtonElement | null>(null);
+  const accountTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const accountWasOpen = useRef(false);
   const [navOpen, setNavOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
 
@@ -36,13 +38,18 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   }, [accountOpen]);
 
   useEffect(() => {
-    if (accountOpen) accountCloseRef.current?.focus();
+    if (accountOpen) {
+      accountCloseRef.current?.focus();
+    } else if (accountWasOpen.current) {
+      accountTriggerRef.current?.focus();
+    }
+    accountWasOpen.current = accountOpen;
   }, [accountOpen]);
 
   return (
     <>
       <a href="#admin-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-card focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-ink focus:shadow-lg focus:outline-2 focus:outline-offset-2 focus:outline-ink">Skip to content</a>
-      <button type="button" aria-expanded={accountOpen} aria-controls="admin-account-panel" onClick={() => setAccountOpen((open) => !open)} className="fixed right-4 top-4 z-40 inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-semibold text-ink shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:right-6">
+      <button ref={accountTriggerRef} type="button" aria-expanded={accountOpen} aria-controls="admin-account-panel" onClick={() => setAccountOpen((open) => !open)} className="fixed right-4 top-4 z-40 inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-card px-3 text-sm font-semibold text-ink shadow-sm transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:right-6">
         <span className="flex size-7 items-center justify-center rounded-full bg-ink text-[0.65rem] font-bold tracking-[0.12em] text-cream" aria-hidden="true">PS</span>
         <span className="hidden sm:inline">Administrator</span>
         <span className="text-xs" aria-hidden="true">{accountOpen ? "×" : "⌄"}</span>
