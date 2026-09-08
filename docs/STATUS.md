@@ -28,6 +28,8 @@ The hosted RLS migration has now been applied and verified. Security Advisor no 
 
 Hosted Performance Advisor now reports zero unindexed foreign keys after the additive index migrations (`20260908051115`, `20260908051923`, and `20260908052153`). It still reports informational unused-index notices; these are retained because the indexes cover expected production joins, referential deletes, and admin lookups and the database is not yet carrying representative production traffic.
 
+Admin store settings now include a hosted payment gateway switch (`payments_enabled`) and runtime Paystack mode (`test` or `live`). Checkout, return verification, mock checkout, and webhooks all follow the stored mode server-side. Live mode is rejected unless a server-side `sk_live_` Paystack secret is configured; the migration is `drizzle/0017_payment_controls.sql` and has been applied to hosted Supabase.
+
 The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Returns pages. Security response headers and client-side Sentry route telemetry are configured; runtime activation still requires the production Sentry DSN.
 
 ## Remaining MVP work, in order
