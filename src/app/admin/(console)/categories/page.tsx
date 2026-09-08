@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -11,14 +12,16 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; q?: string }>;
 };
 
 export default async function AdminCategoriesPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("categories", "read");
-  const rows = await listAdminCategories();
+  const allRows = await listAdminCategories();
   const canWrite = canAccessAdmin(actor.role, "categories", "write");
-  const { error } = await searchParams;
+  const { error, q = "" } = await searchParams;
+  const query = q.trim().toLocaleLowerCase();
+  const rows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
 
   return (
     <main>
@@ -28,6 +31,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
         Shop routes follow these slugs. Keep names operational, not decorative.
       </p>
       <AdminError error={error} />
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="category-search">Search categories</label><input id="category-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search categories or slugs" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/categories" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full min-w-[42rem] text-sm">
           <caption className="sr-only">Categories</caption>
@@ -36,6 +40,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Slug</th>
               <th className="px-4 py-3 font-medium">Active</th>
+              {canWrite ? <th className="px-4 py-3 font-medium">Actions</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -44,6 +49,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 <td className="px-4 py-3">{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
                 <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
+                {canWrite ? <td className="px-4 py-3"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
               </tr>
             ))}
           </tbody>
@@ -69,7 +75,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
               <AdminField label="Parent">
                 <select name="parentId" defaultValue={row.parentId ?? ""} className={adminFieldClass}>
                   <option value="">None (division)</option>
-                  {rows
+                  {allRows
                     .filter((candidate) => candidate.id !== row.id)
                     .map((candidate) => (
                       <option key={candidate.id} value={candidate.id}>
@@ -125,7 +131,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           <AdminField label="Parent">
             <select name="parentId" className={adminFieldClass} defaultValue="">
               <option value="">None (division)</option>
-              {rows.map((row) => (
+              {allRows.map((row) => (
                 <option key={row.id} value={row.id}>
                   {row.name}
                 </option>

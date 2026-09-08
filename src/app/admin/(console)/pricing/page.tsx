@@ -13,14 +13,16 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; q?: string }>;
 };
 
 export default async function AdminPricingPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("pricing", "read");
-  const rows = await listAdminPricingRows();
+  const allRows = await listAdminPricingRows();
   const canWrite = canAccessAdmin(actor.role, "pricing", "write");
-  const { error } = await searchParams;
+  const { error, q = "" } = await searchParams;
+  const query = q.trim().toLocaleLowerCase();
+  const rows = query ? allRows.filter((row) => `${row.productName} ${row.sku}`.toLocaleLowerCase().includes(query)) : allRows;
 
   return (
     <main>
@@ -30,6 +32,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
         Tiers are per variant, in integer pesewas. Request-quote is for volume the desk must price.
       </p>
       <AdminError error={error} />
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="pricing-search">Search pricing</label><input id="pricing-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/pricing" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 space-y-6">
         {rows.map((row) => (
           <section key={row.variantId} className="rounded-xl border border-border bg-card p-5">

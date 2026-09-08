@@ -13,14 +13,16 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; q?: string }>;
 };
 
 export default async function AdminInventoryPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("inventory", "read");
-  const rows = await listInventoryRows();
+  const allRows = await listInventoryRows();
   const canWrite = canAccessAdmin(actor.role, "inventory", "write");
-  const { error } = await searchParams;
+  const { error, q = "" } = await searchParams;
+  const query = q.trim().toLocaleLowerCase();
+  const rows = query ? allRows.filter((row) => `${row.productName} ${row.sku}`.toLocaleLowerCase().includes(query)) : allRows;
 
   return (
     <main>
@@ -30,6 +32,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
         Adjust on-hand with a reason. Every change writes a movement row.
       </p>
       <AdminError error={error} />
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="inventory-search">Search inventory</label><input id="inventory-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/inventory" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full text-sm">
           <caption className="sr-only">Stock by variant</caption>

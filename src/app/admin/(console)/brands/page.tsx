@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -11,14 +12,16 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; q?: string }>;
 };
 
 export default async function AdminBrandsPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("brands", "read");
-  const rows = await listAdminBrands();
+  const allRows = await listAdminBrands();
   const canWrite = canAccessAdmin(actor.role, "brands", "write");
-  const { error } = await searchParams;
+  const { error, q = "" } = await searchParams;
+  const query = q.trim().toLocaleLowerCase();
+  const rows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
 
   return (
     <main>
@@ -28,6 +31,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
         Brand pages use these slugs. Keep PaperSource and supplier names here.
       </p>
       <AdminError error={error} />
+      <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="brand-search">Search brands</label><input id="brand-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search brands or slugs" /><button className={paperButton({ variant: "secondary" })}>Search</button>{q ? <Link href="/admin/brands" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="w-full min-w-[38rem] text-sm">
           <caption className="sr-only">Brands</caption>
@@ -36,6 +40,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Slug</th>
               <th className="px-4 py-3 font-medium">Active</th>
+              {canWrite ? <th className="px-4 py-3 font-medium">Actions</th> : null}
             </tr>
           </thead>
           <tbody>
@@ -44,6 +49,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
                 <td className="px-4 py-3">{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
                 <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
+                {canWrite ? <td className="px-4 py-3"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
               </tr>
             ))}
           </tbody>
