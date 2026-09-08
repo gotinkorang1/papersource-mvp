@@ -3,6 +3,7 @@ import Link from "next/link";
 import { listAdminOrders } from "@/features/orders/queries";
 import { formatGhs } from "@/lib/money";
 import { requireStaffArea } from "@/lib/staff/require";
+import { AdminStatusBadge } from "@/components/admin/status-badge";
 
 export const metadata: Metadata = {
   title: "Orders",
@@ -41,7 +42,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
                     </Link>
                   </td>
                   <td className="px-4 py-3">{row.source}</td>
-                  <td className="px-4 py-3">{row.status.replaceAll("_", " ")}</td>
+                  <td className="px-4 py-3"><AdminStatusBadge status={row.status} /></td>
                   <td className="px-4 py-3 tabular-nums">{formatGhs(row.grandTotal)}</td>
                 </tr>
               ))}

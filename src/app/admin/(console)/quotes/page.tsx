@@ -3,6 +3,7 @@ import Link from "next/link";
 import { listSubmittedQuotes } from "@/features/quotations/admin";
 import { formatGhs } from "@/lib/money";
 import { requireStaffArea } from "@/lib/staff/require";
+import { AdminStatusBadge } from "@/components/admin/status-badge";
 
 export const metadata: Metadata = {
   title: "Quotes",
@@ -42,7 +43,7 @@ export default async function AdminQuotesPage() {
                     </Link>
                   </td>
                   <td className="px-4 py-3">{row.organizationName ?? "—"}</td>
-                  <td className="px-4 py-3">{row.status.replaceAll("_", " ")}</td>
+                  <td className="px-4 py-3"><AdminStatusBadge status={row.status} /></td>
                   <td className="px-4 py-3 tabular-nums">{formatGhs(row.grandTotal)}</td>
                 </tr>
               ))}
