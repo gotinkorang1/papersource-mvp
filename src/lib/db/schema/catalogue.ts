@@ -129,7 +129,7 @@ export const productImages = pgTable(
     alt: text("alt").notNull(),
     position: integer("position").notNull().default(0),
   },
-  (table) => [index("product_images_product_idx").on(table.productId)],
+  (table) => [index("product_images_product_idx").on(table.productId), index("product_images_variant_idx").on(table.variantId)],
 );
 
 export const productAttributes = pgTable(
@@ -146,7 +146,7 @@ export const productAttributes = pgTable(
     valueNum: integer("value_num"),
     position: integer("position").notNull().default(0),
   },
-  (table) => [index("product_attributes_product_idx").on(table.productId)],
+  (table) => [index("product_attributes_product_idx").on(table.productId), index("product_attributes_variant_idx").on(table.variantId)],
 );
 
 export const productAliases = pgTable(
@@ -161,6 +161,7 @@ export const productAliases = pgTable(
   },
   (table) => [
     index("product_aliases_product_idx").on(table.productId),
+    index("product_aliases_variant_idx").on(table.variantId),
     index("product_aliases_trgm").using(
       "gin",
       sql`${table.alias} gin_trgm_ops`,
@@ -197,5 +198,5 @@ export const productBundleItems = pgTable(
       .references(() => productVariants.id),
     quantity: integer("quantity").notNull(),
   },
-  (table) => [index("product_bundle_items_bundle_idx").on(table.bundleProductId)],
+  (table) => [index("product_bundle_items_bundle_idx").on(table.bundleProductId), index("product_bundle_items_variant_idx").on(table.variantId)],
 );

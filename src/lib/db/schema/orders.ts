@@ -60,6 +60,8 @@ export const orders = pgTable(
     index("orders_status_idx").on(table.status),
     index("orders_profile_idx").on(table.profileId),
     index("orders_organization_idx").on(table.organizationId),
+    index("orders_quote_idx").on(table.quoteId),
+    index("orders_delivery_zone_idx").on(table.deliveryZoneId),
   ],
 );
 
@@ -79,5 +81,5 @@ export const orderItems = pgTable(
     lineTotal: integer("line_total").notNull(),
     taxTotal: integer("tax_total").notNull().default(0),
   },
-  (table) => [index("order_items_order_idx").on(table.orderId)],
+  (table) => [index("order_items_order_idx").on(table.orderId), index("order_items_variant_idx").on(table.variantId)],
 );

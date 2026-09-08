@@ -50,6 +50,7 @@ export const cartItems = pgTable(
       table.variantId,
     ),
     index("cart_items_cart_idx").on(table.cartId),
+    index("cart_items_variant_idx").on(table.variantId),
   ],
 );
 
@@ -89,6 +90,8 @@ export const quotes = pgTable(
     index("quotes_status_idx").on(table.status),
     index("quotes_profile_idx").on(table.profileId),
     index("quotes_organization_idx").on(table.organizationId),
+    index("quotes_delivery_zone_idx").on(table.deliveryZoneId),
+    index("quotes_parent_idx").on(table.parentQuoteId),
     uniqueIndex("quotes_profile_draft_unique").on(table.profileId).where(sql`${table.profileId} is not null and ${table.status} = 'draft'`),
     uniqueIndex("quotes_guest_draft_unique").on(table.sessionId).where(sql`${table.profileId} is null and ${table.sessionId} is not null and ${table.status} = 'draft'`),
   ],
@@ -110,7 +113,7 @@ export const quoteItems = pgTable(
     lineTotal: integer("line_total"),
     notes: text("notes"),
   },
-  (table) => [index("quote_items_quote_idx").on(table.quoteId)],
+  (table) => [index("quote_items_quote_idx").on(table.quoteId), index("quote_items_variant_idx").on(table.variantId)],
 );
 
 export const quoteEvents = pgTable(
@@ -145,5 +148,5 @@ export const quoteAccessTokens = pgTable(
       .notNull()
       .defaultNow(),
   },
-  (table) => [uniqueIndex("quote_access_tokens_token_unique").on(table.token)],
+  (table) => [uniqueIndex("quote_access_tokens_token_unique").on(table.token), index("quote_access_tokens_quote_idx").on(table.quoteId)],
 );

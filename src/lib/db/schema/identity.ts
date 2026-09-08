@@ -84,6 +84,7 @@ export const addresses = pgTable("addresses", {
   ...timestamps,
 }, (table) => [
   index("addresses_owner_idx").on(table.ownerProfileId),
+  index("addresses_organization_idx").on(table.organizationId),
   uniqueIndex("addresses_one_personal_default").on(table.ownerProfileId)
     .where(sql`${table.isDefault} and ${table.ownerProfileId} is not null and ${table.organizationId} is null`),
 ]);

@@ -23,6 +23,7 @@ export const uploadedDocuments = pgTable(
   },
   (table) => [
     index("uploaded_documents_quote_idx").on(table.quoteId),
+    index("uploaded_documents_order_idx").on(table.orderId),
     uniqueIndex("uploaded_documents_path_unique").on(table.bucket, table.path),
   ],
 );

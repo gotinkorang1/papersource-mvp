@@ -1,4 +1,4 @@
-import { integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import { index, integer, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import { productVariants } from "./catalogue";
 import { inventoryMovementReasonEnum } from "./enums";
 
@@ -26,4 +26,4 @@ export const inventoryMovements = pgTable("inventory_movements", {
   createdAt: timestamp("created_at", { withTimezone: true })
     .notNull()
     .defaultNow(),
-});
+}, (table) => [index("inventory_movements_variant_idx").on(table.variantId)]);
