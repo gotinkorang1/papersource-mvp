@@ -16,7 +16,7 @@ export function ProductGallery({
         role="img"
         aria-label={alt}
       >
-        {src ? <Image src={src} alt={alt} fill sizes="(max-width: 768px) 100vw, 50vw" className="object-contain p-6" /> : <div className="m-8 h-[calc(100%-4rem)] border border-border bg-card" />}
+        {src ? <Image src={src} alt={alt} fill priority sizes="(max-width: 768px) 100vw, 50vw" className="object-contain p-6" /> : <div className="m-8 h-[calc(100%-4rem)] border border-border bg-card" />}
       </div>
     </div>
   );
