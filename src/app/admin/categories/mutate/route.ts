@@ -25,7 +25,10 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const intent = String(formData.get("intent"));
     if (intent === "bulk-active") {
-      const count = await bulkSetCategoriesActive(actor.role, formData.getAll("categoryId").map(String), String(formData.get("active")) === "true");
+      const ids = formData.getAll("categoryId").map(String);
+      const active = String(formData.get("active")) === "true";
+      const count = await bulkSetCategoriesActive(actor.role, ids, active);
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "categories_bulk_visibility_updated", resourceType: "category", metadata: { count, active } });
       next.searchParams.set("message", `${count} categor${count === 1 ? "y" : "ies"} updated.`);
       return NextResponse.redirect(next, 303);
     }

@@ -25,7 +25,10 @@ export async function POST(request: Request) {
     const formData = await request.formData();
     const intent = String(formData.get("intent"));
     if (intent === "bulk-active") {
-      const count = await bulkSetBrandsActive(actor.role, formData.getAll("brandId").map(String), String(formData.get("active")) === "true");
+      const ids = formData.getAll("brandId").map(String);
+      const active = String(formData.get("active")) === "true";
+      const count = await bulkSetBrandsActive(actor.role, ids, active);
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "brands_bulk_visibility_updated", resourceType: "brand", metadata: { count, active } });
       next.searchParams.set("message", `${count} brand${count === 1 ? "" : "s"} updated.`);
       return NextResponse.redirect(next, 303);
     }
