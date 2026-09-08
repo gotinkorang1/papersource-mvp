@@ -7,6 +7,7 @@ import { formatGhs } from "@/lib/money";
 import { signedDocumentPath } from "@/lib/documents/sign";
 import { publicEnv } from "@/lib/env";
 import { requireStaffArea } from "@/lib/staff/require";
+import { AdminStatusBadge } from "@/components/admin/status-badge";
 
 export const metadata: Metadata = {
   title: "Quote",
@@ -43,7 +44,7 @@ export default async function AdminQuoteDetailPage({
         {quote.number ?? "Quotation"}
       </h1>
       <p className="mt-2 text-sm text-slate">
-        Status: <span className="text-ink">{quote.status.replaceAll("_", " ")}</span>
+        Status: <AdminStatusBadge status={quote.status} />
         {quote.expiresAt ? ` · Expires ${quote.expiresAt.toISOString().slice(0, 10)}` : ""}
         {quote.parentQuoteId ? " · Revision of an earlier quotation" : ""}
       </p>
