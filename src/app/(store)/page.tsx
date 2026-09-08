@@ -13,6 +13,7 @@ import {
 } from "@/features/catalogue";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
+import { cloudinaryImageUrl } from "@/lib/cloudinary";
 
 export default async function HomePage() {
   const categories = await listDivisionCategories();
@@ -30,6 +31,8 @@ export default async function HomePage() {
     workplace: { src: "/images/still-life-documents-stack.jpg", alt: "Workplace documents and office supplies" },
   };
   const categoryImageFor = (category: (typeof categories)[number]) => {
+    const uploaded = category.imagePublicId ? cloudinaryImageUrl(category.imagePublicId, 800) : null;
+    if (uploaded) return { src: uploaded, alt: `${category.name} workplace supplies` };
     const key = `${category.slug} ${category.name}`.toLocaleLowerCase();
     const match = Object.entries(categoryImages).find(([alias]) => key.includes(alias));
     return match?.[1] ?? { src: "/images/catalogue-stationery-generated.png", alt: `${category.name} workplace supplies` };

@@ -93,6 +93,7 @@ export async function listDivisionCategoriesFromDb(): Promise<CatalogueCategoryV
       slug: category.slug,
       caption: category.description ?? "",
       position: category.position,
+      imagePublicId: category.imagePublicId,
     }));
 }
 
@@ -123,6 +124,7 @@ export async function getCategoryBySlugFromDb(
     slug: category.slug,
     caption: category.description ?? "",
     position: category.position,
+    imagePublicId: category.imagePublicId,
   };
 }
 

@@ -47,6 +47,7 @@ export type CatalogueCategoryView = {
   slug: string;
   caption: string;
   position: number;
+  imagePublicId?: string | null;
 };
 
 export type CatalogueBrandView = {
