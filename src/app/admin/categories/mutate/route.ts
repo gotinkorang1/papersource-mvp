@@ -43,6 +43,7 @@ export async function POST(request: Request) {
       slug: String(formData.get("slug") ?? ""),
       parentId: parentRaw ? uuid.parse(parentRaw) : null,
       description: String(formData.get("description") ?? ""),
+      imagePublicId: String(formData.get("imagePublicId") ?? ""),
       position: Number(formData.get("position") ?? 0),
       active: String(formData.get("active") ?? "true") === "true",
     });

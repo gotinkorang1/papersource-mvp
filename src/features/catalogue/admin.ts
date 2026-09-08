@@ -496,6 +496,7 @@ export async function saveCategory(input: {
   slug?: string;
   parentId: string | null;
   description: string;
+  imagePublicId?: string;
   position: number;
   active: boolean;
 }) {
@@ -504,6 +505,7 @@ export async function saveCategory(input: {
     throw new CatalogueAdminError("Position must be a whole number.");
   }
   const slug = input.slug?.trim() ? slugify(input.slug) : slugify(input.name);
+  const imagePublicId = input.imagePublicId ? normalizeCloudinaryPublicId(input.imagePublicId) || null : null;
   const db = getDb();
   if (input.parentId) {
     if (input.parentId === input.categoryId) {
@@ -530,6 +532,7 @@ export async function saveCategory(input: {
         slug,
         parentId: input.parentId,
         description: input.description.trim() || null,
+        imagePublicId,
         position: input.position,
         active: input.active,
         updatedAt: new Date(),
@@ -550,6 +553,7 @@ export async function saveCategory(input: {
         slug,
         parentId: input.parentId,
         description: input.description.trim() || null,
+        imagePublicId,
         position: input.position,
         active: input.active,
       })

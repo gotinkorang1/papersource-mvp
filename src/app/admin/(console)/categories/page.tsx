@@ -124,6 +124,9 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                   className={adminAreaClass}
                 />
               </AdminField>
+              <AdminField label="Category image (Cloudinary public ID or URL)">
+                <input name="imagePublicId" defaultValue={row.imagePublicId ?? ""} className={adminFieldClass} placeholder="papersource/categories/paper" />
+              </AdminField>
               <div className="sm:col-span-2">
                 <SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving category…" className={paperButton()} />
               </div>
@@ -159,6 +162,9 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           </AdminField>
           <AdminField label="Description">
             <textarea name="description" className={adminAreaClass} />
+          </AdminField>
+          <AdminField label="Category image (Cloudinary public ID or URL)">
+            <input name="imagePublicId" className={adminFieldClass} placeholder="papersource/categories/paper" />
           </AdminField>
           <SubmitProgressButton idleLabel="Create category" pendingLabel="Creating category…" className={paperButton({ variant: "secondary" })} />
         </form>
