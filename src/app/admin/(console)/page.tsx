@@ -11,6 +11,13 @@ export const metadata: Metadata = {
   title: "Admin",
 };
 
+const quoteMetricTone: Record<string, string> = {
+  submitted: "border-t-ochre",
+  under_review: "border-t-ochre",
+  priced: "border-t-paper-green",
+  sent: "border-t-paper-green",
+};
+
 export default async function AdminDashboardPage() {
   const actor = await requireStaffArea("dashboard", "read");
   const db = getDb();
@@ -107,7 +114,7 @@ export default async function AdminDashboardPage() {
           <Link
             key={row.status}
             href="/admin/quotes"
-            className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+            className={`group min-h-28 rounded-xl border border-border border-t-4 ${quoteMetricTone[row.status] ?? "border-t-border"} bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
           >
             <p className="text-xs tracking-[0.14em] text-slate uppercase"><AdminStatusBadge status={row.status} /></p>
             <p className="mt-2 font-heading text-3xl tabular-nums text-ink">
@@ -117,7 +124,7 @@ export default async function AdminDashboardPage() {
         )) : null}
         {canReadOrders ? <Link
           href="/admin/orders"
-          className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="group min-h-28 rounded-xl border border-border border-t-4 border-t-ochre bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
             Awaiting Paystack
@@ -128,7 +135,7 @@ export default async function AdminDashboardPage() {
         </Link> : null}
         {canReadOrders ? <Link
           href="/admin/orders"
-          className="group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="group min-h-28 rounded-xl border border-border border-t-4 border-t-paper-green bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
             Nationwide arranging
