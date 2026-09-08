@@ -39,41 +39,35 @@ export default async function AdminDashboardPage() {
       : null,
   ].filter((action): action is NonNullable<typeof action> => Boolean(action));
 
-  const openQuotes = canReadQuotes
-    ? await db
-        .select({ status: quotes.status, total: count() })
-        .from(quotes)
-        .where(
-          inArray(quotes.status, ["submitted", "under_review", "priced", "sent"]),
-        )
-        .groupBy(quotes.status)
-    : [];
-
-  const [pendingPay] = canReadOrders
-    ? await db
-        .select({ total: count() })
-        .from(orders)
-        .where(eq(orders.status, "pending_payment"))
-    : [{ total: 0 }];
-
-  const [nationwide] = canReadOrders
-    ? await db
-        .select({ total: count() })
-        .from(orders)
-        .where(eq(orders.status, "awaiting_terms"))
-    : [{ total: 0 }];
-
-  const [pendingReviews] = canReadReviews
-    ? await db.select({ total: count() }).from(productReviews).where(eq(productReviews.status, "pending"))
-    : [{ total: 0 }];
-  const recentOrders = canReadOrders
-    ? await db
-        .select({ id: orders.id, number: orders.number, status: orders.status, customerEmail: profiles.email, updatedAt: orders.updatedAt })
-        .from(orders)
-        .leftJoin(profiles, eq(profiles.id, orders.profileId))
-        .orderBy(desc(orders.updatedAt))
-        .limit(6)
-    : [];
+  const [openQuotes, pendingPayRows, nationwideRows, pendingReviewRows, recentOrders] = await Promise.all([
+    canReadQuotes
+      ? db
+          .select({ status: quotes.status, total: count() })
+          .from(quotes)
+          .where(inArray(quotes.status, ["submitted", "under_review", "priced", "sent"]))
+          .groupBy(quotes.status)
+      : Promise.resolve([]),
+    canReadOrders
+      ? db.select({ total: count() }).from(orders).where(eq(orders.status, "pending_payment"))
+      : Promise.resolve([{ total: 0 }]),
+    canReadOrders
+      ? db.select({ total: count() }).from(orders).where(eq(orders.status, "awaiting_terms"))
+      : Promise.resolve([{ total: 0 }]),
+    canReadReviews
+      ? db.select({ total: count() }).from(productReviews).where(eq(productReviews.status, "pending"))
+      : Promise.resolve([{ total: 0 }]),
+    canReadOrders
+      ? db
+          .select({ id: orders.id, number: orders.number, status: orders.status, customerEmail: profiles.email, updatedAt: orders.updatedAt })
+          .from(orders)
+          .leftJoin(profiles, eq(profiles.id, orders.profileId))
+          .orderBy(desc(orders.updatedAt))
+          .limit(6)
+      : Promise.resolve([]),
+  ]);
+  const pendingPay = pendingPayRows[0];
+  const nationwide = nationwideRows[0];
+  const pendingReviews = pendingReviewRows[0];
 
   return (
     <main className="mx-auto min-w-0 max-w-7xl">
