@@ -8,7 +8,13 @@ const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/a
 
 function cloudinaryCredentials() {
   const raw = process.env.CLOUDINARY_URL;
-  if (!raw) throw new Error("Cloudinary is not configured on the server.");
+  const splitCloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+  const splitApiKey = process.env.CLOUDINARY_API_KEY;
+  const splitApiSecret = process.env.CLOUDINARY_API_SECRET;
+  if (!raw && splitCloudName && splitApiKey && splitApiSecret) {
+    return { cloudName: splitCloudName, apiKey: splitApiKey, apiSecret: splitApiSecret };
+  }
+  if (!raw) throw new Error("Cloudinary server credentials are missing. Set CLOUDINARY_URL or CLOUDINARY_API_KEY and CLOUDINARY_API_SECRET.");
   const parsed = new URL(raw);
   const cloudName = parsed.hostname;
   const apiKey = decodeURIComponent(parsed.username);
