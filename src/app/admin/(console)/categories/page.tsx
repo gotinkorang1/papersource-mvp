@@ -49,7 +49,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="category-search">Search categories</label><input id="category-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search categories or slugs" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="position">Sort: position</option><option value="name">Sort: name</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "position" ? <Link href="/admin/categories" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
       {canWrite ? <form id="bulk-categories" action="/admin/categories/mutate" method="post" className="mt-6 flex flex-wrap items-center gap-3 rounded-t-xl border border-border bg-muted/30 p-3"><input type="hidden" name="intent" value="bulk-active" /><SelectAllCheckbox count={rows.length} name="categoryId" label="categories" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating categories…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /><span className="text-xs text-slate" aria-live="polite">Bulk updates only change visibility.</span></form> : null}
       <div className={`overflow-x-auto rounded-b-xl border border-border bg-card ${canWrite ? "border-t-0" : "mt-8 rounded-xl"}`}>
-        <table className="w-full min-w-[42rem] text-sm">
+        <table className="admin-responsive-table w-full min-w-[42rem] text-sm">
           <caption className="sr-only">Categories</caption>
           <thead>
             <tr className="border-b border-border text-left text-slate">
@@ -62,10 +62,10 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No categories match this search." : "No categories yet."}</td></tr> : rows.map((row) => (
               <tr key={row.id} className="border-b border-border last:border-0 align-top">
-                <td className="px-4 py-3">{canWrite ? <input form="bulk-categories" type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
-                <td className="px-4 py-3 font-mono text-xs">{row.slug}</td>
-                <td className="px-4 py-3">{row.active ? "Yes" : "No"}</td>
-                {canWrite ? <td className="px-4 py-3"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
+                <td className="px-4 py-3" data-label="Name">{canWrite ? <input form="bulk-categories" type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
+                <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
+                <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>
+                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
               </tr>
             ))}
           </tbody>

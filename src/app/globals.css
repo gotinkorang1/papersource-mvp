@@ -164,6 +164,67 @@
   scrollbar-width: thin;
 }
 
+.admin-shell {
+  overflow-x: clip;
+}
+
+@media (max-width: 639px) {
+  .admin-shell .admin-responsive-table {
+    display: block;
+    min-width: 0 !important;
+  }
+
+  .admin-shell .admin-responsive-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .admin-shell .admin-responsive-table tbody,
+  .admin-shell .admin-responsive-table tr {
+    display: block;
+  }
+
+  .admin-shell .admin-responsive-table tr {
+    margin: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--card);
+  }
+
+  .admin-shell .admin-responsive-table td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    padding: 0.5rem 0 !important;
+    border: 0;
+  }
+
+  .admin-shell .admin-responsive-table td::before {
+    flex: 0 0 5.75rem;
+    color: var(--muted-foreground);
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .admin-shell .admin-responsive-table td:first-child {
+    justify-content: flex-start;
+    padding-bottom: 0.35rem !important;
+  }
+
+  .admin-shell .admin-responsive-table td:first-child::before {
+    display: none;
+  }
+}
+
 .admin-shell table thead {
   position: sticky;
   top: 0;
