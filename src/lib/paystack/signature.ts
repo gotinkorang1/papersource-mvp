@@ -26,13 +26,22 @@ export function signPaystackBody(rawBody: string, secret = paystackSecret()) {
 export function paystackSignatureValid(
   rawBody: string,
   signature: string,
-  secret = paystackSecret(),
+  secret?: string,
 ) {
   if (!signature) {
     return false;
   }
 
-  const expected = signPaystackBody(rawBody, secret);
+  // An unconfigured production secret must fail closed as an invalid
+  // signature, rather than throwing before the webhook route can return 401.
+  let resolvedSecret: string;
+  try {
+    resolvedSecret = secret ?? paystackSecret();
+  } catch {
+    return false;
+  }
+
+  const expected = signPaystackBody(rawBody, resolvedSecret);
   const left = Buffer.from(expected);
   const right = Buffer.from(signature);
   return left.length === right.length && timingSafeEqual(left, right);

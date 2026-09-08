@@ -26,5 +26,14 @@ export default defineConfig({
       reuseExistingServer: !process.env.CI,
     },
   } : {}),
-  projects: [{ name: "chromium", use: { ...devices["Desktop Chrome"] } }],
+  projects: [
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    // Keep a hosted mobile smoke lane available without replaying the
+    // state-changing checkout/admin journeys a second time by default.
+    {
+      name: "mobile-chromium",
+      testMatch: /(?:public-smoke|catalogue)\.spec\.ts/,
+      use: { ...devices["Pixel 7"] },
+    },
+  ],
 });
