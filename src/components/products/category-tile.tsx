@@ -26,7 +26,7 @@ export function CategoryTile({
       )}
     >
       <span className="relative mb-8 h-24 overflow-hidden rounded-lg border border-dashed border-border bg-cream transition-colors duration-300 group-hover:border-ink/30">
-        {imageSrc ? <Image src={imageSrc} alt={imageAlt} fill sizes="(max-width: 640px) 45vw, (max-width: 1024px) 22vw, 240px" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" /> : null}
+        <Image src={imageSrc ?? "/images/catalogue-stationery-generated.png"} alt={imageAlt || `${name} workplace supplies`} fill sizes="(max-width: 640px) 45vw, (max-width: 1024px) 22vw, 240px" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
       </span>
       <span>
         <span className="block text-base font-medium text-ink">{name}</span>
