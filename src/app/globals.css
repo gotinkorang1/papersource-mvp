@@ -167,6 +167,7 @@
 
 .admin-shell {
   overflow-x: clip;
+  scroll-padding-top: calc(4.5rem + env(safe-area-inset-top));
 }
 
 .admin-shell :is(h1, h2, h3) {
