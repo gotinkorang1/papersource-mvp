@@ -24,12 +24,21 @@ export function PwaRegister() {
       event.preventDefault();
       setInstallEvent(event as BeforeInstallPromptEvent);
     };
+    const onInstalled = () => {
+      sessionStorage.setItem("papersource-install-dismissed", "1");
+      setDismissed(true);
+      setInstallEvent(null);
+    };
     window.addEventListener("beforeinstallprompt", onInstall);
-    return () => window.removeEventListener("beforeinstallprompt", onInstall);
+    window.addEventListener("appinstalled", onInstalled);
+    return () => {
+      window.removeEventListener("beforeinstallprompt", onInstall);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
   }, []);
 
   if (updateAvailable) {
-    return <div className="fixed inset-x-4 bottom-20 z-40 mx-auto flex max-w-md items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 text-sm text-ink shadow-[0_18px_44px_rgba(16,42,67,0.2)] md:bottom-6"><p><span className="font-semibold">PaperSource updated</span><span className="mt-0.5 block text-xs text-slate">Refresh to use the latest version.</span></p><button type="button" onClick={() => { void navigator.serviceWorker.ready.then((registration) => { registration.waiting?.postMessage({ type: "SKIP_WAITING" }); }); window.location.reload(); }} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-semibold text-white hover:bg-ink/90">Refresh</button></div>;
+    return <div className="fixed inset-x-4 bottom-20 z-40 mx-auto flex max-w-md items-center justify-between gap-4 rounded-xl border border-border bg-card p-4 text-sm text-ink shadow-[0_18px_44px_rgba(16,42,67,0.2)] md:bottom-6"><p><span className="font-semibold">PaperSource updated</span><span className="mt-0.5 block text-xs text-slate">Refresh to use the latest version.</span></p><button type="button" onClick={() => { let timeout = 0; const reload = () => { window.clearTimeout(timeout); window.location.reload(); }; navigator.serviceWorker.addEventListener("controllerchange", reload, { once: true }); void navigator.serviceWorker.ready.then((registration) => { registration.waiting?.postMessage({ type: "SKIP_WAITING" }); }); timeout = window.setTimeout(reload, 2500); }} className="shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-semibold text-white hover:bg-ink/90">Refresh</button></div>;
   }
   if (!installEvent || dismissed) return null;
   return (
