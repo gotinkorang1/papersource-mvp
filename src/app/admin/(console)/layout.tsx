@@ -31,7 +31,7 @@ export default async function AdminConsoleLayout({
   return (
     <div className="admin-shell flex min-h-[100svh] flex-col bg-background text-ink md:flex-row">
       <AdminSidebar actor={actor} />
-      <div id="admin-main-content" className="min-w-0 flex-1 px-4 pb-8 pt-[calc(5rem+env(safe-area-inset-top))] sm:px-6 sm:pb-10 sm:pt-[calc(5rem+env(safe-area-inset-top))] md:px-8 md:py-8 lg:px-10">{children}</div>
+      <div id="admin-main-content" className="min-w-0 flex-1 px-4 pb-8 pt-[calc(4.5rem+env(safe-area-inset-top))] sm:px-6 sm:pb-10 sm:pt-[calc(4.5rem+env(safe-area-inset-top))] md:px-8 md:py-8 lg:px-10">{children}</div>
     </div>
   );
 }
