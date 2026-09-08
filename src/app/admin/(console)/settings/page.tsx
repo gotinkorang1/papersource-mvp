@@ -47,8 +47,9 @@ export default async function AdminSettingsPage({ searchParams }: { searchParams
             <option value="test">Test mode</option>
             <option value="live">Live mode</option>
           </select>
-          <span className="mt-1 block text-xs text-slate">Live mode requires the server-side PAYSTACK_SECRET_KEY.</span>
+          <span className="mt-1 block text-xs text-slate">Live mode charges real customers and requires a server-side live Paystack key.</span>
         </AdminField>
+        {canWrite && settings.paymentMode === "test" ? <p className="rounded-lg border border-ochre/40 bg-ochre/10 px-3 py-2 text-xs leading-5 text-ink sm:col-span-2">Switch to live mode only after confirming your Paystack webhook and live secret are configured in Vercel. Test mode remains safe for rehearsals.</p> : null}
         {canWrite ? <SubmitProgressButton idleLabel="Save settings" pendingLabel="Saving settings…" className={`${paperButton()} sm:col-span-2 sm:justify-self-start`} /> : null}
       </form>
       <p className="mt-4 text-xs text-slate">Last updated {settings.updatedAt ? new Date(settings.updatedAt).toLocaleString("en-GH") : "by the deployment defaults"}.</p>

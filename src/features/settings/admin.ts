@@ -55,6 +55,9 @@ export function parseStoreSettings(input: StoreSettingsForm) {
   }
   const siteUrl = parsedUrl.data.replace(/\/$/, "");
   const paymentMode: "test" | "live" = input.paymentMode === "live" ? "live" : "test";
+  if (paymentMode === "live" && !process.env.PAYSTACK_SECRET_KEY?.trim().startsWith("sk_live_")) {
+    throw new SettingsAdminError("Live mode requires a configured server-side live Paystack key.");
+  }
   if (!paymentMode) throw new SettingsAdminError("Payment mode must be test or live.");
 
   return {
