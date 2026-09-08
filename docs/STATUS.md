@@ -20,7 +20,7 @@ Customer accounts are merged into both branches. Hosted Supabase/Vercel connecti
 
 The production catalogue route was rechecked after query deduplication: `/shop`, `/search`, `/about`, `/contact`, `/faq`, `/delivery`, `/api/health`, and search suggestions all returned HTTP 200 on the current Ready deployment.
 
-The live health endpoint now reports both database and observability readiness; production currently reports `database: ok` and `observability: configured`. Supabase Advisor could not be queried in this session because the MCP OAuth token refresh failed, so policy findings still require a successful Supabase re-authentication.
+The live health endpoint reports both database and observability readiness; production currently reports `database: ok` and `observability: configured`. Supabase Security Advisor is now reachable. It reports intentional informational notices for service-only tables with RLS but no policies, plus one actionable Auth warning: leaked-password protection is disabled. A direct grants check confirmed those service tables expose no privileges to `anon` or `authenticated`. Enable leaked-password protection in Supabase Auth settings before launch.
 
 Static RLS review identified and fixed an ownership gap in quote items, quote events, and order items (`drizzle/0015_rls_child_scope.sql`). The migration has been applied to hosted Supabase and verified.
 
@@ -31,8 +31,8 @@ The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Re
 ## Remaining MVP work, in order
 
 1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. Direct Vercel redeploys are temporarily blocked by the daily deployment quota.
-2. Review hosted RLS policies and Supabase security advisor findings, not only RLS enablement. The advisor MCP endpoint is not currently available in this session.
-3. Configure and verify the production Sentry DSN; confirm no runtime errors and no sensitive data capture.
+2. Review the hosted RLS policies and the current Advisor findings during launch sign-off; enable Supabase Auth leaked-password protection.
+3. Verify Sentry through the Sentry API with a read-only auth token, then confirm no runtime errors and no sensitive data capture. Vercel production already has the DSN and trace-rate variables configured, and `/api/health` reports observability as configured.
 4. Run the complete Playwright suite against production-safe hosted test data and perform mobile/desktop smoke checks. The local suite is green (27/27).
 5. Final legal/content review of Terms, Privacy and Returns pages.
 6. Optional: quote-expiring reminders at T-48h.
