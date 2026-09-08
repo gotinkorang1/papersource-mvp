@@ -45,10 +45,11 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
               <th className="px-4 py-3 font-medium">Reserved</th>
               <th className="px-4 py-3 font-medium">Sellable</th>
               <th className="px-4 py-3 font-medium">Level</th>
+              {canWrite ? <th className="px-4 py-3 font-medium">Quick adjust</th> : null}
             </tr>
           </thead>
           <tbody>
-            {rows.length === 0 ? <tr><td colSpan={6} className="px-4 py-8 text-center text-sm text-slate">{q ? "No inventory rows match this search." : "No inventory rows yet."}</td></tr> : rows.map((row) => {
+            {rows.length === 0 ? <tr><td colSpan={canWrite ? 7 : 6} className="px-4 py-8 text-center text-sm text-slate">{q ? "No inventory rows match this search." : "No inventory rows yet."}</td></tr> : rows.map((row) => {
               const sellable = sellableQuantity(row.onHand, row.reserved);
               return (
                 <tr key={row.inventoryId} className="border-b border-border last:border-0">
@@ -64,6 +65,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
                   <td className="px-4 py-3">
                     {stockLevelFromQuantity(sellable, row.lowStockThreshold).replaceAll("_", " ")}
                   </td>
+                  {canWrite ? <td className="px-4 py-3"><form action="/admin/inventory/mutate" method="post" className="flex min-w-[17rem] items-center gap-2"><input type="hidden" name="variantId" value={row.variantId} /><label className="sr-only" htmlFor={`delta-${row.variantId}`}>Stock change for {row.sku}</label><input id={`delta-${row.variantId}`} name="delta" required className="h-9 w-20 rounded-md border border-border bg-background px-2 text-sm text-ink" placeholder="+/-" /><label className="sr-only" htmlFor={`reason-${row.variantId}`}>Reason for {row.sku}</label><select id={`reason-${row.variantId}`} name="reason" defaultValue="receive" className="h-9 rounded-md border border-border bg-background px-2 text-xs text-ink"><option value="receive">Receive</option><option value="adjust">Adjust</option></select><SubmitProgressButton idleLabel="Apply" pendingLabel="…" className="h-9 min-h-0 px-2 text-xs" /></form></td> : null}
                 </tr>
               );
             })}
