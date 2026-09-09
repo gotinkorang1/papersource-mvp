@@ -7,7 +7,7 @@ import { formatGhs } from "@/lib/money";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 
 export function QuoteBasket() {
-  const { quoteLines, quoteOpen, setQuoteOpen, clearQuote } = useDualPathPreview();
+  const { quoteLines, quoteOpen, setQuoteOpen, clearQuote, syncError } = useDualPathPreview();
   const previewTotal = quoteLines.reduce(
     (sum, line) => sum + (line.unitPricePesewas ?? 0) * line.quantity,
     0,
@@ -47,6 +47,7 @@ export function QuoteBasket() {
         </>
       }
     >
+      {syncError ? <p role="alert" className="mb-4 rounded-md border border-error/40 bg-error/10 px-3 py-2 text-sm text-error">{syncError}</p> : null}
       {quoteLines.length === 0 ? (
         <p className="text-sm text-slate">
           No items on this quotation yet.{" "}

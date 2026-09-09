@@ -20,6 +20,7 @@ type DualPathPreview = {
   quoteLines: QuoteLinePreview[];
   cartOpen: boolean;
   quoteOpen: boolean;
+  syncError: string | null;
   setCartOpen: (open: boolean) => void;
   setQuoteOpen: (open: boolean) => void;
   addToCart: (product: ProductCardModel, quantity: number) => void;
@@ -100,6 +101,7 @@ export function DualPathPreviewProvider({
   const [quoteLines, setQuoteLines] = useState<QuoteLinePreview[]>(initialQuoteLines);
   const [cartOpen, setCartOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
+  const [syncError, setSyncError] = useState<string | null>(null);
 
   const setCartOpenExclusive = useCallback((open: boolean) => {
     setCartOpen(open);
@@ -120,6 +122,7 @@ export function DualPathPreviewProvider({
       setCartLines((current) => mergeCartLine(current, product, quantity));
       setQuoteOpen(false);
       setCartOpen(true);
+      setSyncError(null);
 
       if (persist) {
         void addToCartAction({ variantId: product.variantId, quantity })
@@ -129,6 +132,7 @@ export function DualPathPreviewProvider({
           })
           .catch((error) => {
             console.error("Could not persist the retail cart", error);
+            setSyncError("Your cart could not be synced. Please try again.");
           });
       }
     },
@@ -140,6 +144,7 @@ export function DualPathPreviewProvider({
       setQuoteLines((current) => mergeQuoteLine(current, product, quantity));
       setCartOpen(false);
       setQuoteOpen(true);
+      setSyncError(null);
 
       if (persist) {
         void addToQuoteAction({ variantId: product.variantId, quantity })
@@ -149,6 +154,7 @@ export function DualPathPreviewProvider({
           })
           .catch((error) => {
             console.error("Could not persist the quote basket", error);
+            setSyncError("Your quote list could not be synced. Please try again.");
           });
       }
     },
@@ -157,21 +163,29 @@ export function DualPathPreviewProvider({
 
   const clearCart = useCallback(() => {
     setCartLines([]);
+    setSyncError(null);
     if (persist) {
       void clearCartAction().then((state) => {
         setCartLines(state.cartLines);
         setQuoteLines(state.quoteLines);
-      }).catch((error) => console.error("Could not clear the retail cart", error));
+      }).catch((error) => {
+        console.error("Could not clear the retail cart", error);
+        setSyncError("Your cart could not be cleared. Please try again.");
+      });
     }
   }, [persist]);
 
   const clearQuote = useCallback(() => {
     setQuoteLines([]);
+    setSyncError(null);
     if (persist) {
       void clearQuoteAction().then((state) => {
         setCartLines(state.cartLines);
         setQuoteLines(state.quoteLines);
-      }).catch((error) => console.error("Could not clear the quote basket", error));
+      }).catch((error) => {
+        console.error("Could not clear the quote basket", error);
+        setSyncError("Your quote list could not be cleared. Please try again.");
+      });
     }
   }, [persist]);
 
@@ -181,6 +195,7 @@ export function DualPathPreviewProvider({
       quoteLines,
       cartOpen,
       quoteOpen,
+      syncError,
       setCartOpen: setCartOpenExclusive,
       setQuoteOpen: setQuoteOpenExclusive,
       addToCart,
@@ -197,6 +212,7 @@ export function DualPathPreviewProvider({
       cartOpen,
       quoteLines,
       quoteOpen,
+      syncError,
       setCartOpenExclusive,
       setQuoteOpenExclusive,
     ],
