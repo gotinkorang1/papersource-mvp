@@ -8,12 +8,13 @@ import { StockBadge } from "@/components/commerce/stock-badge";
 import { OfficeBundleCard } from "@/components/products/office-bundle-card";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
-import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, productJsonLd } from "@/features/catalogue";
+import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, listProductCards, productJsonLd } from "@/features/catalogue";
 import { publicEnv } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
+import { ProductGridList } from "@/components/products/product-grid-list";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -52,7 +53,11 @@ export default async function ProductPage({ params }: PageProps) {
   const origin = siteOrigin();
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
-  const reviews = await listApprovedProductReviews(product.id);
+  const [reviews, relatedProducts] = await Promise.all([
+    listApprovedProductReviews(product.id),
+    listProductCards({ categorySlug: product.categorySlug }),
+  ]);
+  const related = relatedProducts.filter((entry) => entry.id !== product.id).slice(0, 4);
   const canonical = `${origin}/product/${product.slug}`;
   const crumbs = [
     { name: "Shop", href: "/shop" },
@@ -138,6 +143,10 @@ export default async function ProductPage({ params }: PageProps) {
           ) : null}
         </div>
       </div>
+      {related.length ? <section className="mt-16 border-t border-border pt-10" aria-labelledby="related-products-heading">
+        <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-sm font-medium uppercase tracking-[0.16em] text-slate">Keep exploring</p><h2 id="related-products-heading" className="mt-2 text-2xl text-ink">More from {product.categoryName}</h2></div><Link href={`/shop/${product.divisionSlug}`} className="text-sm font-semibold text-ink underline underline-offset-4">View all</Link></div>
+        <div className="mt-6"><ProductGridList products={related} canEdit={canEdit} /></div>
+      </section> : null}
       <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} nextPath={`/product/${product.slug}`} />
     </main>
   );
