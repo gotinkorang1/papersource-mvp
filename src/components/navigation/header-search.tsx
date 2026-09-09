@@ -18,6 +18,7 @@ export function HeaderSearch({
   const [suggestions, setSuggestions] = useState<Array<{ slug: string; name: string; sku: string; specLine: string }>>([]);
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
   const requestRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -30,12 +31,16 @@ export function HeaderSearch({
       requestRef.current?.abort();
       const controller = new AbortController();
       requestRef.current = controller;
+      setLoading(true);
       try {
         const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(value)}`, { signal: controller.signal });
         if (!response.ok) return;
         const data = await response.json() as { suggestions?: typeof suggestions };
         setSuggestions(data.suggestions ?? []); setActive(-1); setOpen(true);
       } catch { /* Ignore aborted or transient suggestion requests. */ }
+      finally {
+        if (requestRef.current === controller) setLoading(false);
+      }
     }, 180);
     return () => {
       window.clearTimeout(timer);
@@ -74,6 +79,7 @@ export function HeaderSearch({
         role="combobox"
         aria-autocomplete="list"
         aria-expanded={open && suggestions.length > 0}
+        aria-busy={loading}
         aria-controls={`${inputId}-suggestions`}
         aria-activedescendant={active >= 0 ? `${inputId}-suggestion-${active}` : undefined}
         autoComplete="off"
