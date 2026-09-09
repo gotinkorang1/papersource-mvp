@@ -1,11 +1,11 @@
 import { AccountLink } from "@/components/navigation/account-link";
-import Link from "next/link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
 import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
 import { BusinessMenu } from "@/components/navigation/business-menu";
 import { Wordmark } from "@/components/marketing/wordmark";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { SiteLinks } from "@/components/navigation/site-links";
+import { ManagedNavLinks } from "@/components/navigation/managed-nav-links";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 
 export async function StoreHeader() {
@@ -21,7 +21,7 @@ export async function StoreHeader() {
         >
           <ShopMegaMenu />
           <BusinessMenu />
-          {managedLinks.length ? links.map((link) => <Link key={link.href} href={link.href} className="border-b-2 border-transparent text-sm font-medium text-graphite transition hover:border-ochre hover:text-ink">{link.label}</Link>) : <SiteLinks />}
+          {managedLinks.length ? <ManagedNavLinks links={links} /> : <SiteLinks />}
         </nav>
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
           <AccountLink />
