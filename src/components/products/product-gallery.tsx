@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 export function ProductGallery({
   alt,
@@ -14,24 +14,28 @@ export function ProductGallery({
 }) {
   const gallery = images?.length ? images : src ? [{ src, alt }] : [];
   const [activeIndex, setActiveIndex] = useState(0);
+  const touchStartX = useRef<number | null>(null);
   const active = gallery[activeIndex] ?? gallery[0];
+  const moveImage = useCallback((direction: 1 | -1) => setActiveIndex((index) => (index + direction + gallery.length) % gallery.length), [gallery.length]);
   useEffect(() => {
     if (gallery.length < 2) return;
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (!target || target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
-      if (event.key === "ArrowLeft") setActiveIndex((index) => (index - 1 + gallery.length) % gallery.length);
-      if (event.key === "ArrowRight") setActiveIndex((index) => (index + 1) % gallery.length);
+      if (event.key === "ArrowLeft") moveImage(-1);
+      if (event.key === "ArrowRight") moveImage(1);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [gallery.length]);
+  }, [gallery.length, moveImage]);
   return (
     <div>
       <div
         className="relative aspect-square overflow-hidden border border-border bg-cream"
         role="img"
         aria-label={alt}
+        onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }}
+        onTouchEnd={(event) => { const start = touchStartX.current; touchStartX.current = null; const end = event.changedTouches[0]?.clientX; if (start === null || end === undefined || gallery.length < 2) return; const distance = end - start; if (Math.abs(distance) > 40) moveImage(distance > 0 ? -1 : 1); }}
       >
         {active ? <>
           <Image src={active.src} alt={active.alt} fill priority sizes="(max-width: 768px) 100vw, 50vw" onError={(event) => { event.currentTarget.src = "/images/catalogue-stationery-generated.png"; }} className="object-contain p-6" />
