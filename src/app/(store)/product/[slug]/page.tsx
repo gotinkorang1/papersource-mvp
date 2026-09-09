@@ -12,6 +12,7 @@ import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, listPro
 import { publicEnv } from "@/lib/env";
 import { pageMetadata } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
+import { CopySkuButton } from "@/components/products/copy-sku-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { ProductGridList } from "@/components/products/product-grid-list";
@@ -109,7 +110,7 @@ export default async function ProductPage({ params }: PageProps) {
             {canEdit ? <Link href={`/admin/products/${product.id}`} className="mt-2 inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit product</Link> : null}
           </div>
           <p className="mt-2 text-slate">{product.specLine}</p>
-          <p className="mt-4 font-mono text-sm text-slate">SKU {product.sku}</p>
+          <div className="mt-4"><CopySkuButton sku={product.sku} /></div>
           <div className="mt-6 space-y-3">
             <PriceDisplay
               pesewas={product.unitPricePesewas}
