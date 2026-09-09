@@ -8,7 +8,9 @@ export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
   if (request.headers.get("origin") !== origin) return new NextResponse("Cross-site submissions are not allowed.", { status: 403 });
   const formData = await request.formData();
-  const token = z.string().uuid().parse(formData.get("token"));
+  const parsedToken = z.string().uuid().safeParse(formData.get("token"));
+  if (!parsedToken.success) return new NextResponse("Invalid quotation link.", { status: 400 });
+  const token = parsedToken.data;
   const quoteUrl = new URL(`/quote/${token}`, origin);
 
   try {
