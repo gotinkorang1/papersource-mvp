@@ -54,7 +54,7 @@ export function ProductCard({
     <PaperCard className={cn("group flex flex-col overflow-hidden", className)}>
       <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
         <Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`} className="absolute inset-0 z-[1] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink">
-          <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
+          <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" onError={(event) => { event.currentTarget.src = "/images/set-school-stationery.jpg"; }} className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
           <span className="absolute bottom-3 right-3 rounded-full bg-card/95 px-3 py-1.5 text-xs font-semibold text-ink opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">View details</span>
         </Link>
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
