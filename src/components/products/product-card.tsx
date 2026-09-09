@@ -3,6 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
+import type { CSSProperties } from "react";
 import { Check } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { PaperCard } from "@/components/commerce/paper-card";
@@ -29,12 +30,14 @@ export function ProductCard({
   onAddToCart,
   onAddToQuote,
   className,
+  style,
   canEdit = false,
 }: {
   product: ProductCardModel;
   onAddToCart?: (product: ProductCardModel, quantity: number) => void;
   onAddToQuote?: (product: ProductCardModel, quantity: number) => void;
   className?: string;
+  style?: CSSProperties;
   canEdit?: boolean;
 }) {
   const preview = useOptionalDualPathPreview();
@@ -51,7 +54,7 @@ export function ProductCard({
   };
 
   return (
-    <PaperCard className={cn("group flex flex-col overflow-hidden", className)}>
+    <PaperCard className={cn("group flex flex-col overflow-hidden", className)} style={style}>
       <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
         <Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`} className="absolute inset-0 z-[1] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink">
           <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" onError={(event) => { event.currentTarget.src = "/images/set-school-stationery.jpg"; }} className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />

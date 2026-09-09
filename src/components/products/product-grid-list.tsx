@@ -32,11 +32,12 @@ export function ProductGridList({
 
   return (
     <ProductGrid>
-      {products.map((product) => (
+      {products.map((product, index) => (
         <ProductCard
           key={product.id}
           product={product}
           className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2"
+          style={{ animationDelay: `${Math.min(index, 11) * 45}ms` }}
           onAddToCart={addToCart}
           onAddToQuote={addToQuote}
           canEdit={canEdit}
