@@ -149,6 +149,14 @@
   background-color: var(--card) !important;
 }
 
+/* Some legacy actions pair a semantic surface utility with a hard-coded
+   white label. In dark mode the semantic surfaces become light, so keep the
+   label on the dark foreground token for readable contrast. */
+.dark .bg-ink.text-white,
+.dark .bg-paper-green.text-white {
+  color: var(--primary-foreground) !important;
+}
+
 /* Admin data surfaces use a denser treatment while still following the
    active theme. This keeps table rows, native controls, and alerts readable
    when staff switch themes from the shared storefront header. */
