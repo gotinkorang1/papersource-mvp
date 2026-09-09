@@ -16,12 +16,13 @@ const lineSchema = z.object({
 });
 
 export async function updateQuoteQuantityAction(formData: FormData) {
-  const parsed = lineSchema.parse({
+  const parsed = lineSchema.safeParse({
     variantId: formData.get("variantId"),
     quantity: formData.get("quantity"),
   });
+  if (!parsed.success) return;
   const sessionId = await readCommerceIdentity(true);
-  await setQuoteLineQuantity(sessionId, parsed.variantId, parsed.quantity);
+  await setQuoteLineQuantity(sessionId, parsed.data.variantId, parsed.data.quantity);
   revalidatePath("/", "layout");
   revalidatePath("/quote");
   revalidatePath("/request-quote");
@@ -29,7 +30,9 @@ export async function updateQuoteQuantityAction(formData: FormData) {
 }
 
 export async function removeQuoteLineAction(formData: FormData) {
-  const variantId = z.string().uuid().parse(formData.get("variantId"));
+  const parsedVariantId = z.string().uuid().safeParse(formData.get("variantId"));
+  if (!parsedVariantId.success) return;
+  const variantId = parsedVariantId.data;
   const sessionId = await readCommerceIdentity(true);
   await removeQuoteLine(sessionId, variantId);
   revalidatePath("/", "layout");
