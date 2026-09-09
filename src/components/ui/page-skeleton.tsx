@@ -1,7 +1,7 @@
 export function PageSkeleton({ variant = "content" }: { variant?: "content" | "catalogue" }) {
   return (
     <main aria-busy="true" aria-label="Loading page" className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-      <div className="animate-pulse space-y-5">
+      <div className="animate-pulse space-y-5 motion-reduce:animate-none">
         <div className="h-3 w-24 rounded-full bg-muted" />
         <div className="h-10 max-w-xl rounded-lg bg-muted md:h-14" />
         <div className="h-5 max-w-2xl rounded-lg bg-muted" />
