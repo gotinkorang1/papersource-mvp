@@ -14,7 +14,7 @@ export function DualPathCounts() {
     <div className="flex items-center gap-3 text-sm">
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
         aria-label={itemCountLabel("Quote list", quoteCount)}
         aria-expanded={quoteOpen}
         onClick={() => setQuoteOpen(true)}
@@ -25,7 +25,7 @@ export function DualPathCounts() {
       </button>
       <button
         type="button"
-        className="inline-flex items-center gap-1.5 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
         aria-label={itemCountLabel("Cart", cartCount)}
         aria-expanded={cartOpen}
         onClick={() => setCartOpen(true)}
