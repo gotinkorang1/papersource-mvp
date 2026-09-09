@@ -69,6 +69,7 @@ export function HeaderSearch({
         aria-autocomplete="list"
         aria-expanded={open && suggestions.length > 0}
         aria-controls={`${inputId}-suggestions`}
+        aria-activedescendant={active >= 0 ? `${inputId}-suggestion-${active}` : undefined}
         autoComplete="off"
         placeholder="Search paper, toner, pens, brands or SKU..."
         className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink transition-[background-color,border-color,box-shadow] duration-200 placeholder:text-slate focus-visible:border-ink focus-visible:bg-card focus-visible:shadow-[0_0_0_3px_rgba(16,42,67,0.08)] focus-visible:outline-none"
@@ -76,7 +77,7 @@ export function HeaderSearch({
       {open && query.trim().length >= 2 && suggestions.length > 0 ? (
         <div id={`${inputId}-suggestions`} role="listbox" className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-border bg-card p-1 shadow-xl">
           {suggestions.map((suggestion, index) => (
-            <button key={suggestion.slug} type="button" role="option" aria-selected={index === active} onMouseDown={(event) => event.preventDefault()} onClick={() => { router.push(`/product/${suggestion.slug}`); setOpen(false); }} className={cn("flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left transition", index === active ? "bg-cream" : "hover:bg-cream")}>
+            <button id={`${inputId}-suggestion-${index}`} key={suggestion.slug} type="button" role="option" aria-selected={index === active} onMouseDown={(event) => event.preventDefault()} onClick={() => { router.push(`/product/${suggestion.slug}`); setOpen(false); }} className={cn("flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left transition", index === active ? "bg-cream" : "hover:bg-cream")}>
               <span className="min-w-0"><span className="block truncate text-sm font-medium text-ink">{suggestion.name}</span><span className="block truncate text-xs text-slate">{suggestion.specLine}</span></span>
               <span className="shrink-0 text-[11px] text-slate">{suggestion.sku}</span>
             </button>
