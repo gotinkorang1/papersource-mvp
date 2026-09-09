@@ -56,7 +56,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
           <div><p className="font-medium text-ink">Upload from device</p><p className="mt-1 text-xs text-slate">JPG, PNG, WebP or AVIF · max 2 MB each</p></div>
           <button type="button" className={paperButton({ variant: "secondary", className: "min-h-10" })} onClick={() => inputRef.current?.click()} disabled={!canAdd}>Choose images</button>
         </div>
-        <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple className="sr-only" onChange={(event) => addFiles(event.target.files)} />
+        <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple className="sr-only" onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ""; }} />
         {notice ? <p className="mt-3 text-xs text-paper-green" role="status">{notice}</p> : null}
         {items.length > 0 ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{items.map((item, index) => <div key={`${item.file.name}-${index}`} className="flex gap-3 rounded-lg border border-border bg-card p-2">
           <Image src={item.preview} alt="" width={64} height={64} unoptimized className="h-16 w-16 rounded-md object-cover" />
