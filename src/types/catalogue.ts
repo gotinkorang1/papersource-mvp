@@ -26,6 +26,7 @@ export type ProductCardModel = {
 };
 
 export type ProductDetailModel = ProductCardModel & {
+  imageSources?: { src: string; alt: string }[];
   sku: string;
   barcode: string | null;
   description: string;

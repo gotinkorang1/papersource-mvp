@@ -92,7 +92,7 @@ export default async function ProductPage({ params }: PageProps) {
       </nav>
 
       <div className="mt-8 grid gap-10 md:grid-cols-2">
-        <ProductGallery alt={product.imageAlt} src={product.imageSrc} />
+        <ProductGallery alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} />
         <div>
           <p className="text-sm text-slate">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">

@@ -346,9 +346,18 @@ export async function getProductBySlugFromDb(
   const bundleContents = attributes
     .filter((attribute) => attribute.namespace === "bundle" && attribute.key === "item")
     .map((attribute) => attribute.valueText);
+  const imageSources = ctx.imageRows
+    .filter((image) => image.productId === row.product.id)
+    .sort((a, b) => a.position - b.position)
+    .map((image) => ({
+      src: cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? "",
+      alt: image.alt,
+    }))
+    .filter((image) => image.src);
 
   return {
     ...toCardFromRow(row, ctx),
+    imageSources: imageSources.length ? imageSources : undefined,
     barcode: row.variant.barcode,
     description: row.product.description ?? "",
     brandName: brand?.name ?? "PaperSource",
