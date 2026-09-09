@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -11,9 +11,15 @@ type UploadItem = { file: File; preview: string; status: "ready" | "uploading" |
 export function ProductImageManager({ productId, imageCount }: { productId: string; imageCount: number }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [items, setItems] = useState<UploadItem[]>([]);
+  const itemsRef = useRef<UploadItem[]>([]);
   const [url, setUrl] = useState("");
   const [urlAlt, setUrlAlt] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
+
+  itemsRef.current = items;
+  useEffect(() => () => {
+    for (const item of itemsRef.current) URL.revokeObjectURL(item.preview);
+  }, []);
 
   function addFiles(files: FileList | null) {
     if (!files) return;
