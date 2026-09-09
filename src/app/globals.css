@@ -47,6 +47,7 @@
   --color-popover: var(--popover);
   --color-card-foreground: var(--card-foreground);
   --color-card: var(--card);
+  --color-surface: var(--ps-surface);
   --radius-sm: 0.25rem;
   --radius-md: 0.375rem;
   --radius-lg: 0.5rem;
@@ -110,6 +111,7 @@
   --ps-paper-green: #74c7a7;
   --ps-ochre: #f3bd4e;
   --ps-cream: #132f48;
+  --ps-surface: #1a3a56;
   --ps-graphite: #f8f6f1;
   --ps-slate: #b0b7c3;
   --ps-error: #ff8a80;
