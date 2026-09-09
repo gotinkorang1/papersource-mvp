@@ -91,16 +91,16 @@ export default async function ProductPage({ params }: PageProps) {
         </ol>
       </nav>
 
-      <div className="mt-8 grid gap-10 md:grid-cols-2">
-        <ProductGallery alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} />
-        <div>
+      <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-12">
+        <div className="md:sticky md:top-24 md:self-start"><ProductGallery alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} /></div>
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
           <p className="text-sm text-slate">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
               {product.brandName}
             </Link>
           </p>
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <h1 className="mt-2 text-3xl text-ink">{product.name}</h1>
+            <h1 className="mt-2 text-3xl leading-tight text-ink sm:text-4xl">{product.name}</h1>
             {canEdit ? <Link href={`/admin/products/${product.id}`} className="mt-2 inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit product</Link> : null}
           </div>
           <p className="mt-2 text-slate">{product.specLine}</p>
