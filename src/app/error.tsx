@@ -1,8 +1,14 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
-export default function GlobalError({ reset }: { reset: () => void }) {
+export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    // Keep a correlation marker available without exposing server details in the UI.
+    console.error("PaperSource page failed to render", { digest: error.digest });
+  }, [error]);
+
   return (
     <main className="mx-auto flex min-h-screen w-full max-w-2xl flex-col items-center justify-center px-4 py-16 text-center sm:px-6 lg:px-8">
       <p className="text-sm font-semibold uppercase tracking-[0.16em] text-ochre">PaperSource</p>
