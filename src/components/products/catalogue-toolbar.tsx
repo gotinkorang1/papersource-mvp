@@ -21,6 +21,13 @@ export function CatalogueToolbar({
   availability?: string;
 }) {
   const hasFilters = Boolean(query || category || brand || availability || sort !== "featured");
+  const activeLabels = [
+    query ? `Search: ${query}` : null,
+    category ? `Category: ${categories.find((entry) => entry.slug === category)?.name ?? category}` : null,
+    brand ? `Brand: ${brands.find((entry) => entry.slug === brand)?.name ?? brand}` : null,
+    availability ? `Stock: ${availability.replace("_", " ")}` : null,
+    sort !== "featured" ? `Sort: ${sort.replaceAll("-", " ")}` : null,
+  ].filter((label): label is string => Boolean(label));
 
   return (
     <section className="rounded-2xl border border-border/80 bg-card p-4 shadow-[0_8px_28px_rgba(16,42,67,0.06)] sm:p-5" aria-label="Catalogue filters">
@@ -69,6 +76,9 @@ export function CatalogueToolbar({
           </div>
         </details>
       </form>
+      {activeLabels.length ? <ul className="mt-4 flex flex-wrap gap-2" aria-label="Active catalogue filters">
+        {activeLabels.map((label) => <li key={label} className="rounded-full border border-border bg-cream px-3 py-1 text-xs font-medium text-slate">{label}</li>)}
+      </ul> : null}
       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-border/70 pt-4 text-sm text-slate">
         <p><span className="font-semibold text-ink">{count}</span> {count === 1 ? "product" : "products"}</p>
         {hasFilters ? <Link href="/shop" className="rounded-md px-2 py-1 font-medium text-ink underline-offset-4 transition hover:bg-cream hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear filters</Link> : null}
