@@ -51,11 +51,13 @@ export function ProductCard({
   };
 
   return (
-    <PaperCard className={cn("flex flex-col overflow-hidden", className)}>
+    <PaperCard className={cn("group flex flex-col overflow-hidden", className)}>
       <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
-        <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
+        <Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`} className="absolute inset-0 z-[1] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink">
+          <Image src={catalogueImage(product)} alt={product.imageAlt} fill sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
+        </Link>
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
-        <div className="absolute left-3 top-3"><StockBadge level={product.stock} /></div>
+        <div className="absolute left-3 top-3 z-10"><StockBadge level={product.stock} /></div>
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
@@ -67,7 +69,8 @@ export function ProductCard({
               {product.name}
             </Link>
           </h3>{canEdit ? <Link href={`/admin/products/${product.id}`} className="inline-flex min-h-10 shrink-0 items-center text-[0.7rem] font-semibold text-ink underline underline-offset-2">Edit</Link> : null}</div>
-          <p className="mt-1 min-h-[2.5rem] text-sm leading-5 text-slate">{product.specLine}</p>
+          <p className="mt-1 min-h-[2.5rem] line-clamp-2 text-sm leading-5 text-slate">{product.specLine}</p>
+          <p className="mt-2 font-mono text-[0.7rem] tracking-wide text-slate/80">SKU {product.sku}</p>
         </div>
         <PriceDisplay
           pesewas={product.unitPricePesewas}

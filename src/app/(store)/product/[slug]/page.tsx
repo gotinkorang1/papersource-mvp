@@ -120,6 +120,11 @@ export default async function ProductPage({ params }: PageProps) {
           <div className="mt-8">
             <ProductPurchase product={product} />
           </div>
+          <div className="mt-8 grid gap-2 border-t border-border pt-6 text-xs text-slate sm:grid-cols-3">
+            <div><p className="font-semibold text-ink">Accra & Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div>
+            <div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div>
+            <div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div>
+          </div>
           <p className="mt-6 max-w-prose text-sm text-slate">
             {product.description}
           </p>
