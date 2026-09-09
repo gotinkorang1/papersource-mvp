@@ -31,7 +31,7 @@ export function ProductGallery({
   return (
     <div>
       <div
-        className="relative aspect-square overflow-hidden border border-border bg-cream"
+        className="relative aspect-square touch-pan-y overflow-hidden border border-border bg-cream"
         role="img"
         aria-label={alt}
         onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }}
