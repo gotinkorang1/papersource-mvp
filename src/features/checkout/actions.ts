@@ -17,19 +17,22 @@ const lineSchema = z.object({
 });
 
 export async function updateCartQuantityAction(formData: FormData) {
-  const parsed = lineSchema.parse({
+  const parsed = lineSchema.safeParse({
     variantId: formData.get("variantId"),
     quantity: formData.get("quantity"),
   });
+  if (!parsed.success) return;
   const sessionId = await readCommerceIdentity(true);
-  await setCartLineQuantity(sessionId, parsed.variantId, parsed.quantity);
+  await setCartLineQuantity(sessionId, parsed.data.variantId, parsed.data.quantity);
   revalidatePath("/", "layout");
   revalidatePath("/cart");
   revalidatePath("/checkout");
 }
 
 export async function removeCartLineAction(formData: FormData) {
-  const variantId = z.string().uuid().parse(formData.get("variantId"));
+  const parsedVariantId = z.string().uuid().safeParse(formData.get("variantId"));
+  if (!parsedVariantId.success) return;
+  const variantId = parsedVariantId.data;
   const sessionId = await readCommerceIdentity(true);
   await removeCartLine(sessionId, variantId);
   revalidatePath("/", "layout");
