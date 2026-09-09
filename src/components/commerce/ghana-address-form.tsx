@@ -151,6 +151,7 @@ export function GhanaAddressForm({
           id={`${id}-region`}
           name="region"
           {...errorProps("region")}
+          autoComplete="address-level1"
           required
           value={values.region}
           onChange={(event) => patch("region", event.target.value)}
@@ -161,6 +162,7 @@ export function GhanaAddressForm({
           id={`${id}-city`}
           name="cityTown"
           {...errorProps("cityTown")}
+          autoComplete="address-level2"
           required
           value={values.cityTown}
           onChange={(event) => patch("cityTown", event.target.value)}
@@ -171,6 +173,7 @@ export function GhanaAddressForm({
           id={`${id}-area`}
           name="areaSuburb"
           {...errorProps("areaSuburb")}
+          autoComplete="address-level3"
           value={values.areaSuburb}
           onChange={(event) => patch("areaSuburb", event.target.value)}
         />
@@ -180,6 +183,7 @@ export function GhanaAddressForm({
           id={`${id}-street`}
           name="streetLandmark"
           {...errorProps("streetLandmark")}
+          autoComplete="street-address"
           value={values.streetLandmark}
           onChange={(event) => patch("streetLandmark", event.target.value)}
         />
@@ -193,6 +197,7 @@ export function GhanaAddressForm({
           id={`${id}-gps`}
           name="ghanapostGps"
           {...errorProps("ghanapostGps")}
+          autoComplete="postal-code"
           className="font-mono"
           placeholder="GA-123-4567"
           value={values.ghanapostGps}
