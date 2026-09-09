@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CatalogueFilterSubmit } from "@/components/products/catalogue-filter-submit";
 import type { CatalogueBrandView, CatalogueCategoryView } from "@/types/catalogue";
 
 export function CatalogueToolbar({
@@ -72,7 +73,7 @@ export function CatalogueToolbar({
               Sort by
               <select name="sort" defaultValue={sort} aria-label="Sort catalogue" className="h-11 min-w-0 rounded-lg border border-border bg-cream px-3 text-sm font-normal normal-case tracking-normal text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/10"><option value="featured">Featured</option><option value="name-asc">Name: A–Z</option><option value="price-asc">Price: low to high</option><option value="price-desc">Price: high to low</option></select>
             </label>
-            <button type="submit" className="h-11 w-full rounded-lg bg-ink px-5 text-sm font-semibold text-white shadow-[0_4px_12px_rgba(16,42,67,0.14)] transition hover:-translate-y-0.5 hover:bg-ink/90 hover:shadow-[0_8px_18px_rgba(16,42,67,0.2)] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:bg-ochre dark:text-ink dark:hover:bg-ochre/90 sm:col-span-2 lg:col-span-1 xl:col-span-1">Apply</button>
+            <CatalogueFilterSubmit />
           </div>
         </details>
       </form>
