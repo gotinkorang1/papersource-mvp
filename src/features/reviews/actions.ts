@@ -15,7 +15,12 @@ const reviewSchema = z.object({
 export type ReviewActionState = { success?: boolean; message?: string; errors?: Record<string, string[]> };
 
 export async function submitReviewAction(_previous: ReviewActionState, formData: FormData): Promise<ReviewActionState> {
-  const actor = await requireCustomer();
+  let actor: Awaited<ReturnType<typeof requireCustomer>>;
+  try {
+    actor = await requireCustomer();
+  } catch {
+    return { message: "Sign in before submitting a review." };
+  }
   const parsed = reviewSchema.safeParse(Object.fromEntries(formData));
   if (!parsed.success) return { message: "Check the highlighted review fields.", errors: parsed.error.flatten().fieldErrors };
   try {
