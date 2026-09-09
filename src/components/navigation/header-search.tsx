@@ -22,7 +22,10 @@ export function HeaderSearch({
 
   useEffect(() => {
     const value = query.trim();
-    if (value.length < 2) return;
+    if (value.length < 2) {
+      requestRef.current?.abort();
+      return;
+    }
     const timer = window.setTimeout(async () => {
       requestRef.current?.abort();
       const controller = new AbortController();
@@ -34,7 +37,10 @@ export function HeaderSearch({
         setSuggestions(data.suggestions ?? []); setActive(-1); setOpen(true);
       } catch { /* Ignore aborted or transient suggestion requests. */ }
     }, 180);
-    return () => window.clearTimeout(timer);
+    return () => {
+      window.clearTimeout(timer);
+      requestRef.current?.abort();
+    };
   }, [query]);
 
   function onSubmit(event: FormEvent) {
