@@ -19,7 +19,11 @@ export function productJsonLd(
     name: product.name,
     description: product.description,
     sku: product.sku,
-    ...(product.imageSrc ? { image: product.imageSrc } : {}),
+    ...(product.imageSources?.length
+      ? { image: product.imageSources.map((image) => image.src) }
+      : product.imageSrc
+        ? { image: product.imageSrc }
+        : {}),
     brand: {
       "@type": "Brand",
       name: product.brandName,

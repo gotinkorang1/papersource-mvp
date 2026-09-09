@@ -30,7 +30,15 @@ describe("productJsonLd", () => {
       { ...product, imageSrc: "https://res.cloudinary.com/demo/image.jpg" },
       "http://localhost:3000/product/double-a-premium-a4",
     );
-    expect(json.image).toBe("https://res.cloudinary.com/demo/image.jpg");
+    expect(json).toHaveProperty("image", "https://res.cloudinary.com/demo/image.jpg");
+  });
+
+  it("publishes every product image for rich search previews", () => {
+    const json = productJsonLd(
+      { ...product, imageSources: [{ src: "https://example.com/one.jpg", alt: "Front" }, { src: "https://example.com/two.jpg", alt: "Back" }] },
+      "http://localhost:3000/product/double-a-premium-a4",
+    );
+    expect(json).toHaveProperty("image", ["https://example.com/one.jpg", "https://example.com/two.jpg"]);
   });
 
   it("includes category, seller and a valid barcode as structured product data", () => {
