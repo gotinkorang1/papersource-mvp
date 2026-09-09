@@ -88,7 +88,7 @@ export function HeaderSearch({
         }}
         role="combobox"
         aria-autocomplete="list"
-        aria-expanded={open && (loading || suggestions.length > 0)}
+        aria-expanded={open && query.trim().length >= 2}
         aria-busy={loading}
         aria-controls={`${inputId}-suggestions`}
         aria-activedescendant={active >= 0 ? `${inputId}-suggestion-${active}` : undefined}
@@ -96,7 +96,7 @@ export function HeaderSearch({
         placeholder="Search paper, toner, pens, brands or SKU..."
         className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink transition-[background-color,border-color,box-shadow] duration-200 placeholder:text-slate focus-visible:border-ink focus-visible:bg-card focus-visible:shadow-[0_0_0_3px_rgba(16,42,67,0.08)] focus-visible:outline-none"
       />
-      {open && query.trim().length >= 2 && (loading || suggestions.length > 0) ? (
+      {open && query.trim().length >= 2 ? (
         <div id={`${inputId}-suggestions`} role="listbox" className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-border bg-card p-1 shadow-xl">
           {loading ? <p role="status" className="px-3 py-3 text-sm text-slate">Searching…</p> : null}
           {!loading && requestError ? <div className="flex items-center justify-between gap-3 px-3 py-3 text-sm text-slate"><p role="status">Suggestions are temporarily unavailable.</p><button type="button" onClick={() => setRetryNonce((value) => value + 1)} className="shrink-0 font-semibold text-ink underline underline-offset-2">Retry</button></div> : null}
