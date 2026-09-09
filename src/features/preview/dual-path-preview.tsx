@@ -21,6 +21,7 @@ type DualPathPreview = {
   cartOpen: boolean;
   quoteOpen: boolean;
   syncError: string | null;
+  clearSyncError: () => void;
   setCartOpen: (open: boolean) => void;
   setQuoteOpen: (open: boolean) => void;
   addToCart: (product: ProductCardModel, quantity: number) => void;
@@ -102,6 +103,7 @@ export function DualPathPreviewProvider({
   const [cartOpen, setCartOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const clearSyncError = useCallback(() => setSyncError(null), []);
 
   const setCartOpenExclusive = useCallback((open: boolean) => {
     setCartOpen(open);
@@ -196,6 +198,7 @@ export function DualPathPreviewProvider({
       cartOpen,
       quoteOpen,
       syncError,
+      clearSyncError,
       setCartOpen: setCartOpenExclusive,
       setQuoteOpen: setQuoteOpenExclusive,
       addToCart,
@@ -213,6 +216,7 @@ export function DualPathPreviewProvider({
       quoteLines,
       quoteOpen,
       syncError,
+      clearSyncError,
       setCartOpenExclusive,
       setQuoteOpenExclusive,
     ],
