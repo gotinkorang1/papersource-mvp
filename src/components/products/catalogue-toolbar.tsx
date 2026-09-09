@@ -52,7 +52,7 @@ export function CatalogueToolbar({
             className="h-11 min-w-0 rounded-lg border border-border bg-cream px-3 text-sm font-normal normal-case tracking-normal text-ink outline-none transition placeholder:text-slate/70 focus:border-ink focus:bg-card focus:ring-2 focus:ring-ink/10"
           />
         </label>
-        <details className="rounded-xl border border-border/70 bg-cream/40 p-3 sm:col-span-2 lg:col-span-3" open={hasFilters}>
+        <details className="rounded-xl border border-border/70 bg-cream/40 p-3 sm:col-span-2 lg:col-span-3" defaultOpen={hasFilters}>
           <summary className="cursor-pointer list-none text-sm font-semibold text-ink marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
             <span className="inline-flex items-center gap-2"><span aria-hidden>＋</span> More filters and sorting</span>
           </summary>
