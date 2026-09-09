@@ -32,8 +32,8 @@ export function ProductGallery({
     <div>
       <div
         className="relative aspect-square touch-pan-y overflow-hidden border border-border bg-cream"
-        role="img"
-        aria-label={alt}
+        role="region"
+        aria-label={`${alt} image gallery`}
         onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }}
         onTouchEnd={(event) => { const start = touchStartX.current; touchStartX.current = null; const end = event.changedTouches[0]?.clientX; if (start === null || end === undefined || gallery.length < 2) return; const distance = end - start; if (Math.abs(distance) > 40) moveImage(distance > 0 ? -1 : 1); }}
       >
