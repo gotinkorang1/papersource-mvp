@@ -20,7 +20,13 @@ const quoteIdSchema = z.string().uuid();
 export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
   const formData = await request.formData();
-  const quoteId = quoteIdSchema.parse(formData.get("quoteId"));
+  const parsedQuoteId = quoteIdSchema.safeParse(formData.get("quoteId"));
+  if (!parsedQuoteId.success) {
+    const invalid = new URL("/admin/quotes", origin);
+    invalid.searchParams.set("error", "That quotation reference is not valid.");
+    return NextResponse.redirect(invalid, 303);
+  }
+  const quoteId = parsedQuoteId.data;
   const intent = String(formData.get("intent") ?? "");
   let detail = new URL(`/admin/quotes/${quoteId}`, origin);
   let auditAction: string | null = null;
