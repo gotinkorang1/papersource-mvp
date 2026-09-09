@@ -98,7 +98,7 @@ export default async function ProductPage({ params }: PageProps) {
       </nav>
 
       <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-12">
-        <div className="md:sticky md:top-24 md:self-start"><ProductGallery alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} /></div>
+        <div className="md:sticky md:top-24 md:self-start"><ProductGallery key={product.slug} alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} /></div>
         <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
           <p className="text-sm text-slate">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
