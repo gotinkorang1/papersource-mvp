@@ -62,7 +62,7 @@ export function ProductCard({
       </div>
       <div className="flex flex-1 flex-col gap-3 p-5">
         <div>
-          <div className="flex items-start justify-between gap-2"><h3 className="min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
+          <div className="flex items-start justify-between gap-2"><h3 className="line-clamp-2 min-h-[2.75rem] text-base font-semibold leading-snug text-ink">
             <Link
               href={`/product/${product.slug}`}
               className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
