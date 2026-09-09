@@ -27,7 +27,9 @@ export function AddressForm({ addressId, defaultValues, isDefault = false }: {
 export function AddressMutationButton({ addressId, intent }: { addressId: string; intent: "remove" | "default" }) {
   const [state, action, pending] = useActionState(intent === "remove" ? removeAddressAction : defaultAddressAction, {} as AccountActionState);
   return (
-    <form action={action}>
+    <form action={action} onSubmit={(event) => {
+      if (intent === "remove" && !window.confirm("Remove this saved address?")) event.preventDefault();
+    }}>
       <input type="hidden" name="addressId" value={addressId} />
       <button type="submit" disabled={pending} className="min-h-10 underline disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">
         {pending ? "Updating…" : intent === "remove" ? "Remove" : "Make default"}
