@@ -57,7 +57,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
       </div>
       <div className="mt-8">
         <ProductGridList products={visibleProducts} canEdit={canEdit} />
-        <CataloguePagination page={Math.min(page, totalPages)} totalPages={totalPages} query={{ q: query, category, brand, sort, availability, zone }} />
+        <CataloguePagination page={Math.min(page, totalPages)} totalPages={totalPages} totalItems={filteredProducts.length} pageSize={pageSize} query={{ q: query, category, brand, sort, availability, zone }} />
       </div>
     </main>
   );
