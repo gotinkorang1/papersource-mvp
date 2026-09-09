@@ -19,6 +19,7 @@ export function HeaderSearch({
   const [active, setActive] = useState(-1);
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [requestError, setRequestError] = useState(false);
   const requestRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -32,12 +33,20 @@ export function HeaderSearch({
       const controller = new AbortController();
       requestRef.current = controller;
       setLoading(true);
+      setRequestError(false);
       try {
         const response = await fetch(`/api/search/suggestions?q=${encodeURIComponent(value)}`, { signal: controller.signal });
-        if (!response.ok) return;
+        if (!response.ok) throw new Error("Suggestion request failed");
         const data = await response.json() as { suggestions?: typeof suggestions };
         setSuggestions(data.suggestions ?? []); setActive(-1); setOpen(true);
-      } catch { /* Ignore aborted or transient suggestion requests. */ }
+      } catch {
+        if (!controller.signal.aborted && requestRef.current === controller) {
+          setSuggestions([]);
+          setActive(-1);
+          setRequestError(true);
+          setOpen(true);
+        }
+      }
       finally {
         if (requestRef.current === controller) setLoading(false);
       }
@@ -68,7 +77,7 @@ export function HeaderSearch({
         id={inputId}
         type="search"
         value={query}
-        onChange={(event) => { const next = event.target.value; setQuery(next); setOpen(next.trim().length >= 2); if (next.trim().length < 2) setSuggestions([]); }}
+        onChange={(event) => { const next = event.target.value; setQuery(next); setRequestError(false); setOpen(next.trim().length >= 2); if (next.trim().length < 2) setSuggestions([]); }}
         onFocus={() => { if (suggestions.length) setOpen(true); }}
         onKeyDown={(event) => {
           if (!open || !suggestions.length) return;
@@ -89,7 +98,8 @@ export function HeaderSearch({
       {open && query.trim().length >= 2 && (loading || suggestions.length > 0) ? (
         <div id={`${inputId}-suggestions`} role="listbox" className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-border bg-card p-1 shadow-xl">
           {loading ? <p role="status" className="px-3 py-3 text-sm text-slate">Searching…</p> : null}
-          {!loading && suggestions.length === 0 ? <p role="status" className="px-3 py-3 text-sm text-slate">No matching products yet.</p> : null}
+          {!loading && requestError ? <p role="status" className="px-3 py-3 text-sm text-slate">Suggestions are temporarily unavailable.</p> : null}
+          {!loading && !requestError && suggestions.length === 0 ? <p role="status" className="px-3 py-3 text-sm text-slate">No matching products yet.</p> : null}
           {suggestions.map((suggestion, index) => (
             <button id={`${inputId}-suggestion-${index}`} key={suggestion.slug} type="button" role="option" aria-selected={index === active} onMouseDown={(event) => event.preventDefault()} onClick={() => { router.push(`/product/${suggestion.slug}`); setOpen(false); }} className={cn("flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left transition", index === active ? "bg-cream" : "hover:bg-cream")}>
               <span className="min-w-0"><span className="block truncate text-sm font-medium text-ink">{suggestion.name}</span><span className="block truncate text-xs text-slate">{suggestion.specLine}</span></span>
