@@ -20,6 +20,7 @@ export function HeaderSearch({
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [requestError, setRequestError] = useState(false);
+  const [retryNonce, setRetryNonce] = useState(0);
   const requestRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
@@ -55,7 +56,7 @@ export function HeaderSearch({
       window.clearTimeout(timer);
       requestRef.current?.abort();
     };
-  }, [query]);
+  }, [query, retryNonce]);
 
   function onSubmit(event: FormEvent) {
     event.preventDefault();
@@ -98,7 +99,7 @@ export function HeaderSearch({
       {open && query.trim().length >= 2 && (loading || suggestions.length > 0) ? (
         <div id={`${inputId}-suggestions`} role="listbox" className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-border bg-card p-1 shadow-xl">
           {loading ? <p role="status" className="px-3 py-3 text-sm text-slate">Searching…</p> : null}
-          {!loading && requestError ? <p role="status" className="px-3 py-3 text-sm text-slate">Suggestions are temporarily unavailable.</p> : null}
+          {!loading && requestError ? <div className="flex items-center justify-between gap-3 px-3 py-3 text-sm text-slate"><p role="status">Suggestions are temporarily unavailable.</p><button type="button" onClick={() => setRetryNonce((value) => value + 1)} className="shrink-0 font-semibold text-ink underline underline-offset-2">Retry</button></div> : null}
           {!loading && !requestError && suggestions.length === 0 ? <p role="status" className="px-3 py-3 text-sm text-slate">No matching products yet.</p> : null}
           {suggestions.map((suggestion, index) => (
             <button id={`${inputId}-suggestion-${index}`} key={suggestion.slug} type="button" role="option" aria-selected={index === active} onMouseDown={(event) => event.preventDefault()} onClick={() => { router.push(`/product/${suggestion.slug}`); setOpen(false); }} className={cn("flex w-full items-center justify-between gap-4 rounded-lg px-3 py-2.5 text-left transition", index === active ? "bg-cream" : "hover:bg-cream")}>
