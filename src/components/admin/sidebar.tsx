@@ -17,11 +17,13 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const accountWasOpen = useRef(false);
   const [navOpen, setNavOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const closeTransientPanels = () => {
+    setNavOpen(false);
+    setAccountOpen(false);
+  };
 
   useEffect(() => {
     activeLinkRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
-    setNavOpen(false);
-    setAccountOpen(false);
   }, [pathname]);
 
   useEffect(() => {
@@ -77,6 +79,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                 key={group.href}
                 href={group.href}
                 ref={current ? activeLinkRef : undefined}
+                onClick={closeTransientPanels}
                 className={`flex min-h-11 w-full snap-start items-center rounded-md px-3 py-2 text-sm md:min-h-0 ${ 
                   current ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50" : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                 }`}
@@ -108,6 +111,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                       <Link
                         href={item.href}
                         ref={current ? activeLinkRef : undefined}
+                        onClick={closeTransientPanels}
                         className={`flex min-h-11 w-full snap-start items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${ 
                           current
                             ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50"
