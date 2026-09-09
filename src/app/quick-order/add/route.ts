@@ -36,12 +36,19 @@ export async function POST(request: Request) {
     return withSessionCookie(NextResponse.redirect(back, 303), sessionId, created);
   }
 
-  const customer = await readCustomerActor();
-  const result = await applyQuickOrderLines({
-    sessionId: customer ? { sessionId, profileId: customer.profileId } : sessionId,
-    destination,
-    rows: parsed.rows,
-  });
+  let result: Awaited<ReturnType<typeof applyQuickOrderLines>>;
+  try {
+    const customer = await readCustomerActor();
+    result = await applyQuickOrderLines({
+      sessionId: customer ? { sessionId, profileId: customer.profileId } : sessionId,
+      destination,
+      rows: parsed.rows,
+    });
+  } catch {
+    const back = new URL("/quick-order", origin);
+    back.searchParams.set("error", "Quick order is temporarily unavailable. Please try again.");
+    return withSessionCookie(NextResponse.redirect(back, 303), sessionId, created);
+  }
 
   if (result.added === 0) {
     const back = new URL("/quick-order", origin);
