@@ -52,7 +52,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
                 <td className="px-4 py-3" data-label="Name">{canWrite ? <input type="checkbox" name="brandId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
                 <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>
-                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
+                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit</a></td> : null}
               </tr>
             ))}
           </tbody>
@@ -60,35 +60,32 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
       </form>
       {canWrite
         ? rows.map((row) => (
-            <form
+            <details
               key={row.id}
               id={`brand-${row.id}`}
-              action="/admin/brands/mutate"
-              method="post"
-              className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-3"
+              className="mt-4 rounded-xl border border-border bg-card shadow-sm"
             >
-              <input type="hidden" name="intent" value="save-brand" />
-              <input type="hidden" name="brandId" value={row.id} />
-              <AdminField label="Name">
-                <input name="name" required defaultValue={row.name} className={adminFieldClass} />
-              </AdminField>
-              <AdminField label="Slug">
-                <input name="slug" required defaultValue={row.slug} className={adminFieldClass} />
-              </AdminField>
-              <AdminField label="Active">
-                <select
-                  name="active"
-                  defaultValue={row.active ? "true" : "false"}
-                  className={adminFieldClass}
-                >
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </AdminField>
-              <div className="sm:col-span-3">
-                <SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving brand…" className={paperButton()} />
-              </div>
-            </form>
+              <summary className="cursor-pointer list-none px-5 py-4 font-medium text-ink marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit {row.name}<span className="float-right text-sm text-slate">Expand</span></summary>
+              <form action="/admin/brands/mutate" method="post" className="grid gap-3 border-t border-border p-5 sm:grid-cols-3">
+                <input type="hidden" name="intent" value="save-brand" />
+                <input type="hidden" name="brandId" value={row.id} />
+                <AdminField label="Name">
+                  <input name="name" required defaultValue={row.name} className={adminFieldClass} />
+                </AdminField>
+                <AdminField label="Slug">
+                  <input name="slug" required defaultValue={row.slug} className={adminFieldClass} />
+                </AdminField>
+                <AdminField label="Active">
+                  <select name="active" defaultValue={row.active ? "true" : "false"} className={adminFieldClass}>
+                    <option value="true">Yes</option>
+                    <option value="false">No</option>
+                  </select>
+                </AdminField>
+                <div className="sm:col-span-3">
+                  <SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving brand…" className={paperButton()} />
+                </div>
+              </form>
+            </details>
           ))
         : null}
       {canWrite ? (

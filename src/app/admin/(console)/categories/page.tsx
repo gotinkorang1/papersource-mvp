@@ -65,7 +65,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 <td className="px-4 py-3" data-label="Name">{canWrite ? <input form="bulk-categories" type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
                 <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
                 <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>
-                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline">Edit</a></td> : null}
+                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit</a></td> : null}
               </tr>
             ))}
           </tbody>
@@ -73,64 +73,25 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
       </div>
       {canWrite
         ? rows.map((row) => (
-            <form
+            <details
               key={row.id}
               id={`category-${row.id}`}
-              action="/admin/categories/mutate"
-              method="post"
-              className="mt-4 grid gap-3 rounded-xl border border-border bg-card p-5 sm:grid-cols-2"
+              className="mt-4 rounded-xl border border-border bg-card shadow-sm"
             >
-              <input type="hidden" name="intent" value="save-category" />
-              <input type="hidden" name="categoryId" value={row.id} />
-              <AdminField label="Name">
-                <input name="name" required defaultValue={row.name} className={adminFieldClass} />
-              </AdminField>
-              <AdminField label="Slug">
-                <input name="slug" required defaultValue={row.slug} className={adminFieldClass} />
-              </AdminField>
-              <AdminField label="Parent">
-                <select name="parentId" defaultValue={row.parentId ?? ""} className={adminFieldClass}>
-                  <option value="">None (division)</option>
-                  {allRows
-                    .filter((candidate) => candidate.id !== row.id)
-                    .map((candidate) => (
-                      <option key={candidate.id} value={candidate.id}>
-                        {categoryPath(candidate)}
-                      </option>
-                    ))}
-                </select>
-              </AdminField>
-              <AdminField label="Position">
-                <input
-                  name="position"
-                  defaultValue={String(row.position)}
-                  className={adminFieldClass}
-                />
-              </AdminField>
-              <AdminField label="Active">
-                <select
-                  name="active"
-                  defaultValue={row.active ? "true" : "false"}
-                  className={adminFieldClass}
-                >
-                  <option value="true">Yes</option>
-                  <option value="false">No</option>
-                </select>
-              </AdminField>
-              <AdminField label="Description">
-                <textarea
-                  name="description"
-                  defaultValue={row.description ?? ""}
-                  className={adminAreaClass}
-                />
-              </AdminField>
-              <AdminField label="Category image (Cloudinary public ID or URL)">
-                <input name="imagePublicId" defaultValue={row.imagePublicId ?? ""} className={adminFieldClass} placeholder="papersource/categories/paper" />
-              </AdminField>
-              <div className="sm:col-span-2">
-                <SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving category…" className={paperButton()} />
-              </div>
-            </form>
+              <summary className="cursor-pointer list-none px-5 py-4 font-medium text-ink marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit {row.name}<span className="float-right text-sm text-slate">Expand</span></summary>
+              <form action="/admin/categories/mutate" method="post" className="grid gap-3 border-t border-border p-5 sm:grid-cols-2">
+                <input type="hidden" name="intent" value="save-category" />
+                <input type="hidden" name="categoryId" value={row.id} />
+                <AdminField label="Name"><input name="name" required defaultValue={row.name} className={adminFieldClass} /></AdminField>
+                <AdminField label="Slug"><input name="slug" required defaultValue={row.slug} className={adminFieldClass} /></AdminField>
+                <AdminField label="Parent"><select name="parentId" defaultValue={row.parentId ?? ""} className={adminFieldClass}><option value="">None (division)</option>{allRows.filter((candidate) => candidate.id !== row.id).map((candidate) => <option key={candidate.id} value={candidate.id}>{categoryPath(candidate)}</option>)}</select></AdminField>
+                <AdminField label="Position"><input name="position" defaultValue={String(row.position)} className={adminFieldClass} /></AdminField>
+                <AdminField label="Active"><select name="active" defaultValue={row.active ? "true" : "false"} className={adminFieldClass}><option value="true">Yes</option><option value="false">No</option></select></AdminField>
+                <AdminField label="Description"><textarea name="description" defaultValue={row.description ?? ""} className={adminAreaClass} /></AdminField>
+                <AdminField label="Category image (Cloudinary public ID or URL)"><input name="imagePublicId" defaultValue={row.imagePublicId ?? ""} className={adminFieldClass} placeholder="papersource/categories/paper" /></AdminField>
+                <div className="sm:col-span-2"><SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving category…" className={paperButton()} /></div>
+              </form>
+            </details>
           ))
         : null}
       {canWrite ? (
