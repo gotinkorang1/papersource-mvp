@@ -1,4 +1,4 @@
-import { processPaystackWebhook, WebhookSignatureError } from "@/features/payments/webhook";
+import { processPaystackWebhook, WebhookPayloadError, WebhookSignatureError } from "@/features/payments/webhook";
 import { captureServerException } from "@/lib/observability/sentry";
 
 export async function POST(request: Request) {
@@ -10,6 +10,9 @@ export async function POST(request: Request) {
   } catch (error) {
     if (error instanceof WebhookSignatureError) {
       return new Response("invalid signature", { status: 401 });
+    }
+    if (error instanceof WebhookPayloadError) {
+      return new Response("invalid payload", { status: 400 });
     }
     captureServerException(error, {
       operation: "paystack_webhook",
