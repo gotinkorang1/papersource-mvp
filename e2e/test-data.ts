@@ -14,3 +14,6 @@ export const catalogueName =
 const baseUrl = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
 const localTarget = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/i.test(baseUrl);
 export const hostedFixtureMissing = !localTarget && !process.env.E2E_CATALOGUE_SKU;
+// Quick Order assertions depend on exact tier/stock data, so require an
+// explicit SKU even for local runs where the database may contain other data.
+export const quickOrderFixtureMissing = !process.env.E2E_CATALOGUE_SKU;

@@ -1,5 +1,5 @@
 import { expect, test as base } from "@playwright/test";
-import { catalogueName, catalogueSku, hostedFixtureMissing } from "./test-data";
+import { catalogueName, catalogueSku, quickOrderFixtureMissing } from "./test-data";
 
 const test = base.extend<{ consoleGuard: void }>({
   consoleGuard: [async ({ page }, use) => {
@@ -13,7 +13,7 @@ const test = base.extend<{ consoleGuard: void }>({
   }, { auto: true }],
 });
 
-test.beforeEach(() => test.skip(hostedFixtureMissing, "Set E2E_CATALOGUE_SKU for hosted fixture journeys."));
+test.beforeEach(() => test.skip(quickOrderFixtureMissing, "Set E2E_CATALOGUE_SKU for Quick Order fixture journeys."));
 
 test("cross-site Quick Order submissions cannot replace the guest basket cookie", async ({ request }) => {
   const response = await request.post("/quick-order/add", {
