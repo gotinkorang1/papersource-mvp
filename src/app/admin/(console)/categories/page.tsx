@@ -66,7 +66,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 <td className="px-4 py-3" data-label="Name">{canWrite ? <input form="bulk-categories" type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
                 <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
                 <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>
-                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit</a></td> : null}
+                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#category-${row.id}`} className="font-semibold text-paper-green underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit below</a></td> : null}
               </tr>
             ))}
           </tbody>

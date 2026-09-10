@@ -53,7 +53,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
                 <td className="px-4 py-3" data-label="Name">{canWrite ? <input type="checkbox" name="brandId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
                 <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>
-                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit</a></td> : null}
+                {canWrite ? <td className="px-4 py-3" data-label="Actions"><a href={`#brand-${row.id}`} className="font-semibold text-paper-green underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit below</a></td> : null}
               </tr>
             ))}
           </tbody>
