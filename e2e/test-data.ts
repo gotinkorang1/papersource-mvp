@@ -7,6 +7,10 @@ export const catalogueSlug =
   process.env.E2E_CATALOGUE_SLUG?.trim() || "double-a-premium-a4";
 export const catalogueName =
   process.env.E2E_CATALOGUE_NAME?.trim() || "Double A Premium A4 Paper";
+export const secondaryCatalogueSku =
+  process.env.E2E_SECONDARY_CATALOGUE_SKU?.trim() || "HP-305-BLK";
+export const secondaryCatalogueName =
+  process.env.E2E_SECONDARY_CATALOGUE_NAME?.trim() || "HP 305 Black Ink Cartridge";
 
 // A fixture must be explicitly selected for any journey that mutates baskets,
 // orders, or quotes on hosted targets. Local runs use the seeded catalogue
@@ -16,4 +20,4 @@ const localTarget = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/i.test(base
 export const hostedFixtureMissing = !localTarget && !process.env.E2E_CATALOGUE_SKU;
 // Quick Order assertions depend on exact tier/stock data, so require an
 // explicit SKU even for local runs where the database may contain other data.
-export const quickOrderFixtureMissing = !process.env.E2E_CATALOGUE_SKU;
+export const quickOrderFixtureMissing = !process.env.E2E_CATALOGUE_SKU || !process.env.E2E_CATALOGUE_NAME || !process.env.E2E_SECONDARY_CATALOGUE_SKU || !process.env.E2E_SECONDARY_CATALOGUE_NAME;

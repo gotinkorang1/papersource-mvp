@@ -1,5 +1,5 @@
 import { expect, test as base } from "@playwright/test";
-import { catalogueName, catalogueSku, quickOrderFixtureMissing } from "./test-data";
+import { catalogueName, catalogueSku, quickOrderFixtureMissing, secondaryCatalogueName, secondaryCatalogueSku } from "./test-data";
 
 const test = base.extend<{ consoleGuard: void }>({
   consoleGuard: [async ({ page }, use) => {
@@ -18,7 +18,7 @@ test.beforeEach(() => test.skip(quickOrderFixtureMissing, "Set E2E_CATALOGUE_SKU
 test("cross-site Quick Order submissions cannot replace the guest basket cookie", async ({ request }) => {
   const response = await request.post("/quick-order/add", {
     headers: { Origin: "https://unrelated.example" },
-    form: { destination: "cart", sku: "HP-305-BLK", quantity: "1" },
+    form: { destination: "cart", sku: secondaryCatalogueSku, quantity: "1" },
     maxRedirects: 0,
   });
   expect(response.status()).toBe(403);
@@ -31,14 +31,14 @@ test("Quick Order adds two SKUs to the quote basket only", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Quick Order" })).toBeVisible();
   await page.locator("#quick-sku-0").fill(catalogueSku);
   await page.locator("#quick-qty-0").fill("10");
-  await page.locator("#quick-sku-1").fill("HP-305-BLK");
+  await page.locator("#quick-sku-1").fill(secondaryCatalogueSku);
   await page.locator("#quick-qty-1").fill("2");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
   await expect(page.getByRole("heading", { name: "Quote list" })).toBeVisible({
     timeout: 45_000,
   });
   await expect(page.getByText(catalogueName)).toBeVisible();
-  await expect(page.getByText("HP 305 Black Ink Cartridge")).toBeVisible();
+  await expect(page.getByText(secondaryCatalogueName)).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Quote list, 12 items" }).first(),
   ).toBeVisible();
@@ -113,7 +113,7 @@ test("duplicate quantity overflow reports an error without creating a quote line
 
 test("cart partial success reports a rejected SKU row instead of silently dropping it", async ({ page }) => {
   await page.goto("/quick-order");
-  await page.getByLabel("SKU 1", { exact: true }).fill("HP-305-BLK");
+    await page.getByLabel("SKU 1", { exact: true }).fill(secondaryCatalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("2");
   await page.getByLabel("SKU 2", { exact: true }).fill(catalogueSku);
   await page.getByRole("button", { name: "Add all to Cart" }).click();
@@ -129,7 +129,7 @@ test("mobile Quick Order stays within the viewport and preserves cart/quote sepa
   await page.getByRole("button", { name: "Add more rows" }).click();
   await expect(page.getByLabel("SKU 12", { exact: true })).toBeVisible();
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
-  await page.getByLabel("SKU 1", { exact: true }).fill("HP-305-BLK");
+  await page.getByLabel("SKU 1", { exact: true }).fill(secondaryCatalogueSku);
   await page.getByLabel("Quantity 1", { exact: true }).fill("1");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
   await expect(page.getByRole("button", { name: "Quote list, 1 item" }).first()).toBeVisible();
