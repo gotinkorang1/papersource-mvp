@@ -233,6 +233,10 @@ export async function POST(request: Request) {
     return redirectWithError(next, error);
   }
 
-  if (isJsonRequest(request)) return NextResponse.json({ ok: true });
+  if (isJsonRequest(request)) {
+    const error = next.searchParams.get("error");
+    if (error) return NextResponse.json({ error }, { status: 400 });
+    return NextResponse.json({ ok: true });
+  }
   return NextResponse.redirect(next, 303);
 }
