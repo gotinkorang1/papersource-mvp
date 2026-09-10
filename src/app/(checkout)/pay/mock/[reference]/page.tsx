@@ -52,7 +52,7 @@ export default async function MockPaystackPage({ params }: PageProps) {
       <p className="text-sm tracking-[0.16em] text-slate uppercase">
         Paystack test checkout
       </p>
-      <h1 className="mt-2 text-3xl text-ink">Pay {formatGhs(row.amount)}</h1>
+      <h1 className="mt-2 text-3xl text-ink" data-testid="mock-payment-amount" data-pesewas={row.amount}>Pay {formatGhs(row.amount)}</h1>
       <p className="mt-4 text-slate">
         Live Paystack keys are not configured. This page stands in for hosted
         checkout. Completing it sends a signed <code>charge.success</code>{" "}

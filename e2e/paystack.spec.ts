@@ -37,6 +37,8 @@ test("Paystack mock checkout marks the order paid via signed webhook", async ({
   await expect(page.getByRole("heading", { name: /Pay GHS/ })).toBeVisible({
     timeout: 30_000,
   });
+  const paymentAmount = Number(await page.getByTestId("mock-payment-amount").getAttribute("data-pesewas"));
+  expect(Number.isInteger(paymentAmount)).toBe(true);
   const reference = page.url().split("/pay/mock/")[1]?.split("?")[0] ?? "";
   expect(reference.length).toBeGreaterThan(8);
   await page.getByRole("button", { name: "Simulate successful payment" }).click();
@@ -55,7 +57,7 @@ test("Paystack mock checkout marks the order paid via signed webhook", async ({
       id: `mock_${reference}`,
       status: "success",
       reference,
-      amount: 1,
+      amount: paymentAmount,
       currency: "GHS",
     },
   });
