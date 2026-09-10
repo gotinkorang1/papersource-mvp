@@ -139,7 +139,14 @@ async function verifyPolicies(sql) {
   });
 }
 
-await verifyLocalRuntime();
+try {
+  await verifyLocalRuntime();
+} catch (error) {
+  console.error("RLS checks require the local Supabase runtime. Start Docker Desktop, then run `pnpm auth:start` and retry.");
+  console.error(error instanceof Error ? error.message : "Local Supabase runtime could not be verified.");
+  process.exitCode = 1;
+  process.exit();
+}
 const db = postgres(localDatabaseUrl, { max: 1, onnotice: () => {} });
 const rollback = new Error("ROLLBACK_RLS_TEST");
 try {
