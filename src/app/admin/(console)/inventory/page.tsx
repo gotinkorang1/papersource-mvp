@@ -35,6 +35,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
       </p>
       <AdminError error={error} />
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="inventory-search">Search inventory</label><input id="inventory-search" name="q" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="product">Sort: product</option><option value="sku">Sort: SKU</option><option value="sellable">Sort: sellable stock</option></select><button className={paperButton({ variant: "secondary" })}>Search</button>{q || sort !== "product" ? <Link href="/admin/inventory" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
+      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} {rows.length === 1 ? "inventory row" : "inventory rows"}{q ? " matching your search" : ""}.</p>
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="admin-responsive-table w-full min-w-[48rem] text-sm">
           <caption className="sr-only">Stock by variant</caption>

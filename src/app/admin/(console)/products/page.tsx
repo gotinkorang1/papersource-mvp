@@ -43,6 +43,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <label className="grid gap-1 text-xs font-medium text-slate">Sort by<select name="sort" defaultValue={filters.sort ?? "updated"} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="updated">Recently updated</option><option value="name">Name</option><option value="status">Status</option></select></label>
         <button type="submit" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Filter</button>
       </form>
+      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} {rows.length === 1 ? "product" : "products"}{filters.q || filters.status ? " matching your filters" : ""}.</p>
       {rows.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-border bg-card p-6 text-sm text-slate"><p>{filters.q || filters.status ? "No products match these filters." : "No products yet."}</p>{filters.q || filters.status || filters.sort ? <Link href="/admin/products" className="mt-2 inline-flex text-ink underline underline-offset-4">Clear filters</Link> : null}</div>
       ) : (
