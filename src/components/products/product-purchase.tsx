@@ -19,7 +19,7 @@ export function ProductPurchase({ product }: { product: ProductCardModel }) {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4" data-testid="product-purchase">
       <QuantitySelector
         value={quantity}
         onChange={setQuantity}

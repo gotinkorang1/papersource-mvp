@@ -11,11 +11,13 @@ test("catalogue and product pages expose dual-path CTAs", async ({ page }) => {
     productHref = href;
     if (!productHref) continue;
     await page.goto(productHref, { waitUntil: "domcontentloaded" });
-    if (await page.getByRole("button", { name: "Add to Cart" }).count() && await page.getByRole("button", { name: "Add to Quote" }).count()) break;
+    const purchase = page.getByTestId("product-purchase");
+    if (await purchase.count() && await purchase.getByRole("button", { name: "Add to Cart" }).count() && await purchase.getByRole("button", { name: "Add to Quote" }).count()) break;
   }
   expect(productHref).toBeTruthy();
-  await expect(page.getByRole("button", { name: "Add to Cart" })).toBeVisible();
-  await expect(page.getByRole("button", { name: "Add to Quote" })).toBeVisible();
+  const purchase = page.getByTestId("product-purchase");
+  await expect(purchase.getByRole("button", { name: "Add to Cart" })).toBeVisible();
+  await expect(purchase.getByRole("button", { name: "Add to Quote" })).toBeVisible();
 });
 
 test("search preserves the submitted query and renders a useful state", async ({ page }) => {
@@ -33,11 +35,11 @@ test("a catalogue product can be added to the quote path", async ({ page }) => {
   for (const href of productHrefs) {
     if (!href) continue;
     await page.goto(href, { waitUntil: "domcontentloaded" });
-    if (await page.getByRole("button", { name: "Add to Quote" }).count()) { productHref = href; break; }
+    if (await page.getByTestId("product-purchase").getByRole("button", { name: "Add to Quote" }).count()) { productHref = href; break; }
   }
   expect(productHref).toBeTruthy();
   await page.goto(productHref!, { waitUntil: "domcontentloaded" });
-  const quoteButton = page.getByRole("button", { name: "Add to Quote" });
+  const quoteButton = page.getByTestId("product-purchase").getByRole("button", { name: "Add to Quote" });
   await expect(quoteButton).toBeVisible();
   const persisted = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.ok(),

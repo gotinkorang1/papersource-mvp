@@ -17,10 +17,10 @@ test("public storefront routes respond successfully", async ({ request }) => {
     "/api/search/suggestions?q=pen",
   ];
 
-  await Promise.all(routes.map(async (route) => {
+  for (const route of routes) {
     const response = await request.get(route);
     expect(response.ok(), `${route} should respond successfully`).toBe(true);
-  }));
+  }
 });
 
 test("health endpoint exposes non-sensitive readiness checks", async ({ request }) => {
