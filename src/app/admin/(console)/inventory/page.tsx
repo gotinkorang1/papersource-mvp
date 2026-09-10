@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { paperButton } from "@/components/commerce/paper-button";
 import { sellableQuantity, stockLevelFromQuantity } from "@/features/inventory/stock";
 import { listInventoryRows } from "@/features/inventory/admin";
@@ -63,7 +64,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
                   <td className="px-4 py-3 tabular-nums" data-label="Reserved">{row.reserved}</td>
                   <td className="px-4 py-3 tabular-nums" data-label="Sellable">{sellable}</td>
                   <td className="px-4 py-3" data-label="Level">
-                    {stockLevelFromQuantity(sellable, row.lowStockThreshold).replaceAll("_", " ")}
+                    <AdminStatusBadge status={stockLevelFromQuantity(sellable, row.lowStockThreshold)} />
                   </td>
                   {canWrite ? <td className="px-4 py-3"><form action="/admin/inventory/mutate" method="post" className="flex min-w-[17rem] items-center gap-2"><input type="hidden" name="variantId" value={row.variantId} /><label className="sr-only" htmlFor={`delta-${row.variantId}`}>Stock change for {row.sku}</label><input id={`delta-${row.variantId}`} name="delta" required className="h-9 w-20 rounded-md border border-border bg-background px-2 text-sm text-ink" placeholder="+/-" /><label className="sr-only" htmlFor={`reason-${row.variantId}`}>Reason for {row.sku}</label><select id={`reason-${row.variantId}`} name="reason" defaultValue="receive" className="h-9 rounded-md border border-border bg-background px-2 text-xs text-ink"><option value="receive">Receive</option><option value="adjust">Adjust</option></select><SubmitProgressButton idleLabel="Apply" pendingLabel="…" className="h-9 min-h-0 px-2 text-xs" /></form></td> : null}
                 </tr>
