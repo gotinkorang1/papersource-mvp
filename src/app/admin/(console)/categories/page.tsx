@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { CategoryImageManager } from "@/components/admin/category-image-manager";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminCategories } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -90,6 +91,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
                 <AdminField label="Active"><select name="active" defaultValue={row.active ? "true" : "false"} className={adminFieldClass}><option value="true">Yes</option><option value="false">No</option></select></AdminField>
                 <AdminField label="Description"><textarea name="description" defaultValue={row.description ?? ""} className={adminAreaClass} /></AdminField>
                 <AdminField label="Category image (Cloudinary public ID or URL)"><input name="imagePublicId" defaultValue={row.imagePublicId ?? ""} className={adminFieldClass} placeholder="papersource/categories/paper" /></AdminField>
+                <div className="sm:col-span-2"><CategoryImageManager categoryId={row.id} imagePublicId={row.imagePublicId} /></div>
                 <div className="sm:col-span-2"><SubmitProgressButton idleLabel={`Save ${row.name}`} pendingLabel="Saving category…" className={paperButton()} /></div>
               </form>
             </details>

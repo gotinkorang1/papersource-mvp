@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
-import { bulkSetCategoriesActive, CatalogueAdminError, saveCategory } from "@/features/catalogue/admin";
+import { bulkSetCategoriesActive, CatalogueAdminError, saveCategory, updateCategoryImage } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -30,6 +30,14 @@ export async function POST(request: Request) {
       const count = await bulkSetCategoriesActive(actor.role, ids, active);
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "categories_bulk_visibility_updated", resourceType: "category", metadata: { count, active } });
       next.searchParams.set("message", `${count} categor${count === 1 ? "y" : "ies"} updated.`);
+      return NextResponse.redirect(next, 303);
+    }
+    if (intent === "update-image" || intent === "remove-image") {
+      const categoryId = uuid.parse(formData.get("categoryId"));
+      const saved = await updateCategoryImage({ role: actor.role, categoryId, imagePublicId: intent === "remove-image" ? null : String(formData.get("imagePublicId") ?? "") });
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "remove-image" ? "category_image_removed" : "category_image_updated", resourceType: "category", resourceId: saved.id });
+      if (wantsJson) return NextResponse.json({ ok: true, item: saved });
+      next.searchParams.set("message", intent === "remove-image" ? "Category image removed." : "Category image saved.");
       return NextResponse.redirect(next, 303);
     }
     const parentRaw = String(formData.get("parentId") ?? "").trim();

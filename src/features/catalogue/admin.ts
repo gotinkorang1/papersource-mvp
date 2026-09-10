@@ -667,6 +667,19 @@ export async function addProductImage(input: {
   return image;
 }
 
+/** Update only a category image without requiring the rest of the edit form. */
+export async function updateCategoryImage(input: { role: StaffRole; categoryId: string; imagePublicId: string | null }) {
+  assertTaxonomyWrite(input.role, "categories");
+  const imagePublicId = input.imagePublicId ? normalizeCloudinaryPublicId(input.imagePublicId) || null : null;
+  const [updated] = await getDb()
+    .update(categories)
+    .set({ imagePublicId, updatedAt: new Date() })
+    .where(eq(categories.id, input.categoryId))
+    .returning({ id: categories.id, imagePublicId: categories.imagePublicId });
+  if (!updated) throw new CatalogueAdminError("That category was not found.");
+  return updated;
+}
+
 export async function savePriceTier(input: {
   role: StaffRole;
   tierId: string;
