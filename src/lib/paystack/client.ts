@@ -47,13 +47,19 @@ export async function initializePaystackTransaction(input: {
       callback_url: input.callbackUrl,
       channels: ["card", "mobile_money"],
     }),
+    signal: AbortSignal.timeout(15_000),
   });
 
-  const payload = (await response.json()) as {
+  let payload: {
     status: boolean;
     message?: string;
     data?: { authorization_url: string; reference: string };
   };
+  try {
+    payload = (await response.json()) as typeof payload;
+  } catch {
+    throw new Error("Paystack returned an invalid response.");
+  }
 
   if (!response.ok || !payload.status || !payload.data) {
     throw new Error(payload.message ?? "Paystack could not start this payment.");
@@ -83,12 +89,18 @@ export async function verifyPaystackTransaction(
     `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
     {
       headers: { Authorization: `Bearer ${paystackSecret()}` },
+      signal: AbortSignal.timeout(15_000),
     },
   );
-  const payload = (await response.json()) as {
+  let payload: {
     status: boolean;
     data?: { status: string; amount: number; reference: string; currency: string };
   };
+  try {
+    payload = (await response.json()) as typeof payload;
+  } catch {
+    return { status: "failed", amount: 0, reference, currency: "GHS" };
+  }
 
   if (!response.ok || !payload.status || !payload.data) {
     return { status: "failed", amount: 0, reference, currency: "GHS" };
