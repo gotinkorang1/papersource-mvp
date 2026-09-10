@@ -52,7 +52,7 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     filters?.status && ["draft", "active", "archived"].includes(filters.status) ? eq(products.status, filters.status as "draft" | "active" | "archived") : undefined,
   );
   const order = filters?.sort === "name" ? asc(products.name) : filters?.sort === "status" ? asc(products.status) : desc(products.updatedAt);
-  return db
+  const rows = await db
     .select({
       id: products.id,
       name: products.name,
@@ -64,10 +64,15 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
       updatedAt: products.updatedAt,
     })
     .from(products)
-    .innerJoin(brands, eq(brands.id, products.brandId))
-    .innerJoin(categories, eq(categories.id, products.categoryId))
+    .leftJoin(brands, eq(brands.id, products.brandId))
+    .leftJoin(categories, eq(categories.id, products.categoryId))
     .where(where)
     .orderBy(order);
+  return rows.map((row) => ({
+    ...row,
+    brandName: row.brandName ?? "Unknown brand",
+    categoryName: row.categoryName ?? "Uncategorized",
+  }));
 }
 
 export async function bulkUpdateProducts(role: StaffRole, productIds: string[], status: "draft" | "active" | "archived") {
