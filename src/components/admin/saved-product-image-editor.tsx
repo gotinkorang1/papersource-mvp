@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import NextImage from "next/image";
 import { paperButton } from "@/components/commerce/paper-button";
 
 type CropRatio = "free" | "4:5" | "5:4" | "3:4" | "4:3";
@@ -13,7 +14,7 @@ async function cropRemoteImage(src: string, ratio: CropRatio) {
   const sourceUrl = URL.createObjectURL(blob);
   try {
     const image = await new Promise<HTMLImageElement>((resolve, reject) => {
-      const element = new Image();
+      const element = new window.Image();
       element.onload = () => resolve(element);
       element.onerror = () => reject(new Error("This image could not be edited."));
       element.src = sourceUrl;
@@ -64,7 +65,7 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
       const result = (await update.json()) as { error?: string };
       if (!update.ok) throw new Error(result.error ?? "The cropped image could not be saved.");
       setOpen(false);
-      window.location.reload();
+      window.location.href = `${window.location.pathname}?success=saved#images`;
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not crop this image.");
     } finally {
@@ -78,6 +79,7 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
       {open ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby={`saved-crop-${imageId}`}>
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-xl">
           <div className="flex items-start justify-between gap-4"><div><h3 id={`saved-crop-${imageId}`} className="font-heading text-xl text-ink">Crop saved image</h3><p className="mt-1 text-sm text-slate">The cropped replacement keeps this image’s position and alt text.</p></div><button type="button" className="text-sm text-slate underline" onClick={() => setOpen(false)} disabled={busy}>Close</button></div>
+          <div className="relative mt-4 h-56 overflow-hidden rounded-lg border border-border bg-ink/10"><NextImage src={imageUrl} alt="Current saved product image" fill sizes="(max-width: 448px) 100vw, 448px" className="object-contain" /></div>
           <div className="mt-4 flex flex-wrap gap-2">{ratios.map((value) => <button key={value} type="button" onClick={() => setRatio(value)} className={`rounded-full border px-3 py-1.5 text-sm ${ratio === value ? "border-paper-green bg-paper-green text-white" : "border-border text-ink"}`}>{value}</button>)}</div>
           {notice ? <p role="alert" className="mt-3 text-sm text-red-700">{notice}</p> : null}
           <div className="mt-5 flex justify-end gap-2"><button type="button" className={paperButton({ variant: "secondary" })} onClick={() => setOpen(false)} disabled={busy}>Cancel</button><button type="button" className={paperButton()} onClick={() => void saveCrop()} disabled={busy}>{busy ? "Saving crop…" : "Save crop"}</button></div>
