@@ -99,18 +99,18 @@ export async function bulkSetBrandsActive(role: StaffRole, brandIds: string[], a
   return ids.length;
 }
 
-export async function listTaxonomyOptions() {
+export async function listTaxonomyOptions(include?: { brandId?: string; categoryId?: string }) {
   const db = getDb();
   const [brandRows, categoryRows] = await Promise.all([
     db
       .select({ id: brands.id, name: brands.name, slug: brands.slug, active: brands.active })
       .from(brands)
-      .where(and(eq(brands.active, true), isNull(brands.deletedAt)))
+      .where(and(or(eq(brands.active, true), include?.brandId ? eq(brands.id, include.brandId) : undefined), isNull(brands.deletedAt)))
       .orderBy(asc(brands.name)),
     db
       .select({ id: categories.id, name: categories.name, parentId: categories.parentId, slug: categories.slug, description: categories.description, imagePublicId: categories.imagePublicId, position: categories.position, active: categories.active })
       .from(categories)
-      .where(and(eq(categories.active, true), isNull(categories.deletedAt)))
+      .where(and(or(eq(categories.active, true), include?.categoryId ? eq(categories.id, include.categoryId) : undefined), isNull(categories.deletedAt)))
       .orderBy(asc(categories.position), asc(categories.name)),
   ]);
   return { brands: brandRows, categories: categoryRows };

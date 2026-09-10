@@ -34,7 +34,7 @@ export default async function AdminProductDetailPage({
     notFound();
   }
 
-  const { brands, categories } = await listTaxonomyOptions();
+  const { brands, categories } = await listTaxonomyOptions({ brandId: product.brandId, categoryId: product.categoryId });
   const canWrite = canAccessAdmin(actor.role, "products", "write");
   const canPrice = canAccessAdmin(actor.role, "pricing", "write");
 
