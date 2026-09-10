@@ -17,6 +17,7 @@ import {
 } from "@/lib/db/schema";
 import type { StaffRole } from "@/lib/staff/types";
 import { canAccessAdmin } from "@/lib/staff/rbac";
+import { destroyCloudinaryImage } from "@/lib/cloudinary/server";
 
 export class CatalogueAdminError extends Error {
   constructor(message: string) {
@@ -719,7 +720,14 @@ function normalizeCloudinaryPublicId(value: string) {
 export async function removeProductImage(input: { role: StaffRole; imageId: string }) {
   assertProductsWrite(input.role);
   const db = getDb();
+  const [current] = await db.select({ cloudinaryPublicId: productImages.cloudinaryPublicId }).from(productImages).where(eq(productImages.id, input.imageId)).limit(1);
   await db.delete(productImages).where(eq(productImages.id, input.imageId));
+  if (current) {
+    const [{ references }] = await db.select({ references: count(productImages.id) }).from(productImages).where(eq(productImages.cloudinaryPublicId, current.cloudinaryPublicId));
+    if (Number(references) === 0) {
+      try { await destroyCloudinaryImage(current.cloudinaryPublicId); } catch (error) { console.error("[cloudinary] deleted product image cleanup failed", error instanceof Error ? error.name : "unknown"); }
+    }
+  }
 }
 
 export async function updateProductImage(input: { role: StaffRole; imageId: string; alt: string }) {
@@ -735,12 +743,20 @@ export async function replaceProductImage(input: { role: StaffRole; productId: s
   assertProductsWrite(input.role);
   const publicId = normalizeCloudinaryPublicId(input.cloudinaryPublicId);
   if (!publicId) throw new CatalogueAdminError("A valid Cloudinary image is required.");
-  const [updated] = await getDb()
+  const db = getDb();
+  const [current] = await db.select({ cloudinaryPublicId: productImages.cloudinaryPublicId }).from(productImages).where(and(eq(productImages.id, input.imageId), eq(productImages.productId, input.productId))).limit(1);
+  if (!current) throw new CatalogueAdminError("That product image was not found.");
+  const [updated] = await db
     .update(productImages)
     .set({ cloudinaryPublicId: publicId })
-    .where(and(eq(productImages.id, input.imageId), eq(productImages.productId, input.productId)))
+    .where(eq(productImages.id, input.imageId))
     .returning();
-  if (!updated) throw new CatalogueAdminError("That product image was not found.");
+  if (updated && current.cloudinaryPublicId !== publicId) {
+    const [{ references }] = await db.select({ references: count(productImages.id) }).from(productImages).where(eq(productImages.cloudinaryPublicId, current.cloudinaryPublicId));
+    if (Number(references) === 0) {
+      try { await destroyCloudinaryImage(current.cloudinaryPublicId); } catch (error) { console.error("[cloudinary] old product image cleanup failed", error instanceof Error ? error.name : "unknown"); }
+    }
+  }
   return updated;
 }
 
