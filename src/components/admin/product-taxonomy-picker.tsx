@@ -3,7 +3,7 @@
 import { useMemo, useState } from "react";
 import { adminFieldClass } from "@/components/admin/field";
 
-type TaxonomyOption = { id: string; name: string; parentId?: string | null };
+type TaxonomyOption = { id: string; name: string; parentId?: string | null; slug?: string | null; description?: string | null; imagePublicId?: string | null; position?: number; active?: boolean };
 
 function categoryLabel(category: TaxonomyOption, all: TaxonomyOption[]) {
   const names: string[] = [];
@@ -53,6 +53,7 @@ export function ProductTaxonomyPicker({
     if (kind === "category") {
       body.set("parentId", parentId);
       body.set("description", "");
+      body.set("imagePublicId", "");
       body.set("position", "0");
     }
     try {
@@ -84,18 +85,19 @@ export function ProductTaxonomyPicker({
     body.set("intent", kind === "category" ? "save-category" : "save-brand");
     body.set(kind === "category" ? "categoryId" : "brandId", selectedItem.id);
     body.set("name", newName.trim());
-    body.set("slug", "");
+    body.set("slug", selectedItem.slug ?? "");
     body.set("active", "true");
     if (kind === "category") {
       body.set("parentId", parentId);
-      body.set("description", "");
-      body.set("position", "0");
+      body.set("description", selectedItem.description ?? "");
+      body.set("imagePublicId", selectedItem.imagePublicId ?? "");
+      body.set("position", String(selectedItem.position ?? 0));
     }
     try {
       const response = await fetch(kind === "category" ? "/admin/categories/mutate" : "/admin/brands/mutate", { method: "POST", body, headers: { Accept: "application/json" } });
       const result = (await response.json()) as { item?: TaxonomyOption; error?: string };
       if (!response.ok || !result.item) throw new Error(result.error ?? "Could not update this option.");
-      setItems((current) => current.map((item) => item.id === result.item!.id ? result.item! : item));
+      setItems((current) => current.map((item) => item.id === result.item!.id ? { ...item, ...result.item } : item));
       setNewName("");
       setEditing(false);
       setOpen(false);
