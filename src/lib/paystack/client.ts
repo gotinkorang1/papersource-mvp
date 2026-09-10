@@ -33,10 +33,15 @@ export async function initializePaystackTransaction(input: {
     };
   }
 
+  const secret = paystackSecret();
+  if (!secret.startsWith("sk_live_")) {
+    throw new Error("Live Paystack payments are not configured safely.");
+  }
+
   const response = await fetch("https://api.paystack.co/transaction/initialize", {
     method: "POST",
     headers: {
-      Authorization: `Bearer ${paystackSecret()}`,
+      Authorization: `Bearer ${secret}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -95,11 +100,15 @@ export async function verifyPaystackTransaction(
       currency: "GHS",
     };
   }
+  const secret = paystackSecret();
+  if (!secret.startsWith("sk_live_")) {
+    return { status: "failed", amount: 0, reference, currency: "GHS" };
+  }
 
   const response = await fetch(
     `https://api.paystack.co/transaction/verify/${encodeURIComponent(reference)}`,
     {
-      headers: { Authorization: `Bearer ${paystackSecret()}` },
+      headers: { Authorization: `Bearer ${secret}` },
       signal: AbortSignal.timeout(15_000),
     },
   );
