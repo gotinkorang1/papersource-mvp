@@ -3,6 +3,7 @@ import Link from "next/link";
 import { listAdminProducts } from "@/features/catalogue/admin";
 import { paperButton } from "@/components/commerce/paper-button";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
+import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
@@ -71,7 +72,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                   <td className="px-4 py-3" data-label="Brand">{row.brandName}</td>
                   <td className="px-4 py-3" data-label="Category">{row.categoryName}</td>
                   <td className="px-4 py-3" data-label="Type">{row.productType}</td>
-                  <td className="px-4 py-3" data-label="Status">{row.status}</td>
+                  <td className="px-4 py-3" data-label="Status"><AdminStatusBadge status={row.status} /></td>
                 </tr>
               ))}
             </tbody>
