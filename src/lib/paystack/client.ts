@@ -65,8 +65,19 @@ export async function initializePaystackTransaction(input: {
     throw new Error(payload.message ?? "Paystack could not start this payment.");
   }
 
+  let authorizationUrl: URL;
+  try {
+    authorizationUrl = new URL(payload.data.authorization_url);
+  } catch {
+    throw new Error("Paystack returned an invalid payment link.");
+  }
+  const isPaystackHost = authorizationUrl.hostname === "paystack.com" || authorizationUrl.hostname.endsWith(".paystack.com");
+  if (authorizationUrl.protocol !== "https:" || !isPaystackHost) {
+    throw new Error("Paystack returned an unsafe payment link.");
+  }
+
   return {
-    authorizationUrl: payload.data.authorization_url,
+    authorizationUrl: authorizationUrl.toString(),
     reference: payload.data.reference,
     raw: payload,
   };

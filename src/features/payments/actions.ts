@@ -11,6 +11,7 @@ import { and, eq } from "drizzle-orm";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { documentOwner } from "@/lib/customer/commerce-identity";
 import { getStoreSettings } from "@/features/settings/admin";
+import { captureServerException } from "@/lib/observability/sentry";
 
 export async function startPaystackPaymentAction(
   _prev: { error: string } | null,
@@ -33,7 +34,8 @@ export async function startPaystackPaymentAction(
     if (error instanceof z.ZodError) {
       return { error: "That order could not be paid." };
     }
-    throw error;
+    captureServerException(error, { operation: "start_paystack_payment", dependency: "paystack" });
+    return { error: "We could not start payment right now. Please try again or contact us if the problem continues." };
   }
   redirect(authorizationUrl);
 }
