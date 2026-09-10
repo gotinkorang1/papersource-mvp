@@ -73,7 +73,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
           </tbody>
         </table>
       </div>
-      {canWrite ? (
+      {canWrite && allRows.length > 0 ? (
         <form
           action="/admin/inventory/mutate"
           method="post"
@@ -82,7 +82,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
           <h2 className="font-heading text-xl text-ink">Adjust stock</h2>
           <AdminField label="SKU">
             <select name="variantId" required className={adminFieldClass}>
-              {rows.map((row) => (
+              {allRows.map((row) => (
                 <option key={row.variantId} value={row.variantId}>
                   {row.sku} — {row.productName}
                 </option>
@@ -100,6 +100,8 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
           </AdminField>
           <SubmitProgressButton idleLabel="Record movement" pendingLabel="Recording movement…" className={paperButton()} />
         </form>
+      ) : canWrite ? (
+        <p className="mt-6 rounded-lg border border-dashed border-border bg-card p-5 text-sm text-slate">No inventory variants are available to adjust yet. Create a product variant first.</p>
       ) : (
         <p className="mt-6 text-sm text-slate">This role can view stock but cannot adjust it.</p>
       )}
