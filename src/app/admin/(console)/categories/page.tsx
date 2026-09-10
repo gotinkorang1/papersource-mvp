@@ -51,7 +51,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
       <div className={`overflow-x-auto rounded-b-xl border border-border bg-card ${canWrite ? "border-t-0" : "mt-8 rounded-xl"}`}>
         <table className="admin-responsive-table w-full min-w-[42rem] text-sm">
           <caption className="sr-only">Categories</caption>
-          <thead>
+          <thead className="sticky top-0 z-10 bg-card">
             <tr className="border-b border-border text-left text-slate">
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Slug</th>
@@ -61,7 +61,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           </thead>
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No categories match this search." : "No categories yet."}</td></tr> : rows.map((row) => (
-              <tr key={row.id} className="border-b border-border last:border-0 align-top">
+              <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0 align-top">
                 <td className="px-4 py-3" data-label="Name">{canWrite ? <input form="bulk-categories" type="checkbox" name="categoryId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}<span title={categoryPath(row)}>{categoryPath(row)}</span></td>
                 <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
                 <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>

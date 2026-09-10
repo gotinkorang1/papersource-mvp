@@ -38,7 +38,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
         <table className="admin-responsive-table w-full min-w-[48rem] text-sm">
           <caption className="sr-only">Stock by variant</caption>
-          <thead>
+          <thead className="sticky top-0 z-10 bg-card">
             <tr className="border-b border-border text-left text-slate">
               <th className="px-4 py-3 font-medium">Product</th>
               <th className="px-4 py-3 font-medium">SKU</th>
@@ -53,7 +53,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 7 : 6} className="px-4 py-8 text-center text-sm text-slate">{q ? "No inventory rows match this search." : "No inventory rows yet."}</td></tr> : rows.map((row) => {
               const sellable = sellableQuantity(row.onHand, row.reserved);
               return (
-                <tr key={row.inventoryId} className="border-b border-border last:border-0">
+                <tr key={row.inventoryId} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0">
                   <td className="px-4 py-3" data-label="Product">
                     <Link href={`/admin/products/${row.productId}`} className="underline">
                       {row.productName}

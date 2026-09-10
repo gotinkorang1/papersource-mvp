@@ -38,7 +38,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
       <form action="/admin/brands/mutate" method="post" className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">{canWrite ? <><input type="hidden" name="intent" value="bulk-active" /><div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><SelectAllCheckbox count={rows.length} name="brandId" label="brands" /><select name="active" defaultValue="true" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="true">Set active</option><option value="false">Set inactive</option></select><SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating brands…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /><span className="text-xs text-slate" aria-live="polite">Bulk updates only change visibility.</span></div></> : null}
         <table className="admin-responsive-table w-full min-w-[38rem] text-sm">
           <caption className="sr-only">Brands</caption>
-          <thead>
+          <thead className="sticky top-0 z-10 bg-card">
             <tr className="border-b border-border text-left text-slate">
               <th className="px-4 py-3 font-medium">Name</th>
               <th className="px-4 py-3 font-medium">Slug</th>
@@ -48,7 +48,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
           </thead>
           <tbody>
             {rows.length === 0 ? <tr><td colSpan={canWrite ? 4 : 3} className="px-4 py-8 text-center text-sm text-slate">{q ? "No brands match this search." : "No brands yet."}</td></tr> : rows.map((row) => (
-              <tr key={row.id} className="border-b border-border last:border-0">
+              <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0">
                 <td className="px-4 py-3" data-label="Name">{canWrite ? <input type="checkbox" name="brandId" value={row.id} aria-label={`Select ${row.name}`} className="mr-3 size-4 align-middle accent-primary" /> : null}{row.name}</td>
                 <td className="px-4 py-3 font-mono text-xs" data-label="Slug">{row.slug}</td>
                 <td className="px-4 py-3" data-label="Active">{row.active ? "Yes" : "No"}</td>

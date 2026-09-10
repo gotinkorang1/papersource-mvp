@@ -50,7 +50,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
           {canWrite ? <div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><input type="hidden" name="intent" value="bulk-update-products" /><label className="sr-only" htmlFor="bulk-status">Bulk action</label><select id="bulk-status" name="status" defaultValue="draft" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="active">Set active</option><option value="draft">Set draft</option><option value="archived">Archive</option></select><SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating products…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /><span className="text-xs text-slate" aria-live="polite">Select products below to update them together.</span></div> : null}
           <table className="admin-responsive-table w-full min-w-[52rem] text-sm">
             <caption className="sr-only">Catalogue products</caption>
-            <thead>
+            <thead className="sticky top-0 z-10 bg-card">
               <tr className="border-b border-border text-left text-slate">
                 {canWrite ? <th className="w-12 px-4 py-3"><SelectAllCheckbox count={rows.length} /></th> : null}
                 <th className="px-4 py-3 font-medium">Name</th>
@@ -62,7 +62,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
             </thead>
             <tbody>
               {rows.map((row) => (
-                <tr key={row.id} className="border-b border-border last:border-0">
+                <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0">
                   {canWrite ? <td className="px-4 py-3" data-label="Select"><input type="checkbox" name="productId" value={row.id} aria-label={`Select ${row.name}`} className="size-4 rounded border-border accent-primary" /></td> : null}
                   <td className="px-4 py-3" data-label="Name">
                     <Link href={`/admin/products/${row.id}`} className="underline">
