@@ -6,10 +6,10 @@ import { notFound } from "next/navigation";
 
 export const metadata = {
   manifest: "/admin/manifest.webmanifest",
-  applicationName: "PaperSource Operations",
+  applicationName: "PaperSource Admin",
   title: {
-    default: "Operations",
-    template: "%s · PaperSource Operations",
+    default: "Admin",
+    template: "%s · PaperSource Admin",
   },
 };
 
