@@ -38,6 +38,10 @@ function redirectWithError(url: URL, error: unknown) {
   return NextResponse.redirect(url, 303);
 }
 
+function isJsonRequest(request: Request) {
+  return request.headers.get("accept")?.includes("application/json") || request.headers.get("x-requested-with") === "XMLHttpRequest";
+}
+
 export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
   const formData = await request.formData();
@@ -213,8 +217,15 @@ export async function POST(request: Request) {
       });
     }
   } catch (error) {
+    if (isJsonRequest(request)) {
+      const message = error instanceof CatalogueAdminError
+        ? error.message
+        : "Could not update the catalogue. Please check the fields and try again.";
+      return NextResponse.json({ error: message }, { status: error instanceof CatalogueAdminError ? 400 : 500 });
+    }
     return redirectWithError(next, error);
   }
 
+  if (isJsonRequest(request)) return NextResponse.json({ ok: true });
   return NextResponse.redirect(next, 303);
 }
