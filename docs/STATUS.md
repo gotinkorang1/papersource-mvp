@@ -34,7 +34,7 @@ The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Re
 
 ## Remaining MVP work, in order
 
-1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. The latest Vitest suite is also green (43 files, 271 tests). Direct Vercel redeploys are temporarily blocked by the daily deployment quota.
+1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. Focused Vitest coverage is green; rerun and record the complete Vitest suite during release sign-off. Direct Vercel redeploys are temporarily blocked by the daily deployment quota.
 2. Review the hosted RLS policies and the current Advisor findings during launch sign-off; enable Supabase Auth leaked-password protection.
 3. Verify Sentry through the Sentry API with a read-only auth token, then confirm no runtime errors and no sensitive data capture. Vercel production already has the DSN and trace-rate variables configured, and `/api/health` reports observability as configured.
 4. Run the complete Playwright suite against production-safe hosted test data and perform mobile/desktop smoke checks. The local suite is green (27/27).
