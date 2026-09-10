@@ -9,6 +9,8 @@ export const catalogueName =
   process.env.E2E_CATALOGUE_NAME?.trim() || "Double A Premium A4 Paper";
 
 // A fixture must be explicitly selected for any journey that mutates baskets,
-// orders, or quotes. This prevents a stale SKU from producing misleading CI
-// failures against a different hosted catalogue.
-export const hostedFixtureMissing = !process.env.E2E_CATALOGUE_SKU;
+// orders, or quotes on hosted targets. Local runs use the seeded catalogue
+// defaults, so they should exercise the full stateful suite.
+const baseUrl = process.env.PLAYWRIGHT_BASE_URL || "http://localhost:3000";
+const localTarget = /^https?:\/\/(localhost|127\.0\.0\.1)(:\d+)?\/?$/i.test(baseUrl);
+export const hostedFixtureMissing = !localTarget && !process.env.E2E_CATALOGUE_SKU;

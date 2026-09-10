@@ -1,11 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
-import { catalogueSlug, hostedFixtureMissing } from "./test-data";
+import { hostedFixtureMissing } from "./test-data";
 
 test.beforeEach(() => test.skip(hostedFixtureMissing, "Set E2E_CATALOGUE_SKU for hosted fixture journeys."));
 
 async function addFirstInStockToCart(page: Page) {
   await page.goto("/");
-  await expect(page.getByTestId(`add-to-quote-${catalogueSlug}`)).toBeEnabled();
+  await expect(page.getByTestId(/^add-to-quote-/).first()).toBeEnabled();
   const persisted = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.status() < 400,
     { timeout: 30_000 },

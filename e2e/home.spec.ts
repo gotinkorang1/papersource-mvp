@@ -1,11 +1,11 @@
 import { expect, test, type Page } from "@playwright/test";
-import { catalogueSlug, hostedFixtureMissing } from "./test-data";
+import { hostedFixtureMissing } from "./test-data";
 
 test.beforeEach(() => test.skip(hostedFixtureMissing, "Set E2E_CATALOGUE_SKU for hosted fixture journeys."));
 
 async function gotoReady(page: Page) {
   await page.goto("/");
-  await expect(page.getByTestId(`add-to-quote-${catalogueSlug}`)).toBeEnabled();
+  await expect(page.getByTestId(/^add-to-quote-/).first()).toBeEnabled();
 }
 
 test("home shows dual-path chrome and Accra & Tema delivery", async ({
@@ -35,7 +35,7 @@ test("home shows dual-path chrome and Accra & Tema delivery", async ({
 
 test("add to quote does not fill the retail cart", async ({ page }) => {
   await gotoReady(page);
-  await page.getByTestId(`add-to-quote-${catalogueSlug}`).click();
+  await page.getByTestId(/^add-to-quote-/).first().click();
   await expect(page.getByTestId("paper-drawer-quote-list")).toBeVisible();
   await expect(page.getByRole("heading", { name: "Quote list" })).toBeVisible();
   await expect(page.getByText("Procurement basket")).toBeVisible();
@@ -53,7 +53,7 @@ test("quote basket survives a reload", async ({ page }) => {
   const persisted = page.waitForResponse(
     (response) => response.request().method() === "POST" && response.ok(),
   );
-  await page.getByTestId(`add-to-quote-${catalogueSlug}`).click();
+  await page.getByTestId(/^add-to-quote-/).first().click();
   await persisted;
   await expect(
     page.getByRole("button", { name: "Quote list, 1 item" }).first(),
