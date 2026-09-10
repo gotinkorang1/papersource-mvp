@@ -20,6 +20,22 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
       <h1 className="text-3xl text-ink">Account</h1>
       <p className="mt-3 text-slate">Signed in as {actor.fullName} · {actor.email}. Your retail cart and quote list stay separate.</p>
       {query.authError === "sign-out" ? <p role="alert" className="mt-4 text-error">We could not sign you out. Please try again.</p> : null}
+      <section className="mt-8" aria-labelledby="account-actions">
+        <h2 id="account-actions" className="font-heading text-xl text-ink">What would you like to do?</h2>
+        <div className="mt-3 grid gap-3 sm:grid-cols-4">
+          {[
+            ["/shop", "Shop products", "Browse the catalogue"],
+            ["/quick-order", "Quick order", "Use a SKU or product name"],
+            ["/cart", "Open cart", "Review retail items"],
+            ["/quote", "Open quote", "Review quote items"],
+          ].map(([href, label, description]) => (
+            <Link key={href} href={href} className="group rounded-xl border border-border bg-surface p-4 text-ink transition hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+              <span className="block font-medium">{label}</span>
+              <span className="mt-1 block text-xs leading-5 text-slate group-hover:text-ink">{description}</span>
+            </Link>
+          ))}
+        </div>
+      </section>
       <div className="mt-8 grid gap-4 sm:grid-cols-2">
         <Link href="/account/addresses" className="group rounded-xl border border-border bg-surface p-5 text-ink shadow-sm transition hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
           <span className="text-sm text-slate">Saved addresses</span>
