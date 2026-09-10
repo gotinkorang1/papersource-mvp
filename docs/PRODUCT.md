@@ -172,6 +172,7 @@ Every route lists purpose and primary CTA.
 | `/account/quotes` | Quote history | View quote |
 | `/account/addresses` | Saved Ghana addresses | Add address |
 | `/account/organisation` | Create or view organisation | Save |
+| `/account/profile` | Maintain customer name and phone | Save profile |
 
 ### Admin
 
