@@ -1,4 +1,4 @@
-import { and, asc, count, desc, eq, ilike, inArray, isNull, or } from "drizzle-orm";
+import { and, asc, count, desc, eq, exists, ilike, inArray, isNull, or } from "drizzle-orm";
 import { refreshProductSearchDocument } from "@/features/catalogue/refresh-search";
 import { getDb } from "@/lib/db/client";
 import { parseGhsToPesewas } from "@/lib/money";
@@ -48,7 +48,7 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
   const search = filters?.search?.trim();
   const where = and(
     isNull(products.deletedAt),
-    search ? or(ilike(products.name, `%${search}%`), ilike(products.slug, `%${search}%`), ilike(brands.name, `%${search}%`), ilike(categories.name, `%${search}%`)) : undefined,
+    search ? or(ilike(products.name, `%${search}%`), ilike(products.slug, `%${search}%`), ilike(brands.name, `%${search}%`), ilike(categories.name, `%${search}%`), exists(db.select({ id: productVariants.id }).from(productVariants).where(and(eq(productVariants.productId, products.id), ilike(productVariants.sku, `%${search}%`))))) : undefined,
     filters?.status && ["draft", "active", "archived"].includes(filters.status) ? eq(products.status, filters.status as "draft" | "active" | "archived") : undefined,
   );
   const order = filters?.sort === "name" ? asc(products.name) : filters?.sort === "status" ? asc(products.status) : desc(products.updatedAt);
