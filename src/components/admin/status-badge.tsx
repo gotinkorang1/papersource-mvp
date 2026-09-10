@@ -14,6 +14,12 @@ const toneByStatus: Record<string, string> = {
   initialized: "bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-800",
   failed: "bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800",
   cancelled: "bg-slate-100 text-slate-600 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600",
+  active: "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-800",
+  in_stock: "bg-emerald-50 text-emerald-700 ring-emerald-200 dark:bg-emerald-950/50 dark:text-emerald-300 dark:ring-emerald-800",
+  draft: "bg-slate-100 text-slate-700 ring-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:ring-slate-600",
+  archived: "bg-slate-100 text-slate-500 ring-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:ring-slate-600",
+  low: "bg-amber-50 text-amber-700 ring-amber-200 dark:bg-amber-950/50 dark:text-amber-300 dark:ring-amber-800",
+  out: "bg-rose-50 text-rose-700 ring-rose-200 dark:bg-rose-950/50 dark:text-rose-300 dark:ring-rose-800",
 };
 
 export function AdminStatusBadge({ status }: { status: string }) {
@@ -22,6 +28,9 @@ export function AdminStatusBadge({ status }: { status: string }) {
     awaiting_terms: "Awaiting delivery terms",
     out_for_delivery: "Out for delivery",
     under_review: "Under review",
+    in_stock: "In stock",
+    low: "Low stock",
+    out: "Out of stock",
   };
   const label = labelByStatus[status] ?? status.replaceAll("_", " ");
   const tone = toneByStatus[status] ?? "bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-800";
