@@ -315,7 +315,7 @@ export default async function AdminProductDetailPage({
         </section>
       ) : null}
 
-      <section className="mt-8 grid gap-8 lg:grid-cols-2">
+      <section id="images" className="mt-8 grid gap-8 lg:grid-cols-2 scroll-mt-24">
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Images</h2>
           <p className="mt-2 text-sm text-slate">Add up to 4 optimized Cloudinary images. The first image is the primary product image.</p>

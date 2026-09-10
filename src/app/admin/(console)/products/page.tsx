@@ -59,6 +59,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                 <th className="px-4 py-3 font-medium">Category</th>
                 <th className="px-4 py-3 font-medium">Type</th>
                 <th className="px-4 py-3 font-medium">Status</th>
+                <th className="px-4 py-3 font-medium">Images</th>
               </tr>
             </thead>
             <tbody>
@@ -74,6 +75,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
                   <td className="px-4 py-3" data-label="Category">{row.categoryName}</td>
                   <td className="px-4 py-3" data-label="Type">{row.productType}</td>
                   <td className="px-4 py-3" data-label="Status"><AdminStatusBadge status={row.status} /></td>
+                  <td className="px-4 py-3" data-label="Images"><Link href={`/admin/products/${row.id}#images`} className="font-medium text-ink underline underline-offset-4">Manage images</Link></td>
                 </tr>
               ))}
             </tbody>
