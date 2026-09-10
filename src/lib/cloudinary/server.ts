@@ -26,11 +26,13 @@ export async function destroyCloudinaryImage(publicId: string) {
   const config = credentials();
   if (!config || !publicId) return false;
   const timestamp = Math.floor(Date.now() / 1000).toString();
+  const invalidate = "true";
   const body = new FormData();
   body.append("public_id", publicId);
   body.append("timestamp", timestamp);
+  body.append("invalidate", invalidate);
   body.append("api_key", config.apiKey);
-  body.append("signature", signature({ public_id: publicId, timestamp }, config.apiSecret));
+  body.append("signature", signature({ public_id: publicId, timestamp, invalidate }, config.apiSecret));
   const response = await fetch(`https://api.cloudinary.com/v1_1/${config.cloudName}/image/destroy`, { method: "POST", body, signal: AbortSignal.timeout(15_000) });
   return response.ok;
 }
