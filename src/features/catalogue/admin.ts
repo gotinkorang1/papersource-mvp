@@ -641,6 +641,12 @@ export async function addProductImage(input: {
   if (Number(imageCount) >= 4) {
     throw new CatalogueAdminError("A product can have up to 4 images.");
   }
+  const [duplicate] = await db
+    .select({ id: productImages.id })
+    .from(productImages)
+    .where(and(eq(productImages.productId, input.productId), eq(productImages.cloudinaryPublicId, publicId)))
+    .limit(1);
+  if (duplicate) throw new CatalogueAdminError("That image is already attached to this product.");
   const [image] = await db
     .insert(productImages)
     .values({
