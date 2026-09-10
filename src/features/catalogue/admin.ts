@@ -731,6 +731,19 @@ export async function updateProductImage(input: { role: StaffRole; imageId: stri
   return updated;
 }
 
+export async function replaceProductImage(input: { role: StaffRole; productId: string; imageId: string; cloudinaryPublicId: string }) {
+  assertProductsWrite(input.role);
+  const publicId = normalizeCloudinaryPublicId(input.cloudinaryPublicId);
+  if (!publicId) throw new CatalogueAdminError("A valid Cloudinary image is required.");
+  const [updated] = await getDb()
+    .update(productImages)
+    .set({ cloudinaryPublicId: publicId })
+    .where(and(eq(productImages.id, input.imageId), eq(productImages.productId, input.productId)))
+    .returning();
+  if (!updated) throw new CatalogueAdminError("That product image was not found.");
+  return updated;
+}
+
 /** Move a product image one slot while preserving the saved ordering. */
 export async function moveProductImage(input: { role: StaffRole; imageId: string; direction: "up" | "down" }) {
   assertProductsWrite(input.role);

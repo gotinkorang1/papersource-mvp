@@ -19,6 +19,7 @@ import {
   removeProductAttribute,
   removeProductImage,
   moveProductImage,
+  replaceProductImage,
   updateProductImage,
   saveProduct,
   saveVariant,
@@ -170,6 +171,13 @@ export async function POST(request: Request) {
         role: actor.role,
         imageId: uuid.parse(formData.get("imageId")),
         direction,
+      });
+    } else if (intent === "replace-image") {
+      await replaceProductImage({
+        role: actor.role,
+        productId,
+        imageId: uuid.parse(formData.get("imageId")),
+        cloudinaryPublicId: String(formData.get("cloudinaryPublicId") ?? ""),
       });
     } else if (intent === "add-alias") {
       await addProductAlias({
