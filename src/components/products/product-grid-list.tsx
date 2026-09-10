@@ -41,6 +41,7 @@ export function ProductGridList({
           onAddToCart={addToCart}
           onAddToQuote={addToQuote}
           canEdit={canEdit}
+          priority={index === 0}
         />
       ))}
     </ProductGrid>
