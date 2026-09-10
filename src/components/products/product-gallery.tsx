@@ -38,7 +38,7 @@ export function ProductGallery({
         onTouchEnd={(event) => { const start = touchStartX.current; touchStartX.current = null; const end = event.changedTouches[0]?.clientX; if (start === null || end === undefined || gallery.length < 2) return; const distance = end - start; if (Math.abs(distance) > 40) moveImage(distance > 0 ? -1 : 1); }}
       >
         {active ? <>
-          <Image src={active.src} alt={active.alt} fill priority loading="eager" sizes="(max-width: 768px) 100vw, 50vw" onError={(event) => { event.currentTarget.src = "/images/catalogue-stationery-generated.png"; }} className="object-contain p-6" />
+          <Image src={active.src} alt={active.alt} fill preload loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 50vw" onError={(event) => { event.currentTarget.src = "/images/catalogue-stationery-generated.png"; }} className="object-contain p-6" />
           {gallery.length > 1 ? <span className="absolute bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-ink/80 px-3 py-1 text-xs font-medium text-white" aria-live="polite">{activeIndex + 1} of {gallery.length}</span> : null}
           {gallery.length > 1 ? <>
             <button type="button" aria-label="Previous product image" onClick={() => setActiveIndex((activeIndex - 1 + gallery.length) % gallery.length)} className="absolute left-3 top-1/2 inline-flex size-10 -translate-y-1/2 items-center justify-center rounded-full border border-border bg-card/90 text-xl text-ink shadow-sm backdrop-blur transition hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">‹</button>

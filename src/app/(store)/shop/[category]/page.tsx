@@ -65,7 +65,7 @@ export default async function ShopCategoryPage({ params }: PageProps) {
       <Breadcrumbs items={[{ label: "Shop", href: "/shop" }, { label: category.name }]} />
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[1fr_16rem]">
         <div><div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink md:text-4xl">{category.name}</h1>{canEdit ? <Link href={`/admin/categories#category-${category.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit category</Link> : null}</div><p className="mt-3 max-w-2xl text-slate">{category.caption}</p></div>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill priority loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
       </div>
       <div className="mt-10">
         <ProductGridList products={products} canEdit={canEdit} />
