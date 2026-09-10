@@ -25,3 +25,8 @@ export const organisationSchema = z.object({
   email: z.union([z.string().trim().email("Enter a valid email").max(254), z.literal("")]),
   phone: z.string().trim().max(30),
 });
+
+export const customerProfileSchema = z.object({
+  fullName: z.string().trim().min(1, "Full name is required").max(160),
+  phone: z.string().trim().max(30, "Phone number is too long"),
+});

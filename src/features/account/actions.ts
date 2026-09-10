@@ -5,7 +5,8 @@ import { z } from "zod";
 import { requireCustomer } from "@/lib/customer/require";
 import { AccountError, removeCustomerAddress, saveCustomerAddress, setDefaultCustomerAddress } from "./addresses";
 import { saveCustomerOrganisation } from "./organisation";
-import { organisationSchema, personalAddressSchema, type AccountActionState } from "./actions-state";
+import { saveCustomerProfile } from "./profile";
+import { customerProfileSchema, organisationSchema, personalAddressSchema, type AccountActionState } from "./actions-state";
 
 const addressMutationSchema = personalAddressSchema.extend({
   addressId: z.union([z.uuid(), z.literal("")]).optional(),
@@ -60,4 +61,15 @@ export async function saveOrganisationAction(_previous: AccountActionState, form
   revalidatePath("/account", "layout");
   revalidatePath("/request-quote");
   return { success: true, message: "Organisation saved." };
+}
+
+export async function saveCustomerProfileAction(_previous: AccountActionState, formData: FormData): Promise<AccountActionState> {
+  const actor = await requireCustomer("/account/profile");
+  const parsed = customerProfileSchema.safeParse(Object.fromEntries(formData));
+  if (!parsed.success) return { errors: parsed.error.flatten().fieldErrors, message: "Check your profile details." };
+  try { await saveCustomerProfile({ profileId: actor.profileId, ...parsed.data }); }
+  catch (error) { return failure(error); }
+  revalidatePath("/account", "layout");
+  revalidatePath("/checkout");
+  return { success: true, message: "Profile saved." };
 }
