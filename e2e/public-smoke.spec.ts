@@ -36,5 +36,10 @@ test("health endpoint exposes non-sensitive readiness checks", async ({ request 
   expect(body.status).toBe("ok");
   expect(["ok", "not_configured"]).toContain(body.checks?.database);
   expect(["configured", "not_configured"]).toContain(body.checks?.observability);
+  expect(["configured", "test_mode", "not_configured"]).toContain(body.checks?.integrations?.paystack);
+  expect(["configured", "mock_mode", "not_configured"]).toContain(body.checks?.integrations?.email);
+  expect(["configured", "not_configured"]).toContain(body.checks?.integrations?.cloudinary);
+  const serialized = JSON.stringify(body);
+  expect(serialized).not.toMatch(/DATABASE_URL|SENTRY_DSN|PAYSTACK_SECRET_KEY|CLOUDINARY_API_SECRET|RESEND_API_KEY/);
   expect(typeof body.durationMs).toBe("number");
 });
