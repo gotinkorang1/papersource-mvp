@@ -18,6 +18,7 @@ import {
   removeProductAlias,
   removeProductAttribute,
   removeProductImage,
+  updateProductImage,
   saveProduct,
   saveVariant,
 } from "@/features/catalogue/admin";
@@ -155,6 +156,12 @@ export async function POST(request: Request) {
       await removeProductImage({
         role: actor.role,
         imageId: uuid.parse(formData.get("imageId")),
+      });
+    } else if (intent === "update-image") {
+      await updateProductImage({
+        role: actor.role,
+        imageId: uuid.parse(formData.get("imageId")),
+        alt: String(formData.get("alt") ?? ""),
       });
     } else if (intent === "add-alias") {
       await addProductAlias({

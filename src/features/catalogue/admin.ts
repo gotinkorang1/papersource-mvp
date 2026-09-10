@@ -696,6 +696,15 @@ export async function removeProductImage(input: { role: StaffRole; imageId: stri
   await db.delete(productImages).where(eq(productImages.id, input.imageId));
 }
 
+export async function updateProductImage(input: { role: StaffRole; imageId: string; alt: string }) {
+  assertProductsWrite(input.role);
+  const alt = input.alt.trim();
+  if (!alt) throw new CatalogueAdminError("Alt text is required.");
+  const [updated] = await getDb().update(productImages).set({ alt }).where(eq(productImages.id, input.imageId)).returning();
+  if (!updated) throw new CatalogueAdminError("That product image was not found.");
+  return updated;
+}
+
 export async function addProductAlias(input: {
   role: StaffRole;
   productId: string;

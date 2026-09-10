@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Image from "next/image";
 import { notFound } from "next/navigation";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
@@ -10,6 +11,7 @@ import { getAdminProduct, listTaxonomyOptions } from "@/features/catalogue/admin
 import { formatGhs, pesewasToMajor } from "@/lib/money";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
+import { cloudinaryImageUrl } from "@/lib/cloudinary";
 
 export const metadata: Metadata = {
   title: "Product",
@@ -320,10 +322,9 @@ export default async function AdminProductDetailPage({
           <p className="mt-2 text-xs font-semibold tracking-[0.12em] text-paper-green uppercase">{product.images.length}/4 images used</p>
           <ul className="mt-4 space-y-2 text-sm">
             {product.images.map((image) => (
-              <li key={image.id} className="flex items-center justify-between gap-3">
-                <span>
-                  {image.cloudinaryPublicId} — {image.alt}
-                </span>
+              <li key={image.id} className="flex items-start gap-3 rounded-lg border border-border p-2">
+                {cloudinaryImageUrl(image.cloudinaryPublicId, 160) ? <Image src={cloudinaryImageUrl(image.cloudinaryPublicId, 160)!} alt={image.alt} width={64} height={64} className="size-16 shrink-0 rounded-md object-cover" /> : null}
+                <div className="min-w-0 flex-1"><p className="truncate font-mono text-xs text-slate">{image.cloudinaryPublicId}</p>{canWrite ? <form action="/admin/products/mutate" method="post" className="mt-2 flex flex-wrap items-center gap-2"><input type="hidden" name="intent" value="update-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><label className="sr-only" htmlFor={`alt-${image.id}`}>Alt text</label><input id={`alt-${image.id}`} name="alt" required defaultValue={image.alt} className={`${adminFieldClass} min-w-0 flex-1`} /><SubmitProgressButton idleLabel="Save alt text" pendingLabel="Saving…" className="min-h-10 px-3 text-xs" /></form> : <p className="mt-1 text-sm text-slate">{image.alt}</p>}</div>
                 {canWrite ? (
                   <form action="/admin/products/mutate" method="post">
                     <input type="hidden" name="intent" value="remove-image" />
