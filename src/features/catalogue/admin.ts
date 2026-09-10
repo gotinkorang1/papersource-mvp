@@ -731,6 +731,34 @@ export async function updateProductImage(input: { role: StaffRole; imageId: stri
   return updated;
 }
 
+/** Move a product image one slot while preserving the saved ordering. */
+export async function moveProductImage(input: { role: StaffRole; imageId: string; direction: "up" | "down" }) {
+  assertProductsWrite(input.role);
+  const db = getDb();
+  const [current] = await db
+    .select({ id: productImages.id, productId: productImages.productId, position: productImages.position })
+    .from(productImages)
+    .where(eq(productImages.id, input.imageId))
+    .limit(1);
+  if (!current) throw new CatalogueAdminError("That product image was not found.");
+
+  const images = await db
+    .select({ id: productImages.id, position: productImages.position })
+    .from(productImages)
+    .where(eq(productImages.productId, current.productId))
+    .orderBy(asc(productImages.position), asc(productImages.id));
+  const index = images.findIndex((image) => image.id === current.id);
+  const targetIndex = input.direction === "up" ? index - 1 : index + 1;
+  const target = images[targetIndex];
+  if (!target) return current;
+
+  await db.transaction(async (tx) => {
+    await tx.update(productImages).set({ position: target.position }).where(eq(productImages.id, current.id));
+    await tx.update(productImages).set({ position: current.position }).where(eq(productImages.id, target.id));
+  });
+  return { ...current, position: target.position };
+}
+
 export async function addProductAlias(input: {
   role: StaffRole;
   productId: string;

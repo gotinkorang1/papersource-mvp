@@ -18,6 +18,7 @@ import {
   removeProductAlias,
   removeProductAttribute,
   removeProductImage,
+  moveProductImage,
   updateProductImage,
   saveProduct,
   saveVariant,
@@ -162,6 +163,13 @@ export async function POST(request: Request) {
         role: actor.role,
         imageId: uuid.parse(formData.get("imageId")),
         alt: String(formData.get("alt") ?? ""),
+      });
+    } else if (intent === "move-image") {
+      const direction = z.enum(["up", "down"]).parse(formData.get("direction"));
+      await moveProductImage({
+        role: actor.role,
+        imageId: uuid.parse(formData.get("imageId")),
+        direction,
       });
     } else if (intent === "add-alias") {
       await addProductAlias({
