@@ -240,15 +240,15 @@ export async function createProduct(input: {
   baseUnitPricePesewas: number;
 }) {
   assertProductsWrite(input.role);
+  const name = input.name.trim();
+  if (name.length < 2 || name.length > 200) throw new CatalogueAdminError("Product name must be between 2 and 200 characters.");
   if (input.baseUnitPricePesewas < 0 || !Number.isInteger(input.baseUnitPricePesewas)) {
     throw new CatalogueAdminError("Base price must be integer pesewas.");
   }
 
-  const slug = input.slug?.trim() ? slugify(input.slug) : slugify(input.name);
+  const slug = input.slug?.trim() ? slugify(input.slug) : slugify(name);
   const sku = input.sku.trim().toUpperCase();
-  if (!sku) {
-    throw new CatalogueAdminError("SKU is required.");
-  }
+  if (!sku || sku.length > 80) throw new CatalogueAdminError("SKU is required and must be 80 characters or fewer.");
 
   const db = getDb();
   try {
@@ -256,7 +256,7 @@ export async function createProduct(input: {
       const [product] = await tx
         .insert(products)
         .values({
-          name: input.name.trim(),
+          name,
           slug,
           brandId: input.brandId,
           categoryId: input.categoryId,
@@ -314,12 +314,14 @@ export async function saveProduct(input: {
   status: "draft" | "active" | "archived";
 }) {
   assertProductsWrite(input.role);
+  const name = input.name.trim();
+  if (name.length < 2 || name.length > 200) throw new CatalogueAdminError("Product name must be between 2 and 200 characters.");
   const db = getDb();
   const [updated] = await db
     .update(products)
     .set({
-      name: input.name.trim(),
-      slug: slugify(input.slug || input.name),
+      name,
+      slug: slugify(input.slug || name),
       brandId: input.brandId,
       categoryId: input.categoryId,
       productType: input.productType,
