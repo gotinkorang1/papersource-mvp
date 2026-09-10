@@ -44,7 +44,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <button type="submit" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Filter</button>
       </form>
       {rows.length === 0 ? (
-        <p className="mt-8 text-slate">No products yet.</p>
+        <div className="mt-8 rounded-xl border border-dashed border-border bg-card p-6 text-sm text-slate"><p>{filters.q || filters.status ? "No products match these filters." : "No products yet."}</p>{filters.q || filters.status || filters.sort ? <Link href="/admin/products" className="mt-2 inline-flex text-ink underline underline-offset-4">Clear filters</Link> : null}</div>
       ) : (
         <form action="/admin/products/mutate" method="post" className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
           {canWrite ? <div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><input type="hidden" name="intent" value="bulk-update-products" /><label className="sr-only" htmlFor="bulk-status">Bulk action</label><select id="bulk-status" name="status" defaultValue="draft" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="active">Set active</option><option value="draft">Set draft</option><option value="archived">Archive</option></select><SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating products…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /><span className="text-xs text-slate" aria-live="polite">Select products below to update them together.</span></div> : null}
