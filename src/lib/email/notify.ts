@@ -102,8 +102,8 @@ export async function notifyQuoteRevised(input: {
 }
 
 export async function notifyQuoteExpiring(input: { quoteId: string; number: string; token: string | null; email: string | null; contactName: string | null }) {
-  if (!input.token) return;
-  await sendTransactional({ event: "quote-expiring", entityId: input.quoteId, to: input.email, subject: `${input.number} expires soon`, react: createElement(QuoteExpiringEmail, { contactName: greetingName(input.contactName), quoteNumber: input.number, quoteUrl: absoluteUrl(`/quote/${input.token}`) }) });
+  const quoteUrl = input.token ? absoluteUrl(`/quote/${input.token}`) : absoluteUrl("/account/quotes");
+  await sendTransactional({ event: "quote-expiring", entityId: input.quoteId, to: input.email, subject: `${input.number} expires soon`, react: createElement(QuoteExpiringEmail, { contactName: greetingName(input.contactName), quoteNumber: input.number, quoteUrl }) });
 }
 
 export async function notifyQuoteAccepted(input: {
