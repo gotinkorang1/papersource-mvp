@@ -63,6 +63,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
   const [cropRatio, setCropRatio] = useState<CropRatio>("free");
   const [isCropping, setIsCropping] = useState(false);
   const [uploadingAll, setUploadingAll] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null);
 
   itemsRef.current = items;
   useEffect(() => () => {
@@ -88,7 +89,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
     });
   }
 
-  async function upload(item: UploadItem, index: number) {
+  async function upload(item: UploadItem, index: number): Promise<boolean> {
     setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "uploading", error: undefined } : entry));
     const body = new FormData();
     body.append("file", item.file);
@@ -97,8 +98,10 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
       const result = (await response.json()) as { publicId?: string; error?: string };
       if (!response.ok || !result.publicId) throw new Error(result.error ?? "Upload failed.");
       setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "done", publicId: result.publicId } : entry));
+      return true;
     } catch (error) {
       setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "error", error: error instanceof Error ? error.message : "Upload failed." } : entry));
+      return false;
     }
   }
 
@@ -106,12 +109,22 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
     const pending = items.map((item, index) => ({ item, index })).filter(({ item }) => item.status === "ready" || item.status === "error");
     if (!pending.length) return;
     setUploadingAll(true);
-    setNotice(`Uploading ${pending.length} image${pending.length === 1 ? "" : "s"}…`);
+    setUploadProgress({ done: 0, total: pending.length });
+    setNotice(`Uploading 0 of ${pending.length} image${pending.length === 1 ? "" : "s"}…`);
     try {
-      await Promise.all(pending.map(({ item, index }) => upload(item, index)));
-      setNotice("All pending images uploaded. Add alt text and save each one to the product.");
+      const results: boolean[] = [];
+      let completed = 0;
+      for (const { item, index } of pending) {
+        results.push(await upload(item, index));
+        completed += 1;
+        setUploadProgress({ done: completed, total: pending.length });
+        setNotice(`Uploading ${completed} of ${pending.length}…`);
+      }
+      const successful = results.filter(Boolean).length;
+      setNotice(`${successful} of ${pending.length} image${pending.length === 1 ? "" : "s"} uploaded. Add alt text and save each one to the product.`);
     } finally {
       setUploadingAll(false);
+      setUploadProgress(null);
     }
   }
 
@@ -157,7 +170,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
       <div className="rounded-lg border border-dashed border-border bg-cream/30 p-4 dark:bg-ink/30">
         <div className="flex flex-wrap items-center justify-between gap-2">
           <div><p className="font-medium text-ink">Upload from device</p><p className="mt-1 text-xs text-slate">JPG, PNG, WebP or AVIF · max 2 MB each</p></div>
-          <div className="flex flex-wrap gap-2"><button type="button" className={paperButton({ variant: "secondary", className: "min-h-10" })} onClick={() => inputRef.current?.click()} disabled={!canAdd || uploadingAll}>Choose images</button>{items.some((item) => item.status === "ready" || item.status === "error") ? <button type="button" className={paperButton({ className: "min-h-10" })} onClick={() => void uploadAllPending()} disabled={uploadingAll}>{uploadingAll ? "Uploading…" : "Upload all pending"}</button> : null}</div>
+          <div className="flex flex-wrap gap-2"><button type="button" className={paperButton({ variant: "secondary", className: "min-h-10" })} onClick={() => inputRef.current?.click()} disabled={!canAdd || uploadingAll}>Choose images</button>{items.some((item) => item.status === "ready" || item.status === "error") ? <button type="button" className={paperButton({ className: "min-h-10" })} onClick={() => void uploadAllPending()} disabled={uploadingAll}>{uploadingAll && uploadProgress ? `Uploading ${uploadProgress.done}/${uploadProgress.total}…` : "Upload all pending"}</button> : null}</div>
         </div>
         <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple className="sr-only" onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ""; }} />
         {notice ? <p className="mt-3 text-xs text-paper-green" role="status">{notice}</p> : null}
