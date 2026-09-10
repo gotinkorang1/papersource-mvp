@@ -19,7 +19,9 @@ export async function POST(request: Request) {
       route: new URL(request.url).pathname,
       dependency: "paystack",
     });
-    throw error;
+    // Return a retryable status without exposing provider/database details or
+    // allowing an unexpected webhook error to terminate the app worker.
+    return new Response("webhook processing failed", { status: 500 });
   }
 
   return new Response(null, { status: 200 });
