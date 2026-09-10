@@ -6,20 +6,28 @@ let client: ReturnType<typeof postgres> | undefined;
 let db: ReturnType<typeof drizzle<typeof schema>> | undefined;
 
 export function isDatabaseConfigured() {
-  return Boolean(process.env.DATABASE_URL);
+  return Boolean(process.env.DATABASE_URL?.trim());
 }
 
 export function getDb() {
   const url = process.env.DATABASE_URL;
 
-  if (!url) {
+  const connectionString = url?.trim();
+  if (!connectionString) {
     throw new Error(
       "DATABASE_URL is not set. Use the dedicated PaperSource Postgres from docker compose — never another project database.",
     );
   }
 
+  try {
+    const parsed = new URL(connectionString);
+    if (!['postgres:', 'postgresql:'].includes(parsed.protocol) || !parsed.hostname) throw new Error();
+  } catch {
+    throw new Error("DATABASE_URL must be a valid PostgreSQL connection string (postgresql://...).");
+  }
+
   if (!db) {
-    client = postgres(url, { prepare: false, max: 10 });
+    client = postgres(connectionString, { prepare: false, max: 10 });
     db = drizzle(client, { schema });
   }
 
