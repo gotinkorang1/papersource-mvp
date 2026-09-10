@@ -11,9 +11,23 @@ export async function GET(request: Request) {
   const checks: {
     database: "ok" | "not_configured" | "error";
     observability: "configured" | "not_configured";
+    integrations: {
+      paystack: "configured" | "test_mode" | "not_configured";
+      email: "configured" | "mock_mode" | "not_configured";
+      cloudinary: "configured" | "not_configured";
+    };
   } = {
     database: "not_configured",
     observability: process.env.SENTRY_DSN ? "configured" : "not_configured",
+    integrations: {
+      paystack: process.env.PAYSTACK_SECRET_KEY?.trim() ? "configured" : "test_mode",
+      email: process.env.EMAIL_MODE === "live"
+        ? (process.env.RESEND_API_KEY?.trim() && process.env.EMAIL_FROM?.trim() ? "configured" : "not_configured")
+        : "mock_mode",
+      cloudinary: process.env.CLOUDINARY_URL?.trim() || (process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME?.trim() && process.env.CLOUDINARY_API_KEY?.trim() && process.env.CLOUDINARY_API_SECRET?.trim())
+        ? "configured"
+        : "not_configured",
+    },
   };
 
   if (isDatabaseConfigured()) {
