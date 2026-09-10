@@ -71,7 +71,7 @@ export default async function HomePage() {
         <LiveDeliveryStatus />
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-cream shadow-[0_24px_60px_rgba(16,42,67,0.16)]">
-            <Image src="/images/catalogue-stationery-generated.png" alt="Stationery, notebooks, paper and desk supplies arranged for a productive workday" fill priority fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
+            <Image src="/images/catalogue-stationery-generated.png" alt="Stationery, notebooks, paper and desk supplies arranged for a productive workday" fill priority loading="eager" fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
           </div>
         </div>
