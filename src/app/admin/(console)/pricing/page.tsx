@@ -72,30 +72,18 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
               )}
             </ul>
             {canWrite ? (
-              <form
-                action="/admin/pricing/mutate"
-                method="post"
-                className="mt-4 grid gap-3 sm:grid-cols-2"
-              >
-                <input type="hidden" name="intent" value="add-tier" />
-                <input type="hidden" name="variantId" value={row.variantId} />
-                <AdminField label="Minimum qty">
-                  <input name="minimumQuantity" required defaultValue="1" className={adminFieldClass} />
-                </AdminField>
-                <AdminField label="Maximum qty">
-                  <input name="maximumQuantity" className={adminFieldClass} />
-                </AdminField>
-                <AdminField label="Unit price (GHS)">
-                  <input name="unitPrice" className={adminFieldClass} />
-                </AdminField>
-                <label className="flex items-center gap-2 self-end text-sm text-ink">
-                  <input type="checkbox" name="requestQuote" value="true" />
-                  Request quote
-                </label>
-                <div className="sm:col-span-2">
-                  <SubmitProgressButton idleLabel={`Add band for ${row.sku}`} pendingLabel="Adding band…" className={paperButton({ variant: "secondary" })} />
-                </div>
-              </form>
+              <details className="mt-4 rounded-lg border border-border bg-background">
+                <summary className="cursor-pointer list-none px-4 py-3 text-sm font-medium text-ink marker:hidden focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Add quantity band<span className="float-right text-xs text-slate">Optional</span></summary>
+                <form action="/admin/pricing/mutate" method="post" className="grid gap-3 border-t border-border p-4 sm:grid-cols-2">
+                  <input type="hidden" name="intent" value="add-tier" />
+                  <input type="hidden" name="variantId" value={row.variantId} />
+                  <AdminField label="Minimum qty"><input name="minimumQuantity" required defaultValue="1" className={adminFieldClass} /></AdminField>
+                  <AdminField label="Maximum qty"><input name="maximumQuantity" className={adminFieldClass} /></AdminField>
+                  <AdminField label="Unit price (GHS)"><input name="unitPrice" className={adminFieldClass} /></AdminField>
+                  <label className="flex items-center gap-2 self-end text-sm text-ink"><input type="checkbox" name="requestQuote" value="true" />Request quote</label>
+                  <div className="sm:col-span-2"><SubmitProgressButton idleLabel={`Add band for ${row.sku}`} pendingLabel="Adding band…" className={paperButton({ variant: "secondary" })} /></div>
+                </form>
+              </details>
             ) : null}
           </section>
         ))}
