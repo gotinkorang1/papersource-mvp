@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 type PageProps = {
   params: Promise<{ id: string }>;
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; success?: string }>;
 };
 
 export default async function AdminProductDetailPage({
@@ -28,7 +28,7 @@ export default async function AdminProductDetailPage({
 }: PageProps) {
   const actor = await requireStaffArea("products", "read");
   const { id } = await params;
-  const { error } = await searchParams;
+  const { error, success } = await searchParams;
   const product = await getAdminProduct(id);
   if (!product) {
     notFound();
@@ -50,6 +50,7 @@ export default async function AdminProductDetailPage({
         {product.status} · {product.productType} · /product/{product.slug}
       </p>
       <AdminError error={error} />
+      {success === "saved" ? <p role="status" className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Saved successfully.</p> : null}
 
       <section className="mt-8 max-w-2xl rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h2 className="font-heading text-xl text-ink">Copy</h2>

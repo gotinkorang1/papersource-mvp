@@ -230,6 +230,7 @@ export async function POST(request: Request) {
         resourceType: intent.includes("variant") ? "variant" : "product",
         resourceId,
       });
+      next.searchParams.set("success", "saved");
     }
   } catch (error) {
     if (isJsonRequest(request)) {
