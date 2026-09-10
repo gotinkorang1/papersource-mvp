@@ -10,8 +10,8 @@ export function createSupabaseServiceClient() {
       "STORAGE_MODE=live requires NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY",
     );
   }
-  if (key.startsWith("NEXT_PUBLIC_")) {
-    throw new Error("Service role key must not be a public env value");
+  if (key.startsWith("NEXT_PUBLIC_") || key.startsWith("sb_publishable_")) {
+    throw new Error("Service role key must be a server-only Supabase secret");
   }
 
   return createClient(url, key, {
