@@ -3,6 +3,11 @@ import { listBrands, listDivisionCategories, listProductCards } from "@/features
 import { listPublishedPages } from "@/features/content";
 import { SITE_URL } from "@/lib/seo";
 
+// Product/category discovery changes through the admin catalogue, not on every
+// request. Cache the generated sitemap for an hour to keep crawlers fast while
+// still picking up catalogue edits promptly.
+export const revalidate = 3600;
+
 const publicRoutes = ["", "/shop", "/brands", "/search", "/about", "/contact", "/delivery", "/faq", "/returns", "/privacy", "/terms", "/business", "/schools", "/corporate-accounts", "/bulk-orders", "/quick-order"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
