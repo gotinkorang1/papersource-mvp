@@ -45,7 +45,8 @@ async function cropImageFile(file: File, ratio: CropRatio) {
     context.drawImage(source, (source.naturalWidth - cropWidth) / 2, (source.naturalHeight - cropHeight) / 2, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, file.type === "image/png" ? "image/png" : "image/jpeg", 0.88));
     if (!blob) throw new Error("This image could not be edited.");
-    return new File([blob], file.name.replace(/\.[^.]+$/, "") + ".jpg", { type: blob.type, lastModified: Date.now() });
+    const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
+    return new File([blob], file.name.replace(/\.[^.]+$/, "") + `.${extension}`, { type: blob.type, lastModified: Date.now() });
   } finally {
     URL.revokeObjectURL(sourceUrl);
   }
