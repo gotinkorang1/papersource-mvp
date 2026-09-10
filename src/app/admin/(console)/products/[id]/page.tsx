@@ -52,7 +52,15 @@ export default async function AdminProductDetailPage({
       <AdminError error={error} />
       {success === "saved" ? <p role="status" className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Saved successfully.</p> : null}
 
-      <section className="mt-8 max-w-2xl rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
+      <nav aria-label="Product editor sections" className="sticky top-16 z-10 mt-6 -mx-1 overflow-x-auto rounded-lg border border-border bg-card/95 p-1 shadow-sm backdrop-blur">
+        <div className="flex min-w-max gap-1 text-sm">
+          {[['copy', 'Copy'], ['variants', 'Variants'], ['pricing', 'Pricing'], ['images', 'Images'], ['aliases', 'Aliases'], ['attributes', 'Attributes'], ...(product.productType === 'bundle' ? [['bundle', 'Office pack']] : [])].map(([id, label]) => (
+            <a key={id} href={`#${id}`} className="rounded-md px-3 py-2 text-slate transition-colors hover:bg-paper-green/10 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">{label}</a>
+          ))}
+        </div>
+      </nav>
+
+      <section id="copy" className="mt-8 max-w-2xl scroll-mt-28 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
         <h2 className="font-heading text-xl text-ink">Copy</h2>
         {canWrite ? (
           <form action="/admin/products/mutate" method="post" className="mt-4 grid gap-4">
@@ -97,7 +105,7 @@ export default async function AdminProductDetailPage({
         )}
       </section>
 
-      <section className="mt-8">
+      <section id="variants" className="mt-8 scroll-mt-28">
         <h2 className="font-heading text-xl text-ink">Variants</h2>
         <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
           <table className="w-full min-w-[34rem] text-sm">
@@ -218,7 +226,7 @@ export default async function AdminProductDetailPage({
       </section>
 
       {canAccessAdmin(actor.role, "pricing", "read") ? (
-        <section className="mt-8">
+        <section id="pricing" className="mt-8 scroll-mt-28">
           <h2 className="font-heading text-xl text-ink">Price tiers</h2>
           <p className="mt-2 text-sm text-slate">
             Server-authoritative bands. Request-quote is for open-ended volume.
@@ -317,7 +325,7 @@ export default async function AdminProductDetailPage({
       ) : null}
 
       <section id="images" className="mt-8 grid gap-8 lg:grid-cols-2 scroll-mt-24">
-        <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
+        <div id="aliases" className="scroll-mt-28 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Images</h2>
           <p className="mt-2 text-sm text-slate">Add up to 4 optimized Cloudinary images. The first image is the primary product image.</p>
           <p className="mt-2 text-xs font-semibold tracking-[0.12em] text-paper-green uppercase">{product.images.length}/4 images used</p>
@@ -345,7 +353,7 @@ export default async function AdminProductDetailPage({
           {canWrite && product.images.length >= 4 ? <p className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Image limit reached. Remove an image before adding another.</p> : null}
         </div>
 
-        <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
+        <div id="attributes" className="scroll-mt-28 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
           <h2 className="font-heading text-xl text-ink">Search aliases</h2>
           <ul className="mt-4 space-y-2 text-sm">
             {product.aliases.map((alias) => (
@@ -415,7 +423,7 @@ export default async function AdminProductDetailPage({
         </div>
 
         {product.productType === "bundle" ? (
-          <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
+          <div id="bundle" className="scroll-mt-28 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
             <h2 className="font-heading text-xl text-ink">Office pack items</h2>
             <ul className="mt-4 space-y-2 text-sm">
               {product.bundleItems.map((item) => (
