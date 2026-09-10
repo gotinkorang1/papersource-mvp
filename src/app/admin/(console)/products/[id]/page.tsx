@@ -320,14 +320,15 @@ export default async function AdminProductDetailPage({
           <h2 className="font-heading text-xl text-ink">Images</h2>
           <p className="mt-2 text-sm text-slate">Add up to 4 optimized Cloudinary images. The first image is the primary product image.</p>
           <p className="mt-2 text-xs font-semibold tracking-[0.12em] text-paper-green uppercase">{product.images.length}/4 images used</p>
+          {canWrite && product.images.length < 4 ? <ProductImageManager productId={product.id} imageCount={product.images.length} /> : null}
           <ul className="mt-4 space-y-2 text-sm">
             {product.images.map((image, imageIndex) => (
               <li key={image.id} className="flex items-start gap-3 rounded-lg border border-border p-2">
                 {cloudinaryImageUrl(image.cloudinaryPublicId, 160) ? <Image src={cloudinaryImageUrl(image.cloudinaryPublicId, 160)!} alt={image.alt} width={64} height={64} className="size-16 shrink-0 rounded-md object-cover" /> : null}
                 <div className="min-w-0 flex-1"><p className="truncate font-mono text-xs text-slate">{image.cloudinaryPublicId}</p>{canWrite ? <form action="/admin/products/mutate" method="post" className="mt-2 flex flex-wrap items-center gap-2"><input type="hidden" name="intent" value="update-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><label className="sr-only" htmlFor={`alt-${image.id}`}>Alt text</label><input id={`alt-${image.id}`} name="alt" required defaultValue={image.alt} className={`${adminFieldClass} min-w-0 flex-1`} /><SubmitProgressButton idleLabel="Save alt text" pendingLabel="Saving…" className="min-h-10 px-3 text-xs" /></form> : <p className="mt-1 text-sm text-slate">{image.alt}</p>}</div>
                 {canWrite ? <div className="flex shrink-0 flex-col gap-1" aria-label={`Reorder ${image.alt}`}>
-                  <form action="/admin/products/mutate" method="post"><input type="hidden" name="intent" value="move-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><input type="hidden" name="direction" value="up" /><SubmitProgressButton idleLabel="↑" pendingLabel="…" ariaLabel="Move image earlier" disabled={imageIndex === 0} className="min-h-8 w-8 px-0 text-sm" /></form>
-                  <form action="/admin/products/mutate" method="post"><input type="hidden" name="intent" value="move-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><input type="hidden" name="direction" value="down" /><SubmitProgressButton idleLabel="↓" pendingLabel="…" ariaLabel="Move image later" disabled={imageIndex === product.images.length - 1} className="min-h-8 w-8 px-0 text-sm" /></form>
+                  <form action="/admin/products/mutate" method="post"><input type="hidden" name="intent" value="move-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><input type="hidden" name="direction" value="up" /><SubmitProgressButton idleLabel="↑ Earlier" pendingLabel="Moving…" ariaLabel="Move image earlier" disabled={imageIndex === 0} className="min-h-8 px-2 text-xs" /></form>
+                  <form action="/admin/products/mutate" method="post"><input type="hidden" name="intent" value="move-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><input type="hidden" name="direction" value="down" /><SubmitProgressButton idleLabel="↓ Later" pendingLabel="Moving…" ariaLabel="Move image later" disabled={imageIndex === product.images.length - 1} className="min-h-8 px-2 text-xs" /></form>
                 </div> : null}
                 {canWrite ? (
                   <form action="/admin/products/mutate" method="post">
@@ -340,9 +341,7 @@ export default async function AdminProductDetailPage({
               </li>
             ))}
           </ul>
-          {canWrite && product.images.length < 4 ? (
-            <ProductImageManager productId={product.id} imageCount={product.images.length} />
-          ) : canWrite ? <p className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Image limit reached. Remove an image before adding another.</p> : null}
+          {canWrite && product.images.length >= 4 ? <p className="mt-4 rounded-lg border border-paper-green/30 bg-paper-green/10 px-3 py-2 text-sm text-paper-green">Image limit reached. Remove an image before adding another.</p> : null}
         </div>
 
         <div className="rounded-xl border border-border bg-card p-4 shadow-sm sm:p-5">
