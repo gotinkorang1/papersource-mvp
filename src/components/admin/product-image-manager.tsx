@@ -70,6 +70,17 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
     for (const item of itemsRef.current) URL.revokeObjectURL(item.preview);
   }, []);
 
+  useEffect(() => {
+    const hasUnsaved = items.some((item) => item.status !== "saved");
+    if (!hasUnsaved) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [items]);
+
   function addFiles(files: FileList | null) {
     if (!files) return;
     const remaining = Math.max(0, 4 - imageCount - items.length);
