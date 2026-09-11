@@ -30,13 +30,8 @@ export function ProductQuickView({
   const addToCart = onAddToCart ?? preview?.addToCart;
   const addToQuote = onAddToQuote ?? preview?.addToQuote;
   const [quantity, setQuantity] = useState(1);
-  const [mounted, setMounted] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -60,7 +55,7 @@ export function ProductQuickView({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  if (!mounted || !open || !product) {
+  if (!open || !product || typeof document === "undefined") {
     return null;
   }
 
