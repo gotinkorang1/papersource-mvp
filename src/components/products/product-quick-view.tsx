@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { X } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { DeliveryBadge } from "@/components/commerce/delivery-badge";
@@ -29,8 +30,13 @@ export function ProductQuickView({
   const addToCart = onAddToCart ?? preview?.addToCart;
   const addToQuote = onAddToQuote ?? preview?.addToQuote;
   const [quantity, setQuantity] = useState(1);
+  const [mounted, setMounted] = useState(false);
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   useEffect(() => {
     if (!open) {
@@ -54,13 +60,14 @@ export function ProductQuickView({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  if (!open || !product) {
+  if (!mounted || !open || !product) {
     return null;
   }
 
   const out = product.stock === "out";
 
-  return (
+  return createPortal(
+    (
     <div
       className="fixed inset-0 z-50 flex items-end justify-center bg-ink/40 p-4 md:items-center"
       role="dialog"
@@ -124,5 +131,7 @@ export function ProductQuickView({
         </div>
       </div>
     </div>
+    ),
+    document.body,
   );
 }
