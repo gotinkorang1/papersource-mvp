@@ -5,9 +5,9 @@ import Image from "next/image";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { adminFieldClass } from "@/components/admin/field";
+import { centeredCropRect, type CropRatio } from "@/lib/image/crop";
 
 type UploadItem = { file: File; preview: string; alt: string; status: "ready" | "uploading" | "done" | "saving" | "saved" | "error"; error?: string; publicId?: string };
-type CropRatio = "free" | "4:5" | "5:4" | "3:4" | "4:3";
 
 const cropRatios: { value: CropRatio; label: string }[] = [
   { value: "free", label: "Free" },
@@ -27,13 +27,7 @@ async function cropImageFile(file: File, ratio: CropRatio) {
       image.onerror = () => reject(new Error("This image could not be edited."));
       image.src = sourceUrl;
     });
-    const [ratioWidth, ratioHeight] = ratio.split(":").map(Number);
-    const sourceRatio = source.naturalWidth / source.naturalHeight;
-    const targetRatio = ratioWidth / ratioHeight;
-    let cropWidth = source.naturalWidth;
-    let cropHeight = source.naturalHeight;
-    if (sourceRatio > targetRatio) cropWidth = Math.round(cropHeight * targetRatio);
-    else cropHeight = Math.round(cropWidth / targetRatio);
+    const { x, y, width: cropWidth, height: cropHeight } = centeredCropRect(source.naturalWidth, source.naturalHeight, ratio);
     const maxDimension = 1800;
     const scale = Math.min(1, maxDimension / Math.max(cropWidth, cropHeight));
     const canvas = document.createElement("canvas");
@@ -42,7 +36,7 @@ async function cropImageFile(file: File, ratio: CropRatio) {
     const context = canvas.getContext("2d");
     if (!context) throw new Error("Your browser cannot edit this image.");
     context.imageSmoothingQuality = "high";
-    context.drawImage(source, (source.naturalWidth - cropWidth) / 2, (source.naturalHeight - cropHeight) / 2, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
+    context.drawImage(source, x, y, cropWidth, cropHeight, 0, 0, canvas.width, canvas.height);
     const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, file.type === "image/png" ? "image/png" : "image/jpeg", 0.88));
     if (!blob) throw new Error("This image could not be edited.");
     const extension = blob.type === "image/png" ? "png" : blob.type === "image/webp" ? "webp" : "jpg";
