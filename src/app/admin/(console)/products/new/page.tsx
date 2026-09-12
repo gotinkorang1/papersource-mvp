@@ -71,6 +71,15 @@ export default async function AdminNewProductPage({ searchParams }: PageProps) {
         <AdminField label="Base unit price (GHS) *">
           <input name="baseUnitPrice" required className={adminFieldClass} placeholder="78.99" />
         </AdminField>
+        <div className="grid gap-4 rounded-lg border border-border bg-muted/20 p-4 sm:grid-cols-2">
+          <AdminField label="Opening stock">
+            <input name="openingStock" type="number" min="0" step="1" className={adminFieldClass} placeholder="0" />
+          </AdminField>
+          <AdminField label="Low-stock threshold">
+            <input name="lowStockThreshold" type="number" min="0" step="1" className={adminFieldClass} placeholder="5" />
+          </AdminField>
+          <p className="text-xs text-slate sm:col-span-2">Set the starting on-hand quantity now. Leave blank to start at 0 with a low-stock threshold of 5.</p>
+        </div>
         <SubmitProgressButton
           idleLabel="Create product"
           pendingLabel="Creating product…"

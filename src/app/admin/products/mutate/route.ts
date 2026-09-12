@@ -7,6 +7,7 @@ import {
   addProductAlias,
   addProductAttribute,
   addProductImage,
+  addProductImages,
   addVariant,
   bulkUpdateProducts,
   CatalogueAdminError,
@@ -91,6 +92,8 @@ export async function POST(request: Request) {
         sku: String(formData.get("sku") ?? ""),
         unitLabel: String(formData.get("unitLabel") ?? "each"),
         baseUnitPricePesewas: parseRequiredPesewas(formData.get("baseUnitPrice")),
+        openingStock: String(formData.get("openingStock") ?? ""),
+        lowStockThreshold: String(formData.get("lowStockThreshold") ?? ""),
       });
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "catalogue_product_created", resourceType: "product", resourceId: created.id });
       return NextResponse.redirect(new URL(`/admin/products/${created.id}`, origin), 303);
@@ -153,6 +156,16 @@ export async function POST(request: Request) {
         cloudinaryPublicId: String(formData.get("cloudinaryPublicId") ?? ""),
         alt: String(formData.get("alt") ?? ""),
         position: Number(formData.get("position") ?? 0),
+      });
+    } else if (intent === "add-images") {
+      const publicIds = formData.getAll("cloudinaryPublicId").map(String);
+      const alts = formData.getAll("alt").map(String);
+      const positions = formData.getAll("position").map((value) => Number(value));
+      if (publicIds.length !== alts.length) throw new CatalogueAdminError("Every uploaded image needs alt text.");
+      await addProductImages({
+        role: actor.role,
+        productId,
+        images: publicIds.map((cloudinaryPublicId, index) => ({ cloudinaryPublicId, alt: alts[index] ?? "", position: positions[index] ?? index })),
       });
     } else if (intent === "remove-image") {
       await removeProductImage({

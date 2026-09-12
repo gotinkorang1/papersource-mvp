@@ -21,6 +21,21 @@ export const INVENTORY_ADJUST_REASONS = ["receive", "adjust"] as const;
 
 export const INVENTORY_BULK_OPERATIONS = ["add", "remove"] as const;
 
+export function parseOpeningInventory(input: { onHand: string; lowStockThreshold: string }) {
+  const parse = (value: string, fallback: number, label: string) => {
+    const raw = value.trim();
+    if (!raw) return fallback;
+    const parsed = Number(raw);
+    if (!Number.isInteger(parsed)) throw new InventoryAdminError(`${label} must be a whole number.`);
+    if (parsed < 0) throw new InventoryAdminError(`${label} must be non-negative.`);
+    return parsed;
+  };
+  return {
+    onHand: parse(input.onHand, 0, "Opening stock"),
+    lowStockThreshold: parse(input.lowStockThreshold, 5, "Low-stock threshold"),
+  };
+}
+
 export function parseInventoryAdjustment(input: { delta: string; reason: string }) {
   const delta = Number(input.delta.trim());
   if (!Number.isInteger(delta) || delta === 0) {

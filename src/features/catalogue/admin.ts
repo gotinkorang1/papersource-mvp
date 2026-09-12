@@ -18,6 +18,7 @@ import {
 import type { StaffRole } from "@/lib/staff/types";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { destroyCloudinaryImage } from "@/lib/cloudinary/server";
+import { parseOpeningInventory } from "@/features/inventory/admin";
 
 export class CatalogueAdminError extends Error {
   constructor(message: string) {
@@ -244,6 +245,8 @@ export async function createProduct(input: {
   sku: string;
   unitLabel: string;
   baseUnitPricePesewas: number;
+  openingStock?: string;
+  lowStockThreshold?: string;
 }) {
   assertProductsWrite(input.role);
   const name = input.name.trim();
@@ -255,6 +258,7 @@ export async function createProduct(input: {
   const slug = input.slug?.trim() ? slugify(input.slug) : slugify(name);
   const sku = input.sku.trim().toUpperCase();
   if (!sku || sku.length > 80) throw new CatalogueAdminError("SKU is required and must be 80 characters or fewer.");
+  const openingInventory = parseOpeningInventory({ onHand: input.openingStock ?? "", lowStockThreshold: input.lowStockThreshold ?? "" });
 
   const db = getDb();
   try {
@@ -288,7 +292,7 @@ export async function createProduct(input: {
         throw new CatalogueAdminError("Could not create the first variant.");
       }
 
-      await tx.insert(inventory).values({ variantId: variant.id, onHand: 0 });
+      await tx.insert(inventory).values({ variantId: variant.id, onHand: openingInventory.onHand, lowStockThreshold: openingInventory.lowStockThreshold });
       return product;
     });
 
@@ -666,6 +670,35 @@ export async function addProductImage(input: {
     throw new CatalogueAdminError("Could not add that image.");
   }
   return image;
+}
+
+export async function addProductImages(input: {
+  role: StaffRole;
+  productId: string;
+  images: Array<{ cloudinaryPublicId: string; alt: string; position: number }>;
+}) {
+  assertProductsWrite(input.role);
+  if (!input.images.length) throw new CatalogueAdminError("Upload at least one image first.");
+  if (input.images.length > 4) throw new CatalogueAdminError("A product can have up to 4 images.");
+  const images = input.images.map((image, index) => {
+    const publicId = normalizeCloudinaryPublicId(image.cloudinaryPublicId);
+    const alt = image.alt.trim();
+    if (!publicId || !alt) throw new CatalogueAdminError("Cloudinary public ID and alt text are required for every image.");
+    return { cloudinaryPublicId: publicId, alt, position: Number.isInteger(image.position) ? image.position : index };
+  });
+  if (new Set(images.map((image) => image.cloudinaryPublicId)).size !== images.length) {
+    throw new CatalogueAdminError("Each image must be unique.");
+  }
+  const db = getDb();
+  await db.transaction(async (tx) => {
+    const existing = await tx.select({ cloudinaryPublicId: productImages.cloudinaryPublicId }).from(productImages).where(eq(productImages.productId, input.productId));
+    if (existing.length + images.length > 4) throw new CatalogueAdminError("A product can have up to 4 images.");
+    if (images.some((image) => existing.some((item) => item.cloudinaryPublicId === image.cloudinaryPublicId))) {
+      throw new CatalogueAdminError("One or more images are already attached to this product.");
+    }
+    await tx.insert(productImages).values(images.map((image) => ({ productId: input.productId, ...image })));
+  });
+  return images.length;
 }
 
 /** Update only a category image without requiring the rest of the edit form. */

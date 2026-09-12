@@ -6,7 +6,7 @@ import { SubmitProgressButton } from "@/components/admin/submit-progress-button"
 import { paperButton } from "@/components/commerce/paper-button";
 import { adminFieldClass } from "@/components/admin/field";
 
-type UploadItem = { file: File; preview: string; status: "ready" | "uploading" | "done" | "saving" | "saved" | "error"; error?: string; publicId?: string };
+type UploadItem = { file: File; preview: string; alt: string; status: "ready" | "uploading" | "done" | "saving" | "saved" | "error"; error?: string; publicId?: string };
 type CropRatio = "free" | "4:5" | "5:4" | "3:4" | "4:3";
 
 const cropRatios: { value: CropRatio; label: string }[] = [
@@ -87,7 +87,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
     const selectedFiles = Array.from(files);
     const eligible = selectedFiles.filter((file) => file.size <= 2 * 1024 * 1024 && ["image/jpeg", "image/png", "image/webp", "image/avif"].includes(file.type));
     const rejected = selectedFiles.length - eligible.length;
-    const next = eligible.slice(0, remaining).map((file) => ({ file, preview: URL.createObjectURL(file), status: "ready" as const }));
+    const next = eligible.slice(0, remaining).map((file) => ({ file, preview: URL.createObjectURL(file), alt: file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " "), status: "ready" as const }));
     if (rejected || eligible.length > remaining) setNotice(`${rejected ? `${rejected} file${rejected === 1 ? "" : "s"} skipped: use JPG, PNG, WebP or AVIF under 2 MB. ` : ""}${eligible.length > remaining ? `Only ${remaining} image${remaining === 1 ? "" : "s"} can be added because the product limit is 4.` : ""}`);
     else setNotice(null);
     setItems((current) => [...current, ...next]);
@@ -142,26 +142,37 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
         setNotice(`Uploading ${completed} of ${pending.length}…`);
       }
       const successful = results.filter(Boolean).length;
-      setNotice(`${successful} of ${pending.length} image${pending.length === 1 ? "" : "s"} uploaded. Add alt text and save each one to the product.`);
+      setNotice(`${successful} of ${pending.length} image${pending.length === 1 ? "" : "s"} uploaded. Review alt text, then save them together.`);
     } finally {
       setUploadingAll(false);
       setUploadProgress(null);
     }
   }
 
-  async function saveImage(form: HTMLFormElement, index: number) {
-    setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "saving", error: undefined } : entry));
+  async function saveAllImages() {
+    const pending = items.map((item, index) => ({ item, index })).filter(({ item }) => item.status === "done" && item.publicId);
+    if (!pending.length) return;
+    setItems((current) => current.map((entry) => pending.some(({ index }) => index === current.indexOf(entry)) ? { ...entry, status: "saving", error: undefined } : entry));
     try {
-      const response = await fetch(form.action, {
+      const body = new FormData();
+      body.set("intent", "add-images");
+      body.set("productId", productId);
+      pending.forEach(({ item, index }) => {
+        body.append("cloudinaryPublicId", item.publicId!);
+        body.append("alt", item.alt);
+        body.append("position", String(imageCount + index));
+      });
+      const response = await fetch("/admin/products/mutate", {
         method: "POST",
-        body: new FormData(form),
+        body,
         headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" },
       });
       const result = (await response.json()) as { ok?: boolean; error?: string };
-      if (!response.ok || !result.ok) throw new Error(result.error ?? "Could not save this image.");
-      setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "saved" } : entry));
+      if (!response.ok || !result.ok) throw new Error(result.error ?? "Could not save these images.");
+      setItems((current) => current.map((entry, itemIndex) => pending.some(({ index }) => index === itemIndex) ? { ...entry, status: "saved" } : entry));
+      setNotice(`${pending.length} image${pending.length === 1 ? "" : "s"} saved to the product.`);
     } catch (error) {
-      setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "done", error: error instanceof Error ? error.message : "Could not save this image." } : entry));
+      setItems((current) => current.map((entry, itemIndex) => pending.some(({ index }) => index === itemIndex) ? { ...entry, status: "done", error: error instanceof Error ? error.message : "Could not save these images." } : entry));
     }
   }
 
@@ -197,8 +208,9 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
         {notice ? <p className="mt-3 text-xs text-paper-green" role="status">{notice}</p> : null}
         {items.length > 0 ? <div className="mt-4 grid gap-3 sm:grid-cols-2">{items.map((item, index) => <div key={`${item.file.name}-${index}`} className="flex gap-3 rounded-lg border border-border bg-card p-2">
           <Image src={item.preview} alt="" width={64} height={64} unoptimized className="h-16 w-16 rounded-md object-cover" />
-          <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-ink">{item.file.name}</p><p className="text-xs text-slate">{(item.file.size / 1024 / 1024).toFixed(2)} MB · {item.status === "uploading" ? "Uploading…" : item.status === "done" ? "Uploaded — save it below" : item.status === "saving" ? "Saving…" : item.status === "saved" ? "Saved to product" : item.status === "error" ? item.error : "Not uploaded"}</p><div className="mt-2 flex flex-wrap gap-3">{item.status === "ready" || item.status === "error" ? <button type="button" className="text-xs font-semibold text-paper-green underline" onClick={() => upload(item, index)}>Upload</button> : null}{item.status !== "saved" && item.status !== "saving" && item.status !== "uploading" ? <button type="button" className="text-xs text-slate underline" onClick={() => { setCropIndex(index); setCropRatio("free"); }}>Crop</button> : null}{item.status !== "saved" && item.status !== "saving" ? <><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => movePending(index, "up")} disabled={index === 0}>Move earlier</button><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => movePending(index, "down")} disabled={index === items.length - 1}>Move later</button><button type="button" className="text-xs text-slate underline" onClick={() => remove(index)}>Remove</button></> : null}</div>{(item.status === "done" || item.status === "saving") && item.publicId ? <form action="/admin/products/mutate" method="post" onSubmit={(event) => { event.preventDefault(); void saveImage(event.currentTarget, index); }} className="mt-3 grid gap-2 border-t border-border pt-3"><input type="hidden" name="intent" value="add-image" /><input type="hidden" name="productId" value={productId} /><input type="hidden" name="cloudinaryPublicId" value={item.publicId} /><input type="hidden" name="position" value={imageCount + index} /><label className="grid gap-1 text-xs font-medium text-ink">Alt text<input name="alt" required defaultValue={item.file.name.replace(/\.[^.]+$/, "").replace(/[-_]+/g, " ")} className={adminFieldClass} disabled={item.status === "saving"} /></label><SubmitProgressButton idleLabel="Save to product" pendingLabel="Saving…" className="min-h-9 px-3 text-xs" /></form> : null}</div>
+          <div className="min-w-0 flex-1"><p className="truncate text-sm font-medium text-ink">{item.file.name}</p><p className="text-xs text-slate">{(item.file.size / 1024 / 1024).toFixed(2)} MB · {item.status === "uploading" ? "Uploading…" : item.status === "done" ? "Uploaded — ready to save" : item.status === "saving" ? "Saving…" : item.status === "saved" ? "Saved to product" : item.status === "error" ? item.error : "Not uploaded"}</p><div className="mt-2 flex flex-wrap gap-3">{item.status === "ready" || item.status === "error" ? <button type="button" className="text-xs font-semibold text-paper-green underline" onClick={() => upload(item, index)}>Upload</button> : null}{item.status !== "saved" && item.status !== "saving" && item.status !== "uploading" ? <button type="button" className="text-xs text-slate underline" onClick={() => { setCropIndex(index); setCropRatio("free"); }}>Crop</button> : null}{item.status !== "saved" && item.status !== "saving" ? <><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => movePending(index, "up")} disabled={index === 0}>Move earlier</button><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => movePending(index, "down")} disabled={index === items.length - 1}>Move later</button><button type="button" className="text-xs text-slate underline" onClick={() => remove(index)}>Remove</button></> : null}</div>{(item.status === "done" || item.status === "saving" || item.status === "saved") && item.publicId ? <label className="mt-3 grid gap-1 border-t border-border pt-3 text-xs font-medium text-ink">Alt text<input value={item.alt} onChange={(event) => setItems((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, alt: event.target.value } : entry))} className={adminFieldClass} disabled={item.status === "saving" || item.status === "saved"} /></label> : null}</div>
         </div>)}</div> : null}
+        {items.some((item) => item.status === "done") ? <button type="button" className={paperButton({ className: "mt-4 min-h-10" })} onClick={() => void saveAllImages()} disabled={items.some((item) => item.status === "saving")}>Save all uploaded images</button> : null}
       </div>
       <form action="/admin/products/mutate" method="post" className="grid gap-3 rounded-lg border border-border bg-card p-4"><input type="hidden" name="intent" value="add-image" /><input type="hidden" name="productId" value={productId} /><label className="grid gap-1 text-sm font-medium text-ink">Or paste a Cloudinary image URL or public ID<input name="cloudinaryPublicId" required value={url} onChange={(event) => setUrl(event.target.value)} className={adminFieldClass} placeholder="https://res.cloudinary.com/... or papersource/products/..." /></label><label className="grid gap-1 text-sm font-medium text-ink">Alt text<input name="alt" required value={urlAlt} onChange={(event) => setUrlAlt(event.target.value)} className={adminFieldClass} placeholder="Product image description" /></label><SubmitProgressButton idleLabel="Add image URL" pendingLabel="Adding image…" className={paperButton({ variant: "secondary" })} /></form>
       {cropIndex !== null && items[cropIndex] ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby="crop-image-title"><div className="w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-xl"><div className="flex items-start justify-between gap-4"><div><h3 id="crop-image-title" className="font-heading text-xl text-ink">Crop image</h3><p className="mt-1 text-sm text-slate">Choose a ratio, then apply a centered crop before uploading.</p></div><button type="button" className="text-sm text-slate underline" onClick={() => setCropIndex(null)} disabled={isCropping}>Close</button></div><div className="mt-4 grid place-items-center rounded-lg bg-ink/10 p-3"><Image src={items[cropIndex].preview} alt="Preview of image being cropped" width={480} height={320} unoptimized className="max-h-64 w-full rounded-md object-contain" /></div><div className="mt-4 flex flex-wrap gap-2">{cropRatios.map((ratio) => <button key={ratio.value} type="button" onClick={() => setCropRatio(ratio.value)} className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${cropRatio === ratio.value ? "border-paper-green bg-paper-green text-white" : "border-border text-ink hover:border-paper-green"}`}>{ratio.label}</button>)}</div><div className="mt-5 flex justify-end gap-2"><button type="button" className={paperButton({ variant: "secondary" })} onClick={() => setCropIndex(null)} disabled={isCropping}>Cancel</button><button type="button" className={paperButton({ variant: "primary" })} onClick={() => void applyCrop()} disabled={isCropping}>{isCropping ? "Applying…" : "Apply crop"}</button></div></div></div> : null}

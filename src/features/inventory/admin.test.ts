@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { InventoryAdminError, parseBulkInventoryAdjustment, parseInventoryAdjustment } from "./admin";
+import { InventoryAdminError, parseBulkInventoryAdjustment, parseInventoryAdjustment, parseOpeningInventory } from "./admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 
 describe("parseInventoryAdjustment", () => {
@@ -20,6 +20,21 @@ describe("parseInventoryAdjustment", () => {
     expect(() => parseInventoryAdjustment({ delta: "2", reason: "reserve" })).toThrow(
       /receive or adjust/,
     );
+  });
+});
+
+describe("parseOpeningInventory", () => {
+  it("defaults blank opening stock and threshold", () => {
+    expect(parseOpeningInventory({ onHand: "", lowStockThreshold: "" })).toEqual({ onHand: 0, lowStockThreshold: 5 });
+  });
+
+  it("accepts non-negative whole numbers", () => {
+    expect(parseOpeningInventory({ onHand: "24", lowStockThreshold: "8" })).toEqual({ onHand: 24, lowStockThreshold: 8 });
+  });
+
+  it("rejects negative or fractional values", () => {
+    expect(() => parseOpeningInventory({ onHand: "-1", lowStockThreshold: "5" })).toThrow(/non-negative/);
+    expect(() => parseOpeningInventory({ onHand: "2.5", lowStockThreshold: "5" })).toThrow(/whole number/);
   });
 });
 
