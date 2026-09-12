@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { InventoryAdminError, parseInventoryAdjustment } from "./admin";
+import { InventoryAdminError, parseBulkInventoryAdjustment, parseInventoryAdjustment } from "./admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 
 describe("parseInventoryAdjustment", () => {
@@ -20,6 +20,29 @@ describe("parseInventoryAdjustment", () => {
     expect(() => parseInventoryAdjustment({ delta: "2", reason: "reserve" })).toThrow(
       /receive or adjust/,
     );
+  });
+});
+
+describe("parseBulkInventoryAdjustment", () => {
+  it("normalizes a positive add operation", () => {
+    expect(parseBulkInventoryAdjustment({ quantity: "12", operation: "add", reason: "receive", variantIds: ["a", "b"] })).toEqual({
+      delta: 12,
+      reason: "receive",
+      variantIds: ["a", "b"],
+    });
+  });
+
+  it("turns remove into a negative delta", () => {
+    expect(parseBulkInventoryAdjustment({ quantity: "3", operation: "remove", reason: "adjust", variantIds: ["a"] })).toEqual({
+      delta: -3,
+      reason: "adjust",
+      variantIds: ["a"],
+    });
+  });
+
+  it("rejects an empty selection and invalid quantity", () => {
+    expect(() => parseBulkInventoryAdjustment({ quantity: "0", operation: "add", reason: "receive", variantIds: [] })).toThrow(/select at least one variant/i);
+    expect(() => parseBulkInventoryAdjustment({ quantity: "-2", operation: "remove", reason: "adjust", variantIds: ["a"] })).toThrow(/positive whole-number quantity/);
   });
 });
 

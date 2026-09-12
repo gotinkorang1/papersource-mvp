@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
-import { adjustInventory, InventoryAdminError } from "@/features/inventory/admin";
+import { adjustInventory, bulkAdjustInventory, InventoryAdminError } from "@/features/inventory/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -19,23 +19,27 @@ export async function POST(request: Request) {
 
   try {
     const formData = await request.formData();
-    const variantId = z.string().uuid().parse(formData.get("variantId"));
-    const delta = Number(formData.get("delta"));
-    const reason = String(formData.get("reason") ?? "");
-    await adjustInventory({
-      role: actor.role,
-      actorId: actor.profileId,
-      variantId,
-      delta,
-      reason,
-    });
-    await recordAdminAudit({
-      actorProfileId: actor.profileId,
-      action: "inventory_adjusted",
-      resourceType: "variant",
-      resourceId: variantId,
-      metadata: { delta, reason },
-    });
+    const intent = String(formData.get("intent") ?? "adjust");
+    if (intent === "bulk-adjust") {
+      const variantIds = formData.getAll("variantId").map((value) => z.string().uuid().parse(value));
+      const operation = String(formData.get("operation") ?? "");
+      const quantity = String(formData.get("quantity") ?? "");
+      const reason = String(formData.get("reason") ?? "");
+      const count = await bulkAdjustInventory({ role: actor.role, actorId: actor.profileId, variantIds, quantity, operation, reason });
+      await recordAdminAudit({
+        actorProfileId: actor.profileId,
+        action: "inventory_bulk_adjusted",
+        resourceType: "inventory",
+        resourceId: null,
+        metadata: { count, operation, quantity: Number(quantity), reason },
+      });
+    } else {
+      const variantId = z.string().uuid().parse(formData.get("variantId"));
+      const delta = Number(formData.get("delta"));
+      const reason = String(formData.get("reason") ?? "");
+      await adjustInventory({ role: actor.role, actorId: actor.profileId, variantId, delta, reason });
+      await recordAdminAudit({ actorProfileId: actor.profileId, action: "inventory_adjusted", resourceType: "variant", resourceId: variantId, metadata: { delta, reason } });
+    }
   } catch (error) {
     const message = error instanceof InventoryAdminError
       ? error.message

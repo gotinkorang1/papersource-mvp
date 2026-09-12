@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 
-export function SelectAllCheckbox({ count, name = "productId", label = "products" }: { count: number; name?: string; label?: string }) {
+export function SelectAllCheckbox({ count, name = "productId", label = "products", formId }: { count: number; name?: string; label?: string; formId?: string }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [selected, setSelected] = useState(0);
 
@@ -13,9 +13,9 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
       const boxes = Array.from(form.elements).filter((element): element is HTMLInputElement => element instanceof HTMLInputElement && element.name === name);
       setSelected(boxes.filter((box) => box.checked).length);
     };
-    form.addEventListener("change", sync);
+    document.addEventListener("change", sync);
     sync();
-    return () => form.removeEventListener("change", sync);
+    return () => document.removeEventListener("change", sync);
   }, [name]);
 
   useEffect(() => {
@@ -26,6 +26,7 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
     <span className="inline-flex items-center gap-2">
       <input
         ref={inputRef}
+        form={formId}
         type="checkbox"
         aria-label={selected === count ? `Deselect all ${label}` : `Select all ${label}`}
         checked={count > 0 && selected === count}
