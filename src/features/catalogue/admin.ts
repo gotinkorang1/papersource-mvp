@@ -258,7 +258,12 @@ export async function createProduct(input: {
   const slug = input.slug?.trim() ? slugify(input.slug) : slugify(name);
   const sku = input.sku.trim().toUpperCase();
   if (!sku || sku.length > 80) throw new CatalogueAdminError("SKU is required and must be 80 characters or fewer.");
-  const openingInventory = parseOpeningInventory({ onHand: input.openingStock ?? "", lowStockThreshold: input.lowStockThreshold ?? "" });
+  let openingInventory: { onHand: number; lowStockThreshold: number };
+  try {
+    openingInventory = parseOpeningInventory({ onHand: input.openingStock ?? "", lowStockThreshold: input.lowStockThreshold ?? "" });
+  } catch (error) {
+    throw new CatalogueAdminError(error instanceof Error ? error.message : "Opening inventory values are invalid.");
+  }
 
   const db = getDb();
   try {
