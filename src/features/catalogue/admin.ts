@@ -247,6 +247,7 @@ export async function createProduct(input: {
   baseUnitPricePesewas: number;
   openingStock?: string;
   lowStockThreshold?: string;
+  images?: Array<{ cloudinaryPublicId: string; alt: string; position: number }>;
 }) {
   assertProductsWrite(input.role);
   const name = input.name.trim();
@@ -264,6 +265,14 @@ export async function createProduct(input: {
   } catch (error) {
     throw new CatalogueAdminError(error instanceof Error ? error.message : "Opening inventory values are invalid.");
   }
+  const images = (input.images ?? []).map((image, index) => ({
+    cloudinaryPublicId: normalizeCloudinaryPublicId(image.cloudinaryPublicId),
+    alt: image.alt.trim(),
+    position: Number.isInteger(image.position) ? image.position : index,
+  }));
+  if (images.length > 4) throw new CatalogueAdminError("A product can have up to 4 images.");
+  if (images.some((image) => !image.cloudinaryPublicId || !image.alt)) throw new CatalogueAdminError("Every product image needs alt text.");
+  if (new Set(images.map((image) => image.cloudinaryPublicId)).size !== images.length) throw new CatalogueAdminError("Each product image must be unique.");
 
   const db = getDb();
   try {
@@ -298,6 +307,7 @@ export async function createProduct(input: {
       }
 
       await tx.insert(inventory).values({ variantId: variant.id, onHand: openingInventory.onHand, lowStockThreshold: openingInventory.lowStockThreshold });
+      if (images.length) await tx.insert(productImages).values(images.map((image) => ({ productId: product.id, variantId: variant.id, ...image })));
       return product;
     });
 

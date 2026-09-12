@@ -94,6 +94,11 @@ export async function POST(request: Request) {
         baseUnitPricePesewas: parseRequiredPesewas(formData.get("baseUnitPrice")),
         openingStock: String(formData.get("openingStock") ?? ""),
         lowStockThreshold: String(formData.get("lowStockThreshold") ?? ""),
+        images: formData.getAll("imagePublicId").map((cloudinaryPublicId, index) => ({
+          cloudinaryPublicId: String(cloudinaryPublicId),
+          alt: String(formData.getAll("imageAlt")[index] ?? ""),
+          position: Number(formData.getAll("imagePosition")[index] ?? index),
+        })),
       });
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "catalogue_product_created", resourceType: "product", resourceId: created.id });
       return NextResponse.redirect(new URL(`/admin/products/${created.id}`, origin), 303);

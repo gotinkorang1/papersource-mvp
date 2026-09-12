@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
-import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
-import { ProductTaxonomyPicker } from "@/components/admin/product-taxonomy-picker";
-import { paperButton } from "@/components/commerce/paper-button";
+import { AdminError } from "@/components/admin/field";
+import { NewProductForm } from "@/components/admin/new-product-form";
 import { listTaxonomyOptions } from "@/features/catalogue/admin";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -32,60 +30,7 @@ export default async function AdminNewProductPage({ searchParams }: PageProps) {
         Creates a draft SKU. Set it active when it should appear on the shop.
       </p>
       <AdminError error={error} />
-      <form action="/admin/products/mutate" method="post" className="mt-8 grid max-w-2xl gap-4 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
-        <input type="hidden" name="intent" value="create-product" />
-        <AdminField label="Name *">
-          <input name="name" required className={adminFieldClass} />
-        </AdminField>
-        <AdminField label="Slug (optional)">
-          <input name="slug" className={adminFieldClass} placeholder="auto from name" />
-        </AdminField>
-        <AdminField label="Brand *">
-          <ProductTaxonomyPicker kind="brand" name="brandId" options={brands} />
-        </AdminField>
-        <AdminField label="Category *">
-          <ProductTaxonomyPicker kind="category" name="categoryId" options={categories} />
-        </AdminField>
-        <AdminField label="Type">
-          <select name="productType" className={adminFieldClass} defaultValue="standard">
-            <option value="standard">Standard</option>
-            <option value="bundle">Office pack</option>
-          </select>
-        </AdminField>
-        <AdminField label="Status">
-          <select name="status" className={adminFieldClass} defaultValue="draft">
-            <option value="draft">Draft</option>
-            <option value="active">Active</option>
-            <option value="archived">Archived</option>
-          </select>
-        </AdminField>
-        <AdminField label="Description">
-          <textarea name="description" className={adminAreaClass} />
-        </AdminField>
-        <AdminField label="First SKU *">
-          <input name="sku" required className={adminFieldClass} />
-        </AdminField>
-        <AdminField label="Unit label">
-          <input name="unitLabel" className={adminFieldClass} defaultValue="each" />
-        </AdminField>
-        <AdminField label="Base unit price (GHS) *">
-          <input name="baseUnitPrice" required className={adminFieldClass} placeholder="78.99" />
-        </AdminField>
-        <div className="grid gap-4 rounded-lg border border-border bg-muted/20 p-4 sm:grid-cols-2">
-          <AdminField label="Opening stock">
-            <input name="openingStock" type="number" min="0" step="1" className={adminFieldClass} placeholder="0" />
-          </AdminField>
-          <AdminField label="Low-stock threshold">
-            <input name="lowStockThreshold" type="number" min="0" step="1" className={adminFieldClass} placeholder="5" />
-          </AdminField>
-          <p className="text-xs text-slate sm:col-span-2">Set the starting on-hand quantity now. Leave blank to start at 0 with a low-stock threshold of 5.</p>
-        </div>
-        <SubmitProgressButton
-          idleLabel="Create product"
-          pendingLabel="Creating product…"
-          className={paperButton()}
-        />
-      </form>
+      <NewProductForm brands={brands} categories={categories} />
     </main>
   );
 }
