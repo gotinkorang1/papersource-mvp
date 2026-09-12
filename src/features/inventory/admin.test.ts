@@ -40,6 +40,10 @@ describe("parseBulkInventoryAdjustment", () => {
     });
   });
 
+  it("deduplicates repeated selected variants", () => {
+    expect(parseBulkInventoryAdjustment({ quantity: "2", operation: "add", reason: "receive", variantIds: ["a", "a", "b"] }).variantIds).toEqual(["a", "b"]);
+  });
+
   it("rejects an empty selection and invalid quantity", () => {
     expect(() => parseBulkInventoryAdjustment({ quantity: "0", operation: "add", reason: "receive", variantIds: [] })).toThrow(/select at least one variant/i);
     expect(() => parseBulkInventoryAdjustment({ quantity: "-2", operation: "remove", reason: "adjust", variantIds: ["a"] })).toThrow(/positive whole-number quantity/);

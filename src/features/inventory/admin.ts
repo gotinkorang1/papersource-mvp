@@ -42,7 +42,8 @@ export function parseBulkInventoryAdjustment(input: {
   variantIds: string[];
 }) {
   const quantity = Number(input.quantity.trim());
-  if (!input.variantIds.length) {
+  const variantIds = [...new Set(input.variantIds)];
+  if (!variantIds.length) {
     throw new InventoryAdminError("Select at least one variant before applying a bulk update.");
   }
   if (!Number.isInteger(quantity) || quantity < 1) {
@@ -57,7 +58,7 @@ export function parseBulkInventoryAdjustment(input: {
   return {
     delta: input.operation === "remove" ? -quantity : quantity,
     reason: input.reason as (typeof INVENTORY_ADJUST_REASONS)[number],
-    variantIds: input.variantIds,
+    variantIds,
   };
 }
 
