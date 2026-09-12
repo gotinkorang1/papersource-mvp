@@ -4,6 +4,7 @@ import { AdminError, AdminField, adminFieldClass } from "@/components/admin/fiel
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
+import { BulkInventorySubmit } from "@/components/admin/bulk-inventory-submit";
 import { paperButton } from "@/components/commerce/paper-button";
 import { sellableQuantity, stockLevelFromQuantity } from "@/features/inventory/stock";
 import { listInventoryRows } from "@/features/inventory/admin";
@@ -44,7 +45,7 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
           <label className="grid gap-1 text-xs font-medium text-ink">Action<select name="operation" className={adminFieldClass}><option value="add">Add stock</option><option value="remove">Remove stock</option></select></label>
           <label className="grid gap-1 text-xs font-medium text-ink">Quantity<input name="quantity" type="number" min="1" step="1" required className={`${adminFieldClass} w-28`} placeholder="0" /></label>
           <label className="grid gap-1 text-xs font-medium text-ink">Reason<select name="reason" className={adminFieldClass}><option value="receive">Receive</option><option value="adjust">Adjust</option></select></label>
-          <SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating stock…" className="min-h-10" />
+          <BulkInventorySubmit formId="bulk-inventory-form" className={paperButton({ className: "min-h-10" })} />
         </form>
       ) : null}
       <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
