@@ -1,0 +1,66 @@
+"use client";
+
+import { Menu, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { useEffect, useId, useState } from "react";
+import { mobileMenuLinks, isNavigationLinkActive } from "./navigation-model";
+
+export function MobileMenu() {
+  const [open, setOpen] = useState(false);
+  const pathname = usePathname();
+  const menuId = useId();
+
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open]);
+
+  return (
+    <div className="lg:hidden">
+      <button
+        type="button"
+        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        aria-label={open ? "Close menu" : "Open menu"}
+        aria-expanded={open}
+        aria-controls={menuId}
+        onClick={() => setOpen((value) => !value)}
+      >
+        {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
+      </button>
+      {open ? (
+        <div id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] sm:px-6">
+          <div className="grid gap-1 sm:grid-cols-2">
+            <Link href="/shop" className="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
+              Shop all products
+            </Link>
+            <Link href="/request-quote" className="rounded-md border border-ink px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-cream" onClick={() => setOpen(false)}>
+              Request a quote
+            </Link>
+          </div>
+          <div className="mt-4 grid gap-1 border-t border-border pt-3 sm:grid-cols-2">
+            {mobileMenuLinks.map((link) => {
+              const active = isNavigationLinkActive(link.href, pathname);
+              return (
+                <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined} className={`rounded-md px-3 py-2.5 text-sm transition-colors hover:bg-cream hover:text-ink ${active ? "font-semibold text-ink" : "text-graphite"}`} onClick={() => setOpen(false)}>
+                  {link.label}
+                </Link>
+              );
+            })}
+          </div>
+          <div className="mt-3 border-t border-border pt-3">
+            <p className="px-3 text-xs tracking-[0.14em] text-slate uppercase">Shop by need</p>
+            <div className="mt-1 grid gap-1 sm:grid-cols-2">
+              <Link href="/schools" className="rounded-md px-3 py-2.5 text-sm text-graphite hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Schools</Link>
+              <Link href="/business" className="rounded-md px-3 py-2.5 text-sm text-graphite hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Business accounts</Link>
+            </div>
+          </div>
+        </div>
+      ) : null}
+    </div>
+  );
+}

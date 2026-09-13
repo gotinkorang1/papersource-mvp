@@ -28,7 +28,7 @@ export async function StoreShell({ children }: { children: ReactNode }) {
     >
       <AnnouncementBanner />
       <StoreHeader />
-      <div className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] md:pb-0">{children}</div>
+      <div className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
       <StoreFooter />
       <MobileNav />
       <CartDrawer />

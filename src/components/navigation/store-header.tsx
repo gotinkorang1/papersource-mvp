@@ -1,32 +1,39 @@
 import { AccountLink } from "@/components/navigation/account-link";
+import Link from "next/link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
 import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
 import { BusinessMenu } from "@/components/navigation/business-menu";
 import { Wordmark } from "@/components/marketing/wordmark";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { SiteLinks } from "@/components/navigation/site-links";
 import { ManagedNavLinks } from "@/components/navigation/managed-nav-links";
+import { MobileMenu } from "@/components/navigation/mobile-menu";
+import { HeaderSearch } from "@/components/navigation/header-search";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 
 export async function StoreHeader() {
   const managedLinks = await listActiveNavigation("header");
   const links = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.header;
+  const additionalManagedLinks = links.filter((link) => !["/shop", "/about", "/contact"].includes(link.href));
   return (
-    <header className="sticky top-0 z-30 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">
+    <header className="relative sticky top-0 z-30 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3.5 sm:gap-5 sm:px-6 lg:px-8">
         <Wordmark />
         <nav
-          className="hidden items-center gap-3 text-sm text-graphite md:flex lg:gap-4"
+          className="hidden items-center gap-3 text-sm text-graphite lg:flex lg:gap-4"
           aria-label="Primary"
         >
           <ShopMegaMenu />
           <BusinessMenu />
-          {managedLinks.length ? <ManagedNavLinks links={links} /> : <SiteLinks />}
+          <Link href="/about" className="border-b-2 border-transparent text-sm font-medium text-graphite transition-[color,border-color] hover:border-ochre hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">About</Link>
+          {additionalManagedLinks.length ? <ManagedNavLinks links={additionalManagedLinks} /> : null}
         </nav>
+        <HeaderSearch />
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
+          <Link href="/request-quote" className="hidden min-h-11 items-center rounded-md bg-ink px-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink lg:inline-flex">Request a Quote</Link>
           <AccountLink />
           <ThemeToggle />
           <DualPathCounts />
+          <MobileMenu />
         </div>
       </div>
     </header>
