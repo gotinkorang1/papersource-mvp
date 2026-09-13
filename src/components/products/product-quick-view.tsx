@@ -7,6 +7,7 @@ import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { DeliveryBadge } from "@/components/commerce/delivery-badge";
 import { paperButton } from "@/components/commerce/paper-button";
 import { PriceDisplay } from "@/components/commerce/price-display";
+import { visibleBulkTiers } from "@/features/catalogue/pricing";
 import { QuantitySelector } from "@/components/commerce/quantity-selector";
 import { QuoteButton } from "@/components/commerce/quote-button";
 import { StockBadge } from "@/components/commerce/stock-badge";
@@ -60,6 +61,7 @@ export function ProductQuickView({
   }
 
   const out = product.stock === "out";
+  const bulkTiers = product ? visibleBulkTiers(product.tiers, product.unitPricePesewas) : [];
 
   return createPortal(
     (
@@ -88,13 +90,15 @@ export function ProductQuickView({
         <h2 id="quick-view-title" className="pr-12 text-xl text-ink">
           {product.name}
         </h2>
-        <p className="mt-1 text-sm text-slate">{product.specLine}</p>
+        {product.specLine ? <p className="mt-1 text-sm text-slate">{product.specLine}</p> : null}
         <div className="mt-4 space-y-3">
           <PriceDisplay
             pesewas={product.unitPricePesewas}
             unitLabel={product.unitLabel}
           />
-          <BulkPriceTable tiers={product.tiers} unitLabel={product.unitLabel} />
+          {bulkTiers.length > 0 ? (
+            <BulkPriceTable tiers={bulkTiers} unitLabel={product.unitLabel} />
+          ) : null}
           <StockBadge level={product.stock} />
           <DeliveryBadge zone={product.deliveryBadge} />
           <QuantitySelector
@@ -106,22 +110,27 @@ export function ProductQuickView({
         <div className="mt-6 grid grid-cols-2 gap-2">
           <button
             type="button"
-            className={paperButton({ variant: "primary" })}
+            className={`${paperButton({ variant: "primary" })} px-2 text-xs sm:px-3 sm:text-sm`}
+            aria-label="Add to Cart"
             disabled={out}
             onClick={() => {
               addToCart?.(product, quantity);
               onClose();
             }}
           >
-            Add to Cart
+            <span className="sm:hidden">Cart</span>
+            <span className="hidden sm:inline">Add to Cart</span>
           </button>
           <QuoteButton
+            className="px-2 text-xs sm:px-3 sm:text-sm"
+            aria-label="Add to Quote"
             onClick={() => {
               addToQuote?.(product, quantity);
               onClose();
             }}
           >
-            Add to Quote
+            <span className="sm:hidden">Quote</span>
+            <span className="hidden sm:inline">Add to Quote</span>
           </QuoteButton>
         </div>
       </div>

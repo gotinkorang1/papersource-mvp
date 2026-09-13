@@ -3,6 +3,7 @@ import {
   lineTotalPesewas,
   resolveUnitPrice,
   tiersOverlap,
+  visibleBulkTiers,
   type PriceTierInput,
 } from "./pricing";
 
@@ -128,6 +129,23 @@ describe("tiersOverlap", () => {
         },
       ]),
     ).toBe(true);
+  });
+});
+
+describe("visibleBulkTiers", () => {
+  it("removes a quantity-one tier when it repeats the displayed unit price", () => {
+    expect(visibleBulkTiers(a4Tiers, 7800)).toEqual(a4Tiers.slice(1));
+  });
+
+  it("preserves tiers that differ from every removal condition in order", () => {
+    const tiers: PriceTierInput[] = [
+      { minimumQuantity: 1, maximumQuantity: 4, unitPricePesewas: 7800, requestQuote: true },
+      { minimumQuantity: 1, maximumQuantity: 4, unitPricePesewas: null, requestQuote: false },
+      { minimumQuantity: 2, maximumQuantity: 4, unitPricePesewas: 7800, requestQuote: false },
+      { minimumQuantity: 1, maximumQuantity: 4, unitPricePesewas: 7900, requestQuote: false },
+    ];
+
+    expect(visibleBulkTiers(tiers, 7800)).toEqual(tiers);
   });
 });
 

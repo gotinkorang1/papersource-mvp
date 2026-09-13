@@ -26,6 +26,20 @@ export function buildSpecLine(
   return parts.join(" • ");
 }
 
+/** Book-only secondary metadata; other catalogue items should not invent a title fallback. */
+export function buildSupplementalSpecLine(
+  attributes: { namespace: string; key: string; valueText: string }[],
+): string {
+  const byKey = new Map(
+    attributes
+      .filter((attribute) => attribute.namespace === "book")
+      .map((attribute) => [attribute.key, attribute.valueText]),
+  );
+  const author = byKey.get("author");
+  if (!author) return "";
+  return [`By ${author}`, byKey.get("format")].filter(Boolean).join(" • ");
+}
+
 export function matchesCatalogueQuery(
   haystacks: string[],
   query: string,

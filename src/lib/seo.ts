@@ -18,6 +18,14 @@ export function absoluteUrl(path = "/") {
   return new URL(path, SITE_URL).toString();
 }
 
+/** Builds a concise PDP title without emitting an empty-part separator. */
+export function productSeoTitle(name: string, specLine: string) {
+  return [name, specLine]
+    .map((value) => value.trim())
+    .filter(Boolean)
+    .join(" · ");
+}
+
 type PageSeo = {
   title: string;
   description: string;

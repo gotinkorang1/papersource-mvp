@@ -33,6 +33,21 @@ export function tiersOverlap(tiers: PriceTierInput[]): boolean {
   return false;
 }
 
+export function visibleBulkTiers(
+  tiers: PriceTierInput[],
+  displayedPricePesewas: number | null,
+): PriceTierInput[] {
+  return tiers.filter(
+    (tier) =>
+      !(
+        tier.minimumQuantity === 1 &&
+        !tier.requestQuote &&
+        tier.unitPricePesewas !== null &&
+        tier.unitPricePesewas === displayedPricePesewas
+      ),
+  );
+}
+
 export function resolveUnitPrice(input: {
   quantity: number;
   baseUnitPricePesewas: MoneyPesewas;

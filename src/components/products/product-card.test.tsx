@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
-import { render, screen } from "@testing-library/react";
+import { render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductCard } from "@/components/products/product-card";
 import { sampleProducts } from "@/lib/design-system/fixtures";
@@ -48,5 +48,45 @@ describe("ProductCard", () => {
 
     expect(screen.getByRole("button", { name: "Add to Cart" })).toBeDisabled();
     expect(screen.getByRole("button", { name: "Add to Quote" })).toBeEnabled();
+  });
+
+  it("uses compact card metadata and explicit responsive CTA labels", () => {
+    const longSkuProduct = {
+      ...product,
+      sku: "A-VERY-LONG-SKU-THAT-MUST-STAY-ON-ONE-LINE",
+      specLine: "",
+    };
+
+    const { container } = render(<ProductCard product={longSkuProduct} />);
+    const sku = screen.getByText(`SKU ${longSkuProduct.sku}`);
+    const cart = screen.getByRole("button", { name: "Add to Cart" });
+    const quote = screen.getByRole("button", { name: "Add to Quote" });
+
+    expect(container.querySelector("p.line-clamp-2")).not.toBeInTheDocument();
+    expect(sku).toHaveClass("truncate");
+    expect(cart).toHaveAttribute("aria-label", "Add to Cart");
+    expect(quote).toHaveAttribute("aria-label", "Add to Quote");
+    expect(cart).toHaveClass("min-h-11");
+    expect(quote).toHaveClass("min-h-11");
+    expect(container.querySelector(".sm\\:hidden")).toHaveTextContent("Cart");
+    expect(container.querySelectorAll(".hidden.sm\\:inline")[0]).toHaveTextContent("Add to Cart");
+    expect(container.querySelectorAll(".hidden.sm\\:inline")[1]).toHaveTextContent("Add to Quote");
+  });
+
+  it("uses the same responsive dual-path labels in quick view", async () => {
+    const user = userEvent.setup();
+    render(<ProductCard product={product} />);
+
+    await user.click(screen.getByRole("button", { name: "Quick view" }));
+    const dialog = screen.getByRole("dialog");
+    const cart = within(dialog).getByRole("button", { name: "Add to Cart" });
+    const quote = within(dialog).getByRole("button", { name: "Add to Quote" });
+
+    expect(cart).toHaveAttribute("aria-label", "Add to Cart");
+    expect(quote).toHaveAttribute("aria-label", "Add to Quote");
+    expect(within(cart).getByText("Cart")).toBeInTheDocument();
+    expect(within(quote).getByText("Quote")).toBeInTheDocument();
+    expect(within(cart).getByText("Add to Cart")).toBeInTheDocument();
+    expect(within(quote).getByText("Add to Quote")).toBeInTheDocument();
   });
 });

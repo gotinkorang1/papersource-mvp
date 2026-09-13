@@ -1,7 +1,7 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
-import { buildSpecLine, matchesCatalogueQuery } from "@/features/catalogue/search";
+import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
   sellableQuantity,
@@ -250,7 +250,7 @@ function toCardFromRow(
     slug: row.product.slug,
     sku: row.variant.sku,
     name: row.product.name,
-    specLine: buildSpecLine(attributes) || row.product.name,
+    specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes),
     unitLabel: row.variant.unitLabel,
     unitPricePesewas: list.unitPricePesewas ?? row.variant.baseUnitPrice,
     imageAlt: image?.alt ?? row.product.name,

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { buildSpecLine, matchesCatalogueQuery } from "./search";
+import {
+  buildSpecLine,
+  buildSupplementalSpecLine,
+  matchesCatalogueQuery,
+} from "./search";
 
 describe("buildSpecLine", () => {
   it("joins paper attributes in catalogue order", () => {
@@ -26,5 +30,16 @@ describe("matchesCatalogueQuery", () => {
 
     expect(matchesCatalogueQuery(haystacks, "HP 305 black")).toBe(true);
     expect(matchesCatalogueQuery(haystacks, "A4 80gsm")).toBe(false);
+  });
+});
+
+describe("buildSupplementalSpecLine", () => {
+  it("ignores author and format attributes outside the book namespace", () => {
+    expect(
+      buildSupplementalSpecLine([
+        { namespace: "paper", key: "author", valueText: "Paper Author" },
+        { namespace: "paper", key: "format", valueText: "A4" },
+      ]),
+    ).toBe("");
   });
 });

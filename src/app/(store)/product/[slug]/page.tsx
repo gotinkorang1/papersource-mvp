@@ -10,12 +10,14 @@ import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
 import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, listProductCards, productJsonLd } from "@/features/catalogue";
 import { publicEnv } from "@/lib/env";
-import { pageMetadata } from "@/lib/seo";
+import { pageMetadata, productSeoTitle } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
 import { CopySkuButton } from "@/components/products/copy-sku-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { visibleBulkTiers } from "@/features/catalogue/pricing";
+import { bookMetadata } from "@/features/catalogue/product-metadata";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -35,8 +37,12 @@ export async function generateMetadata({
     return { title: "Product" };
   }
 
+  const seoTitle = product.attributes.find(
+    (attribute) => attribute.key === "seo_title",
+  )?.valueText.trim();
+
   return pageMetadata({
-    title: `${product.name} · ${product.specLine}`,
+    title: seoTitle || productSeoTitle(product.name, product.specLine),
     description: product.description,
     path: `/product/${product.slug}`,
     image: product.imageSrc,
@@ -59,6 +65,8 @@ export default async function ProductPage({ params }: PageProps) {
     listProductCards({ categorySlug: product.categorySlug }),
   ]);
   const related = relatedProducts.filter((entry) => entry.id !== product.id).slice(0, 4);
+  const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
+  const supplementalMetadata = bookMetadata(product);
   const canonical = `${origin}/product/${product.slug}`;
   const crumbs = [
     { name: "Shop", href: "/shop" },
@@ -97,9 +105,9 @@ export default async function ProductPage({ params }: PageProps) {
         </ol>
       </nav>
 
-      <div className="mt-8 grid gap-8 md:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] md:gap-12">
-        <div className="md:sticky md:top-24 md:self-start"><ProductGallery key={product.slug} alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} /></div>
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-7">
+      <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
+        <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} /></div>
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-7">
           <p className="text-sm text-slate">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
               {product.brandName}
@@ -109,17 +117,17 @@ export default async function ProductPage({ params }: PageProps) {
             <h1 className="mt-2 text-3xl leading-tight text-ink sm:text-4xl">{product.name}</h1>
             {canEdit ? <Link href={`/admin/products/${product.id}`} className="mt-2 inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit product</Link> : null}
           </div>
-          <p className="mt-2 text-slate">{product.specLine}</p>
+          {product.specLine ? <p className="mt-2 text-slate">{product.specLine}</p> : null}
+          {supplementalMetadata.length ? <p className="mt-2 text-sm text-slate">{supplementalMetadata.join(" · ")}</p> : null}
           <div className="mt-4"><CopySkuButton sku={product.sku} /></div>
           <div className="mt-6 space-y-3">
             <PriceDisplay
               pesewas={product.unitPricePesewas}
               unitLabel={product.unitLabel}
             />
-            <BulkPriceTable
-              tiers={product.tiers}
-              unitLabel={product.unitLabel}
-            />
+            {bulkTiers.length > 0 ? (
+              <BulkPriceTable tiers={bulkTiers} unitLabel={product.unitLabel} />
+            ) : null}
             <StockBadge level={product.stock} />
             <DeliveryBadge zone={product.deliveryBadge} />
           </div>
