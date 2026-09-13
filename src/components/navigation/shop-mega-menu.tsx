@@ -4,7 +4,7 @@ import { useId, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
-import { shopMegaColumns } from "@/features/catalogue/local-data";
+import type { ShopMenuColumn } from "./shop-menu-model";
 
 const shopTools = [
   ["Brands", "/brands"],
@@ -12,7 +12,7 @@ const shopTools = [
   ["Quick order", "/quick-order"],
 ] as const;
 
-export function ShopMegaMenu() {
+export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const pathname = usePathname();
@@ -51,7 +51,7 @@ export function ShopMegaMenu() {
         >
           <p className="text-xs tracking-[0.16em] text-slate uppercase">Shop</p>
           <div className="mt-4 grid gap-6 sm:grid-cols-3">
-            {shopMegaColumns.map((column) => (
+            {columns.map((column) => (
               <div key={column.title}>
                 <p className="text-sm font-medium text-ink">{column.title}</p>
                 <ul className="mt-2 space-y-1">

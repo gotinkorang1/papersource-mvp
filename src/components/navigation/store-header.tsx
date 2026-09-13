@@ -8,10 +8,15 @@ import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ManagedNavLinks } from "@/components/navigation/managed-nav-links";
 import { MobileMenu } from "@/components/navigation/mobile-menu";
 import { HeaderSearch } from "@/components/navigation/header-search";
+import { buildShopMenuColumns } from "@/components/navigation/shop-menu-model";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
+import { listDivisionCategories } from "@/features/catalogue";
 
 export async function StoreHeader() {
-  const managedLinks = await listActiveNavigation("header");
+  const [managedLinks, categories] = await Promise.all([
+    listActiveNavigation("header"),
+    listDivisionCategories().catch(() => []),
+  ]);
   const links = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.header;
   const additionalManagedLinks = links.filter((link) => !["/shop", "/about", "/contact"].includes(link.href));
   return (
@@ -22,7 +27,7 @@ export async function StoreHeader() {
           className="hidden items-center gap-3 text-sm text-graphite lg:flex lg:gap-4"
           aria-label="Primary"
         >
-          <ShopMegaMenu />
+          <ShopMegaMenu columns={buildShopMenuColumns(categories)} />
           <BusinessMenu />
           <Link href="/about" className="border-b-2 border-transparent text-sm font-medium text-graphite transition-[color,border-color] hover:border-ochre hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">About</Link>
           {additionalManagedLinks.length ? <ManagedNavLinks links={additionalManagedLinks} /> : null}
