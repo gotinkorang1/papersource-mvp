@@ -41,6 +41,21 @@ export default async function SavedListDetailPage({ params, searchParams }: { pa
           <h2 id="saved-list-items-heading" className="font-heading text-xl text-ink">Items in this list</h2>
           <span className="text-sm text-slate">{list.items.length} {list.items.length === 1 ? "item" : "items"}</span>
         </div>
+        {list.items.some((item) => item.productActive && item.variantActive) ? (
+          <div className="mt-4 flex flex-wrap gap-2 rounded-xl border border-border bg-cream/50 p-3">
+            <form action="/account/lists/items/mutate" method="post">
+              <input type="hidden" name="intent" value="bulk-cart" />
+              <input type="hidden" name="listId" value={list.id} />
+              <button type="submit" className="min-h-10 rounded-lg bg-ink px-3 py-2 text-sm font-semibold text-cream hover:bg-ink/90">Add available to Cart</button>
+            </form>
+            <form action="/account/lists/items/mutate" method="post">
+              <input type="hidden" name="intent" value="bulk-quote" />
+              <input type="hidden" name="listId" value={list.id} />
+              <button type="submit" className="min-h-10 rounded-lg border border-paper-green px-3 py-2 text-sm font-semibold text-paper-green hover:bg-paper-green hover:text-white">Add available to Quote</button>
+            </form>
+            <p className="basis-full text-xs text-slate">Unavailable items are skipped and remain visible below for cleanup.</p>
+          </div>
+        ) : null}
 
         {list.items.length ? (
           <ul className="mt-4 grid gap-3">

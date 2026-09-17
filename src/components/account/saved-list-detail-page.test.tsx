@@ -49,7 +49,9 @@ describe("saved list detail page", () => {
     expect(screen.getByRole("heading", { name: "Monthly supplies", level: 1 })).toBeInTheDocument();
     expect(screen.getByText("Premium Ballpoint Pen")).toBeInTheDocument();
     expect(screen.getByText("Blue ink only")).toBeInTheDocument();
-    expect(screen.getByText(/Unavailable/i)).toBeInTheDocument();
+    expect(screen.getByText("Unavailable — remove or replace this item before reordering.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add available to Cart" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Add available to Quote" })).toBeInTheDocument();
     expect(screen.getAllByRole("button", { name: "Remove" })).toHaveLength(2);
   });
 });
