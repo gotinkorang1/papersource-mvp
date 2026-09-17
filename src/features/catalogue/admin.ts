@@ -19,7 +19,7 @@ import type { StaffRole } from "@/lib/staff/types";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { destroyCloudinaryImage } from "@/lib/cloudinary/server";
 import { parseOpeningInventory } from "@/features/inventory/admin";
-import { ADMIN_PRODUCT_PAGE_SIZE, normaliseAdminProductPage } from "./admin-pagination";
+import { ADMIN_PRODUCT_PAGE_SIZE, resolveAdminProductPage } from "./admin-pagination";
 
 export class CatalogueAdminError extends Error {
   constructor(message: string) {
@@ -55,15 +55,15 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     filters?.status && ["draft", "active", "archived"].includes(filters.status) ? eq(products.status, filters.status as "draft" | "active" | "archived") : undefined,
   );
   const order = filters?.sort === "name" ? asc(products.name) : filters?.sort === "status" ? asc(products.status) : desc(products.updatedAt);
-  const page = normaliseAdminProductPage(filters?.page);
-  const [totalRow, rows] = await Promise.all([
-    db
-      .select({ total: count() })
-      .from(products)
-      .leftJoin(brands, eq(brands.id, products.brandId))
-      .leftJoin(categories, eq(categories.id, products.categoryId))
-      .where(where),
-    db
+  const [totalRow] = await db
+    .select({ total: count() })
+    .from(products)
+    .leftJoin(brands, eq(brands.id, products.brandId))
+    .leftJoin(categories, eq(categories.id, products.categoryId))
+    .where(where);
+  const total = Number(totalRow?.total ?? 0);
+  const page = resolveAdminProductPage(filters?.page, total);
+  const rows = await db
     .select({
       id: products.id,
       name: products.name,
@@ -80,9 +80,7 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     .where(where)
     .orderBy(order)
     .limit(ADMIN_PRODUCT_PAGE_SIZE)
-    .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE),
-  ]);
-  const total = Number(totalRow[0]?.total ?? 0);
+    .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE);
   return {
     rows: rows.map((row) => ({
     ...row,
