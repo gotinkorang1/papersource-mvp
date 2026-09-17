@@ -28,6 +28,11 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   }, [pathname]);
 
   useEffect(() => {
+    setNavOpen(false);
+    setAccountOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     if (!accountOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setAccountOpen(false);
