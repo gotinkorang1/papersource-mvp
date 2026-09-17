@@ -41,6 +41,13 @@ describe("productJsonLd", () => {
     expect(json).toHaveProperty("image", ["https://example.com/one.jpg", "https://example.com/two.jpg"]);
   });
 
+  it("links the Product entity to its canonical product page", () => {
+    const canonical = "http://localhost:3000/product/double-a-premium-a4";
+    const json = productJsonLd(product, canonical);
+
+    expect(json.mainEntityOfPage).toEqual({ "@type": "WebPage", "@id": canonical });
+  });
+
   it("includes category, seller and a valid barcode as structured product data", () => {
     const json = productJsonLd(
       { ...product, categoryName: "Copier Paper", barcode: "123456789012" },

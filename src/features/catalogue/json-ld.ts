@@ -29,6 +29,7 @@ export function productJsonLd(
     name: product.name,
     description,
     url: canonical,
+    mainEntityOfPage: { "@type": "WebPage", "@id": canonical },
     sku: product.sku,
     ...(product.imageSources?.length
       ? { image: product.imageSources.map((image) => image.src) }
