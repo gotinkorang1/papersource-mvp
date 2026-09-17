@@ -27,6 +27,7 @@ export default function manifest(): MetadataRoute.Manifest {
       { name: "Open cart", short_name: "Cart", description: "Review your cart", url: "/cart", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
     ],
     icons: [
+      { src: "/icon.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any" },
       { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "any" },
       { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],

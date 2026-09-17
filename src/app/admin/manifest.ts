@@ -17,6 +17,7 @@ export default function manifest(): MetadataRoute.Manifest {
     lang: "en-GH",
     categories: ["business", "productivity"],
     icons: [
+      { src: "/icon.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any" },
       { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "any" },
       { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
