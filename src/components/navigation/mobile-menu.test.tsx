@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { MobileMenu } from "./mobile-menu";
 
@@ -46,8 +46,6 @@ describe("MobileMenu", () => {
 
     currentPathname = "/about";
     view.rerender(<MobileMenu />);
-    await new Promise((resolve) => setTimeout(resolve, 0));
-
-    expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument();
+    await waitFor(() => expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument());
   });
 });
