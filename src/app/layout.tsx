@@ -6,7 +6,7 @@ import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { PwaRegister } from "@/components/pwa/pwa-register";
 import { PwaSplash } from "@/components/pwa/pwa-splash";
-import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, SITE_NAME, SITE_URL, siteJsonLd } from "@/lib/seo";
+import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, SEO_KEYWORDS, SITE_NAME, SITE_URL, siteJsonLd } from "@/lib/seo";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -25,7 +25,11 @@ export const metadata: Metadata = {
     template: "%s · PaperSource",
   },
   description: DEFAULT_DESCRIPTION,
+  keywords: SEO_KEYWORDS,
   applicationName: SITE_NAME,
+  creator: SITE_NAME,
+  publisher: SITE_NAME,
+  category: "business",
   alternates: { canonical: "/" },
   openGraph: {
     type: "website",
@@ -56,6 +60,11 @@ export const metadata: Metadata = {
   robots: {
     index: true,
     follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+    },
   },
 };
 

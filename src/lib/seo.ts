@@ -51,10 +51,11 @@ type PageSeo = {
   path: string;
   image?: string;
   modifiedTime?: Date | string;
+  keywords?: string[];
 };
 
 /** Shared metadata keeps previews consistent when a page is shared. */
-export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_IMAGE, modifiedTime }: PageSeo): Metadata {
+export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_IMAGE, modifiedTime, keywords = [] }: PageSeo): Metadata {
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
   const normalizedModifiedTime = modifiedTime ? new Date(modifiedTime).toISOString() : undefined;
@@ -63,7 +64,7 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
   return {
     title,
     description: normalizedDescription,
-    keywords: SEO_KEYWORDS,
+    keywords: [...new Set([...keywords, ...SEO_KEYWORDS].map((keyword) => keyword.trim()).filter(Boolean))],
     applicationName: SITE_NAME,
     creator: SITE_NAME,
     publisher: SITE_NAME,

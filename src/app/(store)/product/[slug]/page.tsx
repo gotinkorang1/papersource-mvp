@@ -45,6 +45,7 @@ export async function generateMetadata({
     path: `/product/${product.slug}`,
     image: product.imageSrc,
     modifiedTime: product.updatedAt,
+    keywords: [product.name, product.brandName, product.categoryName, product.specLine],
   });
 }
 
