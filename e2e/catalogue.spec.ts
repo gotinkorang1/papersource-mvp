@@ -24,7 +24,7 @@ test("search preserves the submitted query and renders a useful state", async ({
   await page.goto("/search?q=pen");
   await expect(page.locator("#catalogue-search")).toHaveValue("pen");
   await expect(page.getByRole("heading", { name: /Results for pen/i })).toBeVisible();
-  await expect(page.getByText(/No exact matches yet|product|products/i).first()).toBeVisible();
+  await expect(page.locator("main p:visible, main h2:visible, main span:visible").filter({ hasText: /No exact matches yet|\bproduct(?:s)?\b/i }).first()).toBeVisible();
 });
 
 test("a catalogue product can be added to the quote path", async ({ page }) => {
