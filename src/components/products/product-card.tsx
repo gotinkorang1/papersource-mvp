@@ -4,7 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useState } from "react";
 import type { CSSProperties } from "react";
-import { Check } from "lucide-react";
+import { ArrowUpRight, Check } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { PaperCard } from "@/components/commerce/paper-card";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -115,10 +115,10 @@ export function ProductCard({
         <button
           type="button"
           aria-describedby={`product-name-${product.id}`}
-          className="inline-flex min-h-10 self-start items-center text-sm text-slate underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+          className="mt-1 inline-flex min-h-10 w-full items-center justify-between border-t border-border/70 pt-2 text-sm font-medium text-slate transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
           onClick={() => setQuickOpen(true)}
         >
-          Quick view
+          <span>Quick view</span><ArrowUpRight className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden />
         </button>
       </div>
       <ProductQuickView
