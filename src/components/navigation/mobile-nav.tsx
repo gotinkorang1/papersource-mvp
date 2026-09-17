@@ -12,6 +12,8 @@ export function MobileNav() {
   const pathname = usePathname();
   const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
   const shopActive = isActive("/shop") || isActive("/product") || ["/brands", "/bulk-orders", "/quick-order"].includes(pathname);
+  const quoteActive = quoteOpen || ["/quote", "/request-quote"].includes(pathname);
+  const cartActive = cartOpen || ["/cart", "/checkout"].includes(pathname);
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
   const closeDrawers = () => {
@@ -61,10 +63,11 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className={`group flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${quoteOpen ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${quoteActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
             aria-label={itemCountLabel("Quote list", quoteCount)}
             aria-expanded={quoteOpen}
             aria-pressed={quoteOpen}
+            aria-current={quoteActive && !quoteOpen ? "page" : undefined}
             aria-haspopup="dialog"
             aria-controls="paper-drawer-quote-list"
             onClick={() => setQuoteOpen(!quoteOpen)}
@@ -76,10 +79,11 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className={`group flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${cartOpen ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${cartActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
             aria-label={itemCountLabel("Cart", cartCount)}
             aria-expanded={cartOpen}
             aria-pressed={cartOpen}
+            aria-current={cartActive && !cartOpen ? "page" : undefined}
             aria-haspopup="dialog"
             aria-controls="paper-drawer-cart"
             onClick={() => setCartOpen(!cartOpen)}
