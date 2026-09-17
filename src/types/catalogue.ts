@@ -23,6 +23,7 @@ export type ProductCardModel = {
   stock: StockLevel;
   tiers: PriceTierPreview[];
   deliveryBadge: DeliveryBadgeModel;
+  updatedAt?: Date;
 };
 
 export type ProductDetailModel = ProductCardModel & {

@@ -27,7 +27,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     entries.push(
       ...categories.map((category) => ({ url: `${SITE_URL}/shop/${category.slug}`, changeFrequency: "daily" as const, priority: 0.8 })),
       ...brands.map((brand) => ({ url: `${SITE_URL}/brands/${brand.slug}`, changeFrequency: "weekly" as const, priority: 0.6 })),
-      ...products.map((product) => ({ url: `${SITE_URL}/product/${product.slug}`, changeFrequency: "weekly" as const, priority: 0.7 })),
+      ...products.map((product) => ({
+        url: `${SITE_URL}/product/${product.slug}`,
+        ...(product.updatedAt ? { lastModified: product.updatedAt } : {}),
+        ...(product.imageSrc ? { images: [product.imageSrc] } : {}),
+        changeFrequency: "weekly" as const,
+        priority: 0.7,
+      })),
       ...pages.map((page) => ({ url: `${SITE_URL}/pages/${page.slug}`, lastModified: page.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
     );
   } catch {

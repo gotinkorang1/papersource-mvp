@@ -295,6 +295,7 @@ function toCardFromRow(
     ),
     tiers,
     deliveryBadge: ctx.deliveryBadge,
+    updatedAt: row.product.updatedAt,
   };
 }
 
