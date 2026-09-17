@@ -10,7 +10,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint src scripts",
-    "test": "vitest run",
+    "test": "vitest run --pool=threads --maxWorkers=1",
     "test:watch": "vitest",
     "test:e2e": "playwright test",
     "db:up": "docker compose up -d",
