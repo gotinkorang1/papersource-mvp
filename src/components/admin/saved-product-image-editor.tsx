@@ -2,10 +2,15 @@
 
 import { useState } from "react";
 import NextImage from "next/image";
+import { useRouter } from "next/navigation";
 import { paperButton } from "@/components/commerce/paper-button";
 
 type CropRatio = "free" | "4:5" | "5:4" | "3:4" | "4:3";
 const ratios: CropRatio[] = ["free", "4:5", "5:4", "3:4", "4:3"];
+
+export function buildSavedImageSuccessUrl(pathname: string) {
+  return `${pathname}?success=saved#images`;
+}
 
 async function cropRemoteImage(src: string, ratio: CropRatio) {
   const response = await fetch(src, { mode: "cors" });
@@ -42,6 +47,7 @@ async function cropRemoteImage(src: string, ratio: CropRatio) {
 }
 
 export function SavedProductImageEditor({ productId, imageId, imageUrl }: { productId: string; imageId: string; imageUrl: string }) {
+  const router = useRouter();
   const [open, setOpen] = useState(false);
   const [ratio, setRatio] = useState<CropRatio>("free");
   const [busy, setBusy] = useState(false);
@@ -65,7 +71,7 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
       const result = (await update.json()) as { error?: string };
       if (!update.ok) throw new Error(result.error ?? "The cropped image could not be saved.");
       setOpen(false);
-      window.location.href = `${window.location.pathname}?success=saved#images`;
+      router.push(buildSavedImageSuccessUrl(window.location.pathname));
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "Could not crop this image.");
     } finally {
