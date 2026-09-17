@@ -6,6 +6,7 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
+import { categorySeoDescription } from "@/features/catalogue/seo-copy";
 import { breadcrumbJsonLd } from "@/features/catalogue";
 import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
@@ -28,11 +29,12 @@ export async function generateMetadata({
   if (!category) {
     return { title: "Category" };
   }
+  const description = categorySeoDescription(category);
 
   return {
     ...pageMetadata({
     title: `${category.name} for Ghana workplaces`,
-    description: `${category.caption}. Delivered across Accra and Tema. Nationwide supply on request.`,
+    description,
     path: `/shop/${category.slug}`,
     }),
     ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
@@ -47,6 +49,7 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
   if (!category) {
     notFound();
   }
+  const description = categorySeoDescription(category);
 
   const products = await listProductCards({ categorySlug: category.slug });
   const pageSize = 24;
@@ -75,11 +78,11 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${category.name} for Ghana workplaces`, description: category.caption, url: absoluteUrl(`/shop/${category.slug}`), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${category.name} for Ghana workplaces`, description: categorySeoDescription(category), url: absoluteUrl(`/shop/${category.slug}`), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Shop", href: "/shop" }, { name: category.name, href: `/shop/${category.slug}` }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Shop", href: "/shop" }, { label: category.name }]} />
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[1fr_16rem]">
-        <div><div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink md:text-4xl">{category.name}</h1>{canEdit ? <Link href={`/admin/categories#category-${category.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit category</Link> : null}</div><p className="mt-3 max-w-2xl text-slate">{category.caption}. Browse {products.length} active {products.length === 1 ? "product" : "products"} for workplaces, schools and everyday stationery needs.</p></div>
+        <div><div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink md:text-4xl">{category.name}</h1>{canEdit ? <Link href={`/admin/categories#category-${category.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit category</Link> : null}</div><p className="mt-3 max-w-2xl text-slate">{description} Browse {products.length} active {products.length === 1 ? "product" : "products"} for workplaces, schools and everyday stationery needs.</p></div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill priority loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
       </div>
       <div className="mt-10">
