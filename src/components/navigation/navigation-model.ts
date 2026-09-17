@@ -28,6 +28,6 @@ export function uniqueNavigationLinks(links: readonly NavigationLink[]) {
   });
 }
 
-export function isNavigationLinkActive(href: string, pathname: string) {
-  return pathname === href || pathname.startsWith(`${href}/`);
+export function isNavigationLinkActive(href: string, pathname: string | null | undefined) {
+  return pathname === href || pathname?.startsWith(`${href}/`) === true;
 }
