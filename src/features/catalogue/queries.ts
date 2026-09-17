@@ -4,6 +4,7 @@ import {
   getCategoryBySlugFromDb,
   getProductBySlugFromDb,
   listBrandsFromDb,
+  listBrandDirectoryFromDb,
   listDivisionCategoriesFromDb,
   listFeaturedProductCardsFromDb,
   listProductCardsFromDb,
@@ -14,6 +15,7 @@ import {
   getProductBySlugFromSeed,
   getShopMegaColumns,
   listBrandsFromSeed,
+  listBrandDirectoryFromSeed,
   listDivisionCategoriesFromSeed,
   listFeaturedProductCardsFromSeed,
   listProductCardsFromSeed,
@@ -70,6 +72,11 @@ export async function listBrands(): Promise<CatalogueBrandView[]> {
     return listBrandsFromDb();
   }
   return listBrandsFromSeed();
+}
+
+export async function listBrandDirectory() {
+  if (isDatabaseConfigured()) return listBrandDirectoryFromDb();
+  return listBrandDirectoryFromSeed();
 }
 
 export async function getBrandBySlug(

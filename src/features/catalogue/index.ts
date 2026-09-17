@@ -9,6 +9,7 @@ export {
   getProductBySlug,
   getCategoryBySlug,
   listBrands,
+  listBrandDirectory,
   getBrandBySlug,
   getShopMegaColumns,
 } from "./queries";

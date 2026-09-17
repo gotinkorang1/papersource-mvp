@@ -165,6 +165,19 @@ export function listBrandsFromSeed(): CatalogueBrandView[] {
   }));
 }
 
+export function listBrandDirectoryFromSeed() {
+  const directory = new Map<string, { id: string; name: string; slug: string; categories: { name: string; slug: string }[] }>();
+  for (const product of seedProducts) {
+    const brand = brandById(product.brandId);
+    const category = categoryById(product.categoryId);
+    if (!brand || !category) continue;
+    const entry = directory.get(brand.id) ?? { id: seedUuid("brand", brand.slug), name: brand.name, slug: brand.slug, categories: [] };
+    if (!entry.categories.some((item) => item.slug === category.slug)) entry.categories.push({ name: category.name, slug: category.slug });
+    directory.set(brand.id, entry);
+  }
+  return [...directory.values()];
+}
+
 export function getBrandBySlugFromSeed(slug: string): CatalogueBrandView | null {
   const brand = seedBrands.find((entry) => entry.slug === slug);
   if (!brand) {
