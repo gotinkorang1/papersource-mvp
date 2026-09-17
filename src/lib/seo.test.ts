@@ -57,7 +57,7 @@ describe("collectionPageJsonLd", () => {
       items: [{ name: "Blue pen", url: "https://papersourcegh.com/product/blue-pen", position: 1 }],
     });
 
-    expect(json).toMatchObject({ "@type": "CollectionPage", mainEntity: { "@type": "ItemList", numberOfItems: 42 } });
+    expect(json).toMatchObject({ "@type": "CollectionPage", inLanguage: "en-GH", mainEntity: { "@type": "ItemList", numberOfItems: 42 } });
     expect(json.mainEntity.itemListElement[0]).toMatchObject({ position: 1, url: "https://papersourcegh.com/product/blue-pen" });
   });
 
@@ -70,6 +70,6 @@ describe("collectionPageJsonLd", () => {
 describe("webPageJsonLd", () => {
   it("includes CMS freshness and site entity relationships", () => {
     const json = webPageJsonLd({ name: "Delivery guide", description: "Delivery information", url: "https://papersourcegh.com/pages/delivery-guide", dateModified: "2026-09-10T00:00:00Z" });
-    expect(json).toMatchObject({ "@type": "WebPage", dateModified: "2026-09-10T00:00:00.000Z", isPartOf: { "@id": expect.stringContaining("#website") }, about: { "@id": expect.stringContaining("#organization") } });
+    expect(json).toMatchObject({ "@type": "WebPage", inLanguage: "en-GH", dateModified: "2026-09-10T00:00:00.000Z", isPartOf: { "@id": expect.stringContaining("#website") }, about: { "@id": expect.stringContaining("#organization") } });
   });
 });
