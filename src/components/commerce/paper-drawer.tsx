@@ -22,13 +22,21 @@ export function PaperDrawer({
   const descriptionId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  const wasOpen = useRef(false);
+
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open) {
-      previousFocus.current?.focus();
+      if (wasOpen.current) {
+        previousFocus.current?.focus();
+      }
+      wasOpen.current = false;
       return;
     }
 
+    wasOpen.current = true;
     previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     closeRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
@@ -36,7 +44,7 @@ export function PaperDrawer({
 
     function onKeyDown(event: KeyboardEvent) {
       if (event.key === "Escape") {
-        onClose();
+        onCloseRef.current();
         return;
       }
       if (event.key === "Tab") {
@@ -61,7 +69,7 @@ export function PaperDrawer({
       window.removeEventListener("keydown", onKeyDown);
       document.body.style.overflow = previousOverflow;
     };
-    }, [open, onClose]);
+    }, [open]);
 
   if (!open) {
     return null;
