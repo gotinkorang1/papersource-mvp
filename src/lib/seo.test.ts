@@ -11,11 +11,11 @@ describe("siteJsonLd", () => {
       "@graph": expect.arrayContaining([
         expect.objectContaining({ "@type": "Organization", name: "PaperSource Ghana" }),
         expect.objectContaining({ "@type": "WebSite", name: "PaperSource Ghana" }),
-        expect.objectContaining({ "@type": "LocalBusiness", areaServed: expect.arrayContaining(["Accra", "Tema"]) }),
+        expect.objectContaining({ "@type": ["LocalBusiness", "Store"], areaServed: expect.arrayContaining(["Accra", "Tema"]) }),
       ]),
     });
 
-    const website = json["@graph"].find((item: { "@type": string }) => item["@type"] === "WebSite");
+    const website = json["@graph"].find((item: { "@type": string | string[] }) => item["@type"] === "WebSite");
     expect(website).toBeDefined();
     expect((website?.potentialAction as { target: string }).target).toContain("/search?q={search_term_string}");
   });

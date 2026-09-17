@@ -100,7 +100,7 @@ export function siteJsonLd() {
         contactPoint: { "@type": "ContactPoint", telephone: "+233555001313", contactType: "customer service", areaServed: "GH", availableLanguage: "en" },
       },
       {
-        "@type": "LocalBusiness",
+        "@type": ["LocalBusiness", "Store"],
         "@id": `${SITE_URL}/#local-business`,
         name: SITE_NAME,
         url: SITE_URL,
