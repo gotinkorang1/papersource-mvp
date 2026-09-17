@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { getBrandBySlug, listProductCards } from "@/features/catalogue";
 import { pageMetadata } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -10,6 +11,7 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({
@@ -29,8 +31,9 @@ export async function generateMetadata({
   });
 }
 
-export default async function BrandPage({ params }: PageProps) {
+export default async function BrandPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
+  const { page: pageParam } = await searchParams;
   const brand = await getBrandBySlug(slug);
 
   if (!brand) {
@@ -38,6 +41,10 @@ export default async function BrandPage({ params }: PageProps) {
   }
 
   const products = await listProductCards({ brandSlug: slug });
+  const pageSize = 24;
+  const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
+  const page = Math.min(Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1), totalPages);
+  const visibleProducts = products.slice((page - 1) * pageSize, page * pageSize);
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "brands", "write") : false;
 
@@ -49,7 +56,8 @@ export default async function BrandPage({ params }: PageProps) {
         {brand.name} products in the PaperSource catalogue.
       </p>
       <div className="mt-10">
-        <ProductGridList products={products} canEdit={canEdit} />
+        <ProductGridList products={visibleProducts} canEdit={canEdit} />
+        <CataloguePagination basePath={`/brands/${brand.slug}`} page={page} totalPages={totalPages} totalItems={products.length} query={{}} />
       </div>
     </main>
   );

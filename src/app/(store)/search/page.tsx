@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { HeaderSearch } from "@/components/navigation/header-search";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { listProductCards } from "@/features/catalogue";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { listDivisionCategories, listFeaturedProductCards } from "@/features/catalogue";
@@ -14,12 +15,16 @@ import { pageMetadata } from "@/lib/seo";
 export const metadata: Metadata = { ...pageMetadata({ title: "Search office supplies and stationery", description: "Search PaperSource Ghana for paper, pens, toner, printing materials and workplace essentials.", path: "/search" }), robots: { index: false, follow: true } };
 
 type PageProps = {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; page?: string }>;
 };
 
 export default async function SearchPage({ searchParams }: PageProps) {
-  const { q = "" } = await searchParams;
+  const { q = "", page: pageParam } = await searchParams;
   const [products, categories] = await Promise.all([q ? listProductCards({ query: q }) : Promise.resolve([]), listDivisionCategories()]);
+  const pageSize = 24;
+  const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
+  const page = Math.min(Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1), totalPages);
+  const visibleProducts = products.slice((page - 1) * pageSize, page * pageSize);
   const recommendations = q && products.length === 0 ? await listFeaturedProductCards() : [];
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
@@ -53,7 +58,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
             {products.length ? <p className="text-sm text-slate">{products.length} {products.length === 1 ? "product" : "products"}</p> : null}
           </div>
           <div className="mt-6">
-            {products.length ? <ProductGridList products={products} canEdit={canEdit} /> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
+            {products.length ? <><ProductGridList products={visibleProducts} canEdit={canEdit} /><CataloguePagination basePath="/search" page={page} totalPages={totalPages} totalItems={products.length} query={{ q }} /></> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
           </div>
         </div>
       ) : null}

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 import { pageMetadata } from "@/lib/seo";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
@@ -12,6 +13,7 @@ import { readStaffActor } from "@/lib/staff/require";
 
 type PageProps = {
   params: Promise<{ category: string }>;
+  searchParams: Promise<{ page?: string }>;
 };
 
 export async function generateMetadata({
@@ -31,8 +33,9 @@ export async function generateMetadata({
   });
 }
 
-export default async function ShopCategoryPage({ params }: PageProps) {
+export default async function ShopCategoryPage({ params, searchParams }: PageProps) {
   const { category: slug } = await params;
+  const { page: pageParam } = await searchParams;
   const category = await getCategoryBySlug(slug);
 
   if (!category) {
@@ -40,6 +43,10 @@ export default async function ShopCategoryPage({ params }: PageProps) {
   }
 
   const products = await listProductCards({ categorySlug: category.slug });
+  const pageSize = 24;
+  const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
+  const page = Math.min(Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1), totalPages);
+  const visibleProducts = products.slice((page - 1) * pageSize, page * pageSize);
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "categories", "write") : false;
   const categoryImage: Record<string, { src: string; alt: string }> = {
@@ -68,7 +75,8 @@ export default async function ShopCategoryPage({ params }: PageProps) {
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill priority loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
       </div>
       <div className="mt-10">
-        <ProductGridList products={products} canEdit={canEdit} />
+        <ProductGridList products={visibleProducts} canEdit={canEdit} />
+        <CataloguePagination basePath={`/shop/${category.slug}`} page={page} totalPages={totalPages} totalItems={products.length} query={{}} />
       </div>
     </main>
   );
