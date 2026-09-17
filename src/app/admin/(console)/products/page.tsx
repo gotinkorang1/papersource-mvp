@@ -12,10 +12,11 @@ export const metadata: Metadata = {
   title: "Products",
 };
 
-export default async function AdminProductsPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; sort?: string; message?: string; error?: string }> }) {
+export default async function AdminProductsPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; sort?: string; page?: string; message?: string; error?: string }> }) {
   const actor = await requireStaffArea("products", "read");
   const filters = await searchParams;
-  const rows = await listAdminProducts({ search: filters.q, status: filters.status, sort: filters.sort });
+  const result = await listAdminProducts({ search: filters.q, status: filters.status, sort: filters.sort, page: filters.page });
+  const { rows } = result;
   const canWrite = canAccessAdmin(actor.role, "products", "write");
 
   return (
@@ -43,7 +44,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <label className="grid gap-1 text-xs font-medium text-slate">Sort by<select name="sort" defaultValue={filters.sort ?? "updated"} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="updated">Recently updated</option><option value="name">Name</option><option value="status">Status</option></select></label>
         <button type="submit" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Filter</button>
       </form>
-      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} {rows.length === 1 ? "product" : "products"}{filters.q || filters.status ? " matching your filters" : ""}.</p>
+      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} of {result.total} {result.total === 1 ? "product" : "products"}{filters.q || filters.status ? " matching your filters" : ""}.</p>
       {rows.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-border bg-card p-6 text-sm text-slate"><p>{filters.q || filters.status ? "No products match these filters." : "No products yet."}</p>{filters.q || filters.status || filters.sort ? <Link href="/admin/products" className="mt-2 inline-flex text-ink underline underline-offset-4">Clear filters</Link> : null}</div>
       ) : (
@@ -82,6 +83,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
           </table>
         </form>
       )}
+      {result.totalPages > 1 ? <nav className="mt-6 flex flex-wrap items-center justify-between gap-3" aria-label="Product pages"><p className="text-sm text-slate">Page {result.page} of {result.totalPages}</p><div className="flex gap-2">{result.page > 1 ? <Link href={{ pathname: "/admin/products", query: { q: filters.q, status: filters.status, sort: filters.sort, page: String(result.page - 1) } }} className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-ink hover:bg-muted">Previous</Link> : null}{result.page < result.totalPages ? <Link href={{ pathname: "/admin/products", query: { q: filters.q, status: filters.status, sort: filters.sort, page: String(result.page + 1) } }} className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-ink hover:bg-muted">Next</Link> : null}</div></nav> : null}
     </main>
   );
 }
