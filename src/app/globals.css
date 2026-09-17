@@ -443,6 +443,16 @@
     box-shadow: var(--ps-shadow-md);
   }
 
+  .skeleton-block {
+    background: var(--muted);
+  }
+
+  .skeleton-shimmer .skeleton-block {
+    background-image: linear-gradient(100deg, transparent 20%, color-mix(in srgb, var(--card-foreground) 8%, transparent) 40%, transparent 60%);
+    background-size: 220% 100%;
+    animation: skeleton-shimmer 1.6s ease-in-out infinite;
+  }
+
   @keyframes page-enter {
     from {
       opacity: 0;
@@ -454,6 +464,11 @@
     }
   }
 
+  @keyframes skeleton-shimmer {
+    from { background-position: 120% 0; }
+    to { background-position: -20% 0; }
+  }
+
   @media (prefers-reduced-motion: reduce) {
     *,
     *::before,
@@ -462,6 +477,10 @@
       animation-iteration-count: 1 !important;
       transition-duration: 0.01ms !important;
       scroll-behavior: auto !important;
+    }
+
+    .skeleton-shimmer .skeleton-block {
+      animation: none !important;
     }
   }
 }
