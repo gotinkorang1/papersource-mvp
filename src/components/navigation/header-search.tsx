@@ -22,6 +22,19 @@ export function HeaderSearch({
   const [requestError, setRequestError] = useState(false);
   const [retryNonce, setRetryNonce] = useState(0);
   const requestRef = useRef<AbortController | null>(null);
+  const formRef = useRef<HTMLFormElement | null>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointerDown = (event: PointerEvent) => {
+      if (!formRef.current?.contains(event.target as Node)) {
+        setOpen(false);
+        setActive(-1);
+      }
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, [open]);
 
   useEffect(() => {
     const value = query.trim();
@@ -67,6 +80,7 @@ export function HeaderSearch({
 
   return (
     <form
+      ref={formRef}
       onSubmit={onSubmit}
       className={cn("relative hidden min-w-0 flex-1 lg:block", className)}
       role="search"
