@@ -65,6 +65,8 @@ export function MobileNav() {
             aria-label={itemCountLabel("Quote list", quoteCount)}
             aria-expanded={quoteOpen}
             aria-pressed={quoteOpen}
+            aria-haspopup="dialog"
+            aria-controls="paper-drawer-quote-list"
             onClick={() => setQuoteOpen(!quoteOpen)}
           >
             <span className="relative"><ClipboardList className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{quoteCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{quoteCount > 99 ? "99+" : quoteCount}</span> : null}</span>
@@ -78,6 +80,8 @@ export function MobileNav() {
             aria-label={itemCountLabel("Cart", cartCount)}
             aria-expanded={cartOpen}
             aria-pressed={cartOpen}
+            aria-haspopup="dialog"
+            aria-controls="paper-drawer-cart"
             onClick={() => setCartOpen(!cartOpen)}
           >
             <span className="relative"><ShoppingBag className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{cartCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{cartCount > 99 ? "99+" : cartCount}</span> : null}</span>

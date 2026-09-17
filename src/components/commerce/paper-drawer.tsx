@@ -70,7 +70,11 @@ export function PaperDrawer({
   const drawerName = title.toLowerCase().replaceAll(/\s+/g, "-");
 
   return (
-    <div className="fixed inset-0 z-50" data-testid={`paper-drawer-${drawerName}`}>
+    <div
+      id={`paper-drawer-${drawerName}`}
+      className="fixed inset-0 z-50"
+      data-testid={`paper-drawer-${drawerName}`}
+    >
       <button
         type="button"
         className="absolute inset-0 bg-ink/40"
