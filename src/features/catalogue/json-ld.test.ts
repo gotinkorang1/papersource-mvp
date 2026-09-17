@@ -48,6 +48,6 @@ describe("productJsonLd", () => {
     );
     expect(json.category).toBe("Copier Paper");
     expect(json.gtin).toBe("123456789012");
-    expect(json.offers.seller).toEqual({ "@type": "Organization", name: "PaperSource" });
+    expect(json.offers.seller).toEqual({ "@id": "http://localhost:3000/#organization", "@type": "Organization", name: "PaperSource Ghana" });
   });
 });

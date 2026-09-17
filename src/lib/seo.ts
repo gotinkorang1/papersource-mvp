@@ -1,7 +1,11 @@
 import type { Metadata } from "next";
+import { publicEnv } from "@/lib/env";
 
 export const SITE_NAME = "PaperSource Ghana";
-export const SITE_URL = "https://www.papersourcegh.com";
+// Keep one canonical host everywhere: metadata, JSON-LD, and sitemaps must agree.
+// The deployment URL may override this for previews, while production defaults to
+// the public host documented in docs/SEO.md.
+export const SITE_URL = (publicEnv.NEXT_PUBLIC_SITE_URL || "https://papersourcegh.com").replace(/\/+$/, "");
 export const DEFAULT_DESCRIPTION =
   "Office stationery, paper, printing supplies and workplace essentials delivered across Accra and Tema. Nationwide supply on request.";
 export const DEFAULT_SHARE_IMAGE = "/images/catalogue-stationery-generated.png";
@@ -79,11 +83,12 @@ export function siteJsonLd() {
         name: SITE_NAME,
         legalName: "PaperSource",
         url: SITE_URL,
-        logo: absoluteUrl("/icons/papersource-512.svg"),
+        logo: absoluteUrl("/icons/papersource-logo.png"),
         email: "info@papersourcegh.com",
         telephone: "+233555001313",
         parentOrganization: { "@type": "Organization", name: "NiiPlants Group Ghana Limited" },
         sameAs: [],
+        contactPoint: { "@type": "ContactPoint", telephone: "+233555001313", contactType: "customer service", areaServed: "GH", availableLanguage: "en" },
       },
       {
         "@type": "LocalBusiness",
@@ -112,5 +117,31 @@ export function siteJsonLd() {
         },
       },
     ],
+  };
+}
+
+export function collectionPageJsonLd(input: {
+  name: string;
+  description: string;
+  url: string;
+  items: Array<{ name: string; url: string; position: number }>;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    "@id": `${input.url}#collection`,
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    mainEntity: {
+      "@type": "ItemList",
+      numberOfItems: input.items.length,
+      itemListElement: input.items.map((item) => ({
+        "@type": "ListItem",
+        position: item.position,
+        name: item.name,
+        url: item.url,
+      })),
+    },
   };
 }

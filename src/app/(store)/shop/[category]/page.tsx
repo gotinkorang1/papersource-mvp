@@ -6,7 +6,8 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
-import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/features/catalogue";
+import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -18,19 +19,24 @@ type PageProps = {
 
 export async function generateMetadata({
   params,
+  searchParams,
 }: PageProps): Promise<Metadata> {
   const { category: slug } = await params;
+  const { page } = await searchParams;
   const category = await getCategoryBySlug(slug);
 
   if (!category) {
     return { title: "Category" };
   }
 
-  return pageMetadata({
+  return {
+    ...pageMetadata({
     title: `${category.name} for Ghana workplaces`,
     description: `${category.caption}. Delivered across Accra and Tema. Nationwide supply on request.`,
     path: `/shop/${category.slug}`,
-  });
+    }),
+    ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
+  };
 }
 
 export default async function ShopCategoryPage({ params, searchParams }: PageProps) {
@@ -69,6 +75,8 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${category.name} for Ghana workplaces`, description: category.caption, url: absoluteUrl(`/shop/${category.slug}`), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Shop", href: "/shop" }, { name: category.name, href: `/shop/${category.slug}` }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Shop", href: "/shop" }, { label: category.name }]} />
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[1fr_16rem]">
         <div><div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink md:text-4xl">{category.name}</h1>{canEdit ? <Link href={`/admin/categories#category-${category.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit category</Link> : null}</div><p className="mt-3 max-w-2xl text-slate">{category.caption}</p></div>

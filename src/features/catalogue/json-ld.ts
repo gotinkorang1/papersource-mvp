@@ -6,6 +6,7 @@ export function productJsonLd(
   canonical: string,
   reviews: { rating: number }[] = [],
 ) {
+  const origin = new URL(canonical).origin;
   const availability =
     product.stock === "out"
       ? "https://schema.org/OutOfStock"
@@ -16,8 +17,10 @@ export function productJsonLd(
   return {
     "@context": "https://schema.org",
     "@type": "Product",
+    "@id": `${canonical}#product`,
     name: product.name,
     description: product.description,
+    url: canonical,
     sku: product.sku,
     ...(product.imageSources?.length
       ? { image: product.imageSources.map((image) => image.src) }
@@ -29,6 +32,15 @@ export function productJsonLd(
       name: product.brandName,
     },
     category: product.categoryName,
+    ...(product.attributes?.length
+      ? {
+          additionalProperty: product.attributes.map((attribute) => ({
+            "@type": "PropertyValue",
+            name: attribute.key.replace(/[_-]+/g, " "),
+            value: attribute.valueText,
+          })),
+        }
+      : {}),
     ...(product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode)
       ? { gtin: product.barcode }
       : {}),
@@ -50,7 +62,7 @@ export function productJsonLd(
       price: pesewasToMajor(product.unitPricePesewas),
       availability,
       itemCondition: "https://schema.org/NewCondition",
-      seller: { "@type": "Organization", name: "PaperSource" },
+      seller: { "@id": `${origin}/#organization`, "@type": "Organization", name: "PaperSource Ghana" },
     },
   };
 }

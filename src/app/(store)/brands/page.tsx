@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import { listBrands } from "@/features/catalogue";
-import { BrandLogo } from "@/components/marketing/brand-logo";
-import { pageMetadata } from "@/lib/seo";
+import { listBrandDirectory } from "@/features/catalogue";
+import { BrandDirectory } from "@/components/products/brand-directory";
+import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { breadcrumbJsonLd } from "@/features/catalogue";
 
 export const metadata: Metadata = pageMetadata({
   title: "Office stationery brands in Ghana",
@@ -12,28 +12,18 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function BrandsPage() {
-  const brands = await listBrands();
+  const brands = await listBrandDirectory();
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: "Office stationery brands in Ghana", description: "Browse trusted paper, printer, writing and workplace supply brands available through PaperSource Ghana.", url: absoluteUrl("/brands"), items: brands.map((brand, index) => ({ name: brand.name, url: absoluteUrl(`/brands/${brand.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Brands", href: "/brands" }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Brands" }]} />
       <h1 className="text-3xl text-ink">Brands</h1>
       <p className="mt-3 max-w-2xl text-slate">
         Workplace supplies from brands Ghanaian offices already specify.
       </p>
-      <ul className="mt-10 grid gap-px bg-border sm:grid-cols-2 md:grid-cols-3">
-        {brands.map((brand) => (
-          <li key={brand.id} className="bg-card">
-            <Link
-              href={`/brands/${brand.slug}`}
-              className="flex min-h-28 items-center gap-4 px-5 py-6 hover:bg-cream"
-            >
-              <BrandLogo name={brand.name} />
-              <span className="text-ink">{brand.name}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <BrandDirectory brands={brands} />
     </main>
   );
 }

@@ -5,17 +5,26 @@ import { listBrands, listDivisionCategories, listProductCards } from "@/features
 import type { ProductCardModel } from "@/types/catalogue";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
-import { pageMetadata } from "@/lib/seo";
+import { breadcrumbJsonLd } from "@/features/catalogue";
+import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
-export const metadata: Metadata = pageMetadata({
-  title: "Shop workplace supplies in Ghana",
-  description: "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
-  path: "/shop",
-});
+type ShopSearchParams = { q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string };
+type PageProps = { searchParams: Promise<ShopSearchParams> };
 
-type PageProps = { searchParams: Promise<{ q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string }> };
+export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
+  const params = await searchParams;
+  const hasCatalogueVariant = Object.values(params).some((value) => Boolean(value?.trim()));
+  return {
+    ...pageMetadata({
+      title: "Shop workplace supplies in Ghana",
+      description: "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
+      path: "/shop",
+    }),
+    ...(hasCatalogueVariant ? { robots: { index: false, follow: true } } : {}),
+  };
+}
 
 export default async function ShopPage({ searchParams }: PageProps) {
   const params = await searchParams;
@@ -46,6 +55,8 @@ export default async function ShopPage({ searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: "Shop workplace supplies in Ghana", description: "Office stationery, paper, toner and workplace essentials from PaperSource.", url: absoluteUrl("/shop"), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Shop", href: "/shop" }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Shop" }]} />
       <h1 className="mt-5 text-4xl text-ink md:text-5xl">Shop workplace essentials</h1>
       <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate md:text-lg">

@@ -9,8 +9,7 @@ import { OfficeBundleCard } from "@/components/products/office-bundle-card";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
 import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, listProductCards, productJsonLd } from "@/features/catalogue";
-import { publicEnv } from "@/lib/env";
-import { pageMetadata, productSeoTitle } from "@/lib/seo";
+import { absoluteUrl, pageMetadata, productSeoTitle, SITE_URL } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
 import { CopySkuButton } from "@/components/products/copy-sku-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -25,10 +24,6 @@ type PageProps = {
   params: Promise<{ slug: string }>;
 };
 
-function siteOrigin() {
-  return publicEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
-}
-
 export async function generateMetadata({
   params,
 }: PageProps): Promise<Metadata> {
@@ -42,10 +37,11 @@ export async function generateMetadata({
   const seoTitle = product.attributes.find(
     (attribute) => attribute.key === "seo_title",
   )?.valueText.trim();
+  const seoDescription = product.description.trim() || `${product.name} from ${product.brandName}, available through PaperSource Ghana for Accra, Tema and nationwide supply on request.`;
 
   return pageMetadata({
     title: seoTitle || productSeoTitle(product.name, product.specLine),
-    description: product.description,
+    description: seoDescription,
     path: `/product/${product.slug}`,
     image: product.imageSrc,
   });
@@ -59,7 +55,7 @@ export default async function ProductPage({ params }: PageProps) {
     notFound();
   }
 
-  const origin = siteOrigin();
+  const origin = SITE_URL;
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   const customer = await readCustomerActor();
@@ -71,7 +67,7 @@ export default async function ProductPage({ params }: PageProps) {
   const related = relatedProducts.filter((entry) => entry.id !== product.id).slice(0, 4);
   const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
   const supplementalMetadata = bookMetadata(product);
-  const canonical = `${origin}/product/${product.slug}`;
+  const canonical = absoluteUrl(`/product/${product.slug}`);
   const crumbs = [
     { name: "Shop", href: "/shop" },
     { name: product.divisionName, href: `/shop/${product.divisionSlug}` },

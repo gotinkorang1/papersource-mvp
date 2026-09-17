@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as seo from "./seo";
-import { siteJsonLd } from "./seo";
+import { collectionPageJsonLd, siteJsonLd } from "./seo";
 
 describe("siteJsonLd", () => {
   it("describes PaperSource as a Ghana workplace-supplies business with site search", () => {
@@ -31,5 +31,19 @@ describe("productSeoTitle", () => {
 
     expect(productSeoTitle("Stranded", "")).toBe("Stranded");
     expect(productSeoTitle("Stranded", "Paperback")).toBe("Stranded · Paperback");
+  });
+});
+
+describe("collectionPageJsonLd", () => {
+  it("publishes crawlable catalogue items with absolute URLs", () => {
+    const json = collectionPageJsonLd({
+      name: "Pens in Ghana",
+      description: "Pens for Ghana workplaces.",
+      url: "https://papersourcegh.com/shop/pens",
+      items: [{ name: "Blue pen", url: "https://papersourcegh.com/product/blue-pen", position: 1 }],
+    });
+
+    expect(json).toMatchObject({ "@type": "CollectionPage", mainEntity: { "@type": "ItemList", numberOfItems: 1 } });
+    expect(json.mainEntity.itemListElement[0]).toMatchObject({ position: 1, url: "https://papersourcegh.com/product/blue-pen" });
   });
 });
