@@ -60,8 +60,8 @@ export function MobileMenu() {
       </button>
       {open ? (
         <>
-          <button type="button" aria-label="Close menu overlay" className="fixed inset-0 z-40 cursor-default bg-ink/30 backdrop-blur-[1px] lg:hidden" onClick={() => setOpen(false)} />
-          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] sm:px-6">
+          <button type="button" aria-label="Close menu overlay" className="fixed inset-0 z-40 cursor-default bg-ink/30 backdrop-blur-[1px] motion-safe:animate-in motion-safe:fade-in-0 lg:hidden" onClick={() => setOpen(false)} />
+          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 sm:px-6">
             <div className="grid gap-2 sm:grid-cols-2">
             <Link href="/shop" className="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
               Shop all products
@@ -74,7 +74,7 @@ export function MobileMenu() {
             {mobileMenuLinks.map((link) => {
               const active = isNavigationLinkActive(link.href, pathname);
               return (
-                <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined} className={`rounded-md px-3 py-2.5 text-sm transition-colors hover:bg-cream hover:text-ink ${active ? "font-semibold text-ink" : "text-graphite"}`} onClick={() => setOpen(false)}>
+                <Link key={link.href} href={link.href} aria-current={active ? "page" : undefined} className={`rounded-md border-l-2 px-3 py-2.5 text-sm transition-[color,background-color,border-color] hover:bg-cream hover:text-ink ${active ? "border-ochre bg-cream/50 font-semibold text-ink" : "border-transparent text-graphite"}`} onClick={() => setOpen(false)}>
                   {link.label}
                 </Link>
               );
