@@ -6,6 +6,7 @@ import { orders, profiles, quotes, productReviews } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
+import { getCatalogueSeoAudit } from "@/features/catalogue/seo-audit";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -40,7 +41,7 @@ export default async function AdminDashboardPage() {
       : null,
   ].filter((action): action is NonNullable<typeof action> => Boolean(action));
 
-  const [openQuotes, pendingPayRows, nationwideRows, pendingReviewRows, recentOrders] = await Promise.all([
+  const [openQuotes, pendingPayRows, nationwideRows, pendingReviewRows, recentOrders, seoAudit] = await Promise.all([
     canReadQuotes
       ? db
           .select({ status: quotes.status, total: count() })
@@ -65,6 +66,7 @@ export default async function AdminDashboardPage() {
           .orderBy(desc(orders.updatedAt))
           .limit(6)
       : Promise.resolve([]),
+    canAccessAdmin(actor.role, "products", "read") ? getCatalogueSeoAudit() : Promise.resolve(null),
   ]);
   const pendingPay = pendingPayRows[0];
   const nationwide = nationwideRows[0];
@@ -144,6 +146,7 @@ export default async function AdminDashboardPage() {
         {!canReadQuotes && !canReadOrders && !canReadReviews ? <div className="rounded-xl border border-dashed border-border bg-card p-4 sm:col-span-2 lg:col-span-5"><p className="text-sm font-semibold text-ink">Your workspace is ready</p><p className="mt-1 text-sm text-slate">Use the shortcuts above to manage the areas assigned to your role.</p></div> : null}
       </div>
       {canReadOrders ? <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="recent-orders-heading"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Live queue</p><h2 id="recent-orders-heading" className="mt-1 font-heading text-xl text-ink">Recently updated orders</h2></div><Link href="/admin/orders" className="min-h-11 inline-flex items-center text-sm font-medium text-ink underline underline-offset-4">View all</Link></div>{recentOrders.length ? <div className="mt-5 overflow-x-auto"><table className="admin-responsive-table w-full min-w-[38rem] text-sm"><thead><tr className="border-b border-border text-left text-xs uppercase tracking-[0.12em] text-slate"><th className="px-2 py-3 font-medium">Order</th><th className="px-2 py-3 font-medium">Customer</th><th className="px-2 py-3 font-medium">Status</th><th className="px-2 py-3 font-medium">Updated</th></tr></thead><tbody>{recentOrders.map((order) => <tr key={order.id} className="border-b border-border last:border-0"><td className="px-2 py-3 font-medium text-ink" data-label="Order"><Link href={`/admin/orders/${order.id}`} className="underline underline-offset-4">{order.number ?? "Draft order"}</Link></td><td className="px-2 py-3 text-slate" data-label="Customer">{order.customerEmail ?? "Guest checkout"}</td><td className="px-2 py-3" data-label="Status"><AdminStatusBadge status={order.status} /></td><td className="px-2 py-3 text-slate" data-label="Updated">{new Date(order.updatedAt).toLocaleDateString("en-GH")}</td></tr>)}</tbody></table></div> : <p className="mt-5 text-sm text-slate">No orders have been updated yet.</p>}</section> : null}
+      {seoAudit ? <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="seo-health-heading"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Catalogue quality</p><h2 id="seo-health-heading" className="mt-1 font-heading text-xl text-ink">SEO health</h2><p className="mt-2 max-w-2xl text-sm text-slate">Active products with complete descriptions, images and aliases are easier to discover and easier for customers to understand.</p></div><Link href="/admin/products?status=active" className="min-h-11 inline-flex items-center text-sm font-medium text-ink underline underline-offset-4">Review products</Link></div><div className="mt-5 grid gap-3 sm:grid-cols-4"><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Active products</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.activeProducts}</p></div><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Missing descriptions</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.missingDescriptions}</p></div><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Missing images</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.missingImages}</p></div><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Missing aliases</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.missingAliases}</p></div></div></section> : null}
     </main>
   );
 }
