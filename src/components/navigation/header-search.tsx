@@ -104,7 +104,7 @@ export function HeaderSearch({
         aria-autocomplete="list"
         aria-expanded={open && query.trim().length >= 2}
         aria-busy={loading}
-        aria-controls={`${inputId}-suggestions`}
+        aria-controls={open && query.trim().length >= 2 ? `${inputId}-suggestions` : undefined}
         aria-activedescendant={active >= 0 ? `${inputId}-suggestion-${active}` : undefined}
         autoComplete="off"
         placeholder="Search paper, toner, pens, brands or SKU..."
