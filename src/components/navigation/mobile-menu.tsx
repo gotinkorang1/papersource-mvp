@@ -14,6 +14,10 @@ export function MobileMenu() {
   const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
     if (!open) return;
     const focusTimer = window.setTimeout(() => {
       menuRef.current?.querySelector<HTMLElement>("a[href], button:not([disabled])")?.focus();
