@@ -21,14 +21,14 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/images/catalogue-stationery-generated.png", sizes: "1200x900", type: "image/png", form_factor: "narrow", label: "PaperSource mobile shopping experience" },
     ],
     shortcuts: [
-      { name: "Shop products", short_name: "Shop", description: "Browse workplace supplies", url: "/shop", icons: [{ src: "/icons/papersource-192.svg", sizes: "192x192", type: "image/svg+xml" }] },
-      { name: "Search catalogue", short_name: "Search", description: "Find a product quickly", url: "/search", icons: [{ src: "/icons/papersource-192.svg", sizes: "192x192", type: "image/svg+xml" }] },
-      { name: "Request a quote", short_name: "Quote", description: "Build a bulk quote", url: "/quote", icons: [{ src: "/icons/papersource-192.svg", sizes: "192x192", type: "image/svg+xml" }] },
-      { name: "Open cart", short_name: "Cart", description: "Review your cart", url: "/cart", icons: [{ src: "/icons/papersource-192.svg", sizes: "192x192", type: "image/svg+xml" }] },
+      { name: "Shop products", short_name: "Shop", description: "Browse workplace supplies", url: "/shop", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Search catalogue", short_name: "Search", description: "Find a product quickly", url: "/search", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Request a quote", short_name: "Quote", description: "Build a bulk quote", url: "/quote", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Open cart", short_name: "Cart", description: "Review your cart", url: "/cart", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
     ],
     icons: [
-      { src: "/icons/papersource-192.svg", sizes: "192x192", type: "image/svg+xml", purpose: "any" },
-      { src: "/icons/papersource-512.svg", sizes: "512x512", type: "image/svg+xml", purpose: "maskable" },
+      { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "any" },
+      { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
   };
 }
