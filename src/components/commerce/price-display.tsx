@@ -10,11 +10,13 @@ export function PriceDisplay({
   unitLabel?: string;
   className?: string;
 }) {
+  const normalizedUnitLabel = unitLabel?.replace(/^\s*\/\s*/, "").trim();
+
   return (
     <p className={cn("text-base font-medium text-ink tabular-nums", className)}>
       {formatGhs(pesewas)}
-      {unitLabel ? (
-        <span className="font-normal text-slate"> / {unitLabel}</span>
+      {normalizedUnitLabel ? (
+        <span className="font-normal text-slate"> / {normalizedUnitLabel}</span>
       ) : null}
     </p>
   );
