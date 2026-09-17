@@ -19,7 +19,7 @@ export function DualPathCounts() {
         aria-expanded={quoteOpen}
         aria-pressed={quoteOpen}
         aria-haspopup="dialog"
-        aria-controls="paper-drawer-quote-list"
+        aria-controls={quoteOpen ? "paper-drawer-quote-list" : undefined}
         onClick={() => setQuoteOpen(true)}
       >
         <ClipboardList className="size-4" aria-hidden />
@@ -33,7 +33,7 @@ export function DualPathCounts() {
         aria-expanded={cartOpen}
         aria-pressed={cartOpen}
         aria-haspopup="dialog"
-        aria-controls="paper-drawer-cart"
+        aria-controls={cartOpen ? "paper-drawer-cart" : undefined}
         onClick={() => setCartOpen(true)}
       >
         <ShoppingBag className="size-4" aria-hidden />
