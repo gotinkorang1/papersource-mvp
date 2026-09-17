@@ -54,7 +54,7 @@ export function MobileMenu() {
       <button
         type="button"
         ref={triggerRef}
-        className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+        className={`inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border text-ink transition-[background-color,border-color,color,transform] hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:scale-95 ${open ? "border-ochre bg-cream text-ink" : "border-border"}`}
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
         aria-controls={menuId}
