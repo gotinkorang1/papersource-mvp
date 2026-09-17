@@ -21,6 +21,7 @@ export function PaperDrawer({
   const titleId = useId();
   const descriptionId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLDivElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
   const onCloseRef = useRef(onClose);
   const wasOpen = useRef(false);
@@ -48,9 +49,9 @@ export function PaperDrawer({
         return;
       }
       if (event.key === "Tab") {
-        const focusable = Array.from(document.querySelectorAll<HTMLElement>(
-          '[role="dialog"] button, [role="dialog"] a, [role="dialog"] input, [role="dialog"] select, [role="dialog"] textarea, [role="dialog"] [tabindex]:not([tabindex="-1"])',
-        )).filter((element) => !element.hasAttribute("disabled"));
+        const focusable = Array.from(drawerRef.current?.querySelectorAll<HTMLElement>(
+          'aside[role="dialog"] button, aside[role="dialog"] a, aside[role="dialog"] input, aside[role="dialog"] select, aside[role="dialog"] textarea, aside[role="dialog"] [tabindex]:not([tabindex="-1"])',
+        ) ?? []).filter((element) => !element.hasAttribute("disabled"));
         if (focusable.length === 0) return;
         const first = focusable[0];
         const last = focusable[focusable.length - 1];
@@ -78,7 +79,8 @@ export function PaperDrawer({
   const drawerName = title.toLowerCase().replaceAll(/\s+/g, "-");
 
   return (
-    <div
+      <div
+      ref={drawerRef}
       id={`paper-drawer-${drawerName}`}
       className="fixed inset-0 z-50"
       data-testid={`paper-drawer-${drawerName}`}
