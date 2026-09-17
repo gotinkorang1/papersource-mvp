@@ -9,7 +9,7 @@ describe("siteJsonLd", () => {
     expect(json).toMatchObject({
       "@context": "https://schema.org",
       "@graph": expect.arrayContaining([
-        expect.objectContaining({ "@type": "Organization", name: "PaperSource Ghana" }),
+        expect.objectContaining({ "@type": "Organization", name: "PaperSource Ghana", knowsAbout: expect.arrayContaining(["Office stationery", "Books", "School supplies"]) }),
         expect.objectContaining({ "@type": "WebSite", name: "PaperSource Ghana" }),
         expect.objectContaining({ "@type": ["LocalBusiness", "Store"], areaServed: expect.arrayContaining(["Accra", "Tema"]) }),
       ]),

@@ -96,6 +96,7 @@ export function siteJsonLd() {
         email: "info@papersourcegh.com",
         telephone: "+233555001313",
         parentOrganization: { "@type": "Organization", name: "NiiPlants Group Ghana Limited" },
+        knowsAbout: ["Office stationery", "Books", "School supplies", "Paper and printing supplies", "Workplace essentials"],
         sameAs: [],
         contactPoint: { "@type": "ContactPoint", telephone: "+233555001313", contactType: "customer service", areaServed: "GH", availableLanguage: "en" },
       },
