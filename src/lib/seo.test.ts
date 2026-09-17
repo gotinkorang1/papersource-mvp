@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as seo from "./seo";
-import { collectionItemPosition, collectionPageJsonLd, siteJsonLd, webPageJsonLd } from "./seo";
+import { collectionItemPosition, collectionPageJsonLd, pageMetadata, siteJsonLd, webPageJsonLd } from "./seo";
 
 describe("siteJsonLd", () => {
   it("describes PaperSource as a Ghana workplace-supplies business with site search", () => {
@@ -31,6 +31,19 @@ describe("productSeoTitle", () => {
 
     expect(productSeoTitle("Stranded", "")).toBe("Stranded");
     expect(productSeoTitle("Stranded", "Paperback")).toBe("Stranded · Paperback");
+  });
+});
+
+describe("pageMetadata", () => {
+  it("publishes a verified modification timestamp when supplied", () => {
+    const metadata = pageMetadata({
+      title: "A4 paper",
+      description: "A4 paper for Ghana workplaces.",
+      path: "/product/a4-paper",
+      modifiedTime: "2026-09-17T12:00:00Z",
+    });
+
+    expect(metadata.openGraph).toMatchObject({ modifiedTime: "2026-09-17T12:00:00.000Z" });
   });
 });
 

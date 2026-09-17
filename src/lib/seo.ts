@@ -41,12 +41,14 @@ type PageSeo = {
   description: string;
   path: string;
   image?: string;
+  modifiedTime?: Date | string;
 };
 
 /** Shared metadata keeps previews consistent when a page is shared. */
-export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_IMAGE }: PageSeo): Metadata {
+export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_IMAGE, modifiedTime }: PageSeo): Metadata {
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
+  const normalizedModifiedTime = modifiedTime ? new Date(modifiedTime).toISOString() : undefined;
 
   return {
     title,
@@ -65,6 +67,7 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
       description,
       url,
       images: [{ url: imageUrl, width: 1200, height: 900, alt: `${title} | ${SITE_NAME}` }],
+      ...(normalizedModifiedTime ? { modifiedTime: normalizedModifiedTime } : {}),
     },
     twitter: {
       card: "summary_large_image",
