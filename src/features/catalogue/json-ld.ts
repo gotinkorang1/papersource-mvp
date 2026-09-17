@@ -13,6 +13,7 @@ export function productJsonLd(
   const bookPublisher = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "publisher")?.valueText.trim();
   const validIsbn = bookIsbn && /^(?:\d{9}[\dX]|\d{13})$/.test(bookIsbn.replace(/[-\s]/g, "")) ? bookIsbn.replace(/[-\s]/g, "") : null;
   const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || attributes.some((attribute) => attribute.namespace === "book"));
+  const description = product.description.trim() || `${product.name} by ${product.brandName}. Shop ${product.categoryName || "stationery and books"} from PaperSource Ghana.`;
   const availability =
     product.stock === "out"
       ? "https://schema.org/OutOfStock"
@@ -25,7 +26,7 @@ export function productJsonLd(
     "@type": isBook ? ["Product", "Book"] : "Product",
     "@id": `${canonical}#product`,
     name: product.name,
-    description: product.description,
+    description,
     url: canonical,
     sku: product.sku,
     ...(product.imageSources?.length

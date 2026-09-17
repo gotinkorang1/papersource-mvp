@@ -62,4 +62,12 @@ describe("productJsonLd", () => {
     expect(json.publisher).toEqual({ "@type": "Organization", name: "Example Press" });
     expect(productJsonLd({ ...product, attributes: [{ namespace: "paper", key: "gsm", valueText: "80gsm" }] }, "http://localhost:3000/product/paper")["@type"]).toBe("Product");
   });
+
+  it("publishes a useful fallback description when catalogue copy is empty", () => {
+    const json = productJsonLd(
+      { ...product, description: "   ", categoryName: "Copier Paper" },
+      "http://localhost:3000/product/double-a-premium-a4",
+    );
+    expect(json.description).toBe("Double A Premium A4 Paper by Double A. Shop Copier Paper from PaperSource Ghana.");
+  });
 });
