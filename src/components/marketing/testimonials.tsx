@@ -1,4 +1,4 @@
-import { Quote } from "lucide-react";
+import { Quote, Star } from "lucide-react";
 
 const testimonials = [
   { quote: "PaperSource keeps our office stocked without the usual back-and-forth. The quote path makes approvals simple.", name: "Operations lead", company: "Accra professional services firm" },
@@ -15,7 +15,11 @@ export function Testimonials() {
           <p className="max-w-xs text-sm text-slate">Thoughtful service for teams, schools and growing businesses across Ghana.</p>
         </div>
         <div className="mt-10 grid gap-4 md:grid-cols-3">
-          {testimonials.map((entry) => <figure key={entry.company} className="rounded-2xl border border-border bg-card p-6 shadow-sm transition duration-300 hover:-translate-y-1 hover:shadow-lg"><Quote className="size-6 text-ochre" aria-hidden /><blockquote className="mt-5 text-lg leading-relaxed text-ink">“{entry.quote}”</blockquote><figcaption className="mt-6 border-t border-border pt-4 text-sm"><p className="font-semibold text-ink">{entry.name}</p><p className="mt-1 text-slate">{entry.company}</p></figcaption></figure>)}
+          {testimonials.map((entry) => <figure key={entry.company} className="flex h-full flex-col rounded-2xl border border-border bg-card p-5 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-lg motion-safe:hover:-translate-y-1 sm:p-6">
+            <div className="flex items-center justify-between gap-4"><span className="grid size-10 place-items-center rounded-xl bg-ochre/10 text-ochre"><Quote className="size-5" aria-hidden /></span><span className="flex gap-0.5 text-ochre" aria-hidden><Star className="size-3.5 fill-current" /><Star className="size-3.5 fill-current" /><Star className="size-3.5 fill-current" /><Star className="size-3.5 fill-current" /><Star className="size-3.5 fill-current" /></span></div>
+            <blockquote className="mt-5 flex-1 text-base leading-7 text-ink sm:text-lg">“{entry.quote}”</blockquote>
+            <figcaption className="mt-6 border-t border-border pt-4 text-sm"><p className="font-semibold text-ink">{entry.name}</p><p className="mt-1 text-slate">{entry.company}</p></figcaption>
+          </figure>)}
         </div>
       </div>
     </section>
