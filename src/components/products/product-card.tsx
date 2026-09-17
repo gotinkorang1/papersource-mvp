@@ -114,6 +114,7 @@ export function ProductCard({
         <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>
         <button
           type="button"
+          aria-label={`Quick view ${product.name}`}
           className="inline-flex min-h-10 self-start items-center text-sm text-slate underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
           onClick={() => setQuickOpen(true)}
         >
