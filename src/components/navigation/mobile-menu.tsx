@@ -12,9 +12,13 @@ export function MobileMenu() {
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const previousPathname = useRef(pathname);
 
   useEffect(() => {
-    setOpen(false);
+    if (previousPathname.current === pathname) return;
+    previousPathname.current = pathname;
+    const closeTimer = window.setTimeout(() => setOpen(false), 0);
+    return () => window.clearTimeout(closeTimer);
   }, [pathname]);
 
   useEffect(() => {

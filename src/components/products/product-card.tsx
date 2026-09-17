@@ -69,7 +69,7 @@ export function ProductCard({
       </div>
       <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-5">
         <div>
-          <div className="flex items-start justify-between gap-1.5"><h3 className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-snug text-ink sm:min-h-[2.75rem] sm:text-base">
+          <div className="flex items-start justify-between gap-1.5"><h3 id={`product-name-${product.id}`} className="line-clamp-2 min-h-[2.5rem] text-sm font-semibold leading-snug text-ink sm:min-h-[2.75rem] sm:text-base">
             <Link
               href={`/product/${product.slug}`}
               className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
@@ -114,7 +114,7 @@ export function ProductCard({
         <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>
         <button
           type="button"
-          aria-label={`Quick view ${product.name}`}
+          aria-describedby={`product-name-${product.id}`}
           className="inline-flex min-h-10 self-start items-center text-sm text-slate underline-offset-4 hover:text-ink hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
           onClick={() => setQuickOpen(true)}
         >

@@ -39,13 +39,14 @@ describe("MobileMenu", () => {
     expect(last).toHaveFocus();
   });
 
-  it("closes when the current route changes", () => {
+  it("closes when the current route changes", async () => {
     const view = render(<MobileMenu />);
     fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
     expect(screen.getByRole("dialog", { name: "Menu" })).toBeInTheDocument();
 
     currentPathname = "/about";
     view.rerender(<MobileMenu />);
+    await new Promise((resolve) => setTimeout(resolve, 0));
 
     expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument();
   });
