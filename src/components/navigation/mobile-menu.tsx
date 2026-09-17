@@ -11,11 +11,27 @@ export function MobileMenu() {
   const pathname = usePathname();
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
+  const menuRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
+    const focusTimer = window.setTimeout(() => {
+      menuRef.current?.querySelector<HTMLElement>("a[href], button:not([disabled])")?.focus();
+    }, 0);
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setOpen(false);
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(menuRef.current?.querySelectorAll<HTMLElement>("a[href], button:not([disabled])") ?? []);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     const previousOverflow = document.body.style.overflow;
@@ -24,6 +40,7 @@ export function MobileMenu() {
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
+      window.clearTimeout(focusTimer);
       trigger?.focus();
     };
   }, [open]);
@@ -44,7 +61,7 @@ export function MobileMenu() {
       {open ? (
         <>
           <button type="button" aria-label="Close menu overlay" className="fixed inset-0 z-40 cursor-default bg-ink/30 backdrop-blur-[1px] lg:hidden" onClick={() => setOpen(false)} />
-          <div id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] sm:px-6">
+          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] sm:px-6">
             <div className="grid gap-2 sm:grid-cols-2">
             <Link href="/shop" className="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
               Shop all products

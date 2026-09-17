@@ -24,4 +24,15 @@ describe("MobileMenu", () => {
     expect(screen.queryByRole("dialog", { name: "Menu" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "Open menu" })).toHaveFocus();
   });
+
+  it("moves focus into the menu and wraps Tab at its edges", async () => {
+    render(<MobileMenu />);
+    fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
+    const first = screen.getByRole("link", { name: "Shop all products" });
+    const last = screen.getByRole("link", { name: "Business accounts" });
+    await new Promise((resolve) => setTimeout(resolve, 0));
+    expect(first).toHaveFocus();
+    fireEvent.keyDown(window, { key: "Tab", shiftKey: true });
+    expect(last).toHaveFocus();
+  });
 });
