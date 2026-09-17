@@ -16,7 +16,10 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
   const pathname = usePathname();
-  const active = pathname === "/shop" || pathname.startsWith("/product/") || pathname.startsWith("/brands/") || ["/brands", "/bulk-orders", "/quick-order"].includes(pathname);
+  const currentPathname = pathname ?? "";
+  const active = ["/shop", "/product", "/brands", "/bulk-orders", "/quick-order"].some(
+    (href) => currentPathname === href || currentPathname.startsWith(`${href}/`),
+  );
 
   return (
     <div
@@ -32,7 +35,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
         type="button"
         className={`inline-flex min-h-11 items-center gap-1 border-b-2 text-sm font-medium transition-[color,border-color] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${active ? "border-ochre text-ink" : "border-transparent text-graphite"}`}
         aria-expanded={open}
-        aria-controls={menuId}
+        aria-controls={open ? menuId : undefined}
         aria-haspopup="menu"
         onClick={() => setOpen((current) => !current)}
         onKeyDown={(event) => {
