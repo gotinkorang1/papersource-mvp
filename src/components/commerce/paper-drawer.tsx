@@ -26,7 +26,9 @@ export function PaperDrawer({
   const onCloseRef = useRef(onClose);
   const wasOpen = useRef(false);
 
-  onCloseRef.current = onClose;
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
 
   useEffect(() => {
     if (!open) {

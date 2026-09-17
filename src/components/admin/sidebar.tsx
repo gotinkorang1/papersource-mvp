@@ -34,8 +34,11 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   }, [currentPathname]);
 
   useEffect(() => {
-    setNavOpen(false);
-    setAccountOpen(false);
+    const closeTimer = window.setTimeout(() => {
+      setNavOpen(false);
+      setAccountOpen(false);
+    }, 0);
+    return () => window.clearTimeout(closeTimer);
   }, [currentPathname]);
 
   useEffect(() => {
