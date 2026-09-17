@@ -14,7 +14,7 @@ import {
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
-import { ArrowRight, Check, Layers3, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Truck } from "lucide-react";
 
 export default async function HomePage() {
   const categories = await listDivisionCategories();
@@ -138,6 +138,24 @@ export default async function HomePage() {
             <div><p className="font-medium text-ink">One catalogue</p><p className="mt-1 text-sm text-slate">Paper, stationery, toner and everyday essentials in one place.</p></div>
             <div><p className="font-medium text-ink">Two clear paths</p><p className="mt-1 text-sm text-slate">Cart for retail. Quote for procurement. Always kept separate.</p></div>
             <div><p className="font-medium text-ink">Human support</p><p className="mt-1 text-sm text-slate">Our team helps with bulk requirements and nationwide delivery.</p></div>
+          </div>
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-muted/30 py-14 sm:py-16" aria-labelledby="how-it-works">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="max-w-2xl"><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Simple by design</p><h2 id="how-it-works" className="mt-3 text-3xl tracking-tight text-ink sm:text-4xl">From “we need supplies” to sorted.</h2><p className="mt-3 text-slate">Choose the route that fits your workday. We keep the next step clear.</p></div>
+          <div className="mt-8 grid gap-3 md:grid-cols-3 md:gap-4">
+            {[
+              { icon: Search, step: "01", title: "Find what you need", body: "Browse the catalogue by category, brand or search." },
+              { icon: ClipboardList, step: "02", title: "Choose your route", body: "Use Cart for quick checkout or Quote for volume planning." },
+              { icon: PackageCheck, step: "03", title: "We make it happen", body: "Get clear updates, dependable fulfilment and delivery support." },
+            ].map(({ icon: Icon, step, title, body }) => (
+              <div key={step} className="rounded-2xl border border-border bg-card p-5 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-md motion-safe:hover:-translate-y-0.5 sm:p-6">
+                <div className="flex items-center justify-between gap-4"><span className="grid size-10 place-items-center rounded-xl bg-paper-green/10 text-paper-green"><Icon className="size-5" aria-hidden /></span><span className="text-xs font-semibold tracking-[0.16em] text-slate">{step}</span></div>
+                <h3 className="mt-5 font-semibold text-ink">{title}</h3><p className="mt-2 text-sm leading-6 text-slate">{body}</p>
+              </div>
+            ))}
           </div>
         </div>
       </section>
