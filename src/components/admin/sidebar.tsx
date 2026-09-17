@@ -14,6 +14,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
   const accountCloseRef = useRef<HTMLButtonElement | null>(null);
   const accountTriggerRef = useRef<HTMLButtonElement | null>(null);
+  const accountPanelRef = useRef<HTMLElement | null>(null);
   const accountWasOpen = useRef(false);
   const [navOpen, setNavOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
@@ -30,6 +31,20 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
     if (!accountOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setAccountOpen(false);
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(accountPanelRef.current?.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? []);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
@@ -58,7 +73,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
         <span className="text-xs" aria-hidden="true">{accountOpen ? "×" : "⌄"}</span>
       </button>
       <div className={`fixed inset-0 z-40 bg-ink/30 transition-opacity motion-reduce:transition-none ${accountOpen ? "opacity-100" : "pointer-events-none opacity-0"}`} aria-hidden="true" onClick={() => setAccountOpen(false)} />
-      <section id="admin-account-panel" aria-label="Staff account" aria-hidden={!accountOpen} inert={!accountOpen} className={`fixed inset-y-0 right-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-l border-border bg-card px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 text-ink shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none ${accountOpen ? "translate-x-0" : "translate-x-full"}`}>
+      <section ref={accountPanelRef} id="admin-account-panel" aria-label="Staff account" aria-hidden={!accountOpen} inert={!accountOpen} className={`fixed inset-y-0 right-0 z-50 flex w-[min(20rem,calc(100vw-2rem))] flex-col border-l border-border bg-card px-6 pb-[calc(1.5rem+env(safe-area-inset-bottom))] pt-6 text-ink shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none ${accountOpen ? "translate-x-0" : "translate-x-full"}`}>
         <div className="flex items-start justify-between gap-4"><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate">Signed in as</p><p className="mt-2 font-heading text-xl">{actor.fullName}</p><p className="mt-1 text-sm capitalize text-slate">{actor.role.replaceAll("_", " ")}</p></div><button ref={accountCloseRef} type="button" aria-label="Close account panel" onClick={() => setAccountOpen(false)} className="min-h-11 min-w-11 rounded-md text-2xl text-slate hover:bg-muted hover:text-ink">×</button></div>
         <div className="mt-auto border-t border-border pt-5"><Link href="/admin/profile" onClick={() => setAccountOpen(false)} className="inline-flex min-h-11 w-full items-center rounded-md px-3 text-sm font-semibold text-ink underline underline-offset-4 hover:bg-muted">My profile</Link><form action="/admin/logout" method="post" className="mt-2"><SubmitProgressButton idleLabel="Sign out" pendingLabel="Signing out…" className={`${paperButton({ variant: "ghost" })} min-h-11 w-full justify-start px-3 text-ink`} /></form></div>
       </section>
