@@ -86,6 +86,7 @@ export function ProductQuickView({
     >
       <button
         type="button"
+        tabIndex={-1}
         className="absolute inset-0 cursor-default"
         aria-label="Dismiss quick view"
         onClick={onClose}
