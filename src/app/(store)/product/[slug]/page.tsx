@@ -18,6 +18,8 @@ import { readStaffActor } from "@/lib/staff/require";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { visibleBulkTiers } from "@/features/catalogue/pricing";
 import { bookMetadata } from "@/features/catalogue/product-metadata";
+import { listSavedLists } from "@/features/saved-lists/repository";
+import { readCustomerActor } from "@/lib/customer/require";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -60,6 +62,8 @@ export default async function ProductPage({ params }: PageProps) {
   const origin = siteOrigin();
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
+  const customer = await readCustomerActor();
+  const savedLists = customer ? await listSavedLists(customer) : [];
   const [reviews, relatedProducts] = await Promise.all([
     listApprovedProductReviews(product.id),
     listProductCards({ categorySlug: product.categorySlug }),
@@ -132,7 +136,7 @@ export default async function ProductPage({ params }: PageProps) {
             <DeliveryBadge zone={product.deliveryBadge} />
           </div>
           <div className="mt-8">
-            <ProductPurchase product={product} />
+            <ProductPurchase product={product} savedLists={savedLists.map((list) => ({ id: list.id, name: list.name }))} />
           </div>
           <div className="mt-8 grid gap-2 border-t border-border pt-6 text-xs text-slate sm:grid-cols-3">
             <div><p className="font-semibold text-ink">Accra & Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div>
