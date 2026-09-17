@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bookMetadata, productSeoDescription } from "@/features/catalogue/product-metadata";
+import { bookMetadata, productImageAlt, productSeoDescription } from "@/features/catalogue/product-metadata";
 
 describe("bookMetadata", () => {
   it("returns author and format only for products with an author attribute", () => {
@@ -74,5 +74,15 @@ describe("productSeoDescription", () => {
 
   it("creates useful fallback copy for incomplete products", () => {
     expect(productSeoDescription({ name: "Notebook", brandName: "BIC", categoryName: "Writing", description: "  " })).toBe("Notebook by BIC. Shop Writing from PaperSource Ghana.");
+  });
+});
+
+describe("productImageAlt", () => {
+  it("keeps meaningful uploaded alt text", () => {
+    expect(productImageAlt({ name: "Notebook", specLine: "A5", alt: "Blue ruled notebook" })).toBe("Blue ruled notebook");
+  });
+
+  it("falls back to product identity when uploaded alt text is empty", () => {
+    expect(productImageAlt({ name: "Notebook", specLine: "A5", alt: "   " })).toBe("Notebook, A5");
   });
 });

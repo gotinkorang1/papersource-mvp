@@ -17,12 +17,22 @@ type ProductSeoDescriptionInput = {
   description: string;
 };
 
+type ProductImageAltInput = {
+  name: string;
+  specLine?: string;
+  alt?: string | null;
+};
+
 function normalized(value: string) {
   return value.trim().toLocaleLowerCase();
 }
 
 export function productSeoDescription({ name, brandName, categoryName, description }: ProductSeoDescriptionInput) {
   return description.trim() || `${name} by ${brandName}. Shop ${categoryName || "stationery and books"} from PaperSource Ghana.`;
+}
+
+export function productImageAlt({ name, specLine = "", alt }: ProductImageAltInput) {
+  return alt?.trim() || [name.trim(), specLine.trim()].filter(Boolean).join(", ");
 }
 
 export function bookMetadata({

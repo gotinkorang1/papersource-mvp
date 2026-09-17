@@ -1,6 +1,7 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
+import { productImageAlt } from "@/features/catalogue/product-metadata";
 import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery, uniqueCatalogueProducts } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
@@ -287,7 +288,7 @@ function toCardFromRow(
     specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes),
     unitLabel: row.variant.unitLabel,
     unitPricePesewas: list.unitPricePesewas ?? row.variant.baseUnitPrice,
-    imageAlt: image?.alt ?? row.product.name,
+    imageAlt: productImageAlt({ name: row.product.name, specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes), alt: image?.alt }),
     imageSrc: image ? cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? undefined : undefined,
     stock: stockLevelFromQuantity(
       sellableQuantity(onHand, reserved),
@@ -386,7 +387,7 @@ export async function getProductBySlugFromDb(
     .sort((a, b) => a.position - b.position)
     .map((image) => ({
       src: cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? "",
-      alt: image.alt,
+      alt: productImageAlt({ name: row.product.name, specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes), alt: image.alt }),
     }))
     .filter((image) => image.src);
 

@@ -108,7 +108,7 @@ export default async function ProductPage({ params }: PageProps) {
       </nav>
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
-        <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt} src={product.imageSrc} images={product.imageSources} /></div>
+        <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
         <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-7">
           <p className="text-sm text-slate">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
