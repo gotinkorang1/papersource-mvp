@@ -43,8 +43,9 @@ export const metadata: Metadata = {
     images: [DEFAULT_SHARE_IMAGE],
   },
   icons: {
-    icon: [{ url: "/icons/papersource-192.svg", type: "image/svg+xml" }],
-    apple: "/icons/papersource-192.svg",
+    icon: [{ url: "/icons/papersource-logo.png", type: "image/png", sizes: "512x512" }],
+    shortcut: ["/icons/papersource-logo.png"],
+    apple: "/icons/papersource-logo.png",
   },
   appleWebApp: {
     capable: true,
