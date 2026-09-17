@@ -7,6 +7,12 @@ export function productJsonLd(
   reviews: { rating: number }[] = [],
 ) {
   const origin = new URL(canonical).origin;
+  const attributes = product.attributes ?? [];
+  const bookAuthor = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "author")?.valueText.trim();
+  const bookIsbn = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "isbn")?.valueText.trim();
+  const bookPublisher = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "publisher")?.valueText.trim();
+  const validIsbn = bookIsbn && /^(?:\d{9}[\dX]|\d{13})$/.test(bookIsbn.replace(/[-\s]/g, "")) ? bookIsbn.replace(/[-\s]/g, "") : null;
+  const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || attributes.some((attribute) => attribute.namespace === "book"));
   const availability =
     product.stock === "out"
       ? "https://schema.org/OutOfStock"
@@ -16,7 +22,7 @@ export function productJsonLd(
 
   return {
     "@context": "https://schema.org",
-    "@type": "Product",
+    "@type": isBook ? ["Product", "Book"] : "Product",
     "@id": `${canonical}#product`,
     name: product.name,
     description: product.description,
@@ -32,15 +38,18 @@ export function productJsonLd(
       name: product.brandName,
     },
     category: product.categoryName,
-    ...(product.attributes?.length
+    ...(attributes.length
       ? {
-          additionalProperty: product.attributes.map((attribute) => ({
+          additionalProperty: attributes.map((attribute) => ({
             "@type": "PropertyValue",
             name: attribute.key.replace(/[_-]+/g, " "),
             value: attribute.valueText,
           })),
         }
       : {}),
+    ...(bookAuthor ? { author: { "@type": "Person", name: bookAuthor } } : {}),
+    ...(validIsbn ? { isbn: validIsbn } : {}),
+    ...(bookPublisher ? { publisher: { "@type": "Organization", name: bookPublisher } } : {}),
     ...(product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode)
       ? { gtin: product.barcode }
       : {}),

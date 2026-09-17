@@ -50,4 +50,16 @@ describe("productJsonLd", () => {
     expect(json.gtin).toBe("123456789012");
     expect(json.offers.seller).toEqual({ "@id": "http://localhost:3000/#organization", "@type": "Organization", name: "PaperSource Ghana" });
   });
+
+  it("adds Book signals only when book attributes exist", () => {
+    const json = productJsonLd(
+      { ...product, attributes: [{ namespace: "book", key: "author", valueText: "Ama Mensah" }, { namespace: "book", key: "isbn", valueText: "9781234567890" }, { namespace: "book", key: "publisher", valueText: "Example Press" }] },
+      "http://localhost:3000/product/reading-book",
+    );
+    expect(json["@type"]).toEqual(["Product", "Book"]);
+    expect(json.author).toEqual({ "@type": "Person", name: "Ama Mensah" });
+    expect(json.isbn).toBe("9781234567890");
+    expect(json.publisher).toEqual({ "@type": "Organization", name: "Example Press" });
+    expect(productJsonLd({ ...product, attributes: [{ namespace: "paper", key: "gsm", valueText: "80gsm" }] }, "http://localhost:3000/product/paper")["@type"]).toBe("Product");
+  });
 });

@@ -5,7 +5,13 @@ export const SITE_NAME = "PaperSource Ghana";
 // Keep one canonical host everywhere: metadata, JSON-LD, and sitemaps must agree.
 // The deployment URL may override this for previews, while production defaults to
 // the public host documented in docs/SEO.md.
-export const SITE_URL = (publicEnv.NEXT_PUBLIC_SITE_URL || "https://papersourcegh.com").replace(/\/+$/, "");
+function canonicalSiteUrl(raw: string) {
+  const url = new URL(raw);
+  if (url.hostname === "www.papersourcegh.com") url.hostname = "papersourcegh.com";
+  return url.toString().replace(/\/+$/, "");
+}
+
+export const SITE_URL = canonicalSiteUrl(publicEnv.NEXT_PUBLIC_SITE_URL || "https://papersourcegh.com");
 export const DEFAULT_DESCRIPTION =
   "Office stationery, paper, printing supplies and workplace essentials delivered across Accra and Tema. Nationwide supply on request.";
 export const DEFAULT_SHARE_IMAGE = "/images/catalogue-stationery-generated.png";

@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
-import { getBrandBySlug, listProductCards } from "@/features/catalogue";
+import { getBrandBySlug, listBrandDirectory, listProductCards } from "@/features/catalogue";
 import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -46,7 +46,9 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
     notFound();
   }
 
-  const products = await listProductCards({ brandSlug: slug });
+  const [products, directory] = await Promise.all([listProductCards({ brandSlug: slug }), listBrandDirectory()]);
+  const brandDirectoryEntry = directory.find((entry) => entry.slug === brand.slug);
+  const coveredCategories = brandDirectoryEntry?.categories.map((category) => category.name) ?? [];
   const pageSize = 24;
   const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
   const page = Math.min(Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1), totalPages);
@@ -61,7 +63,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
       <Breadcrumbs items={[{ label: "Brands", href: "/brands" }, { label: brand.name }]} />
       <div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink">{brand.name}</h1>{canEdit ? <Link href={`/admin/brands#brand-${brand.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit brand</Link> : null}</div>
       <p className="mt-3 max-w-2xl text-slate">
-        {brand.name} products in the PaperSource catalogue.
+        Explore {brand.name} products in the PaperSource catalogue, including {coveredCategories.length ? coveredCategories.join(", ") : "workplace essentials"}. {products.length} active {products.length === 1 ? "product is" : "products are"} currently available for Accra and Tema delivery.
       </p>
       <div className="mt-10">
         <ProductGridList products={visibleProducts} canEdit={canEdit} />
