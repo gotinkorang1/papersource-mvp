@@ -24,7 +24,12 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   };
 
   useEffect(() => {
-    activeLinkRef.current?.scrollIntoView({ behavior: "smooth", block: "nearest", inline: "center" });
+    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    activeLinkRef.current?.scrollIntoView({
+      behavior: reduceMotion ? "auto" : "smooth",
+      block: "nearest",
+      inline: "center",
+    });
   }, [pathname]);
 
   useEffect(() => {
