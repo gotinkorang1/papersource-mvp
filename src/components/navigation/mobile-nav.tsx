@@ -10,10 +10,11 @@ export function MobileNav() {
   const { cartLines, quoteLines, cartOpen, quoteOpen, setCartOpen, setQuoteOpen } =
     useDualPathPreview();
   const pathname = usePathname();
-  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
-  const shopActive = isActive("/shop") || isActive("/product") || ["/brands", "/bulk-orders", "/quick-order"].includes(pathname);
-  const quoteActive = quoteOpen || ["/quote", "/request-quote"].includes(pathname);
-  const cartActive = cartOpen || ["/cart", "/checkout"].includes(pathname);
+  const currentPathname = pathname ?? "";
+  const isActive = (href: string) => currentPathname === href || currentPathname.startsWith(`${href}/`);
+  const shopActive = isActive("/shop") || isActive("/product") || ["/brands", "/bulk-orders", "/quick-order"].includes(currentPathname);
+  const quoteActive = quoteOpen || ["/quote", "/request-quote"].includes(currentPathname);
+  const cartActive = cartOpen || ["/cart", "/checkout"].includes(currentPathname);
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
   const closeDrawers = () => {
@@ -31,8 +32,8 @@ export function MobileNav() {
           <Link
             href="/"
             onClick={closeDrawers}
-            aria-current={pathname === "/" ? "page" : undefined}
-            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${pathname === "/" ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            aria-current={currentPathname === "/" ? "page" : undefined}
+            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${currentPathname === "/" ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
             <House className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Home
