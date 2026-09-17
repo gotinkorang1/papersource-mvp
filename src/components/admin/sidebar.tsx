@@ -11,6 +11,7 @@ import { ADMIN_NAV } from "./nav";
 
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
+  const currentPathname = pathname ?? "";
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
   const accountCloseRef = useRef<HTMLButtonElement | null>(null);
   const accountTriggerRef = useRef<HTMLButtonElement | null>(null);
@@ -30,12 +31,12 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
       block: "nearest",
       inline: "center",
     });
-  }, [pathname]);
+  }, [currentPathname]);
 
   useEffect(() => {
     setNavOpen(false);
     setAccountOpen(false);
-  }, [pathname]);
+  }, [currentPathname]);
 
   useEffect(() => {
     if (!accountOpen) return;
@@ -98,7 +99,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
             if (!canAccessAdmin(actor.role, group.area, "read")) {
               return null;
             }
-            const current = pathname === group.href;
+            const current = currentPathname === group.href;
             return (
               <Link
                 key={group.href}
@@ -130,7 +131,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
               <ul className={`${navOpen ? "flex-col" : "flex"} mt-2 gap-1 md:block md:space-y-0.5`}>
                 {items.map((item) => {
                   const current =
-                    pathname === item.href || pathname.startsWith(`${item.href}/`);
+                    currentPathname === item.href || currentPathname.startsWith(`${item.href}/`);
                   return (
                     <li key={item.href}>
                       <Link
