@@ -11,7 +11,7 @@ export function isStandaloneDisplayMode({ matches = false, iosStandalone = false
 
 export function PwaSplash() {
   const pathname = usePathname();
-  const admin = pathname.startsWith("/admin");
+  const admin = (pathname ?? "").startsWith("/admin");
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {

@@ -10,7 +10,7 @@ export function isIosInstallable({ platform, userAgent, standalone, touchPoints 
 
 export function PwaRegister() {
   const pathname = usePathname();
-  const admin = pathname.startsWith("/admin");
+  const admin = (pathname ?? "").startsWith("/admin");
   const dismissKey = admin ? "papersource-admin-install-dismissed" : "papersource-install-dismissed";
   const [installEvent, setInstallEvent] = useState<BeforeInstallPromptEvent | null>(null);
   const [dismissed, setDismissed] = useState(() => typeof window !== "undefined" && sessionStorage.getItem(admin ? "papersource-admin-install-dismissed" : "papersource-install-dismissed") === "1");
