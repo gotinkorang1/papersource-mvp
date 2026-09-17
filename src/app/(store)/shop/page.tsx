@@ -6,7 +6,7 @@ import type { ProductCardModel } from "@/types/catalogue";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { breadcrumbJsonLd } from "@/features/catalogue";
-import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
@@ -49,13 +49,14 @@ export default async function ShopPage({ searchParams }: PageProps) {
   const filteredProducts = sortedProducts.filter((product) => (!availability || product.stock === availability) && (!zone || (zone === "nationwide" ? product.deliveryBadge.feeMode === "on_request" : product.deliveryBadge.label.toLowerCase().includes(zone))));
   const pageSize = 24;
   const totalPages = Math.max(1, Math.ceil(filteredProducts.length / pageSize));
-  const visibleProducts = filteredProducts.slice((Math.min(page, totalPages) - 1) * pageSize, Math.min(page, totalPages) * pageSize);
+  const currentPage = Math.min(page, totalPages);
+  const visibleProducts = filteredProducts.slice((currentPage - 1) * pageSize, currentPage * pageSize);
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
 
   return (
     <main className="mx-auto max-w-7xl px-4 py-12 sm:px-6 md:py-16 lg:px-8">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: "Shop workplace supplies in Ghana", description: "Office stationery, paper, toner and workplace essentials from PaperSource.", url: absoluteUrl("/shop"), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: "Shop workplace supplies in Ghana", description: "Office stationery, paper, toner and workplace essentials from PaperSource.", url: absoluteUrl("/shop"), totalItems: filteredProducts.length, items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: collectionItemPosition(currentPage, pageSize, index) })) })) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Shop", href: "/shop" }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Shop" }]} />
       <h1 className="mt-5 text-4xl text-ink md:text-5xl">Shop workplace essentials</h1>
@@ -68,7 +69,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
       </div>
       <div className="mt-8">
         <ProductGridList products={visibleProducts} canEdit={canEdit} />
-        <CataloguePagination page={Math.min(page, totalPages)} totalPages={totalPages} totalItems={filteredProducts.length} pageSize={pageSize} query={{ q: query, category, brand, sort, availability, zone }} />
+        <CataloguePagination page={currentPage} totalPages={totalPages} totalItems={filteredProducts.length} pageSize={pageSize} query={{ q: query, category, brand, sort, availability, zone }} />
       </div>
     </main>
   );

@@ -130,6 +130,7 @@ export function collectionPageJsonLd(input: {
   name: string;
   description: string;
   url: string;
+  totalItems?: number;
   items: Array<{ name: string; url: string; position: number }>;
 }) {
   return {
@@ -141,7 +142,7 @@ export function collectionPageJsonLd(input: {
     url: input.url,
     mainEntity: {
       "@type": "ItemList",
-      numberOfItems: input.items.length,
+      numberOfItems: input.totalItems ?? input.items.length,
       itemListElement: input.items.map((item) => ({
         "@type": "ListItem",
         position: item.position,
@@ -150,6 +151,10 @@ export function collectionPageJsonLd(input: {
       })),
     },
   };
+}
+
+export function collectionItemPosition(page: number, pageSize: number, index: number) {
+  return Math.max(0, page - 1) * pageSize + index + 1;
 }
 
 export function webPageJsonLd(input: {

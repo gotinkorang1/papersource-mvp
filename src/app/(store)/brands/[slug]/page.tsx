@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { getBrandBySlug, listBrandDirectory, listProductCards } from "@/features/catalogue";
-import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
@@ -58,7 +58,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${brand.name} supplies in Ghana`, description: `${brand.name} workplace supplies from PaperSource Ghana.`, url: absoluteUrl(`/brands/${brand.slug}`), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${brand.name} supplies in Ghana`, description: `${brand.name} workplace supplies from PaperSource Ghana.`, url: absoluteUrl(`/brands/${brand.slug}`), totalItems: products.length, items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: collectionItemPosition(page, pageSize, index) })) })) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Brands", href: "/brands" }, { name: brand.name, href: `/brands/${brand.slug}` }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Brands", href: "/brands" }, { label: brand.name }]} />
       <div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink">{brand.name}</h1>{canEdit ? <Link href={`/admin/brands#brand-${brand.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit brand</Link> : null}</div>

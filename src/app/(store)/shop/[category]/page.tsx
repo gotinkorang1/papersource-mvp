@@ -8,7 +8,7 @@ import { CataloguePagination } from "@/components/products/catalogue-pagination"
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 import { categorySeoDescription } from "@/features/catalogue/seo-copy";
 import { breadcrumbJsonLd } from "@/features/catalogue";
-import { collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -78,7 +78,7 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${category.name} for Ghana workplaces`, description: categorySeoDescription(category), url: absoluteUrl(`/shop/${category.slug}`), items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: index + 1 })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${category.name} for Ghana workplaces`, description: categorySeoDescription(category), url: absoluteUrl(`/shop/${category.slug}`), totalItems: products.length, items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: collectionItemPosition(page, pageSize, index) })) })) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Shop", href: "/shop" }, { name: category.name, href: `/shop/${category.slug}` }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Shop", href: "/shop" }, { label: category.name }]} />
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[1fr_16rem]">

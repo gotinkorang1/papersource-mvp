@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as seo from "./seo";
-import { collectionPageJsonLd, siteJsonLd, webPageJsonLd } from "./seo";
+import { collectionItemPosition, collectionPageJsonLd, siteJsonLd, webPageJsonLd } from "./seo";
 
 describe("siteJsonLd", () => {
   it("describes PaperSource as a Ghana workplace-supplies business with site search", () => {
@@ -40,11 +40,17 @@ describe("collectionPageJsonLd", () => {
       name: "Pens in Ghana",
       description: "Pens for Ghana workplaces.",
       url: "https://papersourcegh.com/shop/pens",
+      totalItems: 42,
       items: [{ name: "Blue pen", url: "https://papersourcegh.com/product/blue-pen", position: 1 }],
     });
 
-    expect(json).toMatchObject({ "@type": "CollectionPage", mainEntity: { "@type": "ItemList", numberOfItems: 1 } });
+    expect(json).toMatchObject({ "@type": "CollectionPage", mainEntity: { "@type": "ItemList", numberOfItems: 42 } });
     expect(json.mainEntity.itemListElement[0]).toMatchObject({ position: 1, url: "https://papersourcegh.com/product/blue-pen" });
+  });
+
+  it("keeps item-list positions stable across paginated catalogue pages", () => {
+    expect(collectionItemPosition(2, 24, 0)).toBe(25);
+    expect(collectionItemPosition(3, 24, 5)).toBe(54);
   });
 });
 
