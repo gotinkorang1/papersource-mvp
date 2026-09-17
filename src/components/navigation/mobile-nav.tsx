@@ -14,6 +14,10 @@ export function MobileNav() {
   const shopActive = isActive("/shop") || isActive("/product") || ["/brands", "/bulk-orders", "/quick-order"].includes(pathname);
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
+  const closeDrawers = () => {
+    if (cartOpen) setCartOpen(false);
+    if (quoteOpen) setQuoteOpen(false);
+  };
 
   return (
     <nav
@@ -24,30 +28,33 @@ export function MobileNav() {
         <li>
           <Link
             href="/"
+            onClick={closeDrawers}
             aria-current={pathname === "/" ? "page" : undefined}
             className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${pathname === "/" ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
-            <House className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden />
+            <House className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Home
           </Link>
         </li>
         <li>
           <Link
             href="/shop"
+            onClick={closeDrawers}
             aria-current={shopActive ? "page" : undefined}
             className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${shopActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
-            <Store className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden />
+            <Store className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Shop
           </Link>
         </li>
         <li>
           <Link
             href="/search"
+            onClick={closeDrawers}
             aria-current={isActive("/search") ? "page" : undefined}
             className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${isActive("/search") ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
-            <Search className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden />
+            <Search className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Search
           </Link>
         </li>
@@ -60,7 +67,7 @@ export function MobileNav() {
             aria-pressed={quoteOpen}
             onClick={() => setQuoteOpen(!quoteOpen)}
           >
-            <span className="relative"><ClipboardList className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden />{quoteCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{quoteCount > 99 ? "99+" : quoteCount}</span> : null}</span>
+            <span className="relative"><ClipboardList className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{quoteCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{quoteCount > 99 ? "99+" : quoteCount}</span> : null}</span>
             Quote
           </button>
         </li>
@@ -73,7 +80,7 @@ export function MobileNav() {
             aria-pressed={cartOpen}
             onClick={() => setCartOpen(!cartOpen)}
           >
-            <span className="relative"><ShoppingBag className="size-4 transition-transform duration-200 group-hover:-translate-y-0.5" aria-hidden />{cartCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{cartCount > 99 ? "99+" : cartCount}</span> : null}</span>
+            <span className="relative"><ShoppingBag className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{cartCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{cartCount > 99 ? "99+" : cartCount}</span> : null}</span>
             Cart
           </button>
         </li>
