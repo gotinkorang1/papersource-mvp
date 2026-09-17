@@ -19,11 +19,12 @@ export function MobileMenu() {
     };
     window.addEventListener("keydown", onKeyDown);
     const previousOverflow = document.body.style.overflow;
+    const trigger = triggerRef.current;
     document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
-      triggerRef.current?.focus();
+      trigger?.focus();
     };
   }, [open]);
 
