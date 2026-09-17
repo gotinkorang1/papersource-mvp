@@ -87,6 +87,7 @@ export function breadcrumbJsonLd(
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
+    "@id": `${origin}${items.at(-1)?.href ?? "/"}#breadcrumb`,
     itemListElement: items.map((item, index) => ({
       "@type": "ListItem",
       position: index + 1,

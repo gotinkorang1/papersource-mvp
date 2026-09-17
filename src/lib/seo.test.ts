@@ -1,4 +1,5 @@
 import { describe, expect, it } from "vitest";
+import { breadcrumbJsonLd } from "@/features/catalogue/json-ld";
 import * as seo from "./seo";
 import { collectionItemPosition, collectionPageJsonLd, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
 
@@ -71,6 +72,17 @@ describe("collectionPageJsonLd", () => {
   it("keeps item-list positions stable across paginated catalogue pages", () => {
     expect(collectionItemPosition(2, 24, 0)).toBe(25);
     expect(collectionItemPosition(3, 24, 5)).toBe(54);
+  });
+});
+
+describe("breadcrumbJsonLd", () => {
+  it("gives each breadcrumb list a stable page-scoped identifier", () => {
+    const json = breadcrumbJsonLd(
+      [{ name: "Shop", href: "/shop" }, { name: "Paper", href: "/shop/paper" }],
+      "https://papersourcegh.com",
+    );
+
+    expect(json["@id"]).toBe("https://papersourcegh.com/shop/paper#breadcrumb");
   });
 });
 
