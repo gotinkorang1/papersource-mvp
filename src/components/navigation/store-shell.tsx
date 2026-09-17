@@ -26,9 +26,15 @@ export async function StoreShell({ children }: { children: ReactNode }) {
       initialCartLines={initial.cartLines}
       initialQuoteLines={initial.quoteLines}
     >
+      <a
+        href="#main-content"
+        className="sr-only fixed left-3 top-3 z-[100] rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white shadow-lg focus:not-sr-only focus:outline-2 focus:outline-offset-2 focus:outline-ink"
+      >
+        Skip to content
+      </a>
       <AnnouncementBanner />
       <StoreHeader />
-      <div className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
+      <div id="main-content" className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
       <StoreFooter />
       <MobileNav />
       <CartDrawer />
