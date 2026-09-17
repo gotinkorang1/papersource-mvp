@@ -46,6 +46,7 @@ describe("productJsonLd", () => {
     const json = productJsonLd(product, canonical);
 
     expect(json.mainEntityOfPage).toEqual({ "@type": "WebPage", "@id": canonical });
+    expect(json.inLanguage).toBe("en-GH");
   });
 
   it("includes category, seller and a valid barcode as structured product data", () => {
