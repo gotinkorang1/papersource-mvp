@@ -29,7 +29,7 @@ export default async function SavedListDetailPage({ params, searchParams }: { pa
           <h1 className="mt-1 text-3xl text-ink">{list.name}</h1>
           {list.description ? <p className="mt-3 max-w-2xl text-slate">{list.description}</p> : null}
         </div>
-        <Link href="/products" className="min-h-11 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-ink hover:bg-muted">
+        <Link href="/shop" className="min-h-11 rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-ink hover:bg-muted">
           Browse products
         </Link>
       </div>
@@ -66,7 +66,7 @@ export default async function SavedListDetailPage({ params, searchParams }: { pa
                   <div className="flex flex-wrap items-start justify-between gap-4">
                     <div className="min-w-0">
                       {available ? (
-                        <Link href={`/products/${item.productSlug}`} className="font-heading text-lg text-ink underline underline-offset-4">
+                        <Link href={`/product/${item.productSlug}`} className="font-heading text-lg text-ink underline underline-offset-4">
                           {item.productName}
                         </Link>
                       ) : (

@@ -47,6 +47,8 @@ describe("saved list detail page", () => {
     render(await SavedListDetailPage({ params: Promise.resolve({ id: "list-1" }) }));
 
     expect(screen.getByRole("heading", { name: "Monthly supplies", level: 1 })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Browse products" })).toHaveAttribute("href", "/shop");
+    expect(screen.getByRole("link", { name: "Premium Ballpoint Pen" })).toHaveAttribute("href", "/product/premium-ballpoint-pen");
     expect(screen.getByText("Premium Ballpoint Pen")).toBeInTheDocument();
     expect(screen.getByText("Blue ink only")).toBeInTheDocument();
     expect(screen.getByText("Unavailable — remove or replace this item before reordering.")).toBeInTheDocument();
