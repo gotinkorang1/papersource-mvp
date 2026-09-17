@@ -160,20 +160,20 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="py-16">
+      <section className="border-t border-border/70 bg-background py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex items-end justify-between gap-4">
-            <h2 className="text-sm tracking-[0.16em] text-slate uppercase">From the catalogue</h2>
-            <Link href="/shop" className="hidden text-sm font-semibold text-ink underline underline-offset-4 sm:inline-flex">View catalogue</Link>
+            <div><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">A considered shortlist</p><h2 className="mt-2 text-3xl tracking-tight text-ink sm:text-4xl">Featured workplace essentials</h2></div>
+            <Link href="/shop" className="hidden shrink-0 items-center gap-1 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ink transition hover:border-paper-green hover:text-paper-green sm:inline-flex">View catalogue <ArrowRight className="size-4" aria-hidden /></Link>
           </div>
-          <p className="mt-2 max-w-2xl text-slate">
+          <p className="mt-3 max-w-2xl text-slate">
             Unit prices, bulk bands and stock from the PaperSource catalogue.
             Add to Cart and Add to Quote stay independent.
           </p>
           <div className="mt-8">
             <ProductGridList products={featured} canEdit={canEdit} />
           </div>
-          <Link href="/shop" className="mt-6 inline-flex text-sm font-semibold text-ink underline underline-offset-4 sm:hidden">View full catalogue →</Link>
+          <Link href="/shop" className="mt-6 inline-flex items-center gap-1 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ink transition hover:border-paper-green hover:text-paper-green sm:hidden">View full catalogue <ArrowRight className="size-4" aria-hidden /></Link>
         </div>
       </section>
 
