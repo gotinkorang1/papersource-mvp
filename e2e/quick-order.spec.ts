@@ -37,8 +37,11 @@ test("Quick Order adds two SKUs to the quote basket only", async ({ page }) => {
   await expect(page.getByRole("heading", { name: "Quote list" })).toBeVisible({
     timeout: 45_000,
   });
-  await expect(page.getByText(catalogueName)).toBeVisible();
-  await expect(page.getByText(secondaryCatalogueName)).toBeVisible();
+  // The quote confirmation renders each product name in both the line item
+  // and summary copy. Assert against the first visible match so the journey
+  // remains deterministic without depending on incidental markup.
+  await expect(page.getByText(catalogueName, { exact: true }).first()).toBeVisible();
+  await expect(page.getByText(secondaryCatalogueName, { exact: true }).first()).toBeVisible();
   await expect(
     page.getByRole("button", { name: "Quote list, 12 items" }).first(),
   ).toBeVisible();
@@ -62,11 +65,11 @@ test("Quick Order adds published-price lines to cart without changing quote", as
 test("unknown and empty SKU submissions leave both baskets empty", async ({ page }) => {
   await page.goto("/quick-order");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
-  await expect(page.getByRole("alert")).toContainText("Enter at least one SKU");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("Enter at least one SKU");
   await page.getByLabel("SKU 1", { exact: true }).fill("NO-SUCH-SKU");
   await page.getByLabel("Quantity 1", { exact: true }).fill("2");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
-  await expect(page.getByRole("alert")).toContainText("not a live catalogue SKU");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("not a live catalogue SKU");
   await expect(page.getByRole("button", { name: "Cart, 0 items" }).first()).toBeVisible();
   await expect(page.getByRole("button", { name: "Quote list, 0 items" }).first()).toBeVisible();
 });
@@ -107,7 +110,7 @@ test("duplicate quantity overflow reports an error without creating a quote line
   await page.getByLabel("SKU 2", { exact: true }).fill(catalogueSku);
   await page.getByLabel("Quantity 2", { exact: true }).fill("1");
   await page.getByRole("button", { name: "Add all to Quote" }).click();
-  await expect(page.getByRole("alert")).toContainText("combined quantity");
+  await expect(page.getByRole("main").getByRole("alert")).toContainText("combined quantity");
   await expect(page.getByRole("button", { name: "Quote list, 0 items" }).first()).toBeVisible();
 });
 
