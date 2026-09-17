@@ -28,6 +28,15 @@ export function absoluteUrl(path = "/") {
   return new URL(path, SITE_URL).toString();
 }
 
+export function seoDescription(value: string, maxLength = 160) {
+  const normalized = value.replace(/\s+/g, " ").trim();
+  if (normalized.length <= maxLength) return normalized;
+
+  const limit = Math.max(1, maxLength - 1);
+  const boundary = normalized.lastIndexOf(" ", limit);
+  return `${normalized.slice(0, boundary > 0 ? boundary : limit)}…`;
+}
+
 /** Builds a concise PDP title without emitting an empty-part separator. */
 export function productSeoTitle(name: string, specLine: string) {
   return [name, specLine]
@@ -49,10 +58,11 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
   const url = absoluteUrl(path);
   const imageUrl = absoluteUrl(image);
   const normalizedModifiedTime = modifiedTime ? new Date(modifiedTime).toISOString() : undefined;
+  const normalizedDescription = seoDescription(description);
 
   return {
     title,
-    description,
+    description: normalizedDescription,
     keywords: SEO_KEYWORDS,
     applicationName: SITE_NAME,
     creator: SITE_NAME,
@@ -64,7 +74,7 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
       locale: "en_GH",
       siteName: SITE_NAME,
       title,
-      description,
+      description: normalizedDescription,
       url,
       images: [{ url: imageUrl, width: 1200, height: 900, alt: `${title} | ${SITE_NAME}` }],
       ...(normalizedModifiedTime ? { modifiedTime: normalizedModifiedTime } : {}),
@@ -72,7 +82,7 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
     twitter: {
       card: "summary_large_image",
       title,
-      description,
+      description: normalizedDescription,
       images: [imageUrl],
     },
     robots: { index: true, follow: true, googleBot: { index: true, follow: true, "max-image-preview": "large" } },

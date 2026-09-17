@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as seo from "./seo";
-import { collectionItemPosition, collectionPageJsonLd, pageMetadata, siteJsonLd, webPageJsonLd } from "./seo";
+import { collectionItemPosition, collectionPageJsonLd, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
 
 describe("siteJsonLd", () => {
   it("describes PaperSource as a Ghana workplace-supplies business with site search", () => {
@@ -44,6 +44,13 @@ describe("pageMetadata", () => {
     });
 
     expect(metadata.openGraph).toMatchObject({ modifiedTime: "2026-09-17T12:00:00.000Z" });
+  });
+
+  it("keeps metadata descriptions concise without cutting through a word", () => {
+    const result = seoDescription("Office paper, notebooks and printing supplies for schools and workplaces across Accra and Tema.", 70);
+
+    expect(result).toBe("Office paper, notebooks and printing supplies for schools and…");
+    expect(result.length).toBeLessThanOrEqual(70);
   });
 });
 
