@@ -22,11 +22,14 @@ function tag(name: string, value: string | undefined | null) {
 }
 
 export function renderGoogleShoppingFeed(entries: GoogleShoppingFeedEntry[]) {
-  const items = entries.map((entry) => [
+  const items = entries.map((entry) => {
+    const description = entry.description.trim() || `${entry.title} by ${entry.brand}. Shop ${entry.productType} from PaperSource Ghana.`;
+
+    return [
     "  <item>",
     tag("id", entry.id),
     tag("title", entry.title),
-    tag("description", entry.description),
+    tag("description", description),
     tag("link", entry.link),
     tag("image_link", entry.imageLink),
     tag("availability", entry.availability),
@@ -37,7 +40,8 @@ export function renderGoogleShoppingFeed(entries: GoogleShoppingFeedEntry[]) {
     tag("gtin", entry.gtin && /^(?:\d{8}|\d{12,14})$/.test(entry.gtin) ? entry.gtin : undefined),
     tag("identifier_exists", entry.gtin && /^(?:\d{8}|\d{12,14})$/.test(entry.gtin) ? "yes" : "no"),
     "  </item>",
-  ].filter(Boolean).join("\n")).join("\n");
+    ].filter(Boolean).join("\n");
+  }).join("\n");
 
   return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n  <title>PaperSource Ghana product feed</title>\n  <link>https://papersourcegh.com/shop</link>\n  <description>Office stationery, books and workplace supplies from PaperSource Ghana.</description>\n${items}\n</channel>\n</rss>`;
 }

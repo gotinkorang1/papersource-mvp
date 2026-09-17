@@ -11,4 +11,21 @@ describe("Google Shopping feed", () => {
     expect(xml).toContain("78.50 GHS");
     expect(xml).toContain("<g:identifier_exists>yes</g:identifier_exists>");
   });
+
+  it("publishes useful fallback copy when a product description is empty", () => {
+    const xml = renderGoogleShoppingFeed([
+      {
+        id: "SKU-2",
+        title: "Classic Notebook",
+        description: "   ",
+        link: "https://papersourcegh.com/product/classic-notebook",
+        availability: "in stock",
+        pricePesewas: 5000,
+        brand: "PaperSource",
+        productType: "Notebooks",
+      },
+    ]);
+
+    expect(xml).toContain("Classic Notebook by PaperSource. Shop Notebooks from PaperSource Ghana.");
+  });
 });
