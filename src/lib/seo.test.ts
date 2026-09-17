@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import * as seo from "./seo";
-import { collectionPageJsonLd, siteJsonLd } from "./seo";
+import { collectionPageJsonLd, siteJsonLd, webPageJsonLd } from "./seo";
 
 describe("siteJsonLd", () => {
   it("describes PaperSource as a Ghana workplace-supplies business with site search", () => {
@@ -45,5 +45,12 @@ describe("collectionPageJsonLd", () => {
 
     expect(json).toMatchObject({ "@type": "CollectionPage", mainEntity: { "@type": "ItemList", numberOfItems: 1 } });
     expect(json.mainEntity.itemListElement[0]).toMatchObject({ position: 1, url: "https://papersourcegh.com/product/blue-pen" });
+  });
+});
+
+describe("webPageJsonLd", () => {
+  it("includes CMS freshness and site entity relationships", () => {
+    const json = webPageJsonLd({ name: "Delivery guide", description: "Delivery information", url: "https://papersourcegh.com/pages/delivery-guide", dateModified: "2026-09-10T00:00:00Z" });
+    expect(json).toMatchObject({ "@type": "WebPage", dateModified: "2026-09-10T00:00:00.000Z", isPartOf: { "@id": expect.stringContaining("#website") }, about: { "@id": expect.stringContaining("#organization") } });
   });
 });

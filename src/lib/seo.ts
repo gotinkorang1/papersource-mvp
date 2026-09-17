@@ -151,3 +151,22 @@ export function collectionPageJsonLd(input: {
     },
   };
 }
+
+export function webPageJsonLd(input: {
+  name: string;
+  description: string;
+  url: string;
+  dateModified?: Date | string;
+}) {
+  return {
+    "@context": "https://schema.org",
+    "@type": "WebPage",
+    "@id": `${input.url}#webpage`,
+    name: input.name,
+    description: input.description,
+    url: input.url,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
+    about: { "@id": `${SITE_URL}/#organization` },
+    ...(input.dateModified ? { dateModified: new Date(input.dateModified).toISOString() } : {}),
+  };
+}
