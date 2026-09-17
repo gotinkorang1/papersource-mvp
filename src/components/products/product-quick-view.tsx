@@ -90,7 +90,7 @@ export function ProductQuickView({
         aria-label="Dismiss quick view"
         onClick={onClose}
       />
-      <div className="relative z-10 w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6">
+      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6">
         <button
           type="button"
           ref={closeRef}
