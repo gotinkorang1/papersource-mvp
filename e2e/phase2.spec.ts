@@ -5,6 +5,7 @@ test("mega menu lists workplace categories", async ({ page }) => {
   await page.getByRole("button", { name: "Shop" }).hover();
   await expect(page.getByRole("menuitem", { name: "Paper" })).toBeVisible();
   await expect(page.getByRole("menuitem", { name: "Printing" })).toBeVisible();
+  await page.getByRole("button", { name: "Business" }).hover();
   await expect(page.getByRole("menuitem", { name: "Schools" })).toBeVisible();
 });
 
