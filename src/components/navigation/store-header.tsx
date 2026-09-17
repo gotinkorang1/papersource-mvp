@@ -11,6 +11,7 @@ import { HeaderSearch } from "@/components/navigation/header-search";
 import { buildShopMenuColumns } from "@/components/navigation/shop-menu-model";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { listDivisionCategories } from "@/features/catalogue";
+import { uniqueNavigationLinks } from "./navigation-model";
 
 export async function StoreHeader() {
   const [managedLinks, categories] = await Promise.all([
@@ -18,7 +19,9 @@ export async function StoreHeader() {
     listDivisionCategories().catch(() => []),
   ]);
   const links = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.header;
-  const additionalManagedLinks = links.filter((link) => !["/shop", "/about", "/contact"].includes(link.href));
+  const additionalManagedLinks = uniqueNavigationLinks(
+    links.filter((link) => !["/shop", "/about", "/contact"].includes(link.href)),
+  );
   return (
     <header className="relative sticky top-0 z-30 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">
       <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3.5 sm:gap-5 sm:px-6 lg:px-8">

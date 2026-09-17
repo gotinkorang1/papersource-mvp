@@ -1,5 +1,10 @@
 import { describe, expect, it } from "vitest";
-import { desktopNavigation, mobileMenuLinks, isNavigationLinkActive } from "./navigation-model";
+import {
+  desktopNavigation,
+  mobileMenuLinks,
+  isNavigationLinkActive,
+  uniqueNavigationLinks,
+} from "./navigation-model";
 
 describe("storefront navigation model", () => {
   it("keeps the desktop primary row focused on the main shopping journeys", () => {
@@ -22,5 +27,18 @@ describe("storefront navigation model", () => {
     expect(isNavigationLinkActive("/shop", "/shop/writing")).toBe(true);
     expect(isNavigationLinkActive("/about", "/about/team")).toBe(true);
     expect(isNavigationLinkActive("/shop", "/shopping-list")).toBe(false);
+  });
+
+  it("removes duplicate destinations while preserving the first label", () => {
+    expect(
+      uniqueNavigationLinks([
+        { label: "Brands", href: "/brands" },
+        { label: "Our brands", href: "/brands" },
+        { label: "Contact", href: "/contact" },
+      ]),
+    ).toEqual([
+      { label: "Brands", href: "/brands" },
+      { label: "Contact", href: "/contact" },
+    ]);
   });
 });

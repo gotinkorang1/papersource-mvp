@@ -18,6 +18,16 @@ export const mobileMenuLinks: readonly NavigationLink[] = [
   { label: "Account", href: "/account" },
 ];
 
+export function uniqueNavigationLinks(links: readonly NavigationLink[]) {
+  const seen = new Set<string>();
+
+  return links.filter((link) => {
+    if (seen.has(link.href)) return false;
+    seen.add(link.href);
+    return true;
+  });
+}
+
 export function isNavigationLinkActive(href: string, pathname: string) {
   return pathname === href || pathname.startsWith(`${href}/`);
 }
