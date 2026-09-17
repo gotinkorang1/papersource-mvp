@@ -3,13 +3,14 @@
 import { Menu, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useId, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { mobileMenuLinks, isNavigationLinkActive } from "./navigation-model";
 
 export function MobileMenu() {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const menuId = useId();
+  const triggerRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (!open) return;
@@ -17,13 +18,20 @@ export function MobileMenu() {
       if (event.key === "Escape") setOpen(false);
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener("keydown", onKeyDown);
+      triggerRef.current?.focus();
+    };
   }, [open]);
 
   return (
     <div className="lg:hidden">
       <button
         type="button"
+        ref={triggerRef}
         className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-md border border-border text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         aria-label={open ? "Close menu" : "Open menu"}
         aria-expanded={open}
