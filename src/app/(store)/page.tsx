@@ -14,6 +14,7 @@ import {
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
+import { ArrowRight, Check, Layers3, ShieldCheck, Truck } from "lucide-react";
 
 export default async function HomePage() {
   const categories = await listDivisionCategories();
@@ -40,23 +41,24 @@ export default async function HomePage() {
 
   return (
     <main className="overflow-hidden">
-      <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-12 shadow-[0_18px_55px_rgba(16,42,67,0.06)] sm:px-6 sm:py-16 md:px-8 md:py-24">
+      <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-10 shadow-[0_18px_55px_rgba(16,42,67,0.06)] sm:px-6 sm:py-14 md:px-8 md:py-20 lg:py-24">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-ochre/10 blur-3xl" />
-        <div className="grid items-center gap-12 lg:grid-cols-[1.05fr_0.95fr] lg:gap-20">
+        <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-24 -z-10 size-80 rounded-full bg-paper-green/10 blur-3xl" />
+        <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
           <div>
-        <p className="inline-flex rounded-full border border-paper-green/25 bg-paper-green/10 px-3 py-1 text-xs font-semibold tracking-[0.14em] text-paper-green uppercase">
+        <p className="inline-flex rounded-full border border-paper-green/25 bg-paper-green/10 px-3 py-1.5 text-[11px] font-semibold tracking-[0.16em] text-paper-green uppercase">
           Ghana&apos;s modern workplace supply partner
         </p>
-        <h1 className="mt-5 max-w-3xl text-balance text-4xl leading-[1.05] tracking-tight text-ink motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 sm:text-5xl md:text-7xl">
+        <h1 className="mt-5 max-w-3xl text-balance text-4xl font-semibold leading-[1.03] tracking-[-0.03em] text-ink motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 sm:text-5xl md:text-6xl lg:text-7xl">
           Everything your workplace needs.
         </h1>
-        <p className="mt-6 max-w-2xl text-lg leading-relaxed text-slate md:text-xl">
+        <p className="mt-6 max-w-2xl text-base leading-8 text-slate sm:text-lg md:text-xl">
           Office stationery, paper, printing supplies and workplace essentials —
           delivered across Accra &amp; Tema.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link href="/shop" className={`${paperButton()} w-full sm:w-auto`}>
-            Shop Products
+            Shop products <ArrowRight className="size-4" aria-hidden />
           </Link>
           <Link
             href="/request-quote"
@@ -65,15 +67,34 @@ export default async function HomePage() {
             Request Bulk Quote
           </Link>
         </div>
-        <p className="mt-6 text-sm text-slate">
+        <p className="mt-5 text-sm text-slate">
           Nationwide supply available on request.
         </p>
         <LiveDeliveryStatus />
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-2xl border border-border bg-cream shadow-[0_24px_60px_rgba(16,42,67,0.16)]">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-border bg-cream shadow-[0_24px_60px_rgba(16,42,67,0.16)] ring-1 ring-ink/5">
             <Image src="/images/catalogue-stationery-generated.png" alt="Stationery, notebooks, paper and desk supplies arranged for a productive workday" fill priority loading="eager" fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
+            <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-xl border border-white/25 bg-ink/75 px-4 py-3 text-cream shadow-lg backdrop-blur-sm">
+              <div><p className="text-[10px] font-semibold tracking-[0.14em] text-ochre uppercase">Ready for the workday</p><p className="mt-1 text-sm font-medium">Reliable stock. Thoughtful service.</p></div>
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-ochre text-ink"><Check className="size-4" aria-hidden /></span>
+            </div>
           </div>
+        </div>
+      </section>
+
+      <section aria-label="Why shop with PaperSource" className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-10 lg:px-8">
+        <div className="grid overflow-hidden rounded-2xl border border-border bg-card shadow-sm sm:grid-cols-3">
+          {[
+            { icon: Truck, title: "Delivery that keeps pace", body: "Accra and Tema delivery, with nationwide supply on request." },
+            { icon: Layers3, title: "Retail or bulk", body: "Checkout everyday items or build a quote for larger requirements." },
+            { icon: ShieldCheck, title: "A dependable partner", body: "Clear pricing, practical support and a team that follows through." },
+          ].map(({ icon: Icon, title, body }, index) => (
+            <div key={title} className={`flex gap-3 p-5 sm:p-6 ${index > 0 ? "border-t border-border sm:border-l sm:border-t-0" : ""}`}>
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-paper-green/10 text-paper-green"><Icon className="size-5" aria-hidden /></span>
+              <div><p className="font-semibold text-ink">{title}</p><p className="mt-1 text-sm leading-6 text-slate">{body}</p></div>
+            </div>
+          ))}
         </div>
       </section>
 
@@ -83,10 +104,10 @@ export default async function HomePage() {
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex items-end justify-between gap-4">
             <div>
-              <h2 className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Shop the workplace</h2>
-              <p className="mt-2 max-w-xl text-sm text-slate sm:text-base">Start with a category and find the supplies your team uses every day.</p>
+              <h2 className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Shop by need</h2>
+              <p className="mt-2 max-w-xl text-base font-medium text-ink sm:text-lg">Start with a category and find the supplies your team uses every day.</p>
             </div>
-            <Link href="/shop" className="hidden shrink-0 text-sm font-semibold text-ink underline underline-offset-4 sm:inline-flex">Browse all</Link>
+            <Link href="/shop" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-paper-green sm:inline-flex">Browse all <ArrowRight className="size-4" aria-hidden /></Link>
           </div>
           <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
             {categories.map((category) => (
