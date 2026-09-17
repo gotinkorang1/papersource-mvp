@@ -52,3 +52,14 @@ export function matchesCatalogueQuery(
 
   return haystacks.some((value) => value.toLowerCase().includes(needle));
 }
+
+export function uniqueCatalogueProducts<
+  T extends { product: { id: string } },
+>(rows: T[]): T[] {
+  const seen = new Set<string>();
+  return rows.filter((row) => {
+    if (seen.has(row.product.id)) return false;
+    seen.add(row.product.id);
+    return true;
+  });
+}

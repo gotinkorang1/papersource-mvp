@@ -3,6 +3,7 @@ import {
   buildSpecLine,
   buildSupplementalSpecLine,
   matchesCatalogueQuery,
+  uniqueCatalogueProducts,
 } from "./search";
 
 describe("buildSpecLine", () => {
@@ -30,6 +31,18 @@ describe("matchesCatalogueQuery", () => {
 
     expect(matchesCatalogueQuery(haystacks, "HP 305 black")).toBe(true);
     expect(matchesCatalogueQuery(haystacks, "A4 80gsm")).toBe(false);
+  });
+});
+
+describe("uniqueCatalogueProducts", () => {
+  it("keeps one storefront row per product while preserving the first variant", () => {
+    const rows = uniqueCatalogueProducts([
+      { product: { id: "product-1" }, variant: { id: "variant-a" } },
+      { product: { id: "product-1" }, variant: { id: "variant-b" } },
+      { product: { id: "product-2" }, variant: { id: "variant-c" } },
+    ]);
+
+    expect(rows.map((row) => row.variant.id)).toEqual(["variant-a", "variant-c"]);
   });
 });
 

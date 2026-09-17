@@ -1,7 +1,7 @@
 import { and, eq, inArray, isNull } from "drizzle-orm";
 import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
-import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery } from "@/features/catalogue/search";
+import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery, uniqueCatalogueProducts } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
   sellableQuantity,
@@ -160,7 +160,7 @@ async function loadActiveProducts() {
   const db = getDb();
   const { categoryRows, brandRows, deliveryBadge, imageRows } = await loadCatalogueContext();
 
-  const productRows = await db
+  const productRows = uniqueCatalogueProducts(await db
     .select({
       product: products,
       variant: productVariants,
@@ -175,7 +175,7 @@ async function loadActiveProducts() {
         isNull(products.deletedAt),
         eq(productVariants.active, true),
       ),
-    );
+    ));
 
   const productIds = productRows.map((row) => row.product.id);
   const variantIds = productRows.map((row) => row.variant.id);
@@ -212,6 +212,40 @@ async function loadActiveProducts() {
     tierRows,
     imageRows,
   };
+}
+
+export async function listBrandDirectoryFromDb() {
+  const db = getDb();
+  const rows = await db
+    .select({
+      brandId: brands.id,
+      brandName: brands.name,
+      brandSlug: brands.slug,
+      categoryName: categories.name,
+      categorySlug: categories.slug,
+    })
+    .from(brands)
+    .innerJoin(products, eq(products.brandId, brands.id))
+    .innerJoin(productVariants, eq(productVariants.productId, products.id))
+    .innerJoin(categories, eq(categories.id, products.categoryId))
+    .where(
+      and(
+        eq(brands.active, true),
+        isNull(brands.deletedAt),
+        eq(products.status, "active"),
+        isNull(products.deletedAt),
+        eq(productVariants.active, true),
+        eq(categories.active, true),
+        isNull(categories.deletedAt),
+      ),
+    );
+  const directory = new Map<string, { id: string; name: string; slug: string; categories: { name: string; slug: string }[] }>();
+  for (const row of rows) {
+    const entry = directory.get(row.brandId) ?? { id: row.brandId, name: row.brandName, slug: row.brandSlug, categories: [] };
+    if (!entry.categories.some((category) => category.slug === row.categorySlug)) entry.categories.push({ name: row.categoryName, slug: row.categorySlug });
+    directory.set(row.brandId, entry);
+  }
+  return [...directory.values()];
 }
 
 function toCardFromRow(
