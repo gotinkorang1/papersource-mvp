@@ -10,8 +10,19 @@ type BookMetadataInput = {
   attributes: ProductAttribute[];
 };
 
+type ProductSeoDescriptionInput = {
+  name: string;
+  brandName: string;
+  categoryName?: string;
+  description: string;
+};
+
 function normalized(value: string) {
   return value.trim().toLocaleLowerCase();
+}
+
+export function productSeoDescription({ name, brandName, categoryName, description }: ProductSeoDescriptionInput) {
+  return description.trim() || `${name} by ${brandName}. Shop ${categoryName || "stationery and books"} from PaperSource Ghana.`;
 }
 
 export function bookMetadata({

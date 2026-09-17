@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { bookMetadata } from "@/features/catalogue/product-metadata";
+import { bookMetadata, productSeoDescription } from "@/features/catalogue/product-metadata";
 
 describe("bookMetadata", () => {
   it("returns author and format only for products with an author attribute", () => {
@@ -64,5 +64,15 @@ describe("bookMetadata", () => {
         ],
       }),
     ).toEqual([]);
+  });
+});
+
+describe("productSeoDescription", () => {
+  it("keeps curated copy and trims it", () => {
+    expect(productSeoDescription({ name: "Notebook", brandName: "BIC", categoryName: "Writing", description: "  Durable ruled notebook.  " })).toBe("Durable ruled notebook.");
+  });
+
+  it("creates useful fallback copy for incomplete products", () => {
+    expect(productSeoDescription({ name: "Notebook", brandName: "BIC", categoryName: "Writing", description: "  " })).toBe("Notebook by BIC. Shop Writing from PaperSource Ghana.");
   });
 });

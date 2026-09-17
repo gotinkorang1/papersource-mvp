@@ -16,7 +16,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { visibleBulkTiers } from "@/features/catalogue/pricing";
-import { bookMetadata } from "@/features/catalogue/product-metadata";
+import { bookMetadata, productSeoDescription } from "@/features/catalogue/product-metadata";
 import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
 
@@ -37,7 +37,7 @@ export async function generateMetadata({
   const seoTitle = product.attributes.find(
     (attribute) => attribute.key === "seo_title",
   )?.valueText.trim();
-  const seoDescription = product.description.trim() || `${product.name} from ${product.brandName}, available through PaperSource Ghana for Accra, Tema and nationwide supply on request.`;
+  const seoDescription = productSeoDescription(product);
 
   return pageMetadata({
     title: seoTitle || productSeoTitle(product.name, product.specLine),
@@ -67,6 +67,7 @@ export default async function ProductPage({ params }: PageProps) {
   const related = relatedProducts.filter((entry) => entry.id !== product.id).slice(0, 4);
   const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
   const supplementalMetadata = bookMetadata(product);
+  const productDescription = productSeoDescription(product);
   const canonical = absoluteUrl(`/product/${product.slug}`);
   const crumbs = [
     { name: "Shop", href: "/shop" },
@@ -140,7 +141,7 @@ export default async function ProductPage({ params }: PageProps) {
             <div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div>
           </div>
           <p className="mt-6 max-w-prose text-sm text-slate">
-            {product.description}
+            {productDescription}
           </p>
           {product.bundleContents ? (
             <div className="mt-8">

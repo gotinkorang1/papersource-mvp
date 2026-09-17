@@ -1,4 +1,5 @@
 import { pesewasToMajor } from "@/lib/money";
+import { productSeoDescription } from "./product-metadata";
 
 export type GoogleShoppingFeedEntry = {
   id: string;
@@ -23,7 +24,7 @@ function tag(name: string, value: string | undefined | null) {
 
 export function renderGoogleShoppingFeed(entries: GoogleShoppingFeedEntry[]) {
   const items = entries.map((entry) => {
-    const description = entry.description.trim() || `${entry.title} by ${entry.brand}. Shop ${entry.productType} from PaperSource Ghana.`;
+    const description = productSeoDescription({ name: entry.title, brandName: entry.brand, categoryName: entry.productType, description: entry.description });
 
     return [
     "  <item>",

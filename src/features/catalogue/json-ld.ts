@@ -1,5 +1,6 @@
 import { pesewasToMajor } from "@/lib/money";
 import type { ProductDetailModel } from "@/types/catalogue";
+import { productSeoDescription } from "./product-metadata";
 
 export function productJsonLd(
   product: ProductDetailModel,
@@ -13,7 +14,7 @@ export function productJsonLd(
   const bookPublisher = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "publisher")?.valueText.trim();
   const validIsbn = bookIsbn && /^(?:\d{9}[\dX]|\d{13})$/.test(bookIsbn.replace(/[-\s]/g, "")) ? bookIsbn.replace(/[-\s]/g, "") : null;
   const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || attributes.some((attribute) => attribute.namespace === "book"));
-  const description = product.description.trim() || `${product.name} by ${product.brandName}. Shop ${product.categoryName || "stationery and books"} from PaperSource Ghana.`;
+  const description = productSeoDescription(product);
   const availability =
     product.stock === "out"
       ? "https://schema.org/OutOfStock"
