@@ -8,12 +8,12 @@ import { SITE_URL } from "@/lib/seo";
 // still picking up catalogue edits promptly.
 export const revalidate = 3600;
 
-const publicRoutes = ["", "/shop", "/brands", "/search", "/about", "/contact", "/delivery", "/faq", "/returns", "/privacy", "/terms", "/business", "/schools", "/corporate-accounts", "/bulk-orders", "/quick-order"];
+const publicRoutes = ["", "/shop", "/brands", "/about", "/contact", "/delivery", "/faq", "/returns", "/privacy", "/terms", "/business", "/schools", "/corporate-accounts", "/bulk-orders", "/quick-order"];
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = publicRoutes.map((path) => ({
     url: `${SITE_URL}${path}`,
-    changeFrequency: path === "/shop" || path === "/search" ? "daily" : "weekly",
+    changeFrequency: path === "/shop" ? "daily" : "weekly",
     priority: path === "" ? 1 : path === "/shop" ? 0.9 : 0.6,
   }));
 
