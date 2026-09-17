@@ -155,6 +155,7 @@ export function collectionPageJsonLd(input: {
     name: input.name,
     description: input.description,
     url: input.url,
+    isPartOf: { "@id": `${SITE_URL}/#website` },
     mainEntity: {
       "@type": "ItemList",
       numberOfItems: input.totalItems ?? input.items.length,

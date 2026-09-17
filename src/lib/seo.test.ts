@@ -64,7 +64,7 @@ describe("collectionPageJsonLd", () => {
       items: [{ name: "Blue pen", url: "https://papersourcegh.com/product/blue-pen", position: 1 }],
     });
 
-    expect(json).toMatchObject({ "@type": "CollectionPage", inLanguage: "en-GH", mainEntity: { "@type": "ItemList", numberOfItems: 42 } });
+    expect(json).toMatchObject({ "@type": "CollectionPage", inLanguage: "en-GH", isPartOf: { "@id": expect.stringContaining("#website") }, mainEntity: { "@type": "ItemList", numberOfItems: 42 } });
     expect(json.mainEntity.itemListElement[0]).toMatchObject({ position: 1, url: "https://papersourcegh.com/product/blue-pen" });
   });
 
