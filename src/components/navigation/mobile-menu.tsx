@@ -42,16 +42,18 @@ export function MobileMenu() {
         {open ? <X className="size-5" aria-hidden /> : <Menu className="size-5" aria-hidden />}
       </button>
       {open ? (
-        <div id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] sm:px-6">
-          <div className="grid gap-1 sm:grid-cols-2">
+        <>
+          <button type="button" aria-label="Close menu overlay" className="fixed inset-0 z-40 cursor-default bg-ink/30 backdrop-blur-[1px] lg:hidden" onClick={() => setOpen(false)} />
+          <div id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] sm:px-6">
+            <div className="grid gap-2 sm:grid-cols-2">
             <Link href="/shop" className="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
               Shop all products
             </Link>
             <Link href="/request-quote" className="rounded-md border border-ink px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-cream" onClick={() => setOpen(false)}>
               Request a quote
             </Link>
-          </div>
-          <div className="mt-4 grid gap-1 border-t border-border pt-3 sm:grid-cols-2">
+            </div>
+            <div className="mt-4 grid gap-1 border-t border-border pt-3 sm:grid-cols-2">
             {mobileMenuLinks.map((link) => {
               const active = isNavigationLinkActive(link.href, pathname);
               return (
@@ -60,15 +62,16 @@ export function MobileMenu() {
                 </Link>
               );
             })}
-          </div>
-          <div className="mt-3 border-t border-border pt-3">
+            </div>
+            <div className="mt-3 border-t border-border pt-3">
             <p className="px-3 text-xs tracking-[0.14em] text-slate uppercase">Shop by need</p>
             <div className="mt-1 grid gap-1 sm:grid-cols-2">
               <Link href="/schools" className="rounded-md px-3 py-2.5 text-sm text-graphite hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Schools</Link>
               <Link href="/business" className="rounded-md px-3 py-2.5 text-sm text-graphite hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Business accounts</Link>
             </div>
+            </div>
           </div>
-        </div>
+        </>
       ) : null}
     </div>
   );

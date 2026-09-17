@@ -23,8 +23,8 @@ export async function StoreHeader() {
     links.filter((link) => !["/shop", "/about", "/contact"].includes(link.href)),
   );
   return (
-    <header className="relative sticky top-0 z-30 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">
-      <div className="mx-auto flex w-full max-w-7xl items-center gap-3 px-4 py-3.5 sm:gap-5 sm:px-6 lg:px-8">
+    <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">
+      <div className="mx-auto flex w-full max-w-7xl items-center gap-2 px-3 py-2.5 sm:gap-5 sm:px-6 sm:py-3.5 lg:px-8">
         <Wordmark />
         <nav
           className="hidden items-center gap-3 text-sm text-graphite lg:flex lg:gap-4"

@@ -35,13 +35,12 @@ export function Wordmark({
         className,
       )}
     >
-      <span className="border-2 border-ink/15 bg-cream px-2 py-1 font-heading text-[1.05rem] font-bold leading-none tracking-[0.16em] text-ink shadow-[3px_3px_0_#e6a329] transition-[padding,box-shadow,border-color] duration-300 group-hover:border-paper-green sm:px-2.5 sm:py-1.5 sm:text-lg">
-        <span className={cn("inline-block transition-[max-width,opacity] duration-300", shrinkOnScroll && isScrolled ? "max-w-0 overflow-hidden opacity-0" : "max-w-[4.5em] opacity-100")} aria-hidden={shrinkOnScroll && isScrolled}>
-          PAPER
+      <span aria-hidden="true" className="border-2 border-ink/15 bg-cream px-2.5 py-1.5 font-heading text-base font-bold leading-none tracking-[0.16em] text-ink shadow-[3px_3px_0_#e6a329] transition-[padding,box-shadow,border-color] duration-300 group-hover:border-paper-green sm:px-2.5 sm:py-1.5 sm:text-lg">
+        <span className={cn("transition-[max-width,opacity] duration-300", isScrolled ? "inline-flex" : "hidden sm:inline-flex")}>
+          {isScrolled ? "PS" : "PAPER"}
         </span>
-        <span className={cn("transition-colors", inverted ? "text-ochre" : "text-paper-green")}>
-          {shrinkOnScroll && isScrolled ? "PS" : "SOURCE"}
-        </span>
+        {!isScrolled ? <span className={cn("hidden transition-colors sm:inline-flex", inverted ? "text-ochre" : "text-paper-green")}>SOURCE</span> : null}
+        {!isScrolled ? <span className="inline-flex text-paper-green sm:hidden">PS</span> : null}
       </span>
     </Link>
   );
