@@ -14,9 +14,12 @@ export function DualPathCounts() {
     <div className="flex items-center gap-3 text-sm">
       <button
         type="button"
-        className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className={`inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${quoteOpen ? "text-ink" : "text-graphite"}`}
         aria-label={itemCountLabel("Quote list", quoteCount)}
         aria-expanded={quoteOpen}
+        aria-pressed={quoteOpen}
+        aria-haspopup="dialog"
+        aria-controls="paper-drawer-quote-list"
         onClick={() => setQuoteOpen(true)}
       >
         <ClipboardList className="size-4" aria-hidden />
@@ -25,9 +28,12 @@ export function DualPathCounts() {
       </button>
       <button
         type="button"
-        className="inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 text-graphite hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+        className={`inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${cartOpen ? "text-ink" : "text-graphite"}`}
         aria-label={itemCountLabel("Cart", cartCount)}
         aria-expanded={cartOpen}
+        aria-pressed={cartOpen}
+        aria-haspopup="dialog"
+        aria-controls="paper-drawer-cart"
         onClick={() => setCartOpen(true)}
       >
         <ShoppingBag className="size-4" aria-hidden />
