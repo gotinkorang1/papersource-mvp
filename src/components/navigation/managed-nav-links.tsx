@@ -7,11 +7,12 @@ type ManagedLink = { id?: string; label: string; href: string };
 
 export function ManagedNavLinks({ links }: { links: ReadonlyArray<ManagedLink> }) {
   const pathname = usePathname();
+  const currentPathname = pathname ?? "";
 
   return (
     <>
       {links.map((link) => {
-        const active = pathname === link.href || pathname.startsWith(`${link.href}/`);
+        const active = currentPathname === link.href || currentPathname.startsWith(`${link.href}/`);
         return (
           <Link
             key={link.id ?? link.href}
