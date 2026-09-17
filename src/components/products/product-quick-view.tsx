@@ -33,16 +33,26 @@ export function ProductQuickView({
   const [quantity, setQuantity] = useState(1);
   const closeRef = useRef<HTMLButtonElement>(null);
   const previousFocus = useRef<HTMLElement | null>(null);
+  const onCloseRef = useRef(onClose);
+  const wasOpen = useRef(false);
+
+  onCloseRef.current = onClose;
 
   useEffect(() => {
     if (!open) {
-      previousFocus.current?.focus();
+      if (wasOpen.current) {
+        previousFocus.current?.focus();
+      }
+      wasOpen.current = false;
       return;
     }
+    wasOpen.current = true;
     previousFocus.current = document.activeElement instanceof HTMLElement ? document.activeElement : null;
     closeRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key === "Escape") onCloseRef.current();
       if (event.key !== "Tab") return;
       const dialog = closeRef.current?.closest('[role="dialog"]');
       const focusable = dialog ? Array.from(dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])')) : [];
@@ -53,8 +63,11 @@ export function ProductQuickView({
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
     };
     window.addEventListener("keydown", onKeyDown);
-    return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [open]);
 
   if (!open || !product || typeof document === "undefined") {
     return null;
