@@ -1,3 +1,4 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -14,7 +15,15 @@ import {
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
+import { absoluteUrl, pageMetadata, webPageJsonLd } from "@/lib/seo";
 import { ArrowRight, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Truck } from "lucide-react";
+
+export const metadata: Metadata = pageMetadata({
+  title: "Office supplies and stationery in Ghana",
+  description: "Shop paper, stationery, printing supplies and workplace essentials from PaperSource Ghana, with delivery across Accra and Tema and nationwide supply on request.",
+  path: "/",
+  keywords: ["office supplies Ghana", "stationery supplier Accra", "office supplies Tema", "bulk stationery Ghana"],
+});
 
 export default async function HomePage() {
   const categories = await listDivisionCategories();
@@ -41,6 +50,16 @@ export default async function HomePage() {
 
   return (
     <main className="overflow-hidden">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(webPageJsonLd({
+            name: "Office supplies and stationery in Ghana",
+            description: "PaperSource Ghana supplies paper, stationery, printing supplies and workplace essentials across Accra and Tema.",
+            url: absoluteUrl("/"),
+          })),
+        }}
+      />
       <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-10 shadow-[0_18px_55px_rgba(16,42,67,0.06)] sm:px-6 sm:py-14 md:px-8 md:py-20 lg:py-24">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-ochre/10 blur-3xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-24 -z-10 size-80 rounded-full bg-paper-green/10 blur-3xl" />
