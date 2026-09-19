@@ -25,6 +25,23 @@ describe("productJsonLd", () => {
     expect(productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4").aggregateRating).toBeUndefined();
   });
 
+  it("publishes individual approved reviews when complete review copy exists", () => {
+    const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4", [{
+      rating: 5,
+      title: "Excellent quality",
+      body: "The paper feeds cleanly and arrives well packed.",
+      displayName: "Ama M.",
+      createdAt: "2026-09-18T10:00:00.000Z",
+    }]);
+    expect(json.review).toEqual([expect.objectContaining({
+      "@type": "Review",
+      name: "Excellent quality",
+      reviewBody: "The paper feeds cleanly and arrives well packed.",
+      author: { "@type": "Person", name: "Ama M." },
+      datePublished: "2026-09-18T10:00:00.000Z",
+    })]);
+  });
+
   it("includes image when Cloudinary (or other) URL is present", () => {
     const json = productJsonLd(
       { ...product, imageSrc: "https://res.cloudinary.com/demo/image.jpg" },

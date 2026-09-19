@@ -5,7 +5,13 @@ import { productSeoDescription } from "./product-metadata";
 export function productJsonLd(
   product: ProductDetailModel,
   canonical: string,
-  reviews: { rating: number }[] = [],
+  reviews: {
+    rating: number;
+    title?: string | null;
+    body?: string;
+    displayName?: string;
+    createdAt?: Date | string;
+  }[] = [],
 ) {
   const origin = new URL(canonical).origin;
   const attributes = product.attributes ?? [];
@@ -15,6 +21,21 @@ export function productJsonLd(
   const validIsbn = bookIsbn && /^(?:\d{9}[\dX]|\d{13})$/.test(bookIsbn.replace(/[-\s]/g, "")) ? bookIsbn.replace(/[-\s]/g, "") : null;
   const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || attributes.some((attribute) => attribute.namespace === "book"));
   const description = productSeoDescription(product);
+  const reviewEntities = reviews
+    .filter((review) => Boolean(review.displayName?.trim() && review.body?.trim()))
+    .map((review) => ({
+      "@type": "Review",
+      ...(review.title?.trim() ? { name: review.title.trim() } : {}),
+      reviewBody: review.body!.trim(),
+      reviewRating: {
+        "@type": "Rating",
+        ratingValue: review.rating,
+        bestRating: 5,
+        worstRating: 1,
+      },
+      author: { "@type": "Person", name: review.displayName!.trim() },
+      ...(review.createdAt ? { datePublished: new Date(review.createdAt).toISOString() } : {}),
+    }));
   const availability =
     product.stock === "out"
       ? "https://schema.org/OutOfStock"
@@ -68,6 +89,7 @@ export function productJsonLd(
           },
         }
       : {}),
+    ...(reviewEntities.length ? { review: reviewEntities } : {}),
     offers: {
       "@type": "Offer",
       url: canonical,
