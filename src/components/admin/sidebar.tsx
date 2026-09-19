@@ -76,14 +76,20 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
         first.focus();
       }
     };
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
     window.addEventListener("keydown", onKeyDown);
     return () => {
-      document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", onKeyDown);
     };
   }, [accountOpen]);
+
+  useEffect(() => {
+    if (!navOpen && !accountOpen) return;
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [accountOpen, navOpen]);
 
   useEffect(() => {
     if (accountOpen) {
