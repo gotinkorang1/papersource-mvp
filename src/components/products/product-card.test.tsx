@@ -99,6 +99,19 @@ describe("ProductCard", () => {
     expect(within(quote).getByText("Add to Quote")).toBeInTheDocument();
   });
 
+  it("closes quick view with Escape and restores focus to its trigger", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<ProductCard product={product} />);
+    const trigger = screen.getByRole("button", { name: "Quick view" });
+
+    await user.click(trigger);
+    expect(screen.getByRole("dialog")).toBeInTheDocument();
+    await user.keyboard("{Escape}");
+
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+    expect(container.ownerDocument.activeElement).toBe(trigger);
+  });
+
   it("shows freshness and trending badges when the catalogue marks them", () => {
     render(<ProductCard product={{ ...product, isNew: true, isTrending: true, viewCount: 12 }} />);
 
