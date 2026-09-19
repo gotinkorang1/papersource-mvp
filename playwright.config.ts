@@ -32,7 +32,7 @@ export default defineConfig({
     // state-changing checkout/admin journeys a second time by default.
     {
       name: "mobile-chromium",
-      testMatch: /(?:public-smoke|catalogue)\.spec\.ts/,
+      testMatch: /(?:public-smoke|catalogue(?:-[^.]*)?)\.spec\.ts/,
       use: { ...devices["Pixel 7"] },
     },
   ],

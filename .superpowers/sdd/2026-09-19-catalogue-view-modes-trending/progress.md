@@ -11,3 +11,4 @@ Task 6 verification pass: focused suites 5 files/16 tests passed; view-mode pers
 Follow-up hardening: extracted and tested product-view payload validation (8 focused tests passed across route/tracking/view-mode; tsc passed). Final production build was rerun successfully after persistence polish; full eslint remained unavailable because the command did not complete in this environment.
 Follow-up admin regression coverage: admin presentation tests now cover default table select-all/bulk state, Grid edit links, and read-only write-control suppression (3/3 passed).
 Follow-up Playwright coverage: new e2e/catalogue-view-modes.spec.ts passed on Chromium desktop (2/2) and mobile-chromium project (project selection configured; local run selected Chromium only due shared test invocation).
+Playwright mobile filter fix: updated mobile project testMatch to include catalogue-*.spec.ts; rerun passed 4/4 across Chromium desktop and mobile-chromium.
