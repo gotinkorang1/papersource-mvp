@@ -27,7 +27,11 @@ export function AdminProductsView({ rows, canWrite }: { rows: AdminProductListRo
   const [viewMode, setViewMode] = useState<CatalogueViewMode>("default");
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
-    if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") setViewMode(saved);
+    if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") {
+      setViewMode(saved);
+      return;
+    }
+    if (window.matchMedia?.("(max-width: 639px)").matches) setViewMode("list");
   }, []);
   const changeMode = (next: CatalogueViewMode) => {
     setViewMode(next);
