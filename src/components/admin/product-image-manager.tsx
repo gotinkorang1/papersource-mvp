@@ -56,6 +56,8 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
   const [cropIndex, setCropIndex] = useState<number | null>(null);
   const [cropRatio, setCropRatio] = useState<CropRatio>("free");
   const [isCropping, setIsCropping] = useState(false);
+  const cropCloseRef = useRef<HTMLButtonElement>(null);
+  const croppingRef = useRef(false);
   const [uploadingAll, setUploadingAll] = useState(false);
   const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null);
 
@@ -74,6 +76,22 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
     window.addEventListener("beforeunload", warn);
     return () => window.removeEventListener("beforeunload", warn);
   }, [items]);
+  useEffect(() => {
+    croppingRef.current = isCropping;
+  }, [isCropping]);
+  useEffect(() => {
+    if (cropIndex === null) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    cropCloseRef.current?.focus();
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !croppingRef.current) setCropIndex(null);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      previousFocus?.focus();
+    };
+  }, [cropIndex]);
 
   function addFiles(files: FileList | null) {
     if (!files) return;
@@ -210,7 +228,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
         {items.some((item) => item.status === "done") ? <button type="button" className={paperButton({ className: "mt-4 min-h-10" })} onClick={() => void saveAllImages()} disabled={items.some((item) => item.status === "saving")}>Save all uploaded images</button> : null}
       </div>
       <form action="/admin/products/mutate" method="post" className="grid gap-3 rounded-lg border border-border bg-card p-4"><input type="hidden" name="intent" value="add-image" /><input type="hidden" name="productId" value={productId} /><label className="grid gap-1 text-sm font-medium text-ink">Or paste a Cloudinary image URL or public ID<input name="cloudinaryPublicId" required value={url} onChange={(event) => setUrl(event.target.value)} className={adminFieldClass} placeholder="https://res.cloudinary.com/... or papersource/products/..." /></label><label className="grid gap-1 text-sm font-medium text-ink">Alt text<input name="alt" required value={urlAlt} onChange={(event) => setUrlAlt(event.target.value)} className={adminFieldClass} placeholder="Product image description" /></label><SubmitProgressButton idleLabel="Add image URL" pendingLabel="Adding image…" className={paperButton({ variant: "secondary" })} /></form>
-      {cropIndex !== null && items[cropIndex] ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby="crop-image-title"><div className="w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-xl"><div className="flex items-start justify-between gap-4"><div><h3 id="crop-image-title" className="font-heading text-xl text-ink">Crop image</h3><p className="mt-1 text-sm text-slate">Choose a ratio, then apply a centered crop before uploading.</p></div><button type="button" className="text-sm text-slate underline" onClick={() => setCropIndex(null)} disabled={isCropping}>Close</button></div><div className="mt-4 grid place-items-center rounded-lg bg-ink/10 p-3"><Image src={items[cropIndex].preview} alt="Preview of image being cropped" width={480} height={320} unoptimized className="max-h-64 w-full rounded-md object-contain" /></div><div className="mt-4 flex flex-wrap gap-2">{cropRatios.map((ratio) => <button key={ratio.value} type="button" onClick={() => setCropRatio(ratio.value)} className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${cropRatio === ratio.value ? "border-paper-green bg-paper-green text-white" : "border-border text-ink hover:border-paper-green"}`}>{ratio.label}</button>)}</div><div className="mt-5 flex justify-end gap-2"><button type="button" className={paperButton({ variant: "secondary" })} onClick={() => setCropIndex(null)} disabled={isCropping}>Cancel</button><button type="button" className={paperButton({ variant: "primary" })} onClick={() => void applyCrop()} disabled={isCropping}>{isCropping ? "Applying…" : "Apply crop"}</button></div></div></div> : null}
+      {cropIndex !== null && items[cropIndex] ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby="crop-image-title"><div className="w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-xl"><div className="flex items-start justify-between gap-4"><div><h3 id="crop-image-title" className="font-heading text-xl text-ink">Crop image</h3><p className="mt-1 text-sm text-slate">Choose a ratio, then apply a centered crop before uploading.</p></div><button ref={cropCloseRef} type="button" className="text-sm text-slate underline" onClick={() => setCropIndex(null)} disabled={isCropping}>Close</button></div><div className="mt-4 grid place-items-center rounded-lg bg-ink/10 p-3"><Image src={items[cropIndex].preview} alt="Preview of image being cropped" width={480} height={320} unoptimized className="max-h-64 w-full rounded-md object-contain" /></div><div className="mt-4 flex flex-wrap gap-2">{cropRatios.map((ratio) => <button key={ratio.value} type="button" onClick={() => setCropRatio(ratio.value)} className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${cropRatio === ratio.value ? "border-paper-green bg-paper-green text-white" : "border-border text-ink hover:border-paper-green"}`}>{ratio.label}</button>)}</div><div className="mt-5 flex justify-end gap-2"><button type="button" className={paperButton({ variant: "secondary" })} onClick={() => setCropIndex(null)} disabled={isCropping}>Cancel</button><button type="button" className={paperButton({ variant: "primary" })} onClick={() => void applyCrop()} disabled={isCropping}>{isCropping ? "Applying…" : "Apply crop"}</button></div></div></div> : null}
     </div>
   );
 }
