@@ -41,6 +41,13 @@ describe("CatalogueViewModeControl", () => {
     expect(container.querySelector('[data-catalogue-view="content"]')).toBeInTheDocument();
   });
 
+  it("lets a URL-provided mode be changed without a full page reload", async () => {
+    const { container } = render(<ProductGridList products={[sampleProducts[0]]} viewMode="list" />);
+    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
+
+    await waitFor(() => expect(container.querySelector('[data-catalogue-view="grid"]')).toBeInTheDocument());
+  });
+
   it("restores the device preference when no URL mode is supplied", async () => {
     window.localStorage.setItem("papersource.catalogue.view-mode", "content");
     const { container } = render(<ProductGridList products={[sampleProducts[0]]} />);

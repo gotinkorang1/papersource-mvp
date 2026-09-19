@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Check, Eye, ShoppingCart } from "lucide-react";
+import { Eye, ShoppingCart } from "lucide-react";
 import { catalogueImage } from "@/components/products/product-card";
 import { paperButton } from "@/components/commerce/paper-button";
 import { PriceDisplay } from "@/components/commerce/price-display";

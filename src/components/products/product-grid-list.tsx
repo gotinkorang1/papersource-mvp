@@ -25,19 +25,20 @@ export function ProductGridList({
   showViewModeControl?: boolean;
 }) {
   const { addToCart, addToQuote } = useDualPathPreview();
-  const [storedViewMode, setStoredViewMode] = useState<CatalogueViewMode>("default");
+  const [viewMode, setSelectedViewMode] = useState<CatalogueViewMode>(controlledViewMode ?? "default");
 
   useEffect(() => {
-    const saved = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
-    if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") setStoredViewMode(saved);
-  }, []);
-
-  const viewMode = controlledViewMode ?? storedViewMode;
-  const setViewMode = (next: CatalogueViewMode) => {
-    if (controlledViewMode === undefined) {
-      setStoredViewMode(next);
-      window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, next);
+    if (controlledViewMode) {
+      setSelectedViewMode(controlledViewMode);
+      return;
     }
+    const saved = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") setSelectedViewMode(saved);
+  }, [controlledViewMode]);
+
+  const setViewMode = (next: CatalogueViewMode) => {
+    setSelectedViewMode(next);
+    window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, next);
     onViewModeChange?.(next);
   };
 
