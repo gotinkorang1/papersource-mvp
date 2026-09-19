@@ -41,12 +41,12 @@ export function ProductListItem({
     <article
       data-catalogue-item={variant}
       className={cn(
-        "group grid gap-4 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md sm:p-4",
+        "group grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md sm:gap-4 sm:p-4",
         content ? "sm:grid-cols-[12rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[8rem_minmax(0,1fr)_auto]",
       )}
     >
-      <Link href={`/product/${product.slug}`} className={cn("relative block overflow-hidden rounded-xl bg-cream", content ? "aspect-[4/3]" : "aspect-square")} aria-label={`View ${product.name}`}>
-        <Image src={catalogueImage(product)} alt={product.imageAlt.trim() || product.name} fill preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 100vw, 192px" : "(max-width: 640px) 100vw, 128px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
+      <Link href={`/product/${product.slug}`} className={cn("relative block min-w-0 self-start overflow-hidden rounded-xl bg-cream", content ? "aspect-square sm:aspect-[4/3]" : "aspect-square")} aria-label={`View ${product.name}`}>
+        <Image src={catalogueImage(product)} alt={product.imageAlt.trim() || product.name} fill preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 88px, 192px" : "(max-width: 640px) 88px, 128px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
       </Link>
       <div className="min-w-0 self-center">
         <div className="flex flex-wrap items-center gap-2"><PresentationBadges product={product} /><StockBadge level={product.stock} /></div>
@@ -58,7 +58,7 @@ export function ProductListItem({
         <p className="mt-1 truncate font-mono text-[0.68rem] tracking-wide text-slate/80">SKU {product.sku}</p>
         {content ? <p className="mt-3 hidden max-w-2xl text-sm leading-6 text-slate sm:block">Reliable workplace supply with clear pricing, stock visibility, and delivery support across Accra and Tema.</p> : null}
       </div>
-      <div className="flex min-w-[10rem] flex-col justify-center gap-3 sm:items-end">
+      <div className="col-span-2 flex min-w-0 flex-col justify-center gap-3 border-t border-border/70 pt-3 sm:col-span-1 sm:min-w-[10rem] sm:items-end sm:border-t-0 sm:pt-0">
         <PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-lg font-semibold" />
         <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:min-w-[10rem] sm:grid-cols-1">
           <button type="button" aria-label="Add to Cart" disabled={out} onClick={() => onAddToCart?.(product, 1)} className={cn(paperButton({ variant: "primary" }), "min-h-10 px-3 text-xs")}><ShoppingCart className="mr-1.5 size-3.5" aria-hidden />Cart</button>
