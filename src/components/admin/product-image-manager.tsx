@@ -166,6 +166,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
       setItems((current) => current.map((entry, itemIndex) => pending.some(({ index }) => index === itemIndex) ? { ...entry, status: "saved" } : entry));
       setNotice(`${pending.length} image${pending.length === 1 ? "" : "s"} saved to the product.`);
     } catch (error) {
+      setNotice(error instanceof Error ? error.message : "Could not save these images.");
       setItems((current) => current.map((entry, itemIndex) => pending.some(({ index }) => index === itemIndex) ? { ...entry, status: "done", error: error instanceof Error ? error.message : "Could not save these images." } : entry));
     }
   }

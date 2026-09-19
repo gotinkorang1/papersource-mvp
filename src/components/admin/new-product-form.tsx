@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { ProductTaxonomyPicker } from "@/components/admin/product-taxonomy-picker";
 import { adminAreaClass, adminFieldClass } from "@/components/admin/field";
@@ -14,11 +14,17 @@ const cropRatios: { value: CropRatio; label: string }[] = [{ value: "free", labe
 export function NewProductForm({ brands, categories }: { brands: Option[]; categories: Option[] }) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<PendingImage[]>([]);
+  const imagesRef = useRef<PendingImage[]>([]);
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [cropIndex, setCropIndex] = useState<number | null>(null);
   const [cropRatio, setCropRatio] = useState<CropRatio>("free");
   const [isCropping, setIsCropping] = useState(false);
+
+  imagesRef.current = images;
+  useEffect(() => () => {
+    for (const image of imagesRef.current) URL.revokeObjectURL(image.preview);
+  }, []);
 
   function addFiles(files: FileList | null) {
     if (!files) return;
@@ -34,6 +40,7 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
     if (!pending.length) return;
     setUploading(true);
     setNotice(`Uploading 0 of ${pending.length} images…`);
+    let failed = 0;
     for (let completed = 0; completed < pending.length; completed += 1) {
       const { image, index } = pending[completed];
       setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "uploading", error: undefined } : entry));
@@ -45,12 +52,13 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
         if (!response.ok || !result.publicId) throw new Error(result.error ?? "Upload failed.");
         setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, publicId: result.publicId, status: "uploaded" } : entry));
       } catch (error) {
+        failed += 1;
         setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "error", error: error instanceof Error ? error.message : "Upload failed." } : entry));
       }
       setNotice(`Uploading ${completed + 1} of ${pending.length} images…`);
     }
     setUploading(false);
-    setNotice("Images uploaded. Review alt text, then create the product to save everything together.");
+    setNotice(failed ? `${pending.length - failed} of ${pending.length} images uploaded. Fix the failed images, then try again.` : "Images uploaded. Review alt text, then create the product to save everything together.");
   }
 
   function move(index: number, direction: "up" | "down") {
@@ -128,7 +136,7 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
         <input ref={inputRef} type="file" accept="image/jpeg,image/png,image/webp,image/avif" multiple className="sr-only" onChange={(event) => { addFiles(event.target.files); event.currentTarget.value = ""; }} />
         <div className="flex flex-wrap gap-2"><button type="button" className={paperButton({ variant: "secondary", className: "min-h-10" })} onClick={() => inputRef.current?.click()} disabled={images.length >= 4 || uploading}>Choose images</button>{images.some((image) => image.status === "ready" || image.status === "error") ? <button type="button" className={paperButton({ className: "min-h-10" })} onClick={() => void uploadAll()} disabled={uploading}>{uploading ? "Uploading…" : "Upload all images"}</button> : null}</div>
         {notice ? <p role="status" className="text-xs text-slate">{notice}</p> : null}
-        {images.map((image, index) => <div key={`${image.file.name}-${index}`} className="grid gap-3 rounded-lg border border-border bg-card p-3 sm:grid-cols-[4rem_1fr]"><Image src={image.preview} alt="" width={64} height={64} unoptimized className="size-16 rounded-md object-cover" /><div className="min-w-0"><p className="truncate text-sm font-medium text-ink">{index + 1}. {image.file.name}</p><p className="text-xs text-slate">{image.status === "uploaded" ? "Uploaded and ready" : image.status === "uploading" ? "Uploading…" : image.status === "error" ? image.error : "Not uploaded"}</p>{image.status === "uploaded" ? <><input type="hidden" name="imagePublicId" value={image.publicId} /><input type="hidden" name="imagePosition" value={index} /><label className="mt-2 grid gap-1 text-xs font-medium text-ink">Alt text<input name="imageAlt" required value={image.alt} onChange={(event) => setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, alt: event.target.value } : entry))} className={adminFieldClass} /></label></> : null}<div className="mt-2 flex flex-wrap gap-3"><button type="button" className="text-xs text-slate underline" onClick={() => { setCropIndex(index); setCropRatio("free"); }} disabled={image.status === "uploading"}>Crop</button><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => move(index, "up")} disabled={index === 0}>Move earlier</button><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => move(index, "down")} disabled={index === images.length - 1}>Move later</button><button type="button" className="text-xs text-slate underline" onClick={() => setImages((current) => current.filter((_, itemIndex) => itemIndex !== index))}>Remove</button></div></div></div>)}
+        {images.map((image, index) => <div key={`${image.file.name}-${index}`} className="grid gap-3 rounded-lg border border-border bg-card p-3 sm:grid-cols-[4rem_1fr]"><Image src={image.preview} alt="" width={64} height={64} unoptimized className="size-16 rounded-md object-cover" /><div className="min-w-0"><p className="truncate text-sm font-medium text-ink">{index + 1}. {image.file.name}</p><p className="text-xs text-slate">{image.status === "uploaded" ? "Uploaded and ready" : image.status === "uploading" ? "Uploading…" : image.status === "error" ? image.error : "Not uploaded"}</p>{image.status === "uploaded" ? <><input type="hidden" name="imagePublicId" value={image.publicId} /><input type="hidden" name="imagePosition" value={index} /><label className="mt-2 grid gap-1 text-xs font-medium text-ink">Alt text<input name="imageAlt" required value={image.alt} onChange={(event) => setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, alt: event.target.value } : entry))} className={adminFieldClass} /></label></> : null}<div className="mt-2 flex flex-wrap gap-3"><button type="button" className="text-xs text-slate underline" onClick={() => { setCropIndex(index); setCropRatio("free"); }} disabled={image.status === "uploading"}>Crop</button><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => move(index, "up")} disabled={index === 0}>Move earlier</button><button type="button" className="text-xs text-slate underline disabled:opacity-40" onClick={() => move(index, "down")} disabled={index === images.length - 1}>Move later</button><button type="button" className="text-xs text-slate underline" onClick={() => { URL.revokeObjectURL(image.preview); setImages((current) => current.filter((_, itemIndex) => itemIndex !== index)); }}>Remove</button></div></div></div>)}
       </section>
       {cropIndex !== null && images[cropIndex] ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby="new-product-crop-title"><div className="w-full max-w-lg rounded-xl border border-border bg-card p-5 shadow-xl"><div className="flex items-start justify-between gap-4"><div><h2 id="new-product-crop-title" className="font-heading text-xl text-ink">Crop image</h2><p className="mt-1 text-sm text-slate">Choose a ratio, then apply a centered crop before uploading.</p></div><button type="button" className="text-sm text-slate underline" onClick={() => setCropIndex(null)} disabled={isCropping}>Close</button></div><div className="mt-4 grid place-items-center rounded-lg bg-ink/10 p-3"><Image src={images[cropIndex].preview} alt="Preview of image being cropped" width={480} height={320} unoptimized className="max-h-64 w-full rounded-md object-contain" /></div><div className="mt-4 flex flex-wrap gap-2">{cropRatios.map((ratio) => <button key={ratio.value} type="button" onClick={() => setCropRatio(ratio.value)} className={`rounded-full border px-3 py-1.5 text-sm transition-colors ${cropRatio === ratio.value ? "border-paper-green bg-paper-green text-white" : "border-border text-ink hover:border-paper-green"}`}>{ratio.label}</button>)}</div><div className="mt-5 flex justify-end gap-2"><button type="button" className={paperButton({ variant: "secondary" })} onClick={() => setCropIndex(null)} disabled={isCropping}>Cancel</button><button type="button" className={paperButton()} onClick={() => void applyCrop()} disabled={isCropping}>{isCropping ? "Applying…" : "Apply crop"}</button></div></div></div> : null}
       <button type="submit" disabled={uploading || images.some((image) => image.status === "ready" || image.status === "uploading" || image.status === "error")} className={`${paperButton()} disabled:cursor-not-allowed disabled:opacity-60`}>{uploading ? "Uploading images…" : "Create product and save"}</button>
