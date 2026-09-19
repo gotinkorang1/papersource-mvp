@@ -18,7 +18,7 @@ import { useOptionalDualPathPreview } from "@/features/preview/dual-path-preview
 import { cn } from "@/lib/utils";
 import type { ProductCardModel } from "@/types/catalogue";
 
-function catalogueImage(product: ProductCardModel) {
+export function catalogueImage(product: ProductCardModel) {
   if (product.imageSrc) return product.imageSrc;
   const name = `${product.name} ${product.specLine}`.toLowerCase();
   if (name.includes("book") || name.includes("novel")) return "/images/stack-books-with-library-scene.jpg";
@@ -66,6 +66,10 @@ export function ProductCard({
         </Link>
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
         <div className="absolute left-3 top-3 z-10"><StockBadge level={product.stock} /></div>
+        {product.isNew || product.isTrending ? <div className="absolute left-3 bottom-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-1.5">
+          {product.isNew ? <span className="rounded-full bg-ochre px-2 py-1 text-[0.68rem] font-semibold text-ink shadow-sm">New</span> : null}
+          {product.isTrending ? <span className="rounded-full bg-paper-green px-2 py-1 text-[0.68rem] font-semibold text-white shadow-sm">Trending{product.viewCount ? ` · ${product.viewCount}` : ""}</span> : null}
+        </div> : null}
       </div>
       <div className="flex flex-1 flex-col gap-2 p-3 sm:gap-3 sm:p-5">
         <div>

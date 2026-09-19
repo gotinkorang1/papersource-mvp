@@ -1,0 +1,8 @@
+# SDD ledger — plan: docs/superpowers/plans/2026-09-19-catalogue-view-modes-trending-plan.md
+
+Pre-flight: Worktree created at C:\Users\gotin\.codex\worktrees\catalogue-view-modes-trending\Paper Source. The provided sdd-workspace helper could not run because this Windows environment has no bash; this ledger is the equivalent isolated plan workspace. Shared interfaces: Task 1 produces product view aggregation consumed by Tasks 2, 4, and 5; Task 2 produces presentation metadata consumed by Tasks 3–5; Task 3 produces view-mode renderers consumed by Tasks 4–5.
+
+Task 1: complete (tests: `pnpm exec vitest run src/features/catalogue/trending.test.ts --pool=threads --maxWorkers=1` -> 3/3; typecheck passed). Ruling: keep the analytics module importable by Vitest instead of adding a `server-only` import; its only production consumers will be server routes/queries, while this preserves pure helper coverage.
+
+Task 2: complete (tests: `pnpm exec vitest run src/features/catalogue/presentation.test.ts src/features/catalogue/trending.test.ts --pool=threads --maxWorkers=1` -> 5/5; `pnpm exec tsc --noEmit --pretty false` passed). Product cards and admin rows now receive server-owned `createdAt`/`isNew` metadata with the seven-day boundary helper.
+Task 3: complete (tests: src/components/products/catalogue-view-mode.test.tsx + product-card.test.tsx + view-tracking.test.ts + presentation.test.ts + trending.test.ts -> 15/15; tsc passed). Shared customer/admin controls support default, grid, list, and content layouts with local persistence, responsive accessible buttons, preserved actions, and New badges.

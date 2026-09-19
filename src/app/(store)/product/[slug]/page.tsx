@@ -19,6 +19,7 @@ import { visibleBulkTiers } from "@/features/catalogue/pricing";
 import { bookMetadata, productSeoDescription } from "@/features/catalogue/product-metadata";
 import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
+import { ProductViewTracker } from "@/components/products/product-view-tracker";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -79,6 +80,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
+      <ProductViewTracker productId={product.id} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

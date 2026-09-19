@@ -3,6 +3,7 @@ import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { productImageAlt } from "@/features/catalogue/product-metadata";
 import { decorateProductPresentation } from "@/features/catalogue/presentation";
+import { listTrendingProductIds } from "@/features/catalogue/trending";
 import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery, uniqueCatalogueProducts } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
@@ -356,7 +357,25 @@ export async function listProductCardsFromDb(
     );
   }
 
-  return rows.map((row) => toCardFromRow(row, ctx));
+  const cards = rows.map((row) => toCardFromRow(row, ctx));
+  let trending = new Map<string, number>();
+  try {
+    trending = await listTrendingProductIds(cards.map((card) => card.id));
+  } catch {
+    // Trend analytics are additive; a missing or temporarily unavailable events table must not break the catalogue.
+  }
+  const trendingIds = new Set(
+    [...trending.entries()]
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 3)
+      .map(([id]) => id),
+  );
+  return cards.map((card) => ({
+    ...card,
+    viewCount: trending.get(card.id),
+    isTrending: trendingIds.has(card.id),
+  }));
 }
 
 export async function getProductBySlugFromDb(

@@ -89,4 +89,11 @@ describe("ProductCard", () => {
     expect(within(cart).getByText("Add to Cart")).toBeInTheDocument();
     expect(within(quote).getByText("Add to Quote")).toBeInTheDocument();
   });
+
+  it("shows freshness and trending badges when the catalogue marks them", () => {
+    render(<ProductCard product={{ ...product, isNew: true, isTrending: true, viewCount: 12 }} />);
+
+    expect(screen.getByText("New")).toBeInTheDocument();
+    expect(screen.getByText("Trending · 12")).toBeInTheDocument();
+  });
 });

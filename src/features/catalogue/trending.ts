@@ -1,4 +1,4 @@
-import { and, count, eq, gte, inArray } from "drizzle-orm";
+import { and, count, gte, inArray } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import { productViewEvents } from "@/lib/db/schema";
 
