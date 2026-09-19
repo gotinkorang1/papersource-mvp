@@ -58,6 +58,16 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   }, [navOpen]);
 
   useEffect(() => {
+    const desktop = window.matchMedia("(min-width: 768px)");
+    const closeOnDesktop = () => {
+      if (desktop.matches) setNavOpen(false);
+    };
+    closeOnDesktop();
+    desktop.addEventListener("change", closeOnDesktop);
+    return () => desktop.removeEventListener("change", closeOnDesktop);
+  }, []);
+
+  useEffect(() => {
     if (!accountOpen) return;
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setAccountOpen(false);
