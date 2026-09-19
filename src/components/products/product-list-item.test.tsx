@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { fireEvent, render, screen } from "@testing-library/react";
 import { ProductListItem } from "@/components/products/product-list-item";
 import { sampleProducts } from "@/lib/design-system/fixtures";
 
@@ -32,5 +32,14 @@ describe("ProductListItem", () => {
     render(<ProductListItem product={{ ...sampleProducts[0], stock: "out" }} variant="content" />);
 
     expect(screen.getByText(/Currently out of stock/)).toBeInTheDocument();
+  });
+
+  it("falls back to a local image when a remote thumbnail fails", () => {
+    render(<ProductListItem product={{ ...sampleProducts[0], imageSrc: "https://cdn.example.invalid/product.jpg" }} />);
+
+    const image = screen.getByRole("img", { name: /Double A Premium A4 paper/ });
+    fireEvent.error(image);
+
+    expect(image).toHaveAttribute("src", expect.stringContaining("set-school-stationery.jpg"));
   });
 });

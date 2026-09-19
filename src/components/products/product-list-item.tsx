@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Eye, ShoppingCart } from "lucide-react";
+import { useEffect, useState } from "react";
 import { catalogueImage } from "@/components/products/product-card";
 import { paperButton } from "@/components/commerce/paper-button";
 import { PriceDisplay } from "@/components/commerce/price-display";
@@ -37,6 +38,16 @@ export function ProductListItem({
 }) {
   const out = product.stock === "out";
   const content = variant === "content";
+  const imageSource = catalogueImage(product);
+  const [resolvedImageSource, setResolvedImageSource] = useState(imageSource);
+
+  useEffect(() => {
+    // List items can be reused for a different record during client navigation.
+    // Reset the fallback when the server-provided image changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setResolvedImageSource(imageSource);
+  }, [imageSource]);
+
   return (
     <article
       data-catalogue-item={variant}
@@ -46,7 +57,7 @@ export function ProductListItem({
       )}
     >
       <Link href={`/product/${product.slug}`} className={cn("relative block min-w-0 self-start overflow-hidden rounded-xl bg-cream", content ? "aspect-[4/3]" : "aspect-square")} aria-label={`View ${product.name}`}>
-        <Image src={catalogueImage(product)} alt={product.imageAlt.trim() || product.name} fill preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 104px, 192px" : "(max-width: 640px) 88px, 128px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
+        <Image src={resolvedImageSource} alt={product.imageAlt.trim() || product.name} fill preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 104px, 192px" : "(max-width: 640px) 88px, 128px"} onError={() => { if (resolvedImageSource !== "/images/set-school-stationery.jpg") setResolvedImageSource("/images/set-school-stationery.jpg"); }} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
       </Link>
       <div className="min-w-0 self-center">
         <div className="flex flex-wrap items-center gap-2"><PresentationBadges product={product} /><StockBadge level={product.stock} /></div>
