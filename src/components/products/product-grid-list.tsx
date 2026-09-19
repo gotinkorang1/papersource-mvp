@@ -30,18 +30,24 @@ export function ProductGridList({
 
   useEffect(() => {
     if (controlledViewMode) {
+      // URL-controlled presentation can change after navigation without a remount.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setSelectedViewMode(controlledViewMode);
       return;
     }
     const saved = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
     if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") {
+      // Client preference is read after hydration to avoid accessing window on the server.
       setSelectedViewMode(saved);
       return;
     }
     // List mode is easier to scan and interact with on narrow screens. Only
     // apply it when there is no saved preference, so an explicit user choice
     // always wins on subsequent visits.
-    if (window.matchMedia?.("(max-width: 639px)").matches) setSelectedViewMode("list");
+    if (window.matchMedia?.("(max-width: 639px)").matches) {
+      // Mobile default is deliberately selected after hydration.
+      setSelectedViewMode("list");
+    }
   }, [controlledViewMode]);
 
   const setViewMode = (next: CatalogueViewMode) => {

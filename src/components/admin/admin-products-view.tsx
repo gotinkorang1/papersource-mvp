@@ -28,10 +28,15 @@ export function AdminProductsView({ rows, canWrite }: { rows: AdminProductListRo
   useEffect(() => {
     const saved = window.localStorage.getItem(STORAGE_KEY);
     if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") {
+      // Client preference is read after hydration to avoid accessing window on the server.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setViewMode(saved);
       return;
     }
-    if (window.matchMedia?.("(max-width: 639px)").matches) setViewMode("list");
+    if (window.matchMedia?.("(max-width: 639px)").matches) {
+      // Mobile default is deliberately selected after hydration.
+      setViewMode("list");
+    }
   }, []);
   const changeMode = (next: CatalogueViewMode) => {
     setViewMode(next);
