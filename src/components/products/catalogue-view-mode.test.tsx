@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 vi.mock("@/features/preview/dual-path-preview", () => ({
   useDualPathPreview: () => ({ addToCart: vi.fn(), addToQuote: vi.fn() }),
@@ -10,6 +10,11 @@ import { ProductGridList } from "./product-grid-list";
 import { sampleProducts } from "@/lib/design-system/fixtures";
 
 describe("CatalogueViewModeControl", () => {
+  afterEach(() => {
+    window.localStorage.clear();
+    vi.unstubAllGlobals();
+  });
+
   it("exposes four labeled modes and marks the active mode", () => {
     render(<CatalogueViewModeControl value="list" onChange={() => undefined} />);
 
@@ -54,6 +59,13 @@ describe("CatalogueViewModeControl", () => {
 
     await waitFor(() => expect(container.querySelector('[data-catalogue-view="content"]')).toBeInTheDocument());
     expect(screen.getByRole("button", { name: "Content" })).toHaveAttribute("aria-pressed", "true");
-    window.localStorage.removeItem("papersource.catalogue.view-mode");
+  });
+
+  it("defaults to list mode on mobile when no preference is saved", async () => {
+    vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: true }) as MediaQueryList));
+    const { container } = render(<ProductGridList products={[sampleProducts[0]]} />);
+
+    await waitFor(() => expect(container.querySelector('[data-catalogue-view="list"]')).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
   });
 });
