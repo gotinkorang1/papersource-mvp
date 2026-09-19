@@ -27,14 +27,19 @@ const fallbackColumns: ShopMenuColumn[] = [
 
 export function buildShopMenuColumns(categories: CategorySummary[]): ShopMenuColumn[] {
   const uniqueCategories = categories.filter(
-    (category, index, all) => all.findIndex((entry) => entry.slug === category.slug) === index,
+    (category, index, all) => {
+      const slug = category.slug.trim();
+      const name = category.name.trim();
+      return Boolean(name && /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(slug))
+        && all.findIndex((entry) => entry.slug.trim().toLowerCase() === slug.toLowerCase()) === index;
+    },
   );
 
   if (uniqueCategories.length === 0) return fallbackColumns;
 
   const links = uniqueCategories.map(({ name, slug }) => ({
-    label: name,
-    href: `/shop/${slug}`,
+    label: name.trim(),
+    href: `/shop/${slug.trim()}`,
   }));
   const columnSize = Math.ceil(links.length / 3);
   const titles = ["Shop by category", "More categories", "More essentials"];

@@ -18,4 +18,15 @@ describe("shop menu catalogue model", () => {
     const links = buildShopMenuColumns([]).flatMap((column) => column.links);
     expect(links).toContainEqual({ label: "Workplace", href: "/shop/workplace" });
   });
+
+  it("skips malformed live category links", () => {
+    const links = buildShopMenuColumns([
+      { name: "", slug: "" },
+      { name: "Broken", slug: "not a route" },
+      { name: " Paper ", slug: "paper" },
+      { name: "Paper duplicate", slug: "PAPER" },
+    ]).flatMap((column) => column.links);
+
+    expect(links).toEqual([{ label: "Paper", href: "/shop/paper" }]);
+  });
 });
