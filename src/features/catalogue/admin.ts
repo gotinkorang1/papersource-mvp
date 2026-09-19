@@ -861,11 +861,16 @@ export async function moveProductImage(input: { role: StaffRole; imageId: string
   const target = images[targetIndex];
   if (!target) return current;
 
+  const reordered = [...images];
+  [reordered[index], reordered[targetIndex]] = [reordered[targetIndex], reordered[index]];
   await db.transaction(async (tx) => {
-    await tx.update(productImages).set({ position: target.position }).where(eq(productImages.id, current.id));
-    await tx.update(productImages).set({ position: current.position }).where(eq(productImages.id, target.id));
+    // Rewrite the complete sequence so legacy gaps or duplicate positions are
+    // repaired whenever staff reorders an image.
+    for (const [position, image] of reordered.entries()) {
+      await tx.update(productImages).set({ position }).where(eq(productImages.id, image.id));
+    }
   });
-  return { ...current, position: target.position };
+  return { ...current, position: targetIndex };
 }
 
 export async function addProductAlias(input: {
