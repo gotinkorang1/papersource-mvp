@@ -26,12 +26,14 @@ export function ProductListItem({
   onAddToCart,
   onAddToQuote,
   canEdit = false,
+  priority = false,
 }: {
   product: ProductCardModel;
   variant?: "list" | "content";
   onAddToCart?: (product: ProductCardModel, quantity: number) => void;
   onAddToQuote?: (product: ProductCardModel, quantity: number) => void;
   canEdit?: boolean;
+  priority?: boolean;
 }) {
   const out = product.stock === "out";
   const content = variant === "content";
@@ -44,7 +46,7 @@ export function ProductListItem({
       )}
     >
       <Link href={`/product/${product.slug}`} className={cn("relative block overflow-hidden rounded-xl bg-cream", content ? "aspect-[4/3]" : "aspect-square")} aria-label={`View ${product.name}`}>
-        <Image src={catalogueImage(product)} alt={product.imageAlt.trim() || product.name} fill sizes={content ? "(max-width: 640px) 100vw, 192px" : "(max-width: 640px) 100vw, 128px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
+        <Image src={catalogueImage(product)} alt={product.imageAlt.trim() || product.name} fill preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 100vw, 192px" : "(max-width: 640px) 100vw, 128px"} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
       </Link>
       <div className="min-w-0 self-center">
         <div className="flex flex-wrap items-center gap-2"><PresentationBadges product={product} /><StockBadge level={product.stock} /></div>

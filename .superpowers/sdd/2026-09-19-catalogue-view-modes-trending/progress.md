@@ -12,3 +12,4 @@ Follow-up hardening: extracted and tested product-view payload validation (8 foc
 Follow-up admin regression coverage: admin presentation tests now cover default table select-all/bulk state, Grid edit links, and read-only write-control suppression (3/3 passed).
 Follow-up Playwright coverage: new e2e/catalogue-view-modes.spec.ts passed on Chromium desktop (2/2) and mobile-chromium project (project selection configured; local run selected Chromium only due shared test invocation).
 Playwright mobile filter fix: updated mobile project testMatch to include catalogue-*.spec.ts; rerun passed 4/4 across Chromium desktop and mobile-chromium.
+Performance polish: List/Content first product image now receives eager/high loading priority. TypeScript passed; focused component tests 8/8 passed; catalogue-view Playwright desktop/mobile 4/4 passed.

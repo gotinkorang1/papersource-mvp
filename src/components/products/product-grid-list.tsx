@@ -62,7 +62,7 @@ export function ProductGridList({
       {showViewModeControl ? <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-slate" aria-live="polite">{products.length} {products.length === 1 ? "product" : "products"}</p><CatalogueViewModeControl value={viewMode} onChange={setViewMode} compact /></div> : null}
       {viewMode === "list" || viewMode === "content" ? (
         <div data-catalogue-view={viewMode} className="grid gap-3">
-          {products.map((product) => <ProductListItem key={product.id} product={product} variant={viewMode} onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} />)}
+          {products.map((product, index) => <ProductListItem key={product.id} product={product} variant={viewMode} onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} priority={index === 0} />)}
         </div>
       ) : (
         <ProductGrid className={viewMode === "grid" ? "sm:grid-cols-3 xl:grid-cols-5" : undefined}>
