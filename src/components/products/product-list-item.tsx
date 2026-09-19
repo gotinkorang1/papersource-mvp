@@ -56,10 +56,11 @@ export function ProductListItem({
         </div>
         {product.specLine ? <p className={cn("mt-1 text-sm text-slate", content ? "line-clamp-3" : "line-clamp-2")}>{product.specLine}</p> : null}
         <p className="mt-1 truncate font-mono text-[0.68rem] tracking-wide text-slate/80">SKU {product.sku}</p>
+        <div className="mt-2 sm:hidden"><PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-base font-semibold" /></div>
         {content ? <p className="mt-3 hidden max-w-2xl text-sm leading-6 text-slate sm:block">Reliable workplace supply with clear pricing, stock visibility, and delivery support across Accra and Tema.</p> : null}
       </div>
       <div className="col-span-2 flex min-w-0 flex-col justify-center gap-3 border-t border-border/70 pt-3 sm:col-span-1 sm:min-w-[10rem] sm:items-end sm:border-t-0 sm:pt-0">
-        <PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-lg font-semibold" />
+        <div className="hidden sm:block"><PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-lg font-semibold" /></div>
         <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:min-w-[10rem] sm:grid-cols-1">
           <button type="button" aria-label="Add to Cart" disabled={out} onClick={() => onAddToCart?.(product, 1)} className={cn(paperButton({ variant: "primary" }), "min-h-10 px-3 text-xs")}><ShoppingCart className="mr-1.5 size-3.5" aria-hidden />Cart</button>
           <QuoteButton aria-label="Add to Quote" onClick={() => onAddToQuote?.(product, 1)} className="min-h-10 px-3 text-xs"><Eye className="mr-1.5 size-3.5" aria-hidden />Quote</QuoteButton>
