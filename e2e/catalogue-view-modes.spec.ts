@@ -1,6 +1,12 @@
 import { expect, test } from "@playwright/test";
 
 test.describe("catalogue presentation modes", () => {
+  test("defaults to list mode on mobile when no preference is saved", async ({ page }) => {
+    test.skip(test.info().project.name !== "mobile-chromium", "Mobile default is covered in the mobile lane.");
+    await page.goto("/shop", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("group", { name: "Catalogue display" }).getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
+  });
+
   test("switches between accessible customer views without navigation", async ({ page }) => {
     await page.goto("/shop", { waitUntil: "domcontentloaded" });
     const display = page.getByRole("group", { name: "Catalogue display" });

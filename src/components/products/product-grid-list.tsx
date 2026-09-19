@@ -33,7 +33,14 @@ export function ProductGridList({
       return;
     }
     const saved = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
-    if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") setSelectedViewMode(saved);
+    if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") {
+      setSelectedViewMode(saved);
+      return;
+    }
+    // List mode is easier to scan and interact with on narrow screens. Only
+    // apply it when there is no saved preference, so an explicit user choice
+    // always wins on subsequent visits.
+    if (window.matchMedia?.("(max-width: 639px)").matches) setSelectedViewMode("list");
   }, [controlledViewMode]);
 
   const setViewMode = (next: CatalogueViewMode) => {
