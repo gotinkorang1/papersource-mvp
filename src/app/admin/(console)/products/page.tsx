@@ -2,9 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listAdminProducts } from "@/features/catalogue/admin";
 import { paperButton } from "@/components/commerce/paper-button";
-import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
-import { AdminStatusBadge } from "@/components/admin/status-badge";
-import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { AdminProductsView } from "@/components/admin/admin-products-view";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -47,42 +45,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
       <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} of {result.total} {result.total === 1 ? "product" : "products"}{filters.q || filters.status ? " matching your filters" : ""}.</p>
       {rows.length === 0 ? (
         <div className="mt-8 rounded-xl border border-dashed border-border bg-card p-6 text-sm text-slate"><p>{filters.q || filters.status ? "No products match these filters." : "No products yet."}</p>{filters.q || filters.status || filters.sort ? <Link href="/admin/products" className="mt-2 inline-flex text-ink underline underline-offset-4">Clear filters</Link> : null}</div>
-      ) : (
-        <form action="/admin/products/mutate" method="post" className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
-          {canWrite ? <div className="flex flex-wrap items-center gap-3 border-b border-border bg-muted/30 p-3"><input type="hidden" name="intent" value="bulk-update-products" /><label className="sr-only" htmlFor="bulk-status">Bulk action</label><select id="bulk-status" name="status" defaultValue="draft" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="active">Set active</option><option value="draft">Set draft</option><option value="archived">Archive</option></select><SubmitProgressButton idleLabel="Apply to selected" pendingLabel="Updating products…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /><span className="text-xs text-slate" aria-live="polite">Select products below to update them together.</span></div> : null}
-          <table className="admin-responsive-table w-full min-w-[52rem] text-sm">
-            <caption className="sr-only">Catalogue products</caption>
-            <thead className="sticky top-0 z-10 bg-card">
-              <tr className="border-b border-border text-left text-slate">
-                {canWrite ? <th className="w-12 px-4 py-3"><SelectAllCheckbox count={rows.length} /></th> : null}
-                <th className="px-4 py-3 font-medium">Name</th>
-                <th className="px-4 py-3 font-medium">Brand</th>
-                <th className="px-4 py-3 font-medium">Category</th>
-                <th className="px-4 py-3 font-medium">Type</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Images</th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((row) => (
-                <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0">
-                  {canWrite ? <td className="px-4 py-3" data-label="Select"><input type="checkbox" name="productId" value={row.id} aria-label={`Select ${row.name}`} className="size-4 rounded border-border accent-primary" /></td> : null}
-                  <td className="px-4 py-3" data-label="Name">
-                    <Link href={`/admin/products/${row.id}`} className="underline">
-                      {row.name}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-3" data-label="Brand">{row.brandName}</td>
-                  <td className="px-4 py-3" data-label="Category">{row.categoryName}</td>
-                  <td className="px-4 py-3" data-label="Type">{row.productType}</td>
-                  <td className="px-4 py-3" data-label="Status"><AdminStatusBadge status={row.status} /></td>
-                  <td className="px-4 py-3" data-label="Images"><Link href={`/admin/products/${row.id}#images`} className="font-medium text-ink underline underline-offset-4">Manage images</Link></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </form>
-      )}
+      ) : <AdminProductsView rows={rows} canWrite={canWrite} />}
       {result.totalPages > 1 ? <nav className="mt-6 flex flex-wrap items-center justify-between gap-3" aria-label="Product pages"><p className="text-sm text-slate">Page {result.page} of {result.totalPages}</p><div className="flex gap-2">{result.page > 1 ? <Link href={{ pathname: "/admin/products", query: { q: filters.q, status: filters.status, sort: filters.sort, page: String(result.page - 1) } }} className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-ink hover:bg-muted">Previous</Link> : null}{result.page < result.totalPages ? <Link href={{ pathname: "/admin/products", query: { q: filters.q, status: filters.status, sort: filters.sort, page: String(result.page + 1) } }} className="rounded-lg border border-border px-3 py-2 text-sm font-medium text-ink hover:bg-muted">Next</Link> : null}</div></nav> : null}
     </main>
   );

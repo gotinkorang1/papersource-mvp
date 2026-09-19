@@ -9,10 +9,11 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { breadcrumbJsonLd } from "@/features/catalogue";
+import type { CatalogueViewMode } from "@/components/products/catalogue-view-mode";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; view?: string }>;
 };
 
 export async function generateMetadata({
@@ -39,7 +40,7 @@ export async function generateMetadata({
 
 export default async function BrandPage({ params, searchParams }: PageProps) {
   const { slug } = await params;
-  const { page: pageParam } = await searchParams;
+  const { page: pageParam, view } = await searchParams;
   const brand = await getBrandBySlug(slug);
 
   if (!brand) {
@@ -55,6 +56,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
   const visibleProducts = products.slice((page - 1) * pageSize, page * pageSize);
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "brands", "write") : false;
+  const viewMode = ["default", "grid", "list", "content"].includes(view ?? "") ? view as CatalogueViewMode : undefined;
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
@@ -66,8 +68,8 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
         Explore {brand.name} products in the PaperSource catalogue, including {coveredCategories.length ? coveredCategories.join(", ") : "workplace essentials"}. {products.length} active {products.length === 1 ? "product is" : "products are"} currently available for Accra and Tema delivery.
       </p>
       <div className="mt-10">
-        <ProductGridList products={visibleProducts} canEdit={canEdit} />
-        <CataloguePagination basePath={`/brands/${brand.slug}`} page={page} totalPages={totalPages} totalItems={products.length} query={{}} />
+        <ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} />
+        <CataloguePagination basePath={`/brands/${brand.slug}`} page={page} totalPages={totalPages} totalItems={products.length} query={viewMode ? { view: viewMode } : {}} />
       </div>
     </main>
   );

@@ -20,6 +20,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { destroyCloudinaryImage } from "@/lib/cloudinary/server";
 import { parseOpeningInventory } from "@/features/inventory/admin";
 import { isProductNew } from "@/features/catalogue/presentation";
+import { listTrendingProductIds } from "@/features/catalogue/trending";
 import { ADMIN_PRODUCT_PAGE_SIZE, resolveAdminProductPage } from "./admin-pagination";
 
 export class CatalogueAdminError extends Error {
@@ -83,12 +84,23 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     .orderBy(order)
     .limit(ADMIN_PRODUCT_PAGE_SIZE)
     .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE);
+  const imageRows = rows.length ? await db.select({ productId: productImages.productId }).from(productImages).where(inArray(productImages.productId, rows.map((row) => row.id))) : [];
+  let trending = new Map<string, number>();
+  try {
+    trending = await listTrendingProductIds(rows.map((row) => row.id));
+  } catch {
+    // Trend analytics remain optional for admin browsing.
+  }
+  const trendingIds = new Set([...trending.entries()].filter(([, opens]) => opens > 0).sort((a, b) => b[1] - a[1]).slice(0, 3).map(([id]) => id));
   return {
     rows: rows.map((row) => ({
     ...row,
     brandName: row.brandName ?? "Unknown brand",
     categoryName: row.categoryName ?? "Uncategorized",
     isNew: isProductNew(row.createdAt),
+    imageCount: imageRows.filter((image) => image.productId === row.id).length,
+    viewCount: trending.get(row.id),
+    isTrending: trendingIds.has(row.id),
     })),
     total,
     page,

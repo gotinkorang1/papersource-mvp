@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
 vi.mock("@/features/preview/dual-path-preview", () => ({
@@ -39,5 +39,14 @@ describe("CatalogueViewModeControl", () => {
 
     rerender(<ProductGridList products={[sampleProducts[0]]} viewMode="content" />);
     expect(container.querySelector('[data-catalogue-view="content"]')).toBeInTheDocument();
+  });
+
+  it("restores the device preference when no URL mode is supplied", async () => {
+    window.localStorage.setItem("papersource.catalogue.view-mode", "content");
+    const { container } = render(<ProductGridList products={[sampleProducts[0]]} />);
+
+    await waitFor(() => expect(container.querySelector('[data-catalogue-view="content"]')).toBeInTheDocument());
+    expect(screen.getByRole("button", { name: "Content" })).toHaveAttribute("aria-pressed", "true");
+    window.localStorage.removeItem("papersource.catalogue.view-mode");
   });
 });

@@ -9,8 +9,9 @@ import { breadcrumbJsonLd } from "@/features/catalogue";
 import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
+import type { CatalogueViewMode } from "@/components/products/catalogue-view-mode";
 
-type ShopSearchParams = { q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string };
+type ShopSearchParams = { q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string; view?: string };
 type PageProps = { searchParams: Promise<ShopSearchParams> };
 
 export async function generateMetadata({ searchParams }: PageProps): Promise<Metadata> {
@@ -34,6 +35,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
   const sort = ["featured", "name-asc", "price-asc", "price-desc"].includes(params.sort ?? "") ? params.sort! : "featured";
   const availability = ["in_stock", "low", "out"].includes(params.availability ?? "") ? params.availability! : "";
   const zone = ["accra", "tema", "nationwide"].includes(params.zone ?? "") ? params.zone! : "";
+  const viewMode = ["default", "grid", "list", "content"].includes(params.view ?? "") ? params.view as CatalogueViewMode : undefined;
   const page = Math.max(1, Number.parseInt(params.page ?? "1", 10) || 1);
   const [products, categories, brands] = await Promise.all([
     listProductCards({ query, categorySlug: category, brandSlug: brand }),
@@ -68,8 +70,8 @@ export default async function ShopPage({ searchParams }: PageProps) {
         <CatalogueToolbar count={filteredProducts.length} query={query} category={category} brand={brand} sort={sort} availability={availability} categories={categories} brands={brands} />
       </div>
       <div className="mt-8">
-        <ProductGridList products={visibleProducts} canEdit={canEdit} />
-        <CataloguePagination page={currentPage} totalPages={totalPages} totalItems={filteredProducts.length} pageSize={pageSize} query={{ q: query, category, brand, sort, availability, zone }} />
+        <ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} />
+        <CataloguePagination page={currentPage} totalPages={totalPages} totalItems={filteredProducts.length} pageSize={pageSize} query={{ q: query, category, brand, sort, availability, zone, ...(viewMode ? { view: viewMode } : {}) }} />
       </div>
     </main>
   );

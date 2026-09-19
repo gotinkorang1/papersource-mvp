@@ -3,8 +3,9 @@
 import { useEffect } from "react";
 import { ensureViewFingerprint } from "@/features/catalogue/view-tracking";
 
-export function ProductViewTracker({ productId }: { productId: string }) {
+export function ProductViewTracker({ productId, enabled = true }: { productId: string; enabled?: boolean }) {
   useEffect(() => {
+    if (!enabled) return;
     let fingerprint: string;
     try {
       fingerprint = ensureViewFingerprint(window.localStorage);
@@ -12,13 +13,13 @@ export function ProductViewTracker({ productId }: { productId: string }) {
       return;
     }
 
-    void fetch("/api/catalogue/product-view", {
+    void fetch("/api/catalogue/view", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ productId, fingerprint }),
       keepalive: true,
     }).catch(() => undefined);
-  }, [productId]);
+  }, [enabled, productId]);
 
   return null;
 }

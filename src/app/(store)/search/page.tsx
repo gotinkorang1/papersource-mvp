@@ -11,15 +11,17 @@ import { RecentSearches } from "@/components/products/recent-searches";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { pageMetadata } from "@/lib/seo";
+import type { CatalogueViewMode } from "@/components/products/catalogue-view-mode";
 
 export const metadata: Metadata = { ...pageMetadata({ title: "Search office supplies and stationery", description: "Search PaperSource Ghana for paper, pens, toner, printing materials and workplace essentials.", path: "/search" }), robots: { index: false, follow: true } };
 
 type PageProps = {
-  searchParams: Promise<{ q?: string; page?: string }>;
+  searchParams: Promise<{ q?: string; page?: string; view?: string }>;
 };
 
 export default async function SearchPage({ searchParams }: PageProps) {
-  const { q = "", page: pageParam } = await searchParams;
+  const { q = "", page: pageParam, view } = await searchParams;
+  const viewMode = ["default", "grid", "list", "content"].includes(view ?? "") ? view as CatalogueViewMode : undefined;
   const [products, categories] = await Promise.all([q ? listProductCards({ query: q }) : Promise.resolve([]), listDivisionCategories()]);
   const pageSize = 24;
   const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
@@ -58,7 +60,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
             {products.length ? <p className="text-sm text-slate">{products.length} {products.length === 1 ? "product" : "products"}</p> : null}
           </div>
           <div className="mt-6">
-            {products.length ? <><ProductGridList products={visibleProducts} canEdit={canEdit} /><CataloguePagination basePath="/search" page={page} totalPages={totalPages} totalItems={products.length} query={{ q }} /></> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
+            {products.length ? <><ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} /><CataloguePagination basePath="/search" page={page} totalPages={totalPages} totalItems={products.length} query={viewMode ? { q, view: viewMode } : { q }} /></> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} viewMode={viewMode} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
           </div>
         </div>
       ) : null}
