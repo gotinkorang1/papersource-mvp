@@ -73,6 +73,15 @@ describe("ProductCard", () => {
     expect(container.querySelectorAll(".hidden.sm\\:inline")[1]).toHaveTextContent("Add to Quote");
   });
 
+  it("requests full-width imagery when the narrow mobile grid collapses to one column", () => {
+    render(<ProductCard product={product} />);
+
+    expect(screen.getByRole("img", { name: /Double A Premium A4 paper/ })).toHaveAttribute(
+      "sizes",
+      "(max-width: 389px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw",
+    );
+  });
+
   it("uses the same responsive dual-path labels in quick view", async () => {
     const user = userEvent.setup();
     render(<ProductCard product={product} />);

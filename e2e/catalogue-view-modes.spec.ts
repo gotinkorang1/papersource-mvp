@@ -28,4 +28,14 @@ test.describe("catalogue presentation modes", () => {
     await expect(display.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
     await expect(page).toHaveURL(/\/shop\?view=list/);
   });
+
+  test("keeps content context and mode-specific mobile image sizing", async ({ page }) => {
+    test.skip(test.info().project.name !== "mobile-chromium", "Mobile media sizing is covered in the mobile lane.");
+    await page.goto("/shop?view=content", { waitUntil: "domcontentloaded" });
+
+    const item = page.locator('[data-catalogue-item="content"]').first();
+    await expect(item).toBeVisible();
+    await expect(item.getByText(/Available with clear pricing, stock visibility, and delivery support across Accra and Tema\./)).toBeVisible();
+    await expect(item.locator("img")).toHaveAttribute("sizes", "(max-width: 640px) 104px, 192px");
+  });
 });
