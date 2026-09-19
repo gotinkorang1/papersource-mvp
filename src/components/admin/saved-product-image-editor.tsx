@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import NextImage from "next/image";
 import { useRouter } from "next/navigation";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -52,6 +52,24 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
   const [ratio, setRatio] = useState<CropRatio>("free");
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
+  const triggerRef = useRef<HTMLButtonElement>(null);
+  const busyRef = useRef(false);
+  useEffect(() => {
+    busyRef.current = busy;
+  }, [busy]);
+
+  useEffect(() => {
+    if (!open) return;
+    const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape" && !busyRef.current) setOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => {
+      window.removeEventListener("keydown", onKeyDown);
+      if (previousFocus instanceof HTMLElement) previousFocus.focus();
+    };
+  }, [open]);
 
   async function saveCrop() {
     setBusy(true);
@@ -81,7 +99,7 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
 
   return (
     <>
-      <button type="button" className="text-xs text-slate underline" onClick={() => { setNotice(null); setOpen(true); }}>Crop</button>
+      <button ref={triggerRef} type="button" className="text-xs text-slate underline" onClick={() => { setNotice(null); setOpen(true); }}>Crop</button>
       {open ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby={`saved-crop-${imageId}`}>
         <div className="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-xl">
           <div className="flex items-start justify-between gap-4"><div><h3 id={`saved-crop-${imageId}`} className="font-heading text-xl text-ink">Crop saved image</h3><p className="mt-1 text-sm text-slate">The cropped replacement keeps this image’s position and alt text.</p></div><button type="button" className="text-sm text-slate underline" onClick={() => setOpen(false)} disabled={busy}>Close</button></div>
