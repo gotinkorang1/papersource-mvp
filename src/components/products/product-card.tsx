@@ -55,6 +55,9 @@ export function ProductCard({
   const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
 
   useEffect(() => {
+    // Product cards can be reused for a different record without remounting;
+    // reset the resolved source when the server-provided image changes.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setResolvedImageSource(imageSource);
   }, [imageSource]);
 
