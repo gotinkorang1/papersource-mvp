@@ -29,4 +29,14 @@ describe("shop menu catalogue model", () => {
 
     expect(links).toEqual([{ label: "Paper", href: "/shop/paper" }]);
   });
+
+  it("ignores runtime records with missing text fields", () => {
+    const links = buildShopMenuColumns([
+      { name: null, slug: "paper" },
+      { name: "Writing", slug: null },
+      { name: "Desk", slug: "desk" },
+    ] as unknown as { name: string; slug: string }[]).flatMap((column) => column.links);
+
+    expect(links).toEqual([{ label: "Desk", href: "/shop/desk" }]);
+  });
 });

@@ -28,16 +28,19 @@ const fallbackColumns: ShopMenuColumn[] = [
 export function normalizeShopCategoryLinks(categories: readonly CategorySummary[]): ShopMenuLink[] {
   const uniqueCategories = categories.filter(
     (category, index, all) => {
-      const slug = category.slug.trim();
-      const name = category.name.trim();
+      const slug = typeof category?.slug === "string" ? category.slug.trim() : "";
+      const name = typeof category?.name === "string" ? category.name.trim() : "";
       return Boolean(name && /^[a-z0-9]+(?:-[a-z0-9]+)*$/i.test(slug))
-        && all.findIndex((entry) => entry.slug.trim().toLowerCase() === slug.toLowerCase()) === index;
+        && all.findIndex((entry) => {
+          const entrySlug = typeof entry?.slug === "string" ? entry.slug.trim().toLowerCase() : "";
+          return entrySlug === slug.toLowerCase();
+        }) === index;
     },
   );
 
-  return uniqueCategories.map(({ name, slug }) => ({
-    label: name.trim(),
-    href: `/shop/${slug.trim()}`,
+  return uniqueCategories.map((category) => ({
+    label: category.name.trim(),
+    href: `/shop/${category.slug.trim()}`,
   }));
 }
 
