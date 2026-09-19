@@ -40,13 +40,29 @@ test.describe("catalogue presentation modes", () => {
   });
 
   test("opens the compact filter toolbar as a dismissible full-screen sheet", async ({ page }) => {
-    await page.goto("/shop", { waitUntil: "domcontentloaded" });
-    await expect(page.getByRole("textbox", { name: "Search catalogue" })).toBeVisible();
+    await page.goto("/shop", { waitUntil: "commit", timeout: 30000 });
+    await expect(page.getByRole("searchbox", { name: "Search catalogue" })).toBeVisible({ timeout: 15000 });
     await page.getByRole("button", { name: "Filters and sort" }).click();
     const sheet = page.getByRole("dialog", { name: "Filters and sorting" });
     await expect(sheet).toBeVisible();
     await expect(sheet.getByRole("combobox", { name: "Sort catalogue" })).toBeVisible();
     await page.keyboard.press("Escape");
     await expect(sheet).toBeHidden();
+  });
+
+  test("removes one active filter without losing the selected view", async ({ page }) => {
+    await page.goto("/shop?q=paper&category=paper&view=content", { waitUntil: "commit", timeout: 30000 });
+    const removeSearch = page.getByRole("link", { name: "Remove search filter" });
+    await expect(removeSearch).toBeVisible({ timeout: 15000 });
+    await removeSearch.click();
+    await expect(page).toHaveURL(/\/shop\?category=paper&view=content$/);
+  });
+
+  test("clears all filters while retaining the selected presentation mode", async ({ page }) => {
+    await page.goto("/shop?q=paper&category=paper&view=content", { waitUntil: "commit", timeout: 30000 });
+    const clearFilters = page.getByRole("link", { name: "Clear filters" });
+    await expect(clearFilters).toBeVisible({ timeout: 15000 });
+    await clearFilters.click();
+    await expect(page).toHaveURL(/\/shop\?view=content$/);
   });
 });
