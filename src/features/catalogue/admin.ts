@@ -19,6 +19,7 @@ import type { StaffRole } from "@/lib/staff/types";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { destroyCloudinaryImage } from "@/lib/cloudinary/server";
 import { parseOpeningInventory } from "@/features/inventory/admin";
+import { isProductNew } from "@/features/catalogue/presentation";
 import { ADMIN_PRODUCT_PAGE_SIZE, resolveAdminProductPage } from "./admin-pagination";
 
 export class CatalogueAdminError extends Error {
@@ -72,6 +73,7 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
       productType: products.productType,
       brandName: brands.name,
       categoryName: categories.name,
+      createdAt: products.createdAt,
       updatedAt: products.updatedAt,
     })
     .from(products)
@@ -86,6 +88,7 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     ...row,
     brandName: row.brandName ?? "Unknown brand",
     categoryName: row.categoryName ?? "Uncategorized",
+    isNew: isProductNew(row.createdAt),
     })),
     total,
     page,

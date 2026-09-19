@@ -2,6 +2,7 @@ import { and, eq, inArray, isNull } from "drizzle-orm";
 import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { productImageAlt } from "@/features/catalogue/product-metadata";
+import { decorateProductPresentation } from "@/features/catalogue/presentation";
 import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery, uniqueCatalogueProducts } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
@@ -279,7 +280,7 @@ function toCardFromRow(
   const lowStockThreshold = row.stock?.lowStockThreshold ?? 5;
   const image = ctx.imageRows.find((entry) => entry.productId === row.product.id);
 
-  return {
+  return decorateProductPresentation({
     id: row.product.id,
     variantId: row.variant.id,
     slug: row.product.slug,
@@ -296,8 +297,9 @@ function toCardFromRow(
     ),
     tiers,
     deliveryBadge: ctx.deliveryBadge,
+    createdAt: row.product.createdAt,
     updatedAt: row.product.updatedAt,
-  };
+  });
 }
 
 function haystacksForRow(
