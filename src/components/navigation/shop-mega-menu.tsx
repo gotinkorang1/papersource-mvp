@@ -1,6 +1,6 @@
 "use client";
 
-import { useId, useState } from "react";
+import { useId, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -15,6 +15,7 @@ const shopTools = [
 export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
   const [open, setOpen] = useState(false);
   const menuId = useId();
+  const menuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
   const currentPathname = pathname ?? "";
   const active = ["/shop", "/product", "/brands", "/bulk-orders", "/quick-order"].some(
@@ -35,12 +36,18 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
         type="button"
         className={`inline-flex min-h-11 items-center gap-1 border-b-2 text-sm font-medium transition-[color,border-color] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${active ? "border-ochre text-ink" : "border-transparent text-graphite"}`}
         aria-expanded={open}
-        aria-controls={open ? menuId : undefined}
+        aria-controls={menuId}
         aria-haspopup="menu"
         onClick={() => setOpen((current) => !current)}
         onKeyDown={(event) => {
           if (event.key === "Escape") {
+            event.preventDefault();
             setOpen(false);
+            event.currentTarget.focus();
+          } else if (event.key === "ArrowDown") {
+            event.preventDefault();
+            setOpen(true);
+            window.setTimeout(() => menuRef.current?.querySelector<HTMLElement>("[role=menuitem]")?.focus(), 0);
           }
         }}
       >
@@ -48,6 +55,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
       </button>
       {open ? (
         <div
+          ref={menuRef}
           id={menuId}
           role="menu"
           className="absolute top-[calc(100%-0.15rem)] left-0 z-30 w-[min(36rem,calc(100vw-2rem))] rounded-2xl border border-border/80 bg-card p-6 pt-5 shadow-[0_18px_44px_rgba(16,42,67,0.14)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1"
