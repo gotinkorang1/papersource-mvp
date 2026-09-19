@@ -41,7 +41,7 @@ export async function StoreHeader() {
           <AccountLink />
           <ThemeToggle />
           <DualPathCounts />
-          <MobileMenu />
+          <MobileMenu categories={categories} />
         </div>
       </div>
     </header>
