@@ -32,8 +32,7 @@ export async function StoreHeader() {
         >
           <ShopMegaMenu columns={buildShopMenuColumns(categories)} />
           <BusinessMenu />
-          <Link href="/about" className="border-b-2 border-transparent text-sm font-medium text-graphite transition-[color,border-color] hover:border-ochre hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">About</Link>
-          <Link href="/contact" className="border-b-2 border-transparent text-sm font-medium text-graphite transition-[color,border-color] hover:border-ochre hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">Contact</Link>
+          <ManagedNavLinks links={[{ label: "About", href: "/about" }, { label: "Contact", href: "/contact" }]} />
           {additionalManagedLinks.length ? <ManagedNavLinks links={additionalManagedLinks} /> : null}
         </nav>
         <HeaderSearch />
