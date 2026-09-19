@@ -241,6 +241,8 @@
     align-items: baseline;
     justify-content: space-between;
     gap: 0.75rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
     padding: 0.5rem 0 !important;
     border: 0;
   }
