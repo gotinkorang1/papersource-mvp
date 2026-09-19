@@ -3,6 +3,15 @@
 import Image from "next/image";
 import { useCallback, useEffect, useRef, useState } from "react";
 
+export function dedupeProductImages(images: { src: string; alt: string }[]) {
+  const seen = new Set<string>();
+  return images.filter((image) => {
+    if (!image.src || seen.has(image.src)) return false;
+    seen.add(image.src);
+    return true;
+  });
+}
+
 export function ProductGallery({
   alt,
   src,
@@ -12,11 +21,16 @@ export function ProductGallery({
   src?: string;
   images?: { src: string; alt: string }[];
 }) {
-  const gallery = images?.length ? images : src ? [{ src, alt }] : [];
+  const gallery = images?.length ? dedupeProductImages(images) : src ? [{ src, alt }] : [];
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
   const active = gallery[activeIndex] ?? gallery[0];
   const moveImage = useCallback((direction: 1 | -1) => setActiveIndex((index) => (index + direction + gallery.length) % gallery.length), [gallery.length]);
+  useEffect(() => {
+    // Keep the active thumbnail valid if images are edited while the page stays mounted.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setActiveIndex((index) => Math.min(index, Math.max(0, gallery.length - 1)));
+  }, [gallery.length]);
   useEffect(() => {
     if (gallery.length < 2) return;
     const onKeyDown = (event: KeyboardEvent) => {
