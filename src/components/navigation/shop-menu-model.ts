@@ -2,7 +2,7 @@ export type ShopMenuLink = { label: string; href: string };
 
 export type ShopMenuColumn = { title: string; links: ShopMenuLink[] };
 
-type CategorySummary = { name: string; slug: string };
+export type CategorySummary = { name: string; slug: string };
 
 const fallbackColumns: ShopMenuColumn[] = [
   {
@@ -25,7 +25,7 @@ const fallbackColumns: ShopMenuColumn[] = [
   },
 ];
 
-export function buildShopMenuColumns(categories: CategorySummary[]): ShopMenuColumn[] {
+export function normalizeShopCategoryLinks(categories: readonly CategorySummary[]): ShopMenuLink[] {
   const uniqueCategories = categories.filter(
     (category, index, all) => {
       const slug = category.slug.trim();
@@ -35,12 +35,16 @@ export function buildShopMenuColumns(categories: CategorySummary[]): ShopMenuCol
     },
   );
 
-  if (uniqueCategories.length === 0) return fallbackColumns;
-
-  const links = uniqueCategories.map(({ name, slug }) => ({
+  return uniqueCategories.map(({ name, slug }) => ({
     label: name.trim(),
     href: `/shop/${slug.trim()}`,
   }));
+}
+
+export function buildShopMenuColumns(categories: readonly CategorySummary[]): ShopMenuColumn[] {
+  const links = normalizeShopCategoryLinks(categories);
+  if (links.length === 0) return fallbackColumns;
+
   const columnSize = Math.ceil(links.length / 3);
   const titles = ["Shop by category", "More categories", "More essentials"];
 

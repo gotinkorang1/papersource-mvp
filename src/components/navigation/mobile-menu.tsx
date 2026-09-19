@@ -5,19 +5,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { mobileMenuLinks, isNavigationLinkActive } from "./navigation-model";
+import { normalizeShopCategoryLinks, type CategorySummary } from "./shop-menu-model";
 
-type MobileCategory = { name: string; slug: string };
-
-export function MobileMenu({ categories = [] }: { categories?: readonly MobileCategory[] }) {
+export function MobileMenu({ categories = [] }: { categories?: readonly CategorySummary[] }) {
   const [open, setOpen] = useState(false);
   const pathname = usePathname();
   const menuId = useId();
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const previousPathname = useRef(pathname);
-  const categoryLinks = categories.filter(
-    (category, index, all) => all.findIndex((entry) => entry.slug === category.slug) === index,
-  );
+  const categoryLinks = normalizeShopCategoryLinks(categories);
 
   useEffect(() => {
     if (previousPathname.current === pathname) return;
@@ -93,7 +90,7 @@ export function MobileMenu({ categories = [] }: { categories?: readonly MobileCa
               );
             })}
             </div>
-            {categoryLinks.length ? <div className="mt-3 border-t border-border pt-3"><p className="px-3 text-xs tracking-[0.14em] text-slate uppercase">Shop by category</p><div className="mt-1 grid gap-1 sm:grid-cols-2">{categoryLinks.map((category) => { const href = `/shop/${category.slug}`; const active = isNavigationLinkActive(href, pathname); return <Link key={category.slug} href={href} aria-current={active ? "page" : undefined} className={`rounded-md border-l-2 px-3 py-2.5 text-sm transition-[color,background-color,border-color] hover:bg-cream hover:text-ink ${active ? "border-ochre bg-cream/50 font-semibold text-ink" : "border-transparent text-graphite"}`} onClick={() => setOpen(false)}>{category.name}</Link>; })}</div></div> : null}
+            {categoryLinks.length ? <div className="mt-3 border-t border-border pt-3"><p className="px-3 text-xs tracking-[0.14em] text-slate uppercase">Shop by category</p><div className="mt-1 grid gap-1 sm:grid-cols-2">{categoryLinks.map((category) => { const active = isNavigationLinkActive(category.href, pathname); return <Link key={category.href} href={category.href} aria-current={active ? "page" : undefined} className={`rounded-md border-l-2 px-3 py-2.5 text-sm transition-[color,background-color,border-color] hover:bg-cream hover:text-ink ${active ? "border-ochre bg-cream/50 font-semibold text-ink" : "border-transparent text-graphite"}`} onClick={() => setOpen(false)}>{category.label}</Link>; })}</div></div> : null}
             <div className="mt-3 border-t border-border pt-3">
             <p className="px-3 text-xs tracking-[0.14em] text-slate uppercase">Shop by need</p>
             <div className="mt-1 grid gap-1 sm:grid-cols-2">

@@ -3,6 +3,7 @@ import { Wordmark } from "@/components/marketing/wordmark";
 import { SocialLinks } from "@/components/navigation/social-links";
 import { listDivisionCategories } from "@/features/catalogue";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
+import { normalizeShopCategoryLinks } from "./shop-menu-model";
 
 export async function StoreFooter() {
   const [managedLinks, categories] = await Promise.all([
@@ -10,7 +11,7 @@ export async function StoreFooter() {
     listDivisionCategories().catch(() => []),
   ]);
   const exploreLinks = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.footer;
-  const categoryLinks = categories.filter((category, index, all) => all.findIndex((entry) => entry.slug === category.slug) === index);
+  const categoryLinks = normalizeShopCategoryLinks(categories);
   return (
     <footer className="mt-auto border-t border-border bg-card">
       <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-sm leading-relaxed text-slate sm:grid-cols-2 sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
@@ -25,7 +26,7 @@ export async function StoreFooter() {
           <nav className="mt-3 grid gap-2" aria-label="Explore">
             {exploreLinks.map((link) => <Link key={link.href} href={link.href} className="inline-flex min-h-10 w-fit items-center hover:text-ink hover:underline underline-offset-4">{link.label}</Link>)}
           </nav>
-          {categoryLinks.length ? <><p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-slate">Shop by category</p><nav className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1" aria-label="Shop by category">{categoryLinks.map((category) => <Link key={category.slug} href={`/shop/${category.slug}`} className="inline-flex min-h-9 items-center text-xs hover:text-ink hover:underline underline-offset-4">{category.name}</Link>)}</nav></> : null}
+          {categoryLinks.length ? <><p className="mt-5 text-xs font-semibold uppercase tracking-[0.14em] text-slate">Shop by category</p><nav className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1" aria-label="Shop by category">{categoryLinks.map((category) => <Link key={category.href} href={category.href} className="inline-flex min-h-9 items-center text-xs hover:text-ink hover:underline underline-offset-4">{category.label}</Link>)}</nav></> : null}
         </div>
         <div>
           <p className="font-semibold text-ink">Support</p>
