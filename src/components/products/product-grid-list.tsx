@@ -6,7 +6,7 @@ import { CatalogueViewModeControl, type CatalogueViewMode } from "@/components/p
 import { ProductListItem } from "@/components/products/product-list-item";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useTransition } from "react";
 import type { ProductCardModel } from "@/types/catalogue";
 
 const VIEW_MODE_STORAGE_KEY = "papersource.catalogue.view-mode";
@@ -26,6 +26,7 @@ export function ProductGridList({
 }) {
   const { addToCart, addToQuote } = useDualPathPreview();
   const [viewMode, setSelectedViewMode] = useState<CatalogueViewMode>(controlledViewMode ?? "default");
+  const [isPending, beginTransition] = useTransition();
 
   useEffect(() => {
     if (controlledViewMode) {
@@ -44,7 +45,7 @@ export function ProductGridList({
   }, [controlledViewMode]);
 
   const setViewMode = (next: CatalogueViewMode) => {
-    setSelectedViewMode(next);
+    beginTransition(() => setSelectedViewMode(next));
     window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, next);
     onViewModeChange?.(next);
   };
@@ -65,8 +66,8 @@ export function ProductGridList({
   }
 
   return (
-    <div className="space-y-5">
-      {showViewModeControl ? <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-slate" aria-live="polite">{products.length} {products.length === 1 ? "product" : "products"}</p><CatalogueViewModeControl value={viewMode} onChange={setViewMode} compact /></div> : null}
+    <div className="space-y-5" aria-busy={isPending || undefined}>
+      {showViewModeControl ? <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-slate" aria-live="polite">{isPending ? "Updating view…" : `${products.length} ${products.length === 1 ? "product" : "products"}`}</p><CatalogueViewModeControl value={viewMode} onChange={setViewMode} compact /></div> : null}
       {viewMode === "list" || viewMode === "content" ? (
         <div data-catalogue-view={viewMode} className="grid gap-3">
           {products.map((product, index) => <ProductListItem key={product.id} product={product} variant={viewMode} onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} priority={index === 0} />)}
