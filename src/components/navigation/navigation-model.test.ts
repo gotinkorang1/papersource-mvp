@@ -41,4 +41,23 @@ describe("storefront navigation model", () => {
       { label: "Contact", href: "/contact" },
     ]);
   });
+
+  it("normalizes managed labels and route slashes while ignoring empty records", () => {
+    expect(
+      uniqueNavigationLinks([
+        { label: "  About us ", href: "/about/" },
+        { label: "", href: "/empty" },
+        { label: "Duplicate", href: "/about" },
+        { label: "Contact", href: " /contact/ " },
+      ]),
+    ).toEqual([
+      { label: "About us", href: "/about" },
+      { label: "Contact", href: "/contact" },
+    ]);
+  });
+
+  it("treats trailing slashes consistently for active routes", () => {
+    expect(isNavigationLinkActive("/about/", "/about")).toBe(true);
+    expect(isNavigationLinkActive("/about", "/about/team/")).toBe(true);
+  });
 });
