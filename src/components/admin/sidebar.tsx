@@ -13,6 +13,8 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
   const currentPathname = pathname ?? "";
   const activeLinkRef = useRef<HTMLAnchorElement | null>(null);
+  const navToggleRef = useRef<HTMLButtonElement | null>(null);
+  const navWasOpen = useRef(false);
   const accountCloseRef = useRef<HTMLButtonElement | null>(null);
   const accountTriggerRef = useRef<HTMLButtonElement | null>(null);
   const accountPanelRef = useRef<HTMLElement | null>(null);
@@ -40,6 +42,20 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
     }, 0);
     return () => window.clearTimeout(closeTimer);
   }, [currentPathname]);
+
+  useEffect(() => {
+    if (!navOpen) {
+      if (navWasOpen.current) navToggleRef.current?.focus();
+      navWasOpen.current = false;
+      return;
+    }
+    navWasOpen.current = true;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setNavOpen(false);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [navOpen]);
 
   useEffect(() => {
     if (!accountOpen) return;
@@ -94,7 +110,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
       <aside className="sticky top-0 z-20 flex max-h-[calc(100svh-4.5rem)] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-[100svh] md:max-h-none md:w-64 md:shadow-none">
       <div className="flex min-h-14 items-center justify-between border-b border-sidebar-border px-4 py-2 sm:px-5 sm:py-3">
         <Link href="/admin" aria-label="PaperSource admin dashboard" className="inline-flex size-9 items-center justify-center rounded-md border-2 border-ochre bg-cream font-heading text-xs font-bold tracking-[0.12em] text-ink shadow-[2px_2px_0_#e6a329] transition-transform hover:-translate-y-0.5 md:size-11 md:text-sm">PS</Link>
-        <button type="button" aria-expanded={navOpen} aria-controls="admin-navigation" onClick={() => setNavOpen((open) => !open)} className="inline-flex min-h-10 items-center gap-2 rounded-md border border-sidebar-border px-2.5 text-sm font-semibold text-sidebar-foreground transition hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring md:hidden"><span>{navOpen ? "Close" : "Menu"}</span><span aria-hidden="true">{navOpen ? "×" : "☰"}</span></button>
+        <button ref={navToggleRef} type="button" aria-expanded={navOpen} aria-controls="admin-navigation" onClick={() => setNavOpen((open) => !open)} className="inline-flex min-h-10 items-center gap-2 rounded-md border border-sidebar-border px-2.5 text-sm font-semibold text-sidebar-foreground transition hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring md:hidden"><span>{navOpen ? "Close" : "Menu"}</span><span aria-hidden="true">{navOpen ? "×" : "☰"}</span></button>
       </div>
       <nav id="admin-navigation" className={`${navOpen ? "max-h-[calc(100svh-8rem)] overflow-x-hidden opacity-100" : "max-h-0 overflow-hidden opacity-0 md:max-h-none md:opacity-100"} flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-y-auto overscroll-contain px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 transition-[max-height,opacity] duration-300 motion-reduce:transition-none [scrollbar-width:thin] md:block md:space-y-6 md:overflow-x-hidden md:px-3 md:py-5`} aria-label="Admin">
         {ADMIN_NAV.map((group) => {
