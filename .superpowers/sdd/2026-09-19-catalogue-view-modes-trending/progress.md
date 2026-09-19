@@ -17,3 +17,4 @@ Hosted verification: Supabase migration product_view_events applied as version 2
 Admin UX polish: Grid/List/Content modes now retain Select All and bulk status actions, with regression coverage (8/8 focused tests; tsc passed).
 Public smoke hardening: local `/api/health` may correctly return `503 degraded` when the dedicated database is unavailable; smoke tests now validate that safe degraded contract locally while requiring `200 ok` for hosted targets. Desktop/mobile public smoke passed (3 passed, 1 intentionally skipped); tsc and diff checks passed.
 Release verification: catalogue/admin/trending/presentation unit suites passed (13/13) and `pnpm run build` completed successfully with all routes generated.
+Image resilience polish: product cards now resolve broken media through React state with a single deterministic fallback instead of mutating the Next Image DOM node; product card/view-mode tests passed (11/11), tsc and diff checks passed.
