@@ -3,6 +3,7 @@ import {
   boolean,
   char,
   customType,
+  date,
   index,
   integer,
   pgTable,
@@ -88,6 +89,23 @@ export const products = pgTable(
     index("products_category_idx").on(table.categoryId),
     index("products_status_idx").on(table.status),
     index("products_search_gin").using("gin", table.searchDocument),
+  ],
+);
+
+export const productViewEvents = pgTable(
+  "product_view_events",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    productId: uuid("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+    fingerprint: text("fingerprint").notNull(),
+    eventDay: date("event_day").notNull(),
+    occurredAt: timestamp("occurred_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (table) => [
+    uniqueIndex("product_view_events_daily_unique").on(table.productId, table.fingerprint, table.eventDay),
+    index("product_view_events_product_time_idx").on(table.productId, table.occurredAt),
   ],
 );
 
