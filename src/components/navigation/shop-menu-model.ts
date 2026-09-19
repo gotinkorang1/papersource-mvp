@@ -10,9 +10,8 @@ const fallbackColumns: ShopMenuColumn[] = [
     links: [
       { label: "Paper", href: "/shop/paper" },
       { label: "Writing", href: "/shop/writing" },
-      { label: "Desk", href: "/shop/desk-essentials" },
       { label: "Schools", href: "/shop/school-supplies" },
-      { label: "Books & Notebooks", href: "/shop/books-notebooks" },
+      { label: "Desk", href: "/shop/desk-essentials" },
     ],
   },
   {
