@@ -76,6 +76,17 @@ describe("productJsonLd", () => {
     expect(json.offers.seller).toEqual({ "@id": "http://localhost:3000/#organization", "@type": "Organization", name: "PaperSource Ghana" });
   });
 
+  it("publishes Ghana shipping and return policy references on the offer", () => {
+    const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4");
+
+    expect(json.offers.shippingDetails).toEqual({
+      "@type": "OfferShippingDetails",
+      shippingDestination: { "@type": "DefinedRegion", addressCountry: "GH" },
+      hasShippingService: { "@id": "http://localhost:3000/#shipping-service" },
+    });
+    expect(json.offers.hasMerchantReturnPolicy).toEqual({ "@id": "http://localhost:3000/#return-policy" });
+  });
+
   it("adds Book signals only when book attributes exist", () => {
     const json = productJsonLd(
       { ...product, attributes: [{ namespace: "book", key: "author", valueText: "Ama Mensah" }, { namespace: "book", key: "isbn", valueText: "9781234567890" }, { namespace: "book", key: "publisher", valueText: "Example Press" }] },

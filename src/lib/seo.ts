@@ -94,6 +94,8 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
 export function siteJsonLd() {
   const organizationId = `${SITE_URL}/#organization`;
   const websiteId = `${SITE_URL}/#website`;
+  const returnPolicyId = `${SITE_URL}/#return-policy`;
+  const shippingServiceId = `${SITE_URL}/#shipping-service`;
   return {
     "@context": "https://schema.org",
     "@graph": [
@@ -110,6 +112,8 @@ export function siteJsonLd() {
         knowsAbout: ["Office stationery", "Books", "School supplies", "Paper and printing supplies", "Workplace essentials"],
         sameAs: [],
         contactPoint: { "@type": "ContactPoint", telephone: "+233555001313", contactType: "customer service", areaServed: "GH", availableLanguage: "en" },
+        hasMerchantReturnPolicy: { "@id": returnPolicyId },
+        hasShippingService: { "@id": shippingServiceId },
       },
       {
         "@type": ["LocalBusiness", "Store"],
@@ -123,6 +127,24 @@ export function siteJsonLd() {
         areaServed: ["Accra", "Tema", "Ghana"],
         address: { "@type": "PostalAddress", addressLocality: "Accra", addressRegion: "Greater Accra", addressCountry: "GH" },
         priceRange: "GHS",
+      },
+      {
+        "@type": "MerchantReturnPolicy",
+        "@id": returnPolicyId,
+        applicableCountry: "GH",
+        returnPolicyCountry: "GH",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        returnMethod: "https://schema.org/ReturnByMail",
+        returnFees: "https://schema.org/FreeReturn",
+        url: absoluteUrl("/returns"),
+      },
+      {
+        "@type": "ShippingService",
+        "@id": shippingServiceId,
+        name: "PaperSource Ghana delivery",
+        provider: { "@id": `${SITE_URL}/#local-business` },
+        areaServed: ["Accra", "Tema", "Ghana"],
       },
       {
         "@type": "WebSite",

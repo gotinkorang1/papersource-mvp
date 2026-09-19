@@ -19,6 +19,14 @@ describe("siteJsonLd", () => {
     const website = json["@graph"].find((item: { "@type": string | string[] }) => item["@type"] === "WebSite");
     expect(website).toBeDefined();
     expect((website?.potentialAction as { target: string }).target).toContain("/search?q={search_term_string}");
+
+    const organization = json["@graph"].find((item: { "@type": string | string[] }) => item["@type"] === "Organization") as Record<string, unknown> | undefined;
+    expect(organization?.hasMerchantReturnPolicy).toEqual({ "@id": expect.stringContaining("#return-policy") });
+    expect(organization?.hasShippingService).toEqual({ "@id": expect.stringContaining("#shipping-service") });
+    expect(json["@graph"]).toEqual(expect.arrayContaining([
+      expect.objectContaining({ "@type": "MerchantReturnPolicy", merchantReturnDays: 7, returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow", returnFees: "https://schema.org/FreeReturn" }),
+      expect.objectContaining({ "@type": "ShippingService", areaServed: expect.arrayContaining(["Accra", "Tema", "Ghana"]) }),
+    ]));
   });
 });
 

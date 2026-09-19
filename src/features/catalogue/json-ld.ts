@@ -97,6 +97,12 @@ export function productJsonLd(
       price: pesewasToMajor(product.unitPricePesewas),
       availability,
       itemCondition: "https://schema.org/NewCondition",
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        shippingDestination: { "@type": "DefinedRegion", addressCountry: "GH" },
+        hasShippingService: { "@id": `${origin}/#shipping-service` },
+      },
+      hasMerchantReturnPolicy: { "@id": `${origin}/#return-policy` },
       seller: { "@id": `${origin}/#organization`, "@type": "Organization", name: "PaperSource Ghana" },
     },
   };
