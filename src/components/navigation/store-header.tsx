@@ -18,7 +18,17 @@ export async function StoreHeader() {
   ]);
   const links = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.header;
   const additionalManagedLinks = uniqueNavigationLinks(
-    links.filter((link) => !["/shop", "/about", "/contact"].includes(link.href)),
+    links.filter((link) => ![
+      "/shop",
+      "/about",
+      "/contact",
+      "/business",
+      "/schools",
+      "/corporate-accounts",
+      "/brands",
+      "/bulk-orders",
+      "/quick-order",
+    ].includes(link.href)),
   );
   return (
     <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">
