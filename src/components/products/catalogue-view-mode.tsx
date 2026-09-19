@@ -30,8 +30,8 @@ export function CatalogueViewModeControl({
       role="group"
       aria-label="Catalogue display"
       className={cn(
-        "inline-flex items-center gap-1 rounded-xl border border-border bg-card p-1 shadow-sm",
-        compact ? "w-fit" : "w-full sm:w-fit",
+        "grid w-full grid-cols-4 items-stretch gap-1 rounded-xl border border-border bg-card p-1 shadow-sm sm:inline-flex sm:w-fit sm:items-center",
+        compact ? "sm:w-fit" : "sm:w-fit",
       )}
     >
       {modes.map(({ value: mode, label, Icon }) => {
@@ -45,14 +45,14 @@ export function CatalogueViewModeControl({
             title={`${label} view`}
             onClick={() => onChange(mode)}
             className={cn(
-              "inline-flex min-h-10 flex-1 items-center justify-center gap-2 rounded-lg px-3 text-xs font-semibold transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:flex-none sm:text-sm",
+              "inline-flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 rounded-lg px-1 text-[0.68rem] font-semibold leading-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:min-h-10 sm:flex-row sm:gap-2 sm:px-3 sm:text-sm",
               active
                 ? "bg-ink text-paper shadow-sm"
                 : "text-slate hover:bg-muted hover:text-ink",
             )}
           >
             <Icon className="size-4" aria-hidden="true" />
-            <span className={cn(compact && "sr-only sm:not-sr-only")}>{label}</span>
+            <span className="truncate">{label}</span>
           </button>
         );
       })}

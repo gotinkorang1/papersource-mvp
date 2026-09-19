@@ -19,3 +19,4 @@ Public smoke hardening: local `/api/health` may correctly return `503 degraded` 
 Release verification: catalogue/admin/trending/presentation unit suites passed (13/13) and `pnpm run build` completed successfully with all routes generated.
 Image resilience polish: product cards now resolve broken media through React state with a single deterministic fallback instead of mutating the Next Image DOM node; product card/view-mode tests passed (11/11), tsc and diff checks passed.
 Release sign-off pass: full Vitest suite passed (76 files, 368 tests); hosted public desktop smoke passed 2/2 and hosted mobile smoke passed 1/1 with health assertion intentionally skipped; production build passed; main pushed to origin at the verified release commit.
+Mobile presentation polish: view-mode controls now use a four-column mobile layout with visible labels, larger touch targets, and compact desktop styling; mobile Playwright view-mode coverage passed 2/2 and tsc/diff checks passed.
