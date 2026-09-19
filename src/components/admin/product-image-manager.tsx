@@ -151,10 +151,12 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
       const body = new FormData();
       body.set("intent", "add-images");
       body.set("productId", productId);
-      pending.forEach(({ item, index }) => {
+      pending.forEach(({ item }, pendingIndex) => {
         body.append("cloudinaryPublicId", item.publicId!);
         body.append("alt", item.alt);
-        body.append("position", String(imageCount + index));
+        // Use the pending batch index, not the local preview index. Saved or
+        // failed rows can remain in the preview list between batches.
+        body.append("position", String(imageCount + pendingIndex));
       });
       const response = await fetch("/admin/products/mutate", {
         method: "POST",
