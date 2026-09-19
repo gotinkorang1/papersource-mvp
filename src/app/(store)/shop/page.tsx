@@ -67,7 +67,7 @@ export default async function ShopPage({ searchParams }: PageProps) {
         Add to Quote are independent.
       </p>
       <div className="mt-8">
-        <CatalogueToolbar count={filteredProducts.length} query={query} category={category} brand={brand} sort={sort} availability={availability} categories={categories} brands={brands} />
+        <CatalogueToolbar count={filteredProducts.length} query={query} category={category} brand={brand} sort={sort} availability={availability} zone={zone} view={viewMode ?? ""} categories={categories} brands={brands} />
       </div>
       <div className="mt-8">
         <ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} />

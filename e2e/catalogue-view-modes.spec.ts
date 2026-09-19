@@ -38,4 +38,15 @@ test.describe("catalogue presentation modes", () => {
     await expect(item.getByText(/Available with clear pricing, stock visibility, and delivery support across Accra and Tema\./)).toBeVisible();
     await expect(item.locator("img")).toHaveAttribute("sizes", "(max-width: 640px) 104px, 192px");
   });
+
+  test("opens the compact filter toolbar as a dismissible full-screen sheet", async ({ page }) => {
+    await page.goto("/shop", { waitUntil: "domcontentloaded" });
+    await expect(page.getByRole("textbox", { name: "Search catalogue" })).toBeVisible();
+    await page.getByRole("button", { name: "Filters and sort" }).click();
+    const sheet = page.getByRole("dialog", { name: "Filters and sorting" });
+    await expect(sheet).toBeVisible();
+    await expect(sheet.getByRole("combobox", { name: "Sort catalogue" })).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(sheet).toBeHidden();
+  });
 });
