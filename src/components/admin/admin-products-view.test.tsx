@@ -32,6 +32,7 @@ describe("AdminProductsView", () => {
     fireEvent.click(screen.getByRole("button", { name: "Grid" }));
 
     expect(document.querySelector('[data-catalogue-view="grid"]')).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Select all products" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Edit product" })).toHaveAttribute("href", "/admin/products/product-1");
     expect(screen.getByRole("link", { name: "Manage images" })).toHaveAttribute("href", "/admin/products/product-1#images");
   });

@@ -14,3 +14,4 @@ Follow-up Playwright coverage: new e2e/catalogue-view-modes.spec.ts passed on Ch
 Playwright mobile filter fix: updated mobile project testMatch to include catalogue-*.spec.ts; rerun passed 4/4 across Chromium desktop and mobile-chromium.
 Performance polish: List/Content first product image now receives eager/high loading priority. TypeScript passed; focused component tests 8/8 passed; catalogue-view Playwright desktop/mobile 4/4 passed.
 Hosted verification: Supabase migration product_view_events applied as version 20260919074528; direct SQL confirmed table exists with RLS enabled and explicit deny SELECT/INSERT policies. Security Advisor remains at 10 intentional RLS-no-policy INFO findings plus WARN for leaked-password protection disabled; no unrelated authorization policy was changed.
+Admin UX polish: Grid/List/Content modes now retain Select All and bulk status actions, with regression coverage (8/8 focused tests; tsc passed).
