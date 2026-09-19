@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { pageMetadata } from "@/lib/seo";
+import { absoluteUrl, pageMetadata, SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Contact PaperSource",
@@ -12,6 +12,41 @@ export const metadata: Metadata = pageMetadata({
 export default function ContactPage() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "ContactPage",
+            "@id": `${absoluteUrl("/contact")}#contact-page`,
+            url: absoluteUrl("/contact"),
+            name: "Contact PaperSource Ghana",
+            isPartOf: { "@id": `${SITE_URL}/#website` },
+            mainEntity: {
+              "@type": "LocalBusiness",
+              "@id": `${SITE_URL}/#local-business`,
+              name: "PaperSource Ghana",
+              email: "info@papersourcegh.com",
+              telephone: "+233555001313",
+              areaServed: ["Accra", "Tema", "Ghana"],
+              address: {
+                "@type": "PostalAddress",
+                addressLocality: "Accra",
+                addressRegion: "Greater Accra",
+                addressCountry: "GH",
+              },
+              contactPoint: {
+                "@type": "ContactPoint",
+                telephone: "+233555001313",
+                email: "info@papersourcegh.com",
+                contactType: "customer service",
+                areaServed: "GH",
+                availableLanguage: "en",
+              },
+            },
+          }),
+        }}
+      />
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr] lg:gap-16">
         <div>
           <p className="text-sm tracking-[0.16em] text-slate uppercase">Contact PaperSource</p>
