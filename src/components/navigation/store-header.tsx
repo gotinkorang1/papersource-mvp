@@ -1,5 +1,4 @@
 import { AccountLink } from "@/components/navigation/account-link";
-import Link from "next/link";
 import { DualPathCounts } from "@/components/navigation/dual-path-counts";
 import { ShopMegaMenu } from "@/components/navigation/shop-mega-menu";
 import { BusinessMenu } from "@/components/navigation/business-menu";
@@ -7,7 +6,6 @@ import { Wordmark } from "@/components/marketing/wordmark";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
 import { ManagedNavLinks } from "@/components/navigation/managed-nav-links";
 import { MobileMenu } from "@/components/navigation/mobile-menu";
-import { HeaderSearch } from "@/components/navigation/header-search";
 import { buildShopMenuColumns } from "@/components/navigation/shop-menu-model";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { listDivisionCategories } from "@/features/catalogue";
@@ -35,9 +33,7 @@ export async function StoreHeader() {
           <ManagedNavLinks links={[{ label: "About", href: "/about" }, { label: "Contact", href: "/contact" }]} />
           {additionalManagedLinks.length ? <ManagedNavLinks links={additionalManagedLinks} /> : null}
         </nav>
-        <HeaderSearch />
         <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
-          <Link href="/request-quote" className="hidden min-h-11 items-center rounded-md bg-ink px-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink lg:inline-flex">Request a Quote</Link>
           <AccountLink />
           <ThemeToggle />
           <DualPathCounts />
