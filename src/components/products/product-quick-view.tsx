@@ -57,7 +57,7 @@ export function ProductQuickView({
       if (event.key === "Escape") onCloseRef.current();
       if (event.key !== "Tab") return;
       const dialog = closeRef.current?.closest('[role="dialog"]');
-      const focusable = dialog ? Array.from(dialog.querySelectorAll<HTMLElement>('button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])')) : [];
+      const focusable = dialog ? Array.from(dialog.querySelectorAll<HTMLElement>('button:not([disabled]):not([tabindex="-1"]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled])')) : [];
       if (!focusable.length) return;
       const first = focusable[0];
       const last = focusable[focusable.length - 1];
