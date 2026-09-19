@@ -50,6 +50,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
       return;
     }
     navWasOpen.current = true;
+    activeLinkRef.current?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setNavOpen(false);
     };
