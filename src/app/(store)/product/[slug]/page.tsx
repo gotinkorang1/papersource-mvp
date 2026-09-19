@@ -32,7 +32,12 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return { title: "Product" };
+    return {
+      title: "Product not found",
+      description: "The requested PaperSource product could not be found.",
+      robots: { index: false, follow: false },
+      alternates: { canonical: undefined },
+    };
   }
 
   const seoTitle = product.attributes.find(
