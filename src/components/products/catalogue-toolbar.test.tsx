@@ -4,6 +4,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("next/link", () => ({
   default: ({ children, ...props }: { children: React.ReactNode; href: string }) => <a {...props}>{children}</a>,
 }));
+vi.mock("next/navigation", () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
 import { CatalogueToolbar } from "./catalogue-toolbar";
 
@@ -15,6 +16,7 @@ describe("CatalogueToolbar", () => {
     render(<CatalogueToolbar count={12} query="paper" categories={categories} brands={brands} />);
 
     expect(screen.getByRole("searchbox", { name: "Search catalogue" })).toBeInTheDocument();
+    expect(screen.getByRole("search").querySelector('input[name="category"]')).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /filters and sort/i })).toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
 

@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { Filter, Search, SlidersHorizontal, X } from "lucide-react";
-import { useState } from "react";
+import { useRouter } from "next/navigation";
+import { type FormEvent, useState, useTransition } from "react";
 import { CatalogueFilterSubmit } from "@/components/products/catalogue-filter-submit";
 import {
   Sheet,
@@ -14,6 +15,10 @@ import {
   SheetTitle,
 } from "@/components/ui/sheet";
 import type { CatalogueBrandView, CatalogueCategoryView } from "@/types/catalogue";
+
+function PreservedInput({ name, value }: { name: string; value: string }) {
+  return value ? <input type="hidden" name={name} value={value} /> : null;
+}
 
 function FilterFields({ availability, category, brand, sort, categories, brands }: { availability: string; category: string; brand: string; sort: string; categories: CatalogueCategoryView[]; brands: CatalogueBrandView[] }) {
   return (
@@ -47,7 +52,19 @@ function FilterFields({ availability, category, brand, sort, categories, brands 
 }
 
 export function CatalogueToolbar({ count, query = "", category = "", brand = "", sort = "featured", availability = "", zone = "", view = "", categories, brands }: { count: number; query?: string; category?: string; brand?: string; sort?: string; categories: CatalogueCategoryView[]; brands: CatalogueBrandView[]; availability?: string; zone?: string; view?: string }) {
+  const router = useRouter();
   const [filterOpen, setFilterOpen] = useState(false);
+  const [isNavigating, startNavigation] = useTransition();
+  const submitCleanCatalogueForm = (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const params = new URLSearchParams();
+    for (const [name, value] of new FormData(event.currentTarget).entries()) {
+      if (typeof value === "string" && value.trim()) params.set(name, value.trim());
+    }
+    const queryString = params.toString();
+    setFilterOpen(false);
+    startNavigation(() => router.push(queryString ? `/shop?${queryString}` : "/shop"));
+  };
   const activeFilterCount = [query, category, brand, availability, sort !== "featured" ? sort : ""].filter(Boolean).length;
   const hasFilters = Boolean(query || activeFilterCount);
   const activeLabels = [
@@ -87,10 +104,10 @@ export function CatalogueToolbar({ count, query = "", category = "", brand = "",
       </div>
 
       <div className="flex min-w-0 items-end gap-2">
-        <form method="get" className="flex min-w-0 flex-1 items-end gap-2" role="search">
+        <form method="get" onSubmit={submitCleanCatalogueForm} className="flex min-w-0 flex-1 items-end gap-2" role="search">
           <label className="grid min-w-0 flex-1 gap-1.5 text-xs font-semibold tracking-[0.08em] text-slate uppercase"><span className="sr-only">Find in catalogue</span><span className="relative"><Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-slate" aria-hidden="true" /><input type="search" enterKeyHint="search" autoComplete="off" name="q" defaultValue={query} placeholder="Paper, pens, SKU..." aria-label="Search catalogue" className="h-11 w-full min-w-0 rounded-xl border border-border bg-background pl-9 pr-3 text-base font-normal normal-case tracking-normal text-ink outline-none transition placeholder:text-slate/70 focus:border-ink focus:ring-2 focus:ring-ink/10 sm:text-sm" /></span></label>
-          <input type="hidden" name="category" value={category} /><input type="hidden" name="brand" value={brand} /><input type="hidden" name="availability" value={availability} /><input type="hidden" name="sort" value={sort} /><input type="hidden" name="zone" value={zone} /><input type="hidden" name="view" value={view} />
-          <button type="submit" className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-ink px-3 text-sm font-semibold text-white transition hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:bg-ochre dark:text-ink dark:hover:bg-ochre/90 sm:px-4"><span className="sr-only sm:not-sr-only">Search</span><Search className="size-4 sm:hidden" aria-hidden="true" /></button>
+          <PreservedInput name="category" value={category} /><PreservedInput name="brand" value={brand} /><PreservedInput name="availability" value={availability} /><PreservedInput name="sort" value={sort !== "featured" ? sort : ""} /><PreservedInput name="zone" value={zone} /><PreservedInput name="view" value={view} />
+          <button type="submit" disabled={isNavigating} className="inline-flex h-11 shrink-0 items-center justify-center rounded-xl bg-ink px-3 text-sm font-semibold text-white transition hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:opacity-70 dark:bg-ochre dark:text-ink dark:hover:bg-ochre/90 sm:px-4"><span className="sr-only sm:not-sr-only">{isNavigating ? "Searching" : "Search"}</span><Search className="size-4 sm:hidden" aria-hidden="true" /></button>
         </form>
         <button type="button" onClick={() => setFilterOpen(true)} aria-label={`Filters and sort${activeFilterCount ? `, ${activeFilterCount} active` : ""}`} aria-haspopup="dialog" aria-expanded={filterOpen} className="inline-flex h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-border bg-background px-3 text-sm font-semibold text-ink transition hover:border-ink hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:px-4"><SlidersHorizontal className="size-4" aria-hidden="true" /><span className="hidden sm:inline">Filters &amp; sort</span><span className="sm:hidden">Filter</span>{activeFilterCount ? <span className="grid size-5 place-items-center rounded-full bg-ink text-[0.68rem] text-white dark:bg-ochre dark:text-ink">{activeFilterCount}</span> : null}</button>
       </div>
@@ -101,11 +118,11 @@ export function CatalogueToolbar({ count, query = "", category = "", brand = "",
       <Sheet open={filterOpen} onOpenChange={setFilterOpen}>
         <SheetContent side="right" showCloseButton={false} className="inset-0 h-dvh w-full max-w-none gap-0 overflow-y-auto border-0 bg-card p-0 sm:max-w-none">
           <SheetHeader className="border-b border-border px-5 py-4 sm:px-8 sm:py-5"><div className="mx-auto flex w-full max-w-3xl items-start justify-between gap-4"><div><SheetTitle className="flex items-center gap-2 text-xl text-ink"><Filter className="size-5" aria-hidden="true" /> Filters and sorting</SheetTitle><SheetDescription className="mt-1 text-sm text-slate">Refine the catalogue, then apply all changes together. {count} {count === 1 ? "product currently matches" : "products currently match"} these settings.</SheetDescription></div><SheetClose render={<button type="button" aria-label="Close filters" className="grid size-10 shrink-0 place-items-center rounded-full border border-border text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" />}><X className="size-5" aria-hidden="true" /></SheetClose></div></SheetHeader>
-          <form method="get" className="mx-auto grid w-full max-w-3xl gap-7 px-5 py-6 sm:px-8 sm:py-8">
+          <form method="get" onSubmit={submitCleanCatalogueForm} className="mx-auto grid w-full max-w-3xl gap-7 px-5 py-6 sm:px-8 sm:py-8">
             <label className="grid gap-2 text-xs font-semibold tracking-[0.08em] text-slate uppercase">Find in catalogue<input type="search" enterKeyHint="search" autoComplete="off" name="q" defaultValue={query} placeholder="Paper, pens, SKU..." aria-label="Search catalogue in filters" className="h-12 w-full rounded-xl border border-border bg-background px-3 text-base font-normal normal-case tracking-normal text-ink outline-none transition placeholder:text-slate/70 focus:border-ink focus:ring-2 focus:ring-ink/10 sm:text-sm" /></label>
-            <input type="hidden" name="zone" value={zone} /><input type="hidden" name="view" value={view} />
+            <PreservedInput name="zone" value={zone} /><PreservedInput name="view" value={view} />
             <FilterFields availability={availability} category={category} brand={brand} sort={sort} categories={categories} brands={brands} />
-            <SheetFooter className="sticky bottom-0 flex-row justify-end border-t border-border bg-card/95 p-0 pt-4 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-[backdrop-filter]:bg-card/80">{hasFilters ? <Link href={clearAllHref()} onClick={() => setFilterOpen(false)} className="inline-flex h-11 items-center rounded-xl px-4 text-sm font-semibold text-slate underline-offset-4 hover:text-ink hover:underline">Clear all</Link> : null}<CatalogueFilterSubmit idleLabel="Apply filters" pendingLabel="Applying filters…" className="sm:w-auto sm:min-w-36" /></SheetFooter>
+            <SheetFooter className="sticky bottom-0 flex-row justify-end border-t border-border bg-card/95 p-0 pt-4 pb-[env(safe-area-inset-bottom)] backdrop-blur supports-[backdrop-filter]:bg-card/80">{hasFilters ? <Link href={clearAllHref()} onClick={() => setFilterOpen(false)} className="inline-flex h-11 items-center rounded-xl px-4 text-sm font-semibold text-slate underline-offset-4 hover:text-ink hover:underline">Clear all</Link> : null}<CatalogueFilterSubmit idleLabel="Apply filters" pendingLabel="Applying filters…" externalPending={isNavigating} className="sm:w-auto sm:min-w-36" /></SheetFooter>
           </form>
         </SheetContent>
       </Sheet>

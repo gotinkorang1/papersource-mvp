@@ -65,4 +65,14 @@ test.describe("catalogue presentation modes", () => {
     await clearFilters.click();
     await expect(page).toHaveURL(/\/shop\?view=content$/);
   });
+
+  test("applies a sort choice from the full-screen filter panel", async ({ page }) => {
+    await page.goto("/shop", { waitUntil: "commit", timeout: 30000 });
+    await expect(page.getByRole("button", { name: "Filters and sort" })).toBeVisible({ timeout: 15000 });
+    await page.getByRole("button", { name: "Filters and sort" }).click();
+    const sheet = page.getByRole("dialog", { name: "Filters and sorting" });
+    await sheet.getByRole("combobox", { name: "Sort catalogue" }).selectOption("name-asc");
+    await sheet.getByRole("button", { name: "Apply filters" }).click();
+    await expect(page).toHaveURL(/\/shop\?sort=name-asc$/);
+  });
 });
