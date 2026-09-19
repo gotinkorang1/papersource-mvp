@@ -55,6 +55,9 @@ export async function POST(request: Request) {
     productIdRaw ? `/admin/products/${productIdRaw}` : "/admin/products/new",
     origin,
   );
+  // Keep image actions anchored to the image manager after a redirect, so
+  // staff do not have to scroll back down after every save or reorder.
+  if (intent.includes("image")) next.hash = "images";
 
   const actor = await readStaffActor();
   if (!actor) {
