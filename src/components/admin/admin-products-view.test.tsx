@@ -1,5 +1,5 @@
 import { fireEvent, render, screen } from "@testing-library/react";
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { AdminProductsView, type AdminProductListRow } from "./admin-products-view";
 
 const rows: AdminProductListRow[] = [{
@@ -16,6 +16,21 @@ const rows: AdminProductListRow[] = [{
 }];
 
 describe("AdminProductsView", () => {
+  afterEach(() => {
+    window.localStorage.clear();
+    vi.unstubAllGlobals();
+    vi.restoreAllMocks();
+  });
+
+  it("defaults to the compact list presentation on mobile without a saved preference", async () => {
+    vi.stubGlobal("matchMedia", vi.fn(() => ({ matches: true }) as MediaQueryList));
+
+    render(<AdminProductsView rows={rows} canWrite />);
+
+    expect(await screen.findByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
+    expect(document.querySelector('[data-catalogue-view="list"]')).toBeInTheDocument();
+  });
+
   it("keeps bulk selection in the default table and exposes catalogue metadata", () => {
     render(<AdminProductsView rows={rows} canWrite />);
 
@@ -39,6 +54,8 @@ describe("AdminProductsView", () => {
 
   it("does not expose write controls to read-only staff", () => {
     render(<AdminProductsView rows={rows} canWrite={false} />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
 
     expect(screen.queryByRole("button", { name: "Apply to selected" })).not.toBeInTheDocument();
     expect(screen.queryByRole("checkbox", { name: /Select/ })).not.toBeInTheDocument();
