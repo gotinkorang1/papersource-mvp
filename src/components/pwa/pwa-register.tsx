@@ -45,7 +45,9 @@ export function PwaRegister() {
     window.addEventListener("beforeinstallprompt", onInstall);
     window.addEventListener("appinstalled", onInstalled);
     const onVisibilityChange = () => {
-      if (document.visibilityState === "visible") void registration?.update();
+      if (document.visibilityState === "visible" && registration) {
+        void registration.update().catch(() => undefined);
+      }
     };
     document.addEventListener("visibilitychange", onVisibilityChange, { passive: true });
     return () => {
