@@ -65,7 +65,19 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
               event.preventDefault();
               triggerRef.current?.focus();
               setOpen(false);
+              return;
             }
+            if (!["ArrowDown", "ArrowUp", "Home", "End"].includes(event.key)) return;
+            const items = Array.from(menuRef.current?.querySelectorAll<HTMLElement>("[role=menuitem]") ?? []);
+            if (!items.length) return;
+            event.preventDefault();
+            const currentIndex = items.indexOf(document.activeElement as HTMLElement);
+            const nextIndex = event.key === "Home"
+              ? 0
+              : event.key === "End"
+                ? items.length - 1
+                : (currentIndex + (event.key === "ArrowUp" ? -1 : 1) + items.length) % items.length;
+            items[nextIndex]?.focus();
           }}
           className="absolute top-[calc(100%-0.15rem)] left-0 z-30 w-[min(36rem,calc(100vw-2rem))] rounded-2xl border border-border/80 bg-card p-6 pt-5 shadow-[0_18px_44px_rgba(16,42,67,0.14)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1"
         >
