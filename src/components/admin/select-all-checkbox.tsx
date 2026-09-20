@@ -37,6 +37,9 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
             box.checked = event.currentTarget.checked;
           });
           setSelected(event.currentTarget.checked ? count : 0);
+          // Notify any second select-all control in the same form so its
+          // count, indeterminate state, and accessible label stay in sync.
+          form.dispatchEvent(new Event("change", { bubbles: true }));
         }}
         className="size-4 rounded border-border accent-primary"
       />
