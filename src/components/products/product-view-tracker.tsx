@@ -8,7 +8,9 @@ export function ProductViewTracker({ productId, enabled = true }: { productId: s
     if (!enabled) return;
     let fingerprint: string;
     try {
-      fingerprint = ensureViewFingerprint(window.localStorage);
+      // Some privacy modes expose localStorage but throw on access.
+      const storage = window.localStorage;
+      fingerprint = ensureViewFingerprint(storage);
     } catch {
       return;
     }

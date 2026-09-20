@@ -7,6 +7,7 @@ import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { cn } from "@/lib/utils";
+import { readLocalValue, writeLocalValue } from "@/lib/browser/local-storage";
 
 const STORAGE_KEY = "papersource.admin.products.view-mode";
 
@@ -26,7 +27,7 @@ export type AdminProductListRow = {
 export function AdminProductsView({ rows, canWrite }: { rows: AdminProductListRow[]; canWrite: boolean }) {
   const [viewMode, setViewMode] = useState<CatalogueViewMode>("default");
   useEffect(() => {
-    const saved = window.localStorage.getItem(STORAGE_KEY);
+    const saved = readLocalValue(STORAGE_KEY);
     if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") {
       // Client preference is read after hydration to avoid accessing window on the server.
       // eslint-disable-next-line react-hooks/set-state-in-effect
@@ -40,7 +41,7 @@ export function AdminProductsView({ rows, canWrite }: { rows: AdminProductListRo
   }, []);
   const changeMode = (next: CatalogueViewMode) => {
     setViewMode(next);
-    window.localStorage.setItem(STORAGE_KEY, next);
+    writeLocalValue(STORAGE_KEY, next);
   };
 
   return (
