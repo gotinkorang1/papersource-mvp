@@ -76,7 +76,9 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
               ? 0
               : event.key === "End"
                 ? items.length - 1
-                : (currentIndex + (event.key === "ArrowUp" ? -1 : 1) + items.length) % items.length;
+                : currentIndex < 0
+                  ? (event.key === "ArrowUp" ? items.length - 1 : 0)
+                  : (currentIndex + (event.key === "ArrowUp" ? -1 : 1) + items.length) % items.length;
             items[nextIndex]?.focus();
           }}
           className="absolute top-[calc(100%-0.15rem)] left-0 z-30 w-[min(36rem,calc(100vw-2rem))] rounded-2xl border border-border/80 bg-card p-6 pt-5 shadow-[0_18px_44px_rgba(16,42,67,0.14)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1"

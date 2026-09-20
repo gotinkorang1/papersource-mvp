@@ -34,3 +34,14 @@ it("moves through business destinations with arrow keys", async () => {
   fireEvent.keyDown(last, { key: "Home" });
   expect(first).toHaveFocus();
 });
+
+it("starts at the correct edge when an arrow key enters the menu", async () => {
+  render(<BusinessMenu />);
+  const trigger = screen.getByRole("button", { name: "Business" });
+  fireEvent.keyDown(trigger, { key: "ArrowDown" });
+  const first = screen.getByRole("menuitem", { name: "Business accounts" });
+  const last = screen.getByRole("menuitem", { name: "Corporate accounts" });
+  await waitFor(() => expect(first).toHaveFocus());
+  fireEvent.keyDown(first, { key: "ArrowUp" });
+  expect(last).toHaveFocus();
+});
