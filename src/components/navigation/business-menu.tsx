@@ -4,6 +4,7 @@ import { useId, useRef, useState } from "react";
 import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { isNavigationLinkActive } from "./navigation-model";
 
 export function BusinessMenu() {
   const [open, setOpen] = useState(false);
@@ -11,9 +12,8 @@ export function BusinessMenu() {
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-  const currentPathname = pathname ?? "";
   const active = ["/business", "/schools", "/corporate-accounts"].some(
-    (href) => currentPathname === href || currentPathname.startsWith(`${href}/`),
+    (href) => isNavigationLinkActive(href, pathname),
   );
   return (
     <div className="group relative" onMouseEnter={() => setOpen(true)} onMouseLeave={() => setOpen(false)} onFocus={() => setOpen(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget as Node | null)) setOpen(false); }}>

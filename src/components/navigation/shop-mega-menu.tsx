@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import { usePathname } from "next/navigation";
 import type { ShopMenuColumn } from "./shop-menu-model";
+import { isNavigationLinkActive } from "./navigation-model";
 
 const shopTools = [
   ["Brands", "/brands"],
@@ -18,9 +19,8 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
   const pathname = usePathname();
-  const currentPathname = pathname ?? "";
   const active = ["/shop", "/product", "/brands", "/bulk-orders", "/quick-order"].some(
-    (href) => currentPathname === href || currentPathname.startsWith(`${href}/`),
+    (href) => isNavigationLinkActive(href, pathname),
   );
 
   return (
