@@ -61,6 +61,14 @@ export function ProductCard({
     setResolvedImageSource(imageSource);
   }, [imageSource]);
 
+  useEffect(() => {
+    // Clear transient controls when a reused card receives a new product.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setQuantity(1);
+    setQuickOpen(false);
+    setAddedTo(null);
+  }, [product.id]);
+
   const confirmAdded = (destination: "cart" | "quote") => {
     setAddedTo(destination);
     window.setTimeout(() => setAddedTo((current) => current === destination ? null : current), 1800);

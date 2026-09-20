@@ -131,4 +131,16 @@ describe("ProductCard", () => {
     expect(screen.getByText("New")).toBeInTheDocument();
     expect(screen.getByText("Trending · 12")).toBeInTheDocument();
   });
+
+  it("resets transient controls when a card is reused for another product", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(<ProductCard product={product} />);
+
+    await user.click(screen.getByRole("button", { name: "Increase quantity" }));
+    expect(screen.getByRole("spinbutton", { name: "Quantity" })).toHaveValue(2);
+    rerender(<ProductCard product={{ ...product, id: "different-product", name: "Another product" }} />);
+
+    expect(screen.getByRole("spinbutton", { name: "Quantity" })).toHaveValue(1);
+    expect(screen.queryByText("Added to cart")).not.toBeInTheDocument();
+  });
 });
