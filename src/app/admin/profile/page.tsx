@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { requireStaff } from "@/lib/staff/require";
 
 export const metadata: Metadata = { title: "My staff profile" };
@@ -19,14 +20,14 @@ export default async function AdminProfilePage({ searchParams }: { searchParams:
         <label className="grid gap-1 text-sm font-medium text-ink">Work email<input value={actor.email} readOnly className="h-11 rounded-lg border border-border bg-muted/40 px-3 text-slate" /></label>
         <label className="grid gap-1 text-sm font-medium text-ink">Full name<input name="fullName" required minLength={2} maxLength={120} defaultValue={actor.fullName} className="h-11 rounded-lg border border-border bg-background px-3 text-ink" /></label>
         <label className="grid gap-1 text-sm font-medium text-ink">Phone (optional)<input name="phone" type="tel" maxLength={30} defaultValue={actor.phone ?? ""} className="h-11 rounded-lg border border-border bg-background px-3 text-ink" /></label>
-        <button type="submit" className="h-11 w-fit rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground">Save profile</button>
+        <SubmitProgressButton idleLabel="Save profile" pendingLabel="Saving profile…" className="h-11 w-fit rounded-lg bg-primary px-5 text-sm font-semibold text-primary-foreground" />
       </form>
       <form action="/admin/profile/mutate" method="post" className="mt-6 grid gap-4 rounded-xl border border-border bg-card p-5">
         <input type="hidden" name="intent" value="password" />
         <div><h2 className="text-lg font-semibold text-ink">Change password</h2><p className="mt-1 text-sm text-slate">Use at least 12 characters. You may be asked to sign in again.</p></div>
         <label className="grid gap-1 text-sm font-medium text-ink">New password<input name="password" type="password" required minLength={12} maxLength={128} autoComplete="new-password" className="h-11 rounded-lg border border-border bg-background px-3 text-ink" /></label>
         <label className="grid gap-1 text-sm font-medium text-ink">Confirm new password<input name="confirmPassword" type="password" required minLength={12} maxLength={128} autoComplete="new-password" className="h-11 rounded-lg border border-border bg-background px-3 text-ink" /></label>
-        <button type="submit" className="h-11 w-fit rounded-lg border border-ink px-5 text-sm font-semibold text-ink transition hover:bg-muted">Update password</button>
+        <SubmitProgressButton idleLabel="Update password" pendingLabel="Updating password…" className="h-11 w-fit rounded-lg border border-ink px-5 text-sm font-semibold text-ink transition hover:bg-muted" />
       </form>
     </main>
   );
