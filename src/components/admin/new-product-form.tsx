@@ -59,24 +59,29 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
     setUploading(true);
     setNotice(`Uploading 0 of ${pending.length} images…`);
     let failed = 0;
-    for (let completed = 0; completed < pending.length; completed += 1) {
-      const { image, index } = pending[completed];
-      setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "uploading", error: undefined } : entry));
-      const body = new FormData();
-      body.append("file", image.file);
-      try {
-        const response = await fetch("/admin/products/upload-image", { method: "POST", body });
-        const result = (await response.json()) as { publicId?: string; error?: string };
-        if (!response.ok || !result.publicId) throw new Error(result.error ?? "Upload failed.");
-        setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, publicId: result.publicId, status: "uploaded" } : entry));
-      } catch (error) {
-        failed += 1;
-        setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "error", error: error instanceof Error ? error.message : "Upload failed." } : entry));
+    try {
+      for (let completed = 0; completed < pending.length; completed += 1) {
+        const { image, index } = pending[completed];
+        setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "uploading", error: undefined } : entry));
+        const body = new FormData();
+        body.append("file", image.file);
+        try {
+          const response = await fetch("/admin/products/upload-image", { method: "POST", body });
+          const result = (await response.json()) as { publicId?: string; error?: string };
+          if (!response.ok || !result.publicId) throw new Error(result.error ?? "Upload failed.");
+          setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, publicId: result.publicId, status: "uploaded" } : entry));
+        } catch (error) {
+          failed += 1;
+          setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "error", error: error instanceof Error ? error.message : "Upload failed." } : entry));
+        }
+        setNotice(`Uploading ${completed + 1} of ${pending.length} images…`);
       }
-      setNotice(`Uploading ${completed + 1} of ${pending.length} images…`);
+      setNotice(failed ? `${pending.length - failed} of ${pending.length} images uploaded. Fix the failed images, then try again.` : "Images uploaded. Review alt text, then create the product to save everything together.");
+    } catch {
+      setNotice("The upload stopped unexpectedly. Try the remaining images again.");
+    } finally {
+      setUploading(false);
     }
-    setUploading(false);
-    setNotice(failed ? `${pending.length - failed} of ${pending.length} images uploaded. Fix the failed images, then try again.` : "Images uploaded. Review alt text, then create the product to save everything together.");
   }
 
   function move(index: number, direction: "up" | "down") {
