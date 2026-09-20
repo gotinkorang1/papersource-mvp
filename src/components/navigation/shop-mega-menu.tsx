@@ -35,6 +35,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
     >
       <button
         type="button"
+        id={`${menuId}-trigger`}
         ref={triggerRef}
         className={`inline-flex min-h-11 items-center gap-1 border-b-2 text-sm font-medium transition-[color,border-color] hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${active ? "border-ochre text-ink" : "border-transparent text-graphite"}`}
         aria-expanded={open}
@@ -59,6 +60,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
         <div
           ref={menuRef}
           id={menuId}
+          aria-labelledby={`${menuId}-trigger`}
           role="menu"
           onKeyDown={(event) => {
             if (event.key === "Escape") {
