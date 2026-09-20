@@ -2,17 +2,17 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { isNavigationLinkActive } from "./navigation-model";
 
 type ManagedLink = { id?: string; label: string; href: string };
 
 export function ManagedNavLinks({ links }: { links: ReadonlyArray<ManagedLink> }) {
   const pathname = usePathname();
-  const currentPathname = pathname ?? "";
 
   return (
     <>
       {links.map((link) => {
-        const active = currentPathname === link.href || currentPathname.startsWith(`${link.href}/`);
+        const active = isNavigationLinkActive(link.href, pathname);
         return (
           <Link
             key={link.id ?? link.href}
