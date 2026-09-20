@@ -99,31 +99,34 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
     setIsCropping(true);
     try {
       const sourceUrl = URL.createObjectURL(item.file);
-      const source = await new Promise<HTMLImageElement>((resolve, reject) => {
-        const image = new window.Image();
-        image.onload = () => resolve(image);
-        image.onerror = () => reject(new Error("This image could not be edited."));
-        image.src = sourceUrl;
-      });
-      const crop = centeredCropRect(source.naturalWidth, source.naturalHeight, cropRatio);
-      const scale = Math.min(1, 1800 / Math.max(crop.width, crop.height));
-      const canvas = document.createElement("canvas");
-      canvas.width = Math.max(1, Math.round(crop.width * scale));
-      canvas.height = Math.max(1, Math.round(crop.height * scale));
-      const context = canvas.getContext("2d");
-      if (!context) throw new Error("Your browser cannot edit this image.");
-      context.imageSmoothingQuality = "high";
-      context.drawImage(source, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
-      const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, item.file.type === "image/png" ? "image/png" : "image/jpeg", 0.88));
-      URL.revokeObjectURL(sourceUrl);
-      if (!blob) throw new Error("This image could not be edited.");
-      if (blob.size > 2 * 1024 * 1024) throw new Error("The cropped image is still larger than 2 MB.");
-      const file = new File([blob], item.file.name.replace(/\.[^.]+$/, "") + (blob.type === "image/png" ? ".png" : ".jpg"), { type: blob.type, lastModified: Date.now() });
-      const preview = URL.createObjectURL(file);
-      URL.revokeObjectURL(item.preview);
-      setImages((current) => current.map((entry, index) => index === cropIndex ? { ...entry, file, preview, publicId: undefined, status: "ready", error: undefined } : entry));
-      setNotice("Crop applied. Upload the updated image when ready.");
-      setCropIndex(null);
+      try {
+        const source = await new Promise<HTMLImageElement>((resolve, reject) => {
+          const image = new window.Image();
+          image.onload = () => resolve(image);
+          image.onerror = () => reject(new Error("This image could not be edited."));
+          image.src = sourceUrl;
+        });
+        const crop = centeredCropRect(source.naturalWidth, source.naturalHeight, cropRatio);
+        const scale = Math.min(1, 1800 / Math.max(crop.width, crop.height));
+        const canvas = document.createElement("canvas");
+        canvas.width = Math.max(1, Math.round(crop.width * scale));
+        canvas.height = Math.max(1, Math.round(crop.height * scale));
+        const context = canvas.getContext("2d");
+        if (!context) throw new Error("Your browser cannot edit this image.");
+        context.imageSmoothingQuality = "high";
+        context.drawImage(source, crop.x, crop.y, crop.width, crop.height, 0, 0, canvas.width, canvas.height);
+        const blob = await new Promise<Blob | null>((resolve) => canvas.toBlob(resolve, item.file.type === "image/png" ? "image/png" : "image/jpeg", 0.88));
+        if (!blob) throw new Error("This image could not be edited.");
+        if (blob.size > 2 * 1024 * 1024) throw new Error("The cropped image is still larger than 2 MB.");
+        const file = new File([blob], item.file.name.replace(/\.[^.]+$/, "") + (blob.type === "image/png" ? ".png" : ".jpg"), { type: blob.type, lastModified: Date.now() });
+        const preview = URL.createObjectURL(file);
+        URL.revokeObjectURL(item.preview);
+        setImages((current) => current.map((entry, index) => index === cropIndex ? { ...entry, file, preview, publicId: undefined, status: "ready", error: undefined } : entry));
+        setNotice("Crop applied. Upload the updated image when ready.");
+        setCropIndex(null);
+      } finally {
+        URL.revokeObjectURL(sourceUrl);
+      }
     } catch (error) {
       setNotice(error instanceof Error ? error.message : "This image could not be edited.");
     } finally {
