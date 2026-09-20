@@ -18,7 +18,28 @@ self.addEventListener("activate", (event) => {
 self.addEventListener("fetch", (event) => {
   const request = event.request;
   const url = new URL(request.url);
-  if (request.method !== "GET" || url.origin !== self.location.origin || url.pathname.startsWith("/api/") || url.pathname.startsWith("/admin") || url.pathname.startsWith("/checkout") || url.pathname.startsWith("/account") || url.pathname.startsWith("/login")) return;
+  // Keep private, tokenised, and stateful journeys out of the offline shell.
+  // A shared device must never replay an order, quote, payment, or auth page
+  // from a previous browser session.
+  const privatePrefixes = [
+    "/api/",
+    "/admin",
+    "/account",
+    "/auth",
+    "/cart",
+    "/checkout",
+    "/forgot-password",
+    "/login",
+    "/order",
+    "/pay",
+    "/quote",
+    "/quick-order",
+    "/register",
+    "/request-quote",
+    "/reset-password",
+    "/signup",
+  ];
+  if (request.method !== "GET" || url.origin !== self.location.origin || privatePrefixes.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) return;
   event.respondWith(fetch(request).then((response) => {
     if (response.ok && (request.mode === "navigate" || response.headers.get("content-type")?.includes("image/"))) {
       const copy = response.clone();
