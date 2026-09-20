@@ -80,6 +80,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
                       <Link
                         href={link.href}
                         role="menuitem"
+                        aria-current={isNavigationLinkActive(link.href, pathname) ? "page" : undefined}
                         className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink"
                         onClick={() => setOpen(false)}
                       >
@@ -95,7 +96,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
               <ul className="mt-2 space-y-1">
                 {shopTools.map(([label, href]) => (
                   <li key={href}>
-                    <Link href={href} role="menuitem" className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>
+                    <Link href={href} role="menuitem" aria-current={isNavigationLinkActive(href, pathname) ? "page" : undefined} className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>
                       {label}
                     </Link>
                   </li>

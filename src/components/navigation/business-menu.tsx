@@ -24,9 +24,9 @@ export function BusinessMenu() {
         <div ref={menuRef} id={menuId} role="menu" onKeyDown={(event) => { if (event.key === "Escape") { event.preventDefault(); triggerRef.current?.focus(); setOpen(false); } }} className="absolute top-[calc(100%-0.15rem)] left-0 z-30 min-w-56 origin-top rounded-2xl border border-border/80 bg-card p-4 pt-5 shadow-[0_18px_44px_rgba(16,42,67,0.14)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1">
           <p className="text-xs tracking-[0.16em] text-slate uppercase">For organisations</p>
           <ul className="mt-3 space-y-2">
-            <li><Link href="/business" role="menuitem" className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Business accounts</Link></li>
-            <li><Link href="/schools" role="menuitem" className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Schools</Link></li>
-            <li><Link href="/corporate-accounts" role="menuitem" className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Corporate accounts</Link></li>
+            <li><Link href="/business" role="menuitem" aria-current={isNavigationLinkActive("/business", pathname) ? "page" : undefined} className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Business accounts</Link></li>
+            <li><Link href="/schools" role="menuitem" aria-current={isNavigationLinkActive("/schools", pathname) ? "page" : undefined} className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Schools</Link></li>
+            <li><Link href="/corporate-accounts" role="menuitem" aria-current={isNavigationLinkActive("/corporate-accounts", pathname) ? "page" : undefined} className="block rounded-md px-2 py-1.5 text-sm text-slate transition-colors hover:bg-cream hover:text-ink" onClick={() => setOpen(false)}>Corporate accounts</Link></li>
           </ul>
         </div>
       ) : null}
