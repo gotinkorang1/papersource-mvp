@@ -9,7 +9,7 @@ import { MobileMenu } from "@/components/navigation/mobile-menu";
 import { buildShopMenuColumns } from "@/components/navigation/shop-menu-model";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { listDivisionCategories } from "@/features/catalogue";
-import { uniqueNavigationLinks } from "./navigation-model";
+import { normalizeNavigationHref, uniqueNavigationLinks } from "./navigation-model";
 
 export async function StoreHeader() {
   const [managedLinks, categories] = await Promise.all([
@@ -17,18 +17,19 @@ export async function StoreHeader() {
     listDivisionCategories().catch(() => []),
   ]);
   const links = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.header;
+  const reservedRoutes = new Set([
+    "/shop",
+    "/about",
+    "/contact",
+    "/business",
+    "/schools",
+    "/corporate-accounts",
+    "/brands",
+    "/bulk-orders",
+    "/quick-order",
+  ]);
   const additionalManagedLinks = uniqueNavigationLinks(
-    links.filter((link) => ![
-      "/shop",
-      "/about",
-      "/contact",
-      "/business",
-      "/schools",
-      "/corporate-accounts",
-      "/brands",
-      "/bulk-orders",
-      "/quick-order",
-    ].includes(link.href)),
+    links.filter((link) => !reservedRoutes.has(normalizeNavigationHref(link.href))),
   );
   return (
     <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/90 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl">

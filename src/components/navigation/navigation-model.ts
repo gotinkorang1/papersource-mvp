@@ -18,7 +18,7 @@ export const mobileMenuLinks: readonly NavigationLink[] = [
   { label: "Account", href: "/account" },
 ];
 
-function normalizeNavigationHref(href: string) {
+export function normalizeNavigationHref(href: string) {
   const trimmed = href.trim();
   if (!trimmed.startsWith("/")) return trimmed;
   return trimmed === "/" ? trimmed : trimmed.replace(/\/+$/, "");
