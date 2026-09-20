@@ -40,5 +40,6 @@ export function uniqueNavigationLinks(links: readonly NavigationLink[]) {
 export function isNavigationLinkActive(href: string, pathname: string | null | undefined) {
   const normalizedHref = normalizeNavigationHref(href);
   const normalizedPathname = pathname ? normalizeNavigationHref(pathname) : "";
+  if (normalizedHref === "/") return normalizedPathname === "/";
   return normalizedPathname === normalizedHref || normalizedPathname.startsWith(`${normalizedHref}/`);
 }

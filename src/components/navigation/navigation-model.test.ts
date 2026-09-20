@@ -60,4 +60,9 @@ describe("storefront navigation model", () => {
     expect(isNavigationLinkActive("/about/", "/about")).toBe(true);
     expect(isNavigationLinkActive("/about", "/about/team/")).toBe(true);
   });
+
+  it("does not mark the home link active on every route", () => {
+    expect(isNavigationLinkActive("/", "/")).toBe(true);
+    expect(isNavigationLinkActive("/", "/shop")).toBe(false);
+  });
 });
