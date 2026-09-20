@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
+import { readSessionFlag, writeSessionFlag } from "@/lib/browser/session-storage";
 
 type StandaloneState = { matches?: boolean; iosStandalone?: boolean };
 
@@ -18,9 +19,9 @@ export function PwaSplash() {
     const media = window.matchMedia("(display-mode: standalone)");
     const iosStandalone = Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone);
     const splashKey = admin ? "papersource-admin-pwa-splash" : "papersource-pwa-splash";
-    if (!isStandaloneDisplayMode({ matches: media.matches, iosStandalone }) || sessionStorage.getItem(splashKey) === "1") return;
+    if (!isStandaloneDisplayMode({ matches: media.matches, iosStandalone }) || readSessionFlag(splashKey)) return;
 
-    sessionStorage.setItem(splashKey, "1");
+    writeSessionFlag(splashKey);
     const showTimeout = window.setTimeout(() => setVisible(true), 0);
     const hideTimeout = window.setTimeout(() => setVisible(false), 700);
     return () => {
