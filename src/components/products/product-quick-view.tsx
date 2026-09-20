@@ -37,6 +37,13 @@ export function ProductQuickView({
   const wasOpen = useRef(false);
 
   useEffect(() => {
+    if (!open) return;
+    // A reopened quick view starts a fresh quantity decision for the current product.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setQuantity(1);
+  }, [open, product?.id]);
+
+  useEffect(() => {
     onCloseRef.current = onClose;
   }, [onClose]);
 
