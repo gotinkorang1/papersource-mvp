@@ -6,6 +6,7 @@ import {
 } from "@/features/quotations/actions";
 import { listQuoteLines } from "@/features/quotations/repository";
 import { paperButton } from "@/components/commerce/paper-button";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { formatGhs } from "@/lib/money";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
@@ -74,9 +75,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
                     <p className="text-slate">{line.specLine}</p>
                     <form action={removeQuoteLineAction} className="mt-2">
                       <input type="hidden" name="variantId" value={line.id} />
-                      <button type="submit" className="text-sm text-error underline">
-                        Remove
-                      </button>
+                      <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="text-sm text-error underline" />
                     </form>
                   </td>
                   <td className="py-3">
@@ -90,9 +89,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
                         aria-label={`Quantity for ${line.name}`}
                         className="h-10 w-16 rounded-md border border-border bg-cream px-2 tabular-nums"
                       />
-                      <button type="submit" className="text-slate underline">
-                        Update
-                      </button>
+                      <SubmitProgressButton idleLabel="Update" pendingLabel="Updating…" className="text-slate underline" />
                     </form>
                   </td>
                   <td className="py-3 tabular-nums text-ink">

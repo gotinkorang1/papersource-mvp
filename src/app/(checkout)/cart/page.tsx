@@ -6,6 +6,7 @@ import {
 } from "@/features/checkout/actions";
 import { listCartLines } from "@/features/cart/repository";
 import { paperButton } from "@/components/commerce/paper-button";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { formatGhs } from "@/lib/money";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
@@ -91,15 +92,11 @@ export default async function CartPage({ searchParams }: PageProps) {
                       defaultValue={line.quantity}
                       className="h-10 w-16 rounded-md border border-border bg-cream px-2 text-sm tabular-nums"
                     />
-                    <button type="submit" className="text-sm text-slate underline">
-                      Update
-                    </button>
+                    <SubmitProgressButton idleLabel="Update" pendingLabel="Updating…" className="text-sm text-slate underline" />
                   </form>
                   <form action={removeCartLineAction}>
                     <input type="hidden" name="variantId" value={line.id} />
-                    <button type="submit" className="text-sm text-error underline">
-                      Remove
-                    </button>
+                    <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="text-sm text-error underline" />
                   </form>
                 </div>
               </li>
