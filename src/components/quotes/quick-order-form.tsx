@@ -1,9 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { useFormStatus } from "react-dom";
 import { paperButton } from "@/components/commerce/paper-button";
 
 const EMPTY_ROWS = 8;
+
+function QuickOrderSubmitButton({ destination, label, className }: { destination: "quote" | "cart"; label: string; className: string }) {
+  const { pending } = useFormStatus();
+  return <button type="submit" name="destination" value={destination} disabled={pending} aria-busy={pending} className={`${className} disabled:cursor-wait disabled:opacity-60`}>{pending ? "Adding…" : label}</button>;
+}
 
 export function QuickOrderForm() {
   const [rows, setRows] = useState(EMPTY_ROWS);
@@ -62,17 +68,8 @@ export function QuickOrderForm() {
         </button>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
-        <button
-          type="submit"
-          name="destination"
-          value="quote"
-          className={paperButton({ variant: "quote" })}
-        >
-          Add all to Quote
-        </button>
-        <button type="submit" name="destination" value="cart" className={paperButton({ variant: "secondary" })}>
-          Add all to Cart
-        </button>
+        <QuickOrderSubmitButton destination="quote" label="Add all to Quote" className={paperButton({ variant: "quote" })} />
+        <QuickOrderSubmitButton destination="cart" label="Add all to Cart" className={paperButton({ variant: "secondary" })} />
       </div>
     </form>
   );
