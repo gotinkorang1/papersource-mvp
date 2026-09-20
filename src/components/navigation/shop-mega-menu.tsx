@@ -92,7 +92,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
                 <p className="text-sm font-medium text-ink">{column.title}</p>
                 <ul className="mt-2 space-y-1">
                   {column.links.map((link) => (
-                    <li key={link.label}>
+                    <li key={link.href}>
                       <Link
                         href={link.href}
                         role="menuitem"
