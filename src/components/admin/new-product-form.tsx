@@ -78,6 +78,7 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
       }
       setNotice(failed ? `${pending.length - failed} of ${pending.length} images uploaded. Fix the failed images, then try again.` : "Images uploaded. Review alt text, then create the product to save everything together.");
     } catch {
+      setImages((current) => current.map((image) => image.status === "uploading" ? { ...image, status: "error", error: "Upload stopped unexpectedly. Try again." } : image));
       setNotice("The upload stopped unexpectedly. Try the remaining images again.");
     } finally {
       setUploading(false);
