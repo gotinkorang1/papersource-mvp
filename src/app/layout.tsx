@@ -88,7 +88,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
     >
       <body className="flex min-h-full flex-col bg-background font-sans text-foreground">
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(siteJsonLd()) }} />
-        <script dangerouslySetInnerHTML={{ __html: `(() => { const saved = localStorage.getItem("papersource-theme"); const dark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches); document.documentElement.classList.toggle("dark", dark); })()` }} />
+        <script dangerouslySetInnerHTML={{ __html: `(() => { try { const saved = localStorage.getItem("papersource-theme"); const dark = saved === "dark" || (!saved && matchMedia("(prefers-color-scheme: dark)").matches); document.documentElement.classList.toggle("dark", dark); } catch { /* Storage may be blocked; system theme remains the fallback. */ } })()` }} />
         {children}
         <PwaSplash />
         <PwaRegister />

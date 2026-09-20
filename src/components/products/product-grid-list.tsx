@@ -8,6 +8,7 @@ import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 import Link from "next/link";
 import { useEffect, useState, useTransition } from "react";
 import type { ProductCardModel } from "@/types/catalogue";
+import { readLocalValue, writeLocalValue } from "@/lib/browser/local-storage";
 
 const VIEW_MODE_STORAGE_KEY = "papersource.catalogue.view-mode";
 
@@ -35,7 +36,7 @@ export function ProductGridList({
       setSelectedViewMode(controlledViewMode);
       return;
     }
-    const saved = window.localStorage.getItem(VIEW_MODE_STORAGE_KEY);
+    const saved = readLocalValue(VIEW_MODE_STORAGE_KEY);
     if (saved === "default" || saved === "grid" || saved === "list" || saved === "content") {
       // Client preference is read after hydration to avoid accessing window on the server.
       setSelectedViewMode(saved);
@@ -52,7 +53,7 @@ export function ProductGridList({
 
   const setViewMode = (next: CatalogueViewMode) => {
     beginTransition(() => setSelectedViewMode(next));
-    window.localStorage.setItem(VIEW_MODE_STORAGE_KEY, next);
+    writeLocalValue(VIEW_MODE_STORAGE_KEY, next);
     onViewModeChange?.(next);
   };
 

@@ -2,13 +2,20 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { readLocalValue, writeLocalValue } from "@/lib/browser/local-storage";
 
 export function RecentSearches({ query }: { query: string }) {
   const [recent, setRecent] = useState<string[]>([]);
   useEffect(() => {
-    const existing = JSON.parse(localStorage.getItem("papersource-recent-searches") ?? "[]") as string[];
+    let existing: string[] = [];
+    try {
+      const parsed = JSON.parse(readLocalValue("papersource-recent-searches") ?? "[]");
+      if (Array.isArray(parsed)) existing = parsed.filter((item): item is string => typeof item === "string");
+    } catch {
+      // Ignore malformed client-side history and start fresh.
+    }
     const next = query.trim() ? [query.trim(), ...existing.filter((item) => item.toLowerCase() !== query.trim().toLowerCase())].slice(0, 5) : existing;
-    if (query.trim()) localStorage.setItem("papersource-recent-searches", JSON.stringify(next));
+    if (query.trim()) writeLocalValue("papersource-recent-searches", JSON.stringify(next));
     const timer = window.setTimeout(() => setRecent(next), 0);
     return () => window.clearTimeout(timer);
   }, [query]);

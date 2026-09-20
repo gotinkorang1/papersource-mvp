@@ -2,6 +2,7 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+import { writeLocalValue } from "@/lib/browser/local-storage";
 
 export function ThemeToggle() {
   const [dark, setDark] = useState(false);
@@ -14,7 +15,7 @@ export function ThemeToggle() {
   function toggle() {
     const next = !document.documentElement.classList.contains("dark");
     document.documentElement.classList.toggle("dark", next);
-    localStorage.setItem("papersource-theme", next ? "dark" : "light");
+    writeLocalValue("papersource-theme", next ? "dark" : "light");
     setDark(next);
   }
 
