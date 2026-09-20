@@ -5,16 +5,17 @@ import { ClipboardList, House, Search, ShoppingBag, Store } from "lucide-react";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 import { itemCountLabel } from "@/lib/copy";
 import { usePathname } from "next/navigation";
+import { isNavigationLinkActive } from "./navigation-model";
 
 export function MobileNav() {
   const { cartLines, quoteLines, cartOpen, quoteOpen, setCartOpen, setQuoteOpen } =
     useDualPathPreview();
   const pathname = usePathname();
   const currentPathname = pathname ?? "";
-  const isActive = (href: string) => currentPathname === href || currentPathname.startsWith(`${href}/`);
-  const shopActive = isActive("/shop") || isActive("/product") || ["/brands", "/bulk-orders", "/quick-order"].includes(currentPathname);
-  const quoteActive = quoteOpen || ["/quote", "/request-quote"].includes(currentPathname);
-  const cartActive = cartOpen || ["/cart", "/checkout"].includes(currentPathname);
+  const isActive = (href: string) => isNavigationLinkActive(href, pathname);
+  const shopActive = ["/shop", "/product", "/brands", "/bulk-orders", "/quick-order"].some(isActive);
+  const quoteActive = quoteOpen || isActive("/quote") || isActive("/request-quote");
+  const cartActive = cartOpen || isActive("/cart") || isActive("/checkout");
   const cartCount = cartLines.reduce((sum, line) => sum + line.quantity, 0);
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
   const closeDrawers = () => {
