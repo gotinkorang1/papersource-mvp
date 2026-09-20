@@ -1,6 +1,12 @@
 "use client";
 
 import { paperButton } from "@/components/commerce/paper-button";
+import { useFormStatus } from "react-dom";
+
+function AcceptSubmitButton() {
+  const { pending } = useFormStatus();
+  return <button type="submit" disabled={pending} aria-busy={pending} className={`${paperButton()} disabled:cursor-wait disabled:opacity-60`}>{pending ? "Accepting…" : "Accept Quote"}</button>;
+}
 
 export function AcceptQuoteButton({
   token,
@@ -17,9 +23,7 @@ export function AcceptQuoteButton({
           {error}
         </p>
       ) : null}
-      <button type="submit" className={paperButton()}>
-        Accept Quote
-      </button>
+      <AcceptSubmitButton />
     </form>
   );
 }
