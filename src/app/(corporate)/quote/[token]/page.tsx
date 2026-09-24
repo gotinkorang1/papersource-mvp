@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AcceptQuoteButton } from "@/components/quotes/accept-quote-button";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { getQuoteByAccessToken } from "@/features/quotations/accept";
 import { signedDocumentPath } from "@/lib/documents/sign";
@@ -107,9 +108,11 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
           <AcceptQuoteButton token={token} error={error} />
           <form action="/quote/decline" method="post">
             <input type="hidden" name="token" value={token} />
-            <button type="submit" className="text-sm underline text-slate">
-              Decline this quotation
-            </button>
+            <SubmitProgressButton
+              idleLabel="Decline this quotation"
+              pendingLabel="Declining…"
+              className="text-sm underline text-slate disabled:no-underline"
+            />
           </form>
         </div>
       ) : (
@@ -131,9 +134,11 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
               {error}
             </p>
           ) : null}
-          <button type="submit" className="text-sm underline text-slate">
-            Cancel this request
-          </button>
+          <SubmitProgressButton
+            idleLabel="Cancel this request"
+            pendingLabel="Cancelling…"
+            className="text-sm underline text-slate disabled:no-underline"
+          />
         </form>
       ) : null}
       <p className="mt-8">
