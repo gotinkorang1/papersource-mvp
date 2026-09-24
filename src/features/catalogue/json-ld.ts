@@ -97,11 +97,10 @@ export function productJsonLd(
       price: pesewasToMajor(product.unitPricePesewas),
       availability,
       itemCondition: "https://schema.org/NewCondition",
-      shippingDetails: {
-        "@type": "OfferShippingDetails",
-        shippingDestination: { "@type": "DefinedRegion", addressCountry: "GH" },
-        hasShippingService: { "@id": `${origin}/#shipping-service` },
-      },
+      // Google requires one accurate nationwide rate and delivery window for
+      // offer-level shipping markup. PaperSource's city zones and nationwide
+      // quotes do not support that claim, so we do not publish a misleading
+      // country-wide shipping offer.
       hasMerchantReturnPolicy: { "@id": `${origin}/#return-policy` },
       seller: { "@id": `${origin}/#organization`, "@type": "Organization", name: "PaperSource Ghana" },
     },

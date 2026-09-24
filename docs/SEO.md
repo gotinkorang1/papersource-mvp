@@ -72,6 +72,10 @@ Every public indexable page:
 - SKU
 - Images
 - Offer (price in GHS, inclusive; `priceCurrency: GHS`)
+- Shipping rich-result data only when one accurate rate and delivery window can
+  be expressed for the destination. Keep Accra/Tema zone pricing and
+  nationwide-on-request terms out of product schema until they are configured
+  accurately in Merchant Center.
 
 This matters for Google search / later Merchant visibility.
 
