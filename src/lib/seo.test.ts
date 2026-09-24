@@ -1,7 +1,14 @@
 import { describe, expect, it } from "vitest";
 import { breadcrumbJsonLd } from "@/features/catalogue/json-ld";
 import * as seo from "./seo";
-import { collectionItemPosition, collectionPageJsonLd, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
+import { SITE_URL, absoluteUrl, collectionItemPosition, collectionPageJsonLd, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
+
+describe("canonical host", () => {
+  it("uses the live www destination for every public URL", () => {
+    expect(SITE_URL).toBe("https://www.papersourcegh.com");
+    expect(absoluteUrl("/shop")).toBe("https://www.papersourcegh.com/shop");
+  });
+});
 
 describe("siteJsonLd", () => {
   it("describes PaperSource as a Ghana workplace-supplies business with site search", () => {

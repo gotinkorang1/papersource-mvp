@@ -1,4 +1,5 @@
 import { pesewasToMajor } from "@/lib/money";
+import { absoluteUrl } from "@/lib/seo";
 import { productSeoDescription } from "./product-metadata";
 
 export type GoogleShoppingFeedEntry = {
@@ -44,5 +45,5 @@ export function renderGoogleShoppingFeed(entries: GoogleShoppingFeedEntry[]) {
     ].filter(Boolean).join("\n");
   }).join("\n");
 
-  return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n  <title>PaperSource Ghana product feed</title>\n  <link>https://papersourcegh.com/shop</link>\n  <description>Office stationery, books and workplace supplies from PaperSource Ghana.</description>\n${items}\n</channel>\n</rss>`;
+  return `<?xml version="1.0" encoding="UTF-8"?>\n<rss version="2.0" xmlns:g="http://base.google.com/ns/1.0">\n<channel>\n  <title>PaperSource Ghana product feed</title>\n  <link>${absoluteUrl("/shop")}</link>\n  <description>Office stationery, books and workplace supplies from PaperSource Ghana.</description>\n${items}\n</channel>\n</rss>`;
 }

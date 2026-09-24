@@ -42,7 +42,9 @@ Do not manufacture dozens of thin doorway pages that repeat the same paragraph. 
 | `/business`, `/schools`, `/bulk-orders`, `/delivery` | Intent pages with real copy |
 | `/cart`, `/checkout`, `/quote`, `/account`, `/admin` | `noindex` |
 
-Canonical host: `https://papersourcegh.com` (www policy: pick one, redirect the other).
+Canonical host: `https://www.papersourcegh.com`. The apex domain redirects to
+this host, so sitemaps, canonicals, structured data, feeds, and share URLs
+must publish the `www` URL directly.
 
 ---
 
