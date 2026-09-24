@@ -31,9 +31,13 @@ describe("siteJsonLd", () => {
     expect(organization?.hasMerchantReturnPolicy).toEqual({ "@id": expect.stringContaining("#return-policy") });
     expect(organization?.hasShippingService).toEqual({ "@id": expect.stringContaining("#shipping-service") });
     expect(json["@graph"]).toEqual(expect.arrayContaining([
-      expect.objectContaining({ "@type": "MerchantReturnPolicy", merchantReturnDays: 7, returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow", returnFees: "https://schema.org/FreeReturn" }),
+      expect.objectContaining({ "@type": "MerchantReturnPolicy", merchantReturnDays: 7, returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow" }),
       expect.objectContaining({ "@type": "ShippingService", areaServed: expect.arrayContaining(["Accra", "Tema", "Ghana"]) }),
     ]));
+
+    const returnPolicy = json["@graph"].find((item: { "@type": string | string[] }) => item["@type"] === "MerchantReturnPolicy") as Record<string, unknown>;
+    expect(returnPolicy).not.toHaveProperty("returnMethod");
+    expect(returnPolicy).not.toHaveProperty("returnFees");
   });
 });
 

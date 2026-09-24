@@ -138,8 +138,8 @@ export function siteJsonLd() {
         returnPolicyCountry: "GH",
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 7,
-        returnMethod: "https://schema.org/ReturnByMail",
-        returnFees: "https://schema.org/FreeReturn",
+        // Returns are reviewed case by case (collection, replacement, or
+        // refund), so do not promise one method or fee arrangement here.
         url: absoluteUrl("/returns"),
       },
       {
