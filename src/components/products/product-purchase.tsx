@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { paperButton } from "@/components/commerce/paper-button";
 import { QuantitySelector } from "@/components/commerce/quantity-selector";
 import { QuoteButton } from "@/components/commerce/quote-button";
@@ -52,7 +53,7 @@ export function ProductPurchase({ product, savedLists = [] }: { product: Product
               {savedLists.map((list) => <option key={list.id} value={list.id}>{list.name}</option>)}
             </select>
           </label>
-          <button type="submit" className="min-h-10 rounded-md border border-ink px-3 py-2 text-sm font-semibold text-ink hover:bg-card">Save product</button>
+          <SubmitProgressButton idleLabel="Save product" pendingLabel="Saving…" className="min-h-10 rounded-md border border-ink px-3 py-2 text-sm font-semibold text-ink hover:bg-card" />
         </form>
       ) : null}
       <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>
