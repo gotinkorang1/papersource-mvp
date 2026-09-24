@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { listBrands, listDivisionCategories, listProductCards } from "@/features/catalogue";
+import { listBrandDirectory, listDivisionCategories, listProductCards } from "@/features/catalogue";
 import { listPublishedPages } from "@/features/content";
 import { SITE_URL } from "@/lib/seo";
 
@@ -20,7 +20,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   try {
     const [categories, brands, products, pages] = await Promise.all([
       listDivisionCategories(),
-      listBrands(),
+      listBrandDirectory(),
       listProductCards(),
       listPublishedPages(),
     ]);
