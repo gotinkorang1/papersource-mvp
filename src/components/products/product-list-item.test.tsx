@@ -1,5 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import { ProductListItem } from "@/components/products/product-list-item";
 import { sampleProducts } from "@/lib/design-system/fixtures";
 
@@ -41,5 +42,22 @@ describe("ProductListItem", () => {
     fireEvent.error(image);
 
     expect(image).toHaveAttribute("src", expect.stringContaining("set-school-stationery.jpg"));
+  });
+
+  it("confirms cart and quote additions in list view", async () => {
+    const user = userEvent.setup();
+    const addToCart = vi.fn();
+    const addToQuote = vi.fn();
+    render(<ProductListItem product={sampleProducts[0]} onAddToCart={addToCart} onAddToQuote={addToQuote} />);
+
+    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+    expect(addToCart).toHaveBeenCalledWith(sampleProducts[0], 1);
+    expect(screen.getByRole("button", { name: "Added to Cart" })).toHaveTextContent("Added");
+    expect(screen.getByRole("status")).toHaveTextContent("Added to cart.");
+
+    await user.click(screen.getByRole("button", { name: "Add to Quote" }));
+    expect(addToQuote).toHaveBeenCalledWith(sampleProducts[0], 1);
+    expect(screen.getByRole("button", { name: "Added to Quote" })).toHaveTextContent("Added");
+    expect(screen.getByRole("status")).toHaveTextContent("Added to quote list.");
   });
 });
