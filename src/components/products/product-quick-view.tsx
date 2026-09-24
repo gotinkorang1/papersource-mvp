@@ -92,15 +92,11 @@ export function ProductQuickView({
       role="dialog"
       aria-modal="true"
       aria-labelledby="quick-view-title"
+      onClick={(event) => {
+        if (event.target === event.currentTarget) onClose();
+      }}
     >
-      <button
-        type="button"
-        tabIndex={-1}
-        className="absolute inset-0 cursor-default"
-        aria-label="Dismiss quick view"
-        onClick={onClose}
-      />
-      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6">
+      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6" onClick={(event) => event.stopPropagation()}>
         <button
           type="button"
           ref={closeRef}

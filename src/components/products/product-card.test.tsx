@@ -112,6 +112,19 @@ describe("ProductCard", () => {
     expect(container.ownerDocument.activeElement).toBe(trigger);
   });
 
+  it("closes quick view from the backdrop without intercepting panel controls", async () => {
+    const user = userEvent.setup();
+    render(<ProductCard product={product} />);
+
+    await user.click(screen.getByRole("button", { name: "Quick view" }));
+    const dialog = screen.getByRole("dialog");
+    await user.click(within(dialog).getByRole("button", { name: "Increase quantity" }));
+    expect(within(dialog).getByRole("spinbutton", { name: "Quantity" })).toHaveValue(2);
+
+    await user.click(dialog);
+    expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
+  });
+
   it("resets quick-view quantity when reopened", async () => {
     const user = userEvent.setup();
     render(<ProductCard product={product} />);
