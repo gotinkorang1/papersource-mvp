@@ -24,6 +24,7 @@ export function ProductGallery({
   const gallery = images?.length ? dedupeProductImages(images) : src ? [{ src, alt }] : [];
   const [activeIndex, setActiveIndex] = useState(0);
   const touchStartX = useRef<number | null>(null);
+  const galleryRef = useRef<HTMLDivElement>(null);
   const active = gallery[activeIndex] ?? gallery[0];
   const moveImage = useCallback((direction: 1 | -1) => setActiveIndex((index) => (index + direction + gallery.length) % gallery.length), [gallery.length]);
   useEffect(() => {
@@ -35,9 +36,15 @@ export function ProductGallery({
     if (gallery.length < 2) return;
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
-      if (!target || target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
-      if (event.key === "ArrowLeft") moveImage(-1);
-      if (event.key === "ArrowRight") moveImage(1);
+      if (!target || !galleryRef.current?.contains(target) || target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        moveImage(-1);
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        moveImage(1);
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
@@ -45,9 +52,11 @@ export function ProductGallery({
   return (
     <div className="mx-auto w-full max-w-xl">
       <div
+        ref={galleryRef}
         className="relative aspect-[4/5] touch-pan-y overflow-hidden border border-border bg-cream sm:aspect-square"
         role="region"
         aria-label={`${alt} image gallery`}
+        tabIndex={0}
         onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }}
         onTouchEnd={(event) => { const start = touchStartX.current; touchStartX.current = null; const end = event.changedTouches[0]?.clientX; if (start === null || end === undefined || gallery.length < 2) return; const distance = end - start; if (Math.abs(distance) > 40) moveImage(distance > 0 ? -1 : 1); }}
       >
