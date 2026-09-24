@@ -10,6 +10,14 @@ vi.mock("@/features/content", () => ({
 }));
 
 describe("sitemap", () => {
+  it("publishes only the canonical www host", async () => {
+    const { default: buildSitemap } = await import("./sitemap");
+    const entries = await buildSitemap();
+
+    expect(entries).not.toHaveLength(0);
+    expect(entries.every((entry) => new URL(entry.url).hostname === "www.papersourcegh.com")).toBe(true);
+  });
+
   it("does not fake current modification dates for catalogue URLs", async () => {
     const { default: buildSitemap } = await import("./sitemap");
     const entries = await buildSitemap();
