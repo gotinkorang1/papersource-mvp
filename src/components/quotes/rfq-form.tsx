@@ -38,6 +38,7 @@ export function RfqForm({ customer, organization, defaultAddress }: {
         defaultValues={{ fullName: customer?.fullName ?? "", phone: customer?.phone ?? "", ...defaultAddress }}
         submitLabel={pending ? "Submitting quotation…" : "Submit RFQ"}
         submitDisabled={pending}
+        busy={pending}
       >
         <div className="space-y-4 border-t border-border pt-4">
           {organization ? (

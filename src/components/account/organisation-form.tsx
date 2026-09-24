@@ -13,7 +13,7 @@ export function OrganisationForm({ values }: { values: { name: string; type: str
   function errors(field: string) { return state.errors?.[field]; }
   function errorProps(field: string) { return { "aria-invalid": Boolean(errors(field)?.length), "aria-describedby": errors(field)?.length ? `org-${field}-error` : undefined }; }
   return (
-    <form action={action} className="mt-8 grid max-w-xl gap-4 rounded-xl border border-border bg-surface p-5 shadow-sm">
+    <form action={action} className="mt-8 grid max-w-xl gap-4 rounded-xl border border-border bg-surface p-5 shadow-sm" aria-busy={pending}>
       <div className="space-y-1.5">
         <label htmlFor="org-name" className="block text-sm font-medium">Organisation name *</label>
         <input id="org-name" name="name" required maxLength={200} autoComplete="organization" defaultValue={values.name} className={fieldClass} {...errorProps("name")} />
@@ -34,7 +34,7 @@ export function OrganisationForm({ values }: { values: { name: string; type: str
         </div>
       ))}
       {state.message ? <p role={state.success ? "status" : "alert"} className={state.success ? "text-sm text-ink" : "text-sm text-error"}>{state.message}</p> : null}
-      <button type="submit" disabled={pending} className={paperButton()}>{pending ? "Saving…" : "Save organisation"}</button>
+      <button type="submit" disabled={pending} aria-busy={pending} className={paperButton({ className: "disabled:cursor-wait" })}>{pending ? "Saving…" : "Save organisation"}</button>
     </form>
   );
 }

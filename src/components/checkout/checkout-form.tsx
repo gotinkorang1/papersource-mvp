@@ -38,6 +38,7 @@ export function CheckoutForm({
           canPlaceOrder ? (pending ? "Placing order…" : "Place order") : undefined
         }
         submitDisabled={pending}
+        busy={pending}
       >
         <div className="space-y-1.5">
           <Label htmlFor="checkout-email">

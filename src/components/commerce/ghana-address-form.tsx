@@ -64,6 +64,7 @@ export function GhanaAddressForm({
   children,
   submitLabel,
   submitDisabled,
+  busy = false,
   fieldErrors,
   savedAddresses,
 }: {
@@ -73,6 +74,7 @@ export function GhanaAddressForm({
   children?: ReactNode;
   submitLabel?: string;
   submitDisabled?: boolean;
+  busy?: boolean;
   fieldErrors?: Record<string, string[] | undefined>;
   savedAddresses?: Array<{ id: string; label: string; values: Partial<GhanaAddressValues> }>;
 }) {
@@ -111,6 +113,7 @@ export function GhanaAddressForm({
       data-hydrated={hydrated ? "true" : "false"}
       className="space-y-4 border border-border bg-card p-5"
       action={action}
+      aria-busy={busy}
       encType={typeof action === "function" ? undefined : "multipart/form-data"}
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
@@ -253,7 +256,7 @@ export function GhanaAddressForm({
       ) : null)}
       {children}
       {submitLabel ? (
-        <button type="submit" className={paperButton()} disabled={submitDisabled || !hydrated}>
+        <button type="submit" className={paperButton({ className: "disabled:cursor-wait" })} disabled={submitDisabled || !hydrated} aria-busy={busy}>
           {submitLabel}
         </button>
       ) : null}

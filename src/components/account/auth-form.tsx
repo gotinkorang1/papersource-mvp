@@ -49,7 +49,7 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
           </div>
         );
       })}
-      <button type="submit" disabled={pending} className={paperButton()}>{pending ? pendingLabels[mode] : labels[mode]}</button>
+      <button type="submit" disabled={pending} aria-busy={pending} className={paperButton({ className: "disabled:cursor-wait" })}>{pending ? pendingLabels[mode] : labels[mode]}</button>
       {mode === "reset" && state.status === "success" ? <Link href="/account" className="text-center text-sm text-ink underline">Continue to account</Link> : null}
     </form>
   );

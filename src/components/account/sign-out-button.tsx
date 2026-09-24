@@ -6,7 +6,7 @@ import { paperButton } from "@/components/commerce/paper-button";
 
 function SubmitSignOut() {
   const { pending } = useFormStatus();
-  return <button type="submit" disabled={pending} className={paperButton({ variant: "secondary" })}>{pending ? "Signing out…" : "Sign out"}</button>;
+  return <button type="submit" disabled={pending} aria-busy={pending} className={paperButton({ variant: "secondary", className: "disabled:cursor-wait" })}>{pending ? "Signing out…" : "Sign out"}</button>;
 }
 
 export function SignOutButton() {
