@@ -8,7 +8,7 @@ import { CataloguePagination } from "@/components/products/catalogue-pagination"
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 import { categorySeoDescription } from "@/features/catalogue/seo-copy";
 import { breadcrumbJsonLd } from "@/features/catalogue";
-import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -28,7 +28,7 @@ export async function generateMetadata({
   const category = await getCategoryBySlug(slug);
 
   if (!category) {
-    return { title: "Category" };
+    return notFoundPageMetadata("Category not found");
   }
   const description = categorySeoDescription(category);
 

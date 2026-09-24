@@ -9,7 +9,7 @@ import { OfficeBundleCard } from "@/components/products/office-bundle-card";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
 import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, listProductCards, productJsonLd } from "@/features/catalogue";
-import { absoluteUrl, pageMetadata, productSeoTitle, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, notFoundPageMetadata, pageMetadata, productSeoTitle, SITE_URL } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
 import { CopySkuButton } from "@/components/products/copy-sku-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -32,12 +32,7 @@ export async function generateMetadata({
   const product = await getProductBySlug(slug);
 
   if (!product) {
-    return {
-      title: "Product not found",
-      description: "The requested PaperSource product could not be found.",
-      robots: { index: false, follow: false },
-      alternates: { canonical: undefined },
-    };
+    return notFoundPageMetadata("Product not found");
   }
 
   const seoTitle = product.attributes.find(

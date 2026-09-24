@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { getBrandBySlug, listBrandDirectory, listProductCards } from "@/features/catalogue";
-import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, absoluteUrl } from "@/lib/seo";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
@@ -25,7 +25,7 @@ export async function generateMetadata({
   const brand = await getBrandBySlug(slug);
 
   if (!brand) {
-    return { title: "Brand" };
+    return notFoundPageMetadata("Brand not found");
   }
 
   return {

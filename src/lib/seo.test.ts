@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { breadcrumbJsonLd } from "@/features/catalogue/json-ld";
 import * as seo from "./seo";
-import { SITE_URL, absoluteUrl, collectionItemPosition, collectionPageJsonLd, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
+import { SITE_URL, absoluteUrl, collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
 
 describe("canonical host", () => {
   it("uses the live www destination for every public URL", () => {
@@ -55,6 +55,14 @@ describe("productSeoTitle", () => {
 });
 
 describe("pageMetadata", () => {
+  it("keeps unknown public pages out of search results and canonical clusters", () => {
+    expect(notFoundPageMetadata("Brand not found")).toMatchObject({
+      title: "Brand not found",
+      robots: { index: false, follow: false },
+      alternates: { canonical: undefined },
+    });
+  });
+
   it("publishes a verified modification timestamp when supplied", () => {
     const metadata = pageMetadata({
       title: "A4 paper",

@@ -93,6 +93,16 @@ export function pageMetadata({ title, description, path, image = DEFAULT_SHARE_I
   };
 }
 
+/** Prevent an unknown dynamic URL from joining the public canonical cluster. */
+export function notFoundPageMetadata(title = "Page not found"): Metadata {
+  return {
+    title,
+    description: "The requested PaperSource page could not be found.",
+    robots: { index: false, follow: false },
+    alternates: { canonical: undefined },
+  };
+}
+
 /** Site-wide entities used by search engines and social previews. */
 export function siteJsonLd() {
   const organizationId = `${SITE_URL}/#organization`;
