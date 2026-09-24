@@ -3,7 +3,15 @@ import Link from "next/link";
 import { QuickOrderForm } from "@/components/quotes/quick-order-form";
 import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({ title: "Quick Order by SKU", description: "Paste product SKUs and quantities to build a PaperSource Ghana quotation for Accra and Tema offices.", path: "/quick-order" });
+export const metadata: Metadata = {
+  ...pageMetadata({
+    title: "Quick Order by SKU",
+    description: "Paste product SKUs and quantities to build a PaperSource Ghana quotation for Accra and Tema offices.",
+    path: "/quick-order",
+  }),
+  // A useful procurement tool, not a standalone search landing page.
+  robots: { index: false, follow: true },
+};
 
 type PageProps = {
   searchParams: Promise<{ error?: string }>;

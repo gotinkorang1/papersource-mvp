@@ -27,5 +27,6 @@ describe("sitemap", () => {
     expect(product).toMatchObject({ url: expect.stringContaining("/product/blue-pen"), changeFrequency: "weekly", lastModified: new Date("2026-09-10T00:00:00Z"), images: ["https://cdn.example/blue-pen.jpg"] });
     expect(page).toHaveProperty("lastModified");
     expect(entries.some((entry) => entry.url.endsWith("/search"))).toBe(false);
+    expect(entries.some((entry) => entry.url.endsWith("/quick-order"))).toBe(false);
   });
 });

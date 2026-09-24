@@ -40,7 +40,7 @@ Do not manufacture dozens of thin doorway pages that repeat the same paragraph. 
 | `/brands/[slug]` | `/brands/hp`, `/brands/canon`, `/brands/double-a` |
 | `/search` | `noindex` (search result pages) unless a later policy says otherwise |
 | `/business`, `/schools`, `/bulk-orders`, `/delivery` | Intent pages with real copy |
-| `/cart`, `/checkout`, `/quote`, `/account`, `/admin` | `noindex` |
+| `/cart`, `/checkout`, `/quote`, `/account`, `/admin`, `/quick-order` | `noindex` |
 
 Canonical host: `https://www.papersourcegh.com`. The apex domain redirects to
 this host, so sitemaps, canonicals, structured data, feeds, and share URLs
@@ -134,5 +134,6 @@ If the only way to buy at that qty is Request Quote, do not invent a fake low pr
 
 - Ship PDPs without JSON-LD.
 - Index guest quote tokens or Paystack return URLs.
+- Index transactional helpers such as the SKU quick-order tool; keep them usable, but exclude them from the sitemap and search indexes.
 - Create doorway pages for every keyword with duplicate text.
 - Put US-only schema (`priceCurrency: USD`) on Ghana offers.
