@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, permanentRedirect } from "next/navigation";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
@@ -49,6 +49,9 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
 
   if (!category) {
     notFound();
+  }
+  if (category.slug !== slug) {
+    permanentRedirect(`/shop/${category.slug}`);
   }
   const description = categorySeoDescription(category);
 

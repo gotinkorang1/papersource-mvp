@@ -42,6 +42,11 @@ const CATEGORY_SLUG_ALIASES: Record<string, string> = {
   "desk-essentials": "desk-accessories",
 };
 
+/** Resolves a previously shared category path to its current database slug. */
+export function canonicalCategorySlug(slug: string) {
+  return CATEGORY_SLUG_ALIASES[slug] ?? slug;
+}
+
 type ProductFilter = {
   categorySlug?: string;
   brandSlug?: string;
@@ -61,8 +66,8 @@ export async function getCategoryBySlug(
   if (isDatabaseConfigured()) {
     const category = await getCategoryBySlugFromDb(slug);
     if (category) return category;
-    const alias = CATEGORY_SLUG_ALIASES[slug];
-    return alias ? getCategoryBySlugFromDb(alias) : null;
+    const alias = canonicalCategorySlug(slug);
+    return alias !== slug ? getCategoryBySlugFromDb(alias) : null;
   }
   return getCategoryBySlugFromSeed(slug);
 }
