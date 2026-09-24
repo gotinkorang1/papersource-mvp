@@ -5,6 +5,7 @@ import {
   useCallback,
   useContext,
   useMemo,
+  useRef,
   useState,
   type ReactNode,
 } from "react";
@@ -103,7 +104,17 @@ export function DualPathPreviewProvider({
   const [cartOpen, setCartOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
   const [syncError, setSyncError] = useState<string | null>(null);
+  const cartLinesRef = useRef(initialCartLines);
+  const quoteLinesRef = useRef(initialQuoteLines);
+  const syncRequestRef = useRef(0);
   const clearSyncError = useCallback(() => setSyncError(null), []);
+
+  const replaceLines = useCallback((nextCartLines: CartLinePreview[], nextQuoteLines: QuoteLinePreview[]) => {
+    cartLinesRef.current = nextCartLines;
+    quoteLinesRef.current = nextQuoteLines;
+    setCartLines(nextCartLines);
+    setQuoteLines(nextQuoteLines);
+  }, []);
 
   const setCartOpenExclusive = useCallback((open: boolean) => {
     setCartOpen(open);
@@ -121,75 +132,85 @@ export function DualPathPreviewProvider({
 
   const addToCart = useCallback(
     (product: ProductCardModel, quantity: number) => {
-      setCartLines((current) => mergeCartLine(current, product, quantity));
+      const nextCartLines = mergeCartLine(cartLinesRef.current, product, quantity);
+      replaceLines(nextCartLines, quoteLinesRef.current);
       setQuoteOpen(false);
       setCartOpen(true);
       setSyncError(null);
 
       if (persist) {
+        const requestId = ++syncRequestRef.current;
         void addToCartAction({ variantId: product.variantId, quantity })
           .then((state) => {
-            setCartLines(state.cartLines);
-            setQuoteLines(state.quoteLines);
+            if (requestId === syncRequestRef.current) replaceLines(state.cartLines, state.quoteLines);
           })
           .catch((error) => {
             console.error("Could not persist the retail cart", error);
-            setSyncError("Your cart could not be synced. Please try again.");
+            if (requestId === syncRequestRef.current) setSyncError("Your cart could not be synced. Please try again.");
           });
       }
     },
-    [persist],
+    [persist, replaceLines],
   );
 
   const addToQuote = useCallback(
     (product: ProductCardModel, quantity: number) => {
-      setQuoteLines((current) => mergeQuoteLine(current, product, quantity));
+      const nextQuoteLines = mergeQuoteLine(quoteLinesRef.current, product, quantity);
+      replaceLines(cartLinesRef.current, nextQuoteLines);
       setCartOpen(false);
       setQuoteOpen(true);
       setSyncError(null);
 
       if (persist) {
+        const requestId = ++syncRequestRef.current;
         void addToQuoteAction({ variantId: product.variantId, quantity })
           .then((state) => {
-            setCartLines(state.cartLines);
-            setQuoteLines(state.quoteLines);
+            if (requestId === syncRequestRef.current) replaceLines(state.cartLines, state.quoteLines);
           })
           .catch((error) => {
             console.error("Could not persist the quote basket", error);
-            setSyncError("Your quote list could not be synced. Please try again.");
+            if (requestId === syncRequestRef.current) setSyncError("Your quote list could not be synced. Please try again.");
           });
       }
     },
-    [persist],
+    [persist, replaceLines],
   );
 
   const clearCart = useCallback(() => {
-    setCartLines([]);
+    const previousCartLines = cartLinesRef.current;
+    replaceLines([], quoteLinesRef.current);
     setSyncError(null);
     if (persist) {
+      const requestId = ++syncRequestRef.current;
       void clearCartAction().then((state) => {
-        setCartLines(state.cartLines);
-        setQuoteLines(state.quoteLines);
+        if (requestId === syncRequestRef.current) replaceLines(state.cartLines, state.quoteLines);
       }).catch((error) => {
         console.error("Could not clear the retail cart", error);
-        setSyncError("Your cart could not be cleared. Please try again.");
+        if (requestId === syncRequestRef.current) {
+          replaceLines(previousCartLines, quoteLinesRef.current);
+          setSyncError("Your cart could not be cleared. Please try again.");
+        }
       });
     }
-  }, [persist]);
+  }, [persist, replaceLines]);
 
   const clearQuote = useCallback(() => {
-    setQuoteLines([]);
+    const previousQuoteLines = quoteLinesRef.current;
+    replaceLines(cartLinesRef.current, []);
     setSyncError(null);
     if (persist) {
+      const requestId = ++syncRequestRef.current;
       void clearQuoteAction().then((state) => {
-        setCartLines(state.cartLines);
-        setQuoteLines(state.quoteLines);
+        if (requestId === syncRequestRef.current) replaceLines(state.cartLines, state.quoteLines);
       }).catch((error) => {
         console.error("Could not clear the quote basket", error);
-        setSyncError("Your quote list could not be cleared. Please try again.");
+        if (requestId === syncRequestRef.current) {
+          replaceLines(cartLinesRef.current, previousQuoteLines);
+          setSyncError("Your quote list could not be cleared. Please try again.");
+        }
       });
     }
-  }, [persist]);
+  }, [persist, replaceLines]);
 
   const value = useMemo(
     () => ({
