@@ -109,27 +109,27 @@ export default async function AdminProductDetailPage({
       <section id="variants" className="mt-8 scroll-mt-28">
         <h2 className="font-heading text-xl text-ink">Variants</h2>
         <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-          <table className="w-full min-w-[34rem] text-sm">
+          <table className="admin-responsive-table w-full min-w-[34rem] text-sm">
             <caption className="sr-only">Product variants</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
-                <th className="px-4 py-3 font-medium">SKU</th>
-                <th className="px-4 py-3 font-medium">Unit</th>
-                <th className="px-4 py-3 font-medium">List price</th>
-                <th className="px-4 py-3 font-medium">Active</th>
+                <th scope="col" className="px-4 py-3 font-medium">SKU</th>
+                <th scope="col" className="px-4 py-3 font-medium">Unit</th>
+                <th scope="col" className="px-4 py-3 font-medium">List price</th>
+                <th scope="col" className="px-4 py-3 font-medium">Active</th>
               </tr>
             </thead>
             <tbody>
               {product.variants.map((variant) => (
                 <tr key={variant.id} className="border-b border-border last:border-0">
-                  <td className="px-4 py-3 font-mono text-xs">{variant.sku}</td>
-                  <td className="px-4 py-3">{variant.unitLabel}</td>
-                  <td className="px-4 py-3 tabular-nums">
+                  <td className="px-4 py-3 font-mono text-xs" data-label="SKU">{variant.sku}</td>
+                  <td className="px-4 py-3" data-label="Unit">{variant.unitLabel}</td>
+                  <td className="px-4 py-3 tabular-nums" data-label="List price">
                     {canAccessAdmin(actor.role, "pricing", "read")
                       ? formatGhs(variant.baseUnitPrice)
                       : "—"}
                   </td>
-                  <td className="px-4 py-3">{variant.active ? "Yes" : "No"}</td>
+                  <td className="px-4 py-3" data-label="Active">{variant.active ? "Yes" : "No"}</td>
                 </tr>
               ))}
             </tbody>
@@ -233,15 +233,15 @@ export default async function AdminProductDetailPage({
             Server-authoritative bands. Request-quote is for open-ended volume.
           </p>
           <div className="mt-4 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
-            <table className="w-full min-w-[34rem] text-sm">
+            <table className="admin-responsive-table w-full min-w-[34rem] text-sm">
               <caption className="sr-only">Price tiers</caption>
               <thead>
                 <tr className="border-b border-border text-left text-slate">
-                  <th className="px-4 py-3 font-medium">SKU</th>
-                  <th className="px-4 py-3 font-medium">Qty</th>
-                  <th className="px-4 py-3 font-medium">Price</th>
-                  <th className="px-4 py-3 font-medium">Active</th>
-                  {canPrice ? <th className="px-4 py-3 font-medium"> </th> : null}
+                  <th scope="col" className="px-4 py-3 font-medium">SKU</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Qty</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Price</th>
+                  <th scope="col" className="px-4 py-3 font-medium">Active</th>
+                  {canPrice ? <th scope="col" className="px-4 py-3 font-medium"> </th> : null}
                 </tr>
               </thead>
               <tbody>
@@ -250,21 +250,21 @@ export default async function AdminProductDetailPage({
                     product.variants.find((variant) => variant.id === tier.variantId)?.sku ?? "—";
                   return (
                     <tr key={tier.id} className="border-b border-border last:border-0">
-                      <td className="px-4 py-3 font-mono text-xs">{sku}</td>
-                      <td className="px-4 py-3">
+                      <td className="px-4 py-3 font-mono text-xs" data-label="SKU">{sku}</td>
+                      <td className="px-4 py-3" data-label="Qty">
                         {tier.minimumQuantity}
                         {tier.maximumQuantity ? `–${tier.maximumQuantity}` : "+"}
                       </td>
-                      <td className="px-4 py-3 tabular-nums">
+                      <td className="px-4 py-3 tabular-nums" data-label="Price">
                         {tier.requestQuote
                           ? "Request quote"
                           : tier.unitPrice !== null
                             ? formatGhs(tier.unitPrice)
                             : "—"}
                       </td>
-                      <td className="px-4 py-3">{tier.active ? "Yes" : "No"}</td>
+                      <td className="px-4 py-3" data-label="Active">{tier.active ? "Yes" : "No"}</td>
                       {canPrice && tier.active ? (
-                        <td className="px-4 py-3">
+                        <td className="px-4 py-3" data-label="Action">
                           <form action="/admin/products/mutate" method="post">
                             <input type="hidden" name="intent" value="deactivate-tier" />
                             <input type="hidden" name="productId" value={product.id} />
@@ -277,7 +277,7 @@ export default async function AdminProductDetailPage({
                           </form>
                         </td>
                       ) : canPrice ? (
-                        <td className="px-4 py-3 text-slate">—</td>
+                        <td className="px-4 py-3 text-slate" data-label="Action">—</td>
                       ) : null}
                     </tr>
                   );

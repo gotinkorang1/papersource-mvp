@@ -27,10 +27,10 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
             <caption className="sr-only">Orders</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
-                <th className="px-4 py-3 font-medium">Number</th>
-                <th className="px-4 py-3 font-medium">Source</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Total</th>
+                <th scope="col" className="px-4 py-3 font-medium">Number</th>
+                <th scope="col" className="px-4 py-3 font-medium">Source</th>
+                <th scope="col" className="px-4 py-3 font-medium">Status</th>
+                <th scope="col" className="px-4 py-3 font-medium">Total</th>
               </tr>
             </thead>
             <tbody>

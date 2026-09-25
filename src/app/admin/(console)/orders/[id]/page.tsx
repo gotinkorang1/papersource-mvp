@@ -41,24 +41,24 @@ export default async function AdminOrderDetailPage({ params }: PageProps) {
       </p>
       <section className="mt-8 rounded-md border border-border bg-white p-5"><h2 className="font-heading text-xl text-ink">Order timeline</h2><ol className="mt-4 grid gap-3 sm:grid-cols-3 lg:grid-cols-6">{statusSteps.map((step, index) => <li key={step} aria-current={step === order.status ? "step" : undefined} className={`rounded-md border px-3 py-2 text-xs ${index <= currentStep ? "border-paper-green/40 bg-paper-green/10 text-paper-green" : "border-border text-slate"}`}><span className="font-semibold">{index + 1}</span><span className="ml-2"><AdminStatusBadge status={step} /></span></li>)}</ol></section>
       <div className="mt-6 grid gap-6 lg:grid-cols-2"><section className="rounded-md border border-border bg-white p-5"><h2 className="font-heading text-xl text-ink">Delivery</h2><p className="mt-3 text-sm text-ink">{address.fullName ?? "—"} · {address.phone ?? "—"}</p><p className="mt-1 text-sm text-slate">{[address.areaSuburb, address.cityTown, address.region].filter(Boolean).join(", ") || "Address snapshot unavailable"}</p>{address.ghanapostGps ? <p className="mt-1 font-mono text-xs text-slate">GPS {address.ghanapostGps}</p> : null}<p className="mt-3 flex flex-wrap items-center gap-2 text-sm text-slate"><span>Delivery fee: {formatGhs(order.deliveryFee)}</span><AdminStatusBadge status={order.deliveryFeeStatus} /></p></section><section className="rounded-md border border-border bg-white p-5"><h2 className="font-heading text-xl text-ink">Payments</h2>{order.payments.length === 0 ? <p className="mt-3 text-sm text-slate">No payment record yet.</p> : <ul className="mt-3 space-y-3 text-sm">{order.payments.map((payment) => <li key={payment.id} className="flex items-center justify-between gap-4 border-b border-border pb-3 last:border-0"><span className="flex min-w-0 flex-wrap items-center gap-2 text-ink"><span className="capitalize">{payment.provider.replaceAll("_", " ")}</span><AdminStatusBadge status={payment.status} /></span><span className="tabular-nums text-slate">{formatGhs(payment.amount)}</span></li>)}</ul>}</section></div>
-      <table className="mt-8 w-full text-sm">
+      <table className="admin-responsive-table mt-8 w-full text-sm">
         <caption className="sr-only">Order lines</caption>
         <thead>
           <tr className="border-b border-border text-left text-slate">
-            <th className="py-2 font-medium">Item</th>
-            <th className="py-2 font-medium">Qty</th>
-            <th className="py-2 font-medium">Line</th>
+            <th scope="col" className="py-2 font-medium">Item</th>
+            <th scope="col" className="py-2 font-medium">Qty</th>
+            <th scope="col" className="py-2 font-medium">Line</th>
           </tr>
         </thead>
         <tbody>
           {order.lines.map((line) => (
             <tr key={line.id} className="border-b border-border">
-              <td className="py-3">
+              <td className="py-3" data-label="Item">
                 {line.nameSnapshot}{" "}
                 <span className="text-slate">{line.skuSnapshot}</span>
               </td>
-              <td className="py-3 tabular-nums">{line.quantity}</td>
-              <td className="py-3 tabular-nums">{formatGhs(line.lineTotal)}</td>
+              <td className="py-3 tabular-nums" data-label="Qty">{line.quantity}</td>
+              <td className="py-3 tabular-nums" data-label="Line">{formatGhs(line.lineTotal)}</td>
             </tr>
           ))}
         </tbody>

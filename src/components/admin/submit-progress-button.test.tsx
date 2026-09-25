@@ -15,6 +15,7 @@ describe("SubmitProgressButton", () => {
 
     const button = screen.getByRole("button", { name: "Apply" });
     expect(button).toBeDisabled();
+    expect(button).toHaveAttribute("aria-live", "polite");
     await user.click(screen.getByRole("checkbox", { name: "Product" }));
     expect(button).toBeEnabled();
   });

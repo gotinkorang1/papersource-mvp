@@ -26,7 +26,7 @@ export default async function AccountOrdersPage() {
         </p>
       ) : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
-          <table className="w-full min-w-[30rem] text-sm">
+          <table className="account-history-table w-full min-w-[30rem] text-sm">
             <caption className="sr-only">Your orders</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
@@ -38,13 +38,13 @@ export default async function AccountOrdersPage() {
             <tbody>
               {rows.map((row) => (
                 <tr key={row.id} className="border-b border-border last:border-0 hover:bg-cream/40 dark:hover:bg-ink/20">
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3" data-label="Number">
                     <Link href={`/order/${row.number}`} className="underline">
                       {row.number}
                     </Link>
                   </td>
-                  <td className="px-4 py-3"><span className="inline-flex rounded-full border border-border px-2.5 py-1 text-xs font-medium capitalize text-ink">{row.status.replaceAll("_", " ")}</span></td>
-                  <td className="px-4 py-3 tabular-nums">{formatGhs(row.grandTotal)}</td>
+                  <td className="px-4 py-3" data-label="Status"><span className="inline-flex rounded-full border border-border px-2.5 py-1 text-xs font-medium capitalize text-ink">{row.status.replaceAll("_", " ")}</span></td>
+                  <td className="px-4 py-3 tabular-nums" data-label="Total">{formatGhs(row.grandTotal)}</td>
                 </tr>
               ))}
             </tbody>

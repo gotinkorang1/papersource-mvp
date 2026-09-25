@@ -56,7 +56,7 @@ export function QuoteAdminActions({
           <input type="hidden" name="quoteId" value={quoteId} />
           <input type="hidden" name="intent" value="save-prices" />
           <div className="overflow-x-auto">
-            <table className="w-full text-sm">
+            <table className="admin-responsive-table w-full text-sm">
               <caption className="sr-only">Quote line prices in GHS</caption>
               <thead>
                 <tr className="border-b border-border text-left text-slate">
@@ -69,13 +69,13 @@ export function QuoteAdminActions({
               <tbody>
                 {lines.map((line) => (
                   <tr key={line.id} className="border-b border-border">
-                    <td className="py-3">
+                    <td className="py-3" data-label="Item">
                       <p className="text-ink">{line.nameSnapshot}</p>
                       <p className="text-xs text-slate">{line.specSnapshot}</p>
                     </td>
-                    <td className="py-3 font-mono text-xs">{line.skuSnapshot}</td>
-                    <td className="py-3 tabular-nums">{line.quantity}</td>
-                    <td className="py-3">
+                    <td className="py-3 font-mono text-xs" data-label="SKU">{line.skuSnapshot}</td>
+                    <td className="py-3 tabular-nums" data-label="Qty">{line.quantity}</td>
+                    <td className="py-3" data-label="Unit price (GHS)">
                       <Label htmlFor={`price-${line.id}`} className="sr-only">
                         Unit price for {line.nameSnapshot}
                       </Label>

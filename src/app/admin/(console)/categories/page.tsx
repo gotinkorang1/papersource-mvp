@@ -55,10 +55,10 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           <caption className="sr-only">Categories</caption>
           <thead className="sticky top-0 z-10 bg-card">
             <tr className="border-b border-border text-left text-slate">
-              <th className="px-4 py-3 font-medium">Name</th>
-              <th className="px-4 py-3 font-medium">Slug</th>
-              <th className="px-4 py-3 font-medium">Active</th>
-              {canWrite ? <th className="px-4 py-3 font-medium">Actions</th> : null}
+              <th scope="col" className="px-4 py-3 font-medium">Name</th>
+              <th scope="col" className="px-4 py-3 font-medium">Slug</th>
+              <th scope="col" className="px-4 py-3 font-medium">Active</th>
+              {canWrite ? <th scope="col" className="px-4 py-3 font-medium">Actions</th> : null}
             </tr>
           </thead>
           <tbody>

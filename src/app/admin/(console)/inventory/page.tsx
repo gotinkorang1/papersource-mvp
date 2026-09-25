@@ -53,14 +53,14 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
           <caption className="sr-only">Stock by variant</caption>
           <thead className="sticky top-0 z-10 bg-card">
             <tr className="border-b border-border text-left text-slate">
-              {canWrite ? <th className="px-4 py-3 font-medium"><SelectAllCheckbox count={rows.length} name="variantId" label="inventory rows" formId="bulk-inventory-form" /></th> : null}
-              <th className="px-4 py-3 font-medium">Product</th>
-              <th className="px-4 py-3 font-medium">SKU</th>
-              <th className="px-4 py-3 font-medium">On hand</th>
-              <th className="px-4 py-3 font-medium">Reserved</th>
-              <th className="px-4 py-3 font-medium">Sellable</th>
-              <th className="px-4 py-3 font-medium">Level</th>
-              {canWrite ? <th className="px-4 py-3 font-medium">Quick adjust</th> : null}
+              {canWrite ? <th scope="col" className="px-4 py-3 font-medium"><SelectAllCheckbox count={rows.length} name="variantId" label="inventory rows" formId="bulk-inventory-form" /></th> : null}
+              <th scope="col" className="px-4 py-3 font-medium">Product</th>
+              <th scope="col" className="px-4 py-3 font-medium">SKU</th>
+              <th scope="col" className="px-4 py-3 font-medium">On hand</th>
+              <th scope="col" className="px-4 py-3 font-medium">Reserved</th>
+              <th scope="col" className="px-4 py-3 font-medium">Sellable</th>
+              <th scope="col" className="px-4 py-3 font-medium">Level</th>
+              {canWrite ? <th scope="col" className="px-4 py-3 font-medium">Quick adjust</th> : null}
             </tr>
           </thead>
           <tbody>

@@ -28,10 +28,10 @@ export default async function AdminQuotesPage() {
             <caption className="sr-only">Submitted quotations</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
-                <th className="px-4 py-3 font-medium">Number</th>
-                <th className="px-4 py-3 font-medium">Organisation</th>
-                <th className="px-4 py-3 font-medium">Status</th>
-                <th className="px-4 py-3 font-medium">Total</th>
+                <th scope="col" className="px-4 py-3 font-medium">Number</th>
+                <th scope="col" className="px-4 py-3 font-medium">Organisation</th>
+                <th scope="col" className="px-4 py-3 font-medium">Status</th>
+                <th scope="col" className="px-4 py-3 font-medium">Total</th>
               </tr>
             </thead>
             <tbody>

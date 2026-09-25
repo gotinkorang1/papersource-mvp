@@ -261,63 +261,71 @@
     content: "Action";
   }
 
-  /* Legacy six-column payment list: keep it readable until its markup is
-     migrated to the shared data-label pattern. */
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) {
-    display: block;
-    min-width: 0 !important;
-  }
-
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) thead {
-    position: absolute;
-    width: 1px;
-    height: 1px;
-    overflow: hidden;
-    clip: rect(0 0 0 0);
-  }
-
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) tbody,
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) tr {
-    display: block;
-  }
-
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) tr {
-    margin: 0.75rem;
-    padding: 0.65rem 0.85rem;
-    border: 1px solid var(--border);
-    border-radius: 0.75rem;
-  }
-
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td {
-    display: flex;
-    justify-content: space-between;
-    gap: 0.75rem;
-    padding: 0.5rem 0 !important;
-    border: 0;
-  }
-
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td::before {
-    flex: 0 0 5.75rem;
-    color: var(--muted-foreground);
-    font-size: 0.68rem;
-    font-weight: 600;
-    letter-spacing: 0.08em;
-    text-transform: uppercase;
-  }
-
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td:nth-child(1)::before { content: "Order"; }
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td:nth-child(2)::before { content: "Provider"; }
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td:nth-child(3)::before { content: "Status"; }
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td:nth-child(4)::before { content: "Amount"; }
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td:nth-child(5)::before { content: "Reference"; }
-  .admin-shell table:not(.admin-responsive-table):has(th:nth-child(6)) td:nth-child(6)::before { content: "Received"; }
-
   .admin-shell .admin-responsive-table td:first-child {
     justify-content: flex-start;
     padding-bottom: 0.35rem !important;
   }
 
   .admin-shell .admin-responsive-table td:first-child::before {
+    display: none;
+  }
+}
+
+@media (max-width: 639px) {
+  .account-history-table {
+    display: block;
+    min-width: 0 !important;
+  }
+
+  .account-history-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .account-history-table tbody,
+  .account-history-table tr {
+    display: block;
+  }
+
+  .account-history-table tr {
+    margin: 0.75rem;
+    padding: 0.65rem 0.85rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--card);
+  }
+
+  .account-history-table td {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    padding: 0.5rem 0 !important;
+    border: 0;
+  }
+
+  .account-history-table td::before {
+    flex: 0 0 5.75rem;
+    color: var(--muted-foreground);
+    content: attr(data-label);
+    font-size: 0.68rem;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .account-history-table td:first-child {
+    justify-content: flex-start;
+    padding-bottom: 0.35rem !important;
+  }
+
+  .account-history-table td:first-child::before {
     display: none;
   }
 }
