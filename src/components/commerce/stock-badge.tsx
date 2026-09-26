@@ -11,7 +11,7 @@ export function StockBadge({ level }: { level: StockLevel }) {
   const item = copy[level];
 
   return (
-    <p className={cn("inline-flex w-fit items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold", item.className)}>
+    <p className={cn("inline-flex w-fit whitespace-nowrap items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-semibold leading-5", item.className)}>
       <span aria-hidden className={cn("size-1.5 rounded-full", level === "in_stock" ? "bg-paper-green" : level === "low" ? "bg-ochre" : "bg-error")} />
       {item.label}
     </p>

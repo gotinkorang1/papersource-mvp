@@ -17,6 +17,7 @@ describe("SubmitProgressButton", () => {
     expect(button).toBeDisabled();
     expect(button).toHaveAttribute("aria-live", "polite");
     expect(button).toHaveClass("focus-visible:outline-2");
+    expect(button).toHaveClass("min-h-11");
     await user.click(screen.getByRole("checkbox", { name: "Product" }));
     expect(button).toBeEnabled();
   });

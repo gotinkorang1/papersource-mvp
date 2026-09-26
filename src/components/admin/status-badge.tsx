@@ -34,5 +34,5 @@ export function AdminStatusBadge({ status }: { status: string }) {
   };
   const label = labelByStatus[status] ?? status.replaceAll("_", " ");
   const tone = toneByStatus[status] ?? "bg-sky-50 text-sky-700 ring-sky-200 dark:bg-sky-950/50 dark:text-sky-300 dark:ring-sky-800";
-  return <span className={`inline-flex rounded-full px-2.5 py-1 text-xs font-medium capitalize ring-1 ring-inset ${tone}`}>{label}</span>;
+  return <span className={`inline-flex whitespace-nowrap rounded-full px-2.5 py-1 text-xs font-medium capitalize leading-5 ring-1 ring-inset ${tone}`}>{label}</span>;
 }

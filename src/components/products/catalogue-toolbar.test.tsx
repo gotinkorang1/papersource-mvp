@@ -16,6 +16,7 @@ describe("CatalogueToolbar", () => {
     render(<CatalogueToolbar count={12} query="paper" categories={categories} brands={brands} />);
 
     expect(screen.getByRole("searchbox", { name: "Search catalogue" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Search" })).toHaveAttribute("aria-busy", "false");
     expect(screen.getByRole("search").querySelector('input[name="category"]')).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: /filters and sort/i })).toBeInTheDocument();
     expect(screen.queryByRole("dialog")).not.toBeInTheDocument();
@@ -26,7 +27,7 @@ describe("CatalogueToolbar", () => {
     expect(screen.getByRole("dialog", { name: "Filters and sorting" })).toHaveTextContent("12 products currently match these settings.");
     expect(screen.getByRole("combobox", { name: "Filter by category" })).toBeInTheDocument();
     expect(screen.getByRole("combobox", { name: "Sort catalogue" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Apply filters" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Apply filters" })).toHaveAttribute("aria-busy", "false");
   });
 
   it("closes the full-screen filter sheet with Escape", () => {

@@ -36,6 +36,8 @@ describe("AdminProductsView", () => {
 
     expect(screen.getByRole("table", { name: "Catalogue products" })).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Select all products" })).toBeInTheDocument();
+    expect(screen.getByLabelText("Bulk action")).toHaveClass("h-11");
+    expect(screen.getByRole("button", { name: "Apply to selected" })).toHaveClass("min-h-11");
     expect(screen.getByText("New")).toBeInTheDocument();
     expect(screen.getByText("Trending · 18")).toBeInTheDocument();
     expect(screen.getByText("3 · Manage images")).toBeInTheDocument();

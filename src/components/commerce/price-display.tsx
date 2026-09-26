@@ -13,7 +13,7 @@ export function PriceDisplay({
   const normalizedUnitLabel = unitLabel?.replace(/^\s*\/\s*/, "").trim();
 
   return (
-    <p className={cn("text-base font-medium text-ink tabular-nums", className)}>
+    <p className={cn("whitespace-nowrap text-base font-medium leading-tight text-ink tabular-nums", className)}>
       {formatGhs(pesewas)}
       {normalizedUnitLabel ? (
         <span className="font-normal text-slate"> / {normalizedUnitLabel}</span>

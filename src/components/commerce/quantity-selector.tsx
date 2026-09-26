@@ -25,7 +25,7 @@ export function QuantitySelector({
     <div className="inline-flex items-stretch overflow-hidden rounded-md border border-border bg-card">
       <button
         type="button"
-        className="min-h-11 min-w-11 px-3 text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink disabled:opacity-40"
+        className="min-h-11 min-w-11 px-3 text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-40"
         onClick={() => onChange(clamp(value - 1))}
         disabled={disabled || value <= min}
         aria-label="Decrease quantity"
@@ -50,13 +50,13 @@ export function QuantitySelector({
         className={cn(
           "h-11 w-14 border-x border-border bg-card text-center text-sm tabular-nums text-ink transition-colors [appearance:textfield]",
           "focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink",
-          "disabled:opacity-40 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
+          "disabled:cursor-not-allowed disabled:opacity-40 [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none",
         )}
         aria-label="Quantity"
       />
       <button
         type="button"
-        className="min-h-11 min-w-11 px-3 text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink disabled:opacity-40"
+        className="min-h-11 min-w-11 px-3 text-ink transition-colors hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-40"
         onClick={() => onChange(clamp(value + 1))}
         disabled={disabled || value >= max}
         aria-label="Increase quantity"

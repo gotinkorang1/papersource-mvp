@@ -33,7 +33,7 @@ export function SubmitProgressButton({
   }, [requiresSelection]);
 
   return (
-    <button ref={buttonRef} type="submit" disabled={pending || disabled || (requiresSelection && !hasSelection)} aria-label={ariaLabel} aria-busy={pending} aria-live="polite" className={`${className} focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-60`}>
+    <button ref={buttonRef} type="submit" disabled={pending || disabled || (requiresSelection && !hasSelection)} aria-label={ariaLabel} aria-busy={pending} aria-live="polite" className={`${className} min-h-11 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-60`}>
       {pending ? <span aria-hidden="true" className="mr-2 inline-block size-3 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.1em]" /> : null}
       {pending ? pendingLabel : idleLabel}
     </button>
