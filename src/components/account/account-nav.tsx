@@ -23,7 +23,7 @@ export function AccountNav() {
           key={link.href}
           href={link.href}
           aria-current={(link.href === "/account" ? currentPathname === "/account" : currentPathname === link.href || currentPathname.startsWith(`${link.href}/`)) ? "page" : undefined}
-          className={`min-h-10 shrink-0 rounded-full border px-4 py-2 font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${(link.href === "/account" ? currentPathname === "/account" : currentPathname === link.href || currentPathname.startsWith(`${link.href}/`)) ? "border-ink bg-ink text-cream" : "border-border bg-surface text-ink hover:border-ink"}`}
+          className={`min-h-11 shrink-0 rounded-full border px-4 py-2 font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${(link.href === "/account" ? currentPathname === "/account" : currentPathname === link.href || currentPathname.startsWith(`${link.href}/`)) ? "border-ink bg-ink text-cream" : "border-border bg-surface text-ink hover:border-ink"}`}
         >
           {link.label}
         </Link>

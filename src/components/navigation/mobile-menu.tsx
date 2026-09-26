@@ -71,7 +71,7 @@ export function MobileMenu({ categories = [] }: { categories?: readonly Category
       {open ? (
         <>
           <button type="button" aria-label="Close menu overlay" className="fixed inset-0 z-40 cursor-default bg-ink/30 backdrop-blur-[1px] motion-safe:animate-in motion-safe:fade-in-0 lg:hidden" onClick={() => setOpen(false)} />
-          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 sm:px-6">
+          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 sm:px-6 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-ink [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-ink">
             <div className="grid gap-2 sm:grid-cols-2">
             <Link href="/shop" className="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
               Shop all products
