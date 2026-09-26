@@ -21,4 +21,19 @@ describe("SubmitProgressButton", () => {
     await user.click(screen.getByRole("checkbox", { name: "Product" }));
     expect(button).toBeEnabled();
   });
+
+  it("shows progress and locks the action after a valid native form submit", async () => {
+    const user = userEvent.setup();
+    render(
+      <form onSubmit={(event) => event.preventDefault()}>
+        <SubmitProgressButton idleLabel="Save" pendingLabel="Saving" className="button" />
+      </form>,
+    );
+
+    const button = screen.getByRole("button", { name: "Save" });
+    await user.click(button);
+
+    expect(screen.getByRole("button", { name: "Saving" })).toBeDisabled();
+    expect(button).toHaveAttribute("aria-busy", "true");
+  });
 });

@@ -59,4 +59,24 @@ describe("SelectAllCheckbox", () => {
     expect(screen.getByRole("checkbox", { name: "Select all products" })).toBeDisabled();
     expect(screen.getByLabelText("0 products selected")).toBeInTheDocument();
   });
+
+  it("ignores checkboxes in other forms", async () => {
+    const user = userEvent.setup();
+    render(
+      <>
+        <form>
+          <SelectAllCheckbox count={1} />
+          <input type="checkbox" name="productId" value="one" aria-label="Product" />
+        </form>
+        <form>
+          <input type="checkbox" name="productId" value="other" aria-label="Other form" />
+        </form>
+      </>,
+    );
+
+    await user.click(screen.getByRole("checkbox", { name: "Other form" }));
+
+    expect(screen.getByLabelText("0 products selected")).toBeInTheDocument();
+    expect(screen.getByRole("checkbox", { name: "Select all products" })).not.toBeChecked();
+  });
 });

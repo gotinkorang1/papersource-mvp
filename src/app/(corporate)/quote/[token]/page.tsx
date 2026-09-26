@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AcceptQuoteButton } from "@/components/quotes/accept-quote-button";
-import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { ConfirmQuoteActionForm } from "@/components/quotes/confirm-quote-action-form";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { getQuoteByAccessToken } from "@/features/quotations/accept";
 import { signedDocumentPath } from "@/lib/documents/sign";
@@ -45,6 +45,11 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
         Status: {quote.status.replaceAll("_", " ")}. Prices on this page are set
         by PaperSource, not the live catalogue.
       </p>
+      {error && !canAccept && !canCancel ? (
+        <p role="alert" className="mt-5 border border-error/40 bg-cream px-4 py-3 text-sm text-error">
+          {error}
+        </p>
+      ) : null}
       <table className="mt-8 w-full text-sm">
         <caption className="sr-only">Quoted lines</caption>
         <thead>
@@ -106,14 +111,13 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
       ) : canAccept ? (
         <div className="mt-8 space-y-4">
           <AcceptQuoteButton token={token} error={error} />
-          <form action="/quote/decline" method="post">
-            <input type="hidden" name="token" value={token} />
-            <SubmitProgressButton
-              idleLabel="Decline this quotation"
-              pendingLabel="Declining…"
-              className="text-sm underline text-slate disabled:no-underline"
-            />
-          </form>
+          <ConfirmQuoteActionForm
+            action="/quote/decline"
+            token={token}
+            idleLabel="Decline this quotation"
+            pendingLabel="Declining…"
+            confirmation="Decline this quotation? This decision cannot be undone."
+          />
         </div>
       ) : (
         <p className="mt-8 text-slate">
@@ -127,19 +131,20 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
         </p>
       )}
       {canCancel ? (
-        <form action="/quote/cancel" method="post" className="mt-6">
-          <input type="hidden" name="token" value={token} />
+        <div className="mt-6">
           {error ? (
             <p role="alert" className="mb-3 border border-error/40 bg-cream px-4 py-3 text-sm text-error">
               {error}
             </p>
           ) : null}
-          <SubmitProgressButton
+          <ConfirmQuoteActionForm
+            action="/quote/cancel"
+            token={token}
             idleLabel="Cancel this request"
             pendingLabel="Cancelling…"
-            className="text-sm underline text-slate disabled:no-underline"
+            confirmation="Cancel this quotation request? This cannot be undone."
           />
-        </form>
+        </div>
       ) : null}
       <p className="mt-8">
         <Link href="/shop" className="underline">

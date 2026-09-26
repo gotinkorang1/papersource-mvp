@@ -93,17 +93,19 @@ export function DualPathPreviewProvider({
   persist = false,
   initialCartLines = [],
   initialQuoteLines = [],
+  initialSyncError = null,
 }: {
   children: ReactNode;
   persist?: boolean;
   initialCartLines?: CartLinePreview[];
   initialQuoteLines?: QuoteLinePreview[];
+  initialSyncError?: string | null;
 }) {
   const [cartLines, setCartLines] = useState<CartLinePreview[]>(initialCartLines);
   const [quoteLines, setQuoteLines] = useState<QuoteLinePreview[]>(initialQuoteLines);
   const [cartOpen, setCartOpen] = useState(false);
   const [quoteOpen, setQuoteOpen] = useState(false);
-  const [syncError, setSyncError] = useState<string | null>(null);
+  const [syncError, setSyncError] = useState<string | null>(initialSyncError);
   const cartLinesRef = useRef(initialCartLines);
   const quoteLinesRef = useRef(initialQuoteLines);
   const syncRequestRef = useRef(0);
@@ -132,6 +134,8 @@ export function DualPathPreviewProvider({
 
   const addToCart = useCallback(
     (product: ProductCardModel, quantity: number) => {
+      const previousCartLines = cartLinesRef.current;
+      const previousQuoteLines = quoteLinesRef.current;
       const nextCartLines = mergeCartLine(cartLinesRef.current, product, quantity);
       replaceLines(nextCartLines, quoteLinesRef.current);
       setQuoteOpen(false);
@@ -146,7 +150,10 @@ export function DualPathPreviewProvider({
           })
           .catch((error) => {
             console.error("Could not persist the retail cart", error);
-            if (requestId === syncRequestRef.current) setSyncError("Your cart could not be synced. Please try again.");
+            if (requestId === syncRequestRef.current) {
+              replaceLines(previousCartLines, previousQuoteLines);
+              setSyncError("Your cart could not be synced. Please try again.");
+            }
           });
       }
     },
@@ -155,6 +162,8 @@ export function DualPathPreviewProvider({
 
   const addToQuote = useCallback(
     (product: ProductCardModel, quantity: number) => {
+      const previousCartLines = cartLinesRef.current;
+      const previousQuoteLines = quoteLinesRef.current;
       const nextQuoteLines = mergeQuoteLine(quoteLinesRef.current, product, quantity);
       replaceLines(cartLinesRef.current, nextQuoteLines);
       setCartOpen(false);
@@ -169,7 +178,10 @@ export function DualPathPreviewProvider({
           })
           .catch((error) => {
             console.error("Could not persist the quote basket", error);
-            if (requestId === syncRequestRef.current) setSyncError("Your quote list could not be synced. Please try again.");
+            if (requestId === syncRequestRef.current) {
+              replaceLines(previousCartLines, previousQuoteLines);
+              setSyncError("Your quote list could not be synced. Please try again.");
+            }
           });
       }
     },

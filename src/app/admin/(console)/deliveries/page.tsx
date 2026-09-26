@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { listAdminDeliveries } from "@/features/admin/queries";
 import { formatGhs } from "@/lib/money";
 import { requireStaffArea } from "@/lib/staff/require";
@@ -25,7 +26,7 @@ export default async function AdminDeliveriesPage({
         <label className="grid gap-1 text-xs font-medium text-slate">Search deliveries<input name="q" defaultValue={filters.q ?? ""} placeholder="Order, zone or customer email" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink" /></label>
         <label className="grid gap-1 text-xs font-medium text-slate">Status<select name="status" defaultValue={filters.status ?? ""} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="">All statuses</option>{["pending_payment", "awaiting_terms", "paid", "processing", "out_for_delivery", "delivered", "cancelled"].map((status) => <option key={status} value={status}>{status.replaceAll("_", " ")}</option>)}</select></label>
         <label className="grid gap-1 text-xs font-medium text-slate">Sort by<select name="sort" defaultValue={filters.sort ?? "updated"} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="updated">Recently updated</option><option value="status">Status</option></select></label>
-        <div className="flex items-center gap-3"><button type="submit" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Filter</button>{filters.q || filters.status || filters.sort ? <Link href="/admin/deliveries" className="text-xs text-slate underline">Clear</Link> : null}</div>
+        <div className="flex items-center gap-3"><SubmitProgressButton idleLabel="Filter" pendingLabel="Filtering…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" />{filters.q || filters.status || filters.sort ? <Link href="/admin/deliveries" className="text-xs text-slate underline">Clear</Link> : null}</div>
       </form>
       {rows.length === 0 ? <p className="mt-8 rounded-lg border border-border bg-card p-6 text-slate">No deliveries match these filters.</p> : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">

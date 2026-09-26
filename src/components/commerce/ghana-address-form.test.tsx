@@ -49,4 +49,13 @@ describe("GhanaAddressForm", () => {
     expect(screen.getByLabelText(/Full Name/)).toHaveValue("");
     expect(screen.getByLabelText(/Phone Number/)).toHaveValue("");
   });
+
+  it("shows progress while the address form is submitting", () => {
+    render(<GhanaAddressForm submitLabel="Placing order…" busy submitDisabled />);
+
+    const button = screen.getByRole("button", { name: "Placing order…" });
+    expect(button).toHaveAttribute("aria-busy", "true");
+    expect(button).toBeDisabled();
+    expect(button.querySelector("span[aria-hidden='true']")).toBeInTheDocument();
+  });
 });

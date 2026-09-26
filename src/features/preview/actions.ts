@@ -16,24 +16,45 @@ const addLineSchema = z.object({
 export type DualPathState = {
   cartLines: CartLinePreview[];
   quoteLines: QuoteLinePreview[];
+  syncError?: string;
 };
+
+async function withTimeout<T>(promise: Promise<T>, milliseconds: number): Promise<T> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  try {
+    return await new Promise<T>((resolve, reject) => {
+      timer = setTimeout(() => reject(new Error("Basket hydration timed out.")), milliseconds);
+      promise.then(resolve, reject);
+    });
+  } finally {
+    if (timer) clearTimeout(timer);
+  }
+}
 
 export async function loadGuestDualPath(): Promise<DualPathState> {
   if (!isDatabaseConfigured()) {
     return { cartLines: [], quoteLines: [] };
   }
 
-  const sessionId = await readCommerceIdentity();
-  if (!sessionId.profileId && !sessionId.sessionId) {
-    return { cartLines: [], quoteLines: [] };
+  try {
+    const sessionId = await withTimeout(readCommerceIdentity(), 2_000);
+    if (!sessionId.profileId && !sessionId.sessionId) {
+      return { cartLines: [], quoteLines: [] };
+    }
+
+    const [cartLines, quoteLines] = await withTimeout(Promise.all([
+      listCartLines(sessionId),
+      listQuoteLines(sessionId),
+    ]), 2_000);
+
+    return { cartLines, quoteLines };
+  } catch {
+    return {
+      cartLines: [],
+      quoteLines: [],
+      syncError: "Cart and quote sync is temporarily unavailable. Please try again shortly.",
+    };
   }
-
-  const [cartLines, quoteLines] = await Promise.all([
-    listCartLines(sessionId),
-    listQuoteLines(sessionId),
-  ]);
-
-  return { cartLines, quoteLines };
 }
 
 export async function addToCartAction(input: {

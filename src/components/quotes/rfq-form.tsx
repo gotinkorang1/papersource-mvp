@@ -1,11 +1,12 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { GhanaAddressForm, type GhanaAddressValues } from "@/components/commerce/ghana-address-form";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { submitRfqAction } from "@/features/quotations/actions";
+import { MAX_DOCUMENT_BYTES, MAX_DOCUMENTS_PER_RFQ } from "@/lib/documents/mime";
 
 const ORGANIZATION_TYPES = [
   ["business", "Business"],
@@ -25,6 +26,19 @@ export function RfqForm({ customer, organization, defaultAddress }: {
   defaultAddress?: Partial<GhanaAddressValues>;
 }) {
   const [state, action, pending] = useActionState(submitRfqAction, null);
+  const [attachmentError, setAttachmentError] = useState<string | null>(null);
+
+  function validateAttachments(input: HTMLInputElement) {
+    const files = Array.from(input.files ?? []);
+    const maxMegabytes = MAX_DOCUMENT_BYTES / 1024 / 1024;
+    const error = files.length > MAX_DOCUMENTS_PER_RFQ
+      ? `Choose no more than ${MAX_DOCUMENTS_PER_RFQ} files.`
+      : files.find((file) => file.size > MAX_DOCUMENT_BYTES)
+        ? `Each attachment must be ${maxMegabytes} MB or smaller.`
+        : null;
+    input.setCustomValidity(error ?? "");
+    setAttachmentError(error);
+  }
 
   return (
     <div className="space-y-4">
@@ -110,11 +124,14 @@ export function RfqForm({ customer, organization, defaultAddress }: {
               type="file"
               multiple
               accept=".pdf,.xlsx,.xls,.doc,.docx,.jpg,.jpeg,.png,.webp"
+              aria-describedby={attachmentError ? "documents-help documents-error" : "documents-help"}
+              onChange={(event) => validateAttachments(event.currentTarget)}
             />
-            <p className="text-sm text-slate">
-              PDF, Excel, Word or image. Up to five files, 15 MB each. Stored
+            <p id="documents-help" className="text-sm text-slate">
+              PDF, Excel, Word or image. Up to {MAX_DOCUMENTS_PER_RFQ} files, {MAX_DOCUMENT_BYTES / 1024 / 1024} MB each. Stored
               privately — not on the public product CDN.
             </p>
+            {attachmentError ? <p id="documents-error" role="alert" className="text-sm text-error">{attachmentError}</p> : null}
           </div>
         </div>
       </GhanaAddressForm>

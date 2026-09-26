@@ -19,7 +19,14 @@ const quoteIdSchema = z.string().uuid();
 
 export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
-  const formData = await request.formData();
+  let formData: FormData;
+  try {
+    formData = await request.formData();
+  } catch {
+    const invalid = new URL("/admin/quotes", origin);
+    invalid.searchParams.set("error", "Could not read that quotation action. Please try again.");
+    return NextResponse.redirect(invalid, 303);
+  }
   const parsedQuoteId = quoteIdSchema.safeParse(formData.get("quoteId"));
   if (!parsedQuoteId.success) {
     const invalid = new URL("/admin/quotes", origin);

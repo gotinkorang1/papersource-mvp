@@ -83,6 +83,7 @@ export function GhanaAddressForm({
     ...defaultValues,
   }));
   const [selectedAddressId, setSelectedAddressId] = useState("");
+  const hasDefaultAddress = Boolean(defaultValues?.fullName || defaultValues?.phone || defaultValues?.cityTown);
   const hydrated = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -124,7 +125,7 @@ export function GhanaAddressForm({
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
       <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
-      {savedAddresses?.length ? <Field id={`${id}-saved`} label="Saved address"><select id={`${id}-saved`} value={selectedAddressId} onChange={(event) => applySavedAddress(event.target.value)} className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm text-ink"><option value="">Enter a new address</option>{savedAddresses.map((address) => <option key={address.id} value={address.id}>{address.label}</option>)}</select></Field> : null}
+      {savedAddresses?.length ? <Field id={`${id}-saved`} label="Saved address"><select id={`${id}-saved`} value={selectedAddressId} onChange={(event) => applySavedAddress(event.target.value)} className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm text-ink"><option value="">{hasDefaultAddress ? "Use details below" : "Enter a new address"}</option>{savedAddresses.map((address) => <option key={address.id} value={address.id}>{address.label}</option>)}</select></Field> : null}
       <Field id={`${id}-name`} label="Full Name" required>
         <Input
           id={`${id}-name`}
@@ -263,6 +264,7 @@ export function GhanaAddressForm({
       {children}
       {submitLabel ? (
         <button type="submit" className={paperButton({ className: "disabled:cursor-wait" })} disabled={submitDisabled || !hydrated} aria-busy={busy}>
+          {busy ? <span aria-hidden="true" className="mr-2 inline-block size-3 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.1em]" /> : null}
           {submitLabel}
         </button>
       ) : null}

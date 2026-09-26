@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 import { z } from "zod";
 import { QuoteAcceptError } from "@/features/quotations/accept";
 import { cancelQuoteByToken } from "@/features/quotations/cancel";
+import { captureServerException } from "@/lib/observability/sentry";
 
 export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
@@ -18,6 +19,9 @@ export async function POST(request: Request) {
     quoteUrl.searchParams.set("notice", "cancelled");
     return NextResponse.redirect(quoteUrl, 303);
   } catch (error) {
+    if (!(error instanceof QuoteAcceptError)) {
+      captureServerException(error, { operation: "cancel_quote", dependency: "database" });
+    }
     quoteUrl.searchParams.set(
       "error",
       error instanceof QuoteAcceptError

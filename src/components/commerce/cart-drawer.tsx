@@ -12,6 +12,9 @@ export function CartDrawer() {
     (sum, line) => sum + line.unitPricePesewas * line.quantity,
     0,
   );
+  function confirmClearCart() {
+    if (window.confirm("Clear all items from your cart?")) clearCart();
+  }
 
   return (
     <PaperDrawer
@@ -24,7 +27,7 @@ export function CartDrawer() {
           {cartLines.length > 0 ? (
             <div className="flex items-center justify-between gap-3">
               <p className="text-sm text-ink">Subtotal (preview) {formatGhs(subtotal)}</p>
-              <button type="button" onClick={clearCart} className="inline-flex min-h-11 items-center rounded-md px-2 text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear cart</button>
+              <button type="button" onClick={confirmClearCart} className="inline-flex min-h-11 items-center rounded-md px-2 text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear cart</button>
             </div>
           ) : null}
           <div className="flex flex-col gap-2">
@@ -52,9 +55,14 @@ export function CartDrawer() {
         </>
       }
     >
-      {syncError ? <div role="alert" className="mb-4 flex items-start justify-between gap-3 rounded-md border border-error/40 bg-error/10 px-3 py-2 text-sm text-error"><p>{syncError}</p><button type="button" onClick={clearSyncError} className="inline-flex min-h-11 shrink-0 items-center rounded-md px-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Dismiss</button></div> : null}
+      {syncError ? <div role="alert" aria-live="assertive" className="mb-4 flex items-start justify-between gap-3 rounded-md border border-error/40 bg-error/10 px-3 py-2 text-sm text-error"><p>{syncError}</p><button type="button" onClick={clearSyncError} className="inline-flex min-h-11 shrink-0 items-center rounded-md px-2 font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Dismiss</button></div> : null}
       {cartLines.length === 0 ? (
-        <p className="text-sm text-slate">Your cart is empty.</p>
+        <div className="space-y-3">
+          <p className="text-sm text-slate">Your cart is empty.</p>
+          <Link href="/shop" className={paperButton({ variant: "primary" })} onClick={() => setCartOpen(false)}>
+            Shop workplace supplies
+          </Link>
+        </div>
       ) : (
         <ul className="divide-y divide-border border-y border-border">
           {cartLines.map((line) => (

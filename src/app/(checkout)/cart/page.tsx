@@ -37,7 +37,7 @@ export default async function CartPage({ searchParams }: PageProps) {
       </p>
       {added ? (
         <p className="mt-4 text-sm text-ink">
-          Added {added} {added === "1" ? "line" : "lines"} from Quick Order.
+          Added {added} {added === "1" ? "line" : "lines"} to your cart.
         </p>
       ) : null}
       {unknown ? (
@@ -93,6 +93,7 @@ export default async function CartPage({ searchParams }: PageProps) {
                       type="number"
                       inputMode="numeric"
                       min={1}
+                      max={9999}
                       defaultValue={line.quantity}
                       className="h-11 w-16 rounded-md border border-border bg-cream px-2 text-sm tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                     />

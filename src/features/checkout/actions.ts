@@ -10,6 +10,7 @@ import {
   setCartLineQuantity,
 } from "@/features/cart/repository";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { captureServerException } from "@/lib/observability/sentry";
 
 const lineSchema = z.object({
   variantId: z.string().uuid(),
@@ -21,21 +22,31 @@ export async function updateCartQuantityAction(formData: FormData) {
     variantId: formData.get("variantId"),
     quantity: formData.get("quantity"),
   });
-  if (!parsed.success) return;
-  const sessionId = await readCommerceIdentity(true);
-  await setCartLineQuantity(sessionId, parsed.data.variantId, parsed.data.quantity);
+  if (!parsed.success) redirect("/cart?warning=Enter a valid quantity.");
+  try {
+    const sessionId = await readCommerceIdentity(true);
+    await setCartLineQuantity(sessionId, parsed.data.variantId, parsed.data.quantity);
+  } catch (error) {
+    captureServerException(error, { operation: "update_cart_quantity", dependency: "database" });
+    redirect("/cart?warning=We could not update that item. Please try again.");
+  }
   revalidatePath("/", "layout");
   revalidatePath("/cart");
   revalidatePath("/checkout");
-  redirect("/cart?notice=updated");
+  redirect(`/cart?notice=${parsed.data.quantity === 0 ? "removed" : "updated"}`);
 }
 
 export async function removeCartLineAction(formData: FormData) {
   const parsedVariantId = z.string().uuid().safeParse(formData.get("variantId"));
-  if (!parsedVariantId.success) return;
+  if (!parsedVariantId.success) redirect("/cart?warning=That cart item could not be found.");
   const variantId = parsedVariantId.data;
-  const sessionId = await readCommerceIdentity(true);
-  await removeCartLine(sessionId, variantId);
+  try {
+    const sessionId = await readCommerceIdentity(true);
+    await removeCartLine(sessionId, variantId);
+  } catch (error) {
+    captureServerException(error, { operation: "remove_cart_line", dependency: "database" });
+    redirect("/cart?warning=We could not remove that item. Please try again.");
+  }
   revalidatePath("/", "layout");
   revalidatePath("/cart");
   revalidatePath("/checkout");
@@ -66,7 +77,8 @@ export async function placeRetailOrderAction(
     if (error instanceof z.ZodError) {
       return { error: "Check the highlighted delivery details.", fieldErrors: error.flatten().fieldErrors as Record<string, string[]> };
     }
-    throw error;
+    captureServerException(error, { operation: "place_retail_order", dependency: "database" });
+    return { error: "We could not place your order right now. Please review your details and try again." };
   }
   redirect(`/order/${number}`);
 }

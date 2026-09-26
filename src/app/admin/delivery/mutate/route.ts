@@ -8,7 +8,13 @@ export async function POST(request: Request) {
   const next = new URL("/admin/delivery", origin);
   const actor = await readStaffActor();
   if (!actor) return NextResponse.redirect(new URL("/admin/login", origin), 303);
-  const form = await request.formData();
+  let form: FormData;
+  try {
+    form = await request.formData();
+  } catch {
+    next.searchParams.set("error", "Could not read the delivery form. Please try again.");
+    return NextResponse.redirect(next, 303);
+  }
   const intent = String(form.get("intent") ?? "");
   let auditAction: string;
   let auditResourceId: string | null = null;

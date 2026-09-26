@@ -8,10 +8,10 @@ export async function POST(request: Request) {
   const next = new URL("/admin/reviews", origin);
   const actor = await readStaffActor();
   if (!actor) return NextResponse.redirect(new URL("/admin/login", origin), 303);
-  const form = await request.formData();
-  const id = String(form.get("reviewId") ?? "");
-  const status = String(form.get("status") ?? "");
   try {
+    const form = await request.formData();
+    const id = String(form.get("reviewId") ?? "");
+    const status = String(form.get("status") ?? "");
     if (!/^[0-9a-f-]{36}$/i.test(id) || !["approved", "rejected"].includes(status)) throw new Error("Invalid review action.");
     await setReviewStatus(actor.role, id, status as "approved" | "rejected");
     await recordAdminAudit({ actorProfileId: actor.profileId, action: `review_${status}`, resourceType: "product_review", resourceId: id });

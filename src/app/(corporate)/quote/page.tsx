@@ -34,7 +34,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
       </p>
       {added ? (
         <p className="mt-4 text-sm text-ink">
-          Added {added} {added === "1" ? "line" : "lines"} from Quick Order.
+          Added {added} {added === "1" ? "line" : "lines"} to your quote list.
         </p>
       ) : null}
       {unknown ? (
@@ -83,6 +83,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
                         type="number"
                         inputMode="numeric"
                         min={1}
+                        max={9999}
                         defaultValue={line.quantity}
                         aria-label={`Quantity for ${line.name}`}
                         className="h-11 w-16 rounded-md border border-border bg-cream px-2 tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"

@@ -7,6 +7,7 @@ import { AccountError, removeCustomerAddress, saveCustomerAddress, setDefaultCus
 import { saveCustomerOrganisation } from "./organisation";
 import { saveCustomerProfile } from "./profile";
 import { customerProfileSchema, organisationSchema, personalAddressSchema, type AccountActionState } from "./actions-state";
+import { captureServerException } from "@/lib/observability/sentry";
 
 const addressMutationSchema = personalAddressSchema.extend({
   addressId: z.union([z.uuid(), z.literal("")]).optional(),
@@ -14,6 +15,9 @@ const addressMutationSchema = personalAddressSchema.extend({
 });
 const addressIdSchema = z.uuid();
 function failure(error: unknown): AccountActionState {
+  if (!(error instanceof AccountError)) {
+    captureServerException(error, { operation: "customer_account_mutation", dependency: "database" });
+  }
   return { message: error instanceof AccountError ? error.message : "We could not save your changes. Please try again." };
 }
 

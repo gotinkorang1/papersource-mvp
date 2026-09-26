@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { RemoveSavedListItemForm } from "@/components/account/remove-saved-list-item-form";
 import { requireCustomer } from "@/lib/customer/require";
 import { getSavedList, SavedListError } from "@/features/saved-lists/repository";
 
@@ -77,12 +78,7 @@ export default async function SavedListDetailPage({ params, searchParams }: { pa
                       {item.note ? <p className="mt-2 text-sm text-slate">{item.note}</p> : null}
                       {!available ? <p className="mt-2 text-sm font-semibold text-red-700">Unavailable — remove or replace this item before reordering.</p> : null}
                     </div>
-                    <form action="/account/lists/items/mutate" method="post">
-                      <input type="hidden" name="intent" value="remove" />
-                      <input type="hidden" name="listId" value={list.id} />
-                      <input type="hidden" name="itemId" value={item.id} />
-                      <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="min-h-10 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-slate hover:border-red-300 hover:text-red-700" />
-                    </form>
+                    <RemoveSavedListItemForm listId={list.id} itemId={item.id} />
                   </div>
                 </li>
               );

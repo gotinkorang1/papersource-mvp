@@ -20,9 +20,13 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
       const boxes = Array.from(form.elements).filter((element): element is HTMLInputElement => element instanceof HTMLInputElement && element.name === name);
       setSelected(boxes.filter((box) => box.checked).length);
     };
-    document.addEventListener("change", sync);
+    form.addEventListener("change", sync);
+    form.addEventListener("reset", sync);
     sync();
-    return () => document.removeEventListener("change", sync);
+    return () => {
+      form.removeEventListener("change", sync);
+      form.removeEventListener("reset", sync);
+    };
   }, [name]);
 
   useEffect(() => {

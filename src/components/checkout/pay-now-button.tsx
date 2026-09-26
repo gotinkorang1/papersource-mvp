@@ -15,7 +15,8 @@ export function PayNowButton({ orderId }: { orderId: string }) {
           {state.error}
         </p>
       ) : null}
-      <button type="submit" className={paperButton({ className: "disabled:cursor-wait" })} disabled={pending} aria-busy={pending}>
+      <button type="submit" className={paperButton({ className: "disabled:cursor-wait" })} disabled={pending} aria-busy={pending} aria-live="polite">
+        {pending ? <span aria-hidden="true" className="mr-2 inline-block size-3 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.1em]" /> : null}
         {pending ? "Starting Paystack…" : "Pay with Paystack"}
       </button>
     </form>

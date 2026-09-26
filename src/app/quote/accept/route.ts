@@ -4,6 +4,7 @@ import { z } from "zod";
 import { acceptQuoteByToken, QuoteAcceptError } from "@/features/quotations/accept";
 import { GUEST_SESSION_COOKIE } from "@/lib/session/guest";
 import { guestSessionCookieOptions } from "@/lib/session/constants";
+import { captureServerException } from "@/lib/observability/sentry";
 
 export async function POST(request: Request) {
   const origin = new URL(request.url).origin;
@@ -25,6 +26,9 @@ export async function POST(request: Request) {
     }
     return response;
   } catch (error) {
+    if (!(error instanceof QuoteAcceptError)) {
+      captureServerException(error, { operation: "accept_quote", dependency: "database" });
+    }
     const quoteUrl = new URL(`/quote/${token}`, origin);
     quoteUrl.searchParams.set(
       "error",

@@ -8,7 +8,7 @@ vi.mock("server-only", () => ({}));
 vi.mock("@/lib/customer/require", () => ({ requireCustomer: async () => ({ profileId: "owner", fullName: "Ama", email: "ama@example.test", phone: "0241234567" }) }));
 vi.mock("@/features/account/addresses", () => ({ listCustomerAddresses: async () => [{ id: "address-1", fullName: "Ama", phone: "0241234567", region: "Greater Accra", cityTown: "Accra", areaSuburb: null, streetLandmark: null, ghanapostGps: null, deliveryInstructions: null, deliveryArea: "accra", isDefault: false }] }));
 vi.mock("@/features/account/organisation", () => ({ getCustomerOrganisation: async () => ({ id: "org", name: "Member School", type: "school", role: "member", email: null, phone: null }) }));
-vi.mock("@/features/account/history", () => ({ listCustomerQuotes: async () => [{ id: "quote-123", number: "Q-123", status: "submitted", grandTotal: 100, createdAt: new Date() }] }));
+vi.mock("@/features/account/history", () => ({ listCustomerQuotes: async () => [{ id: "quote-123", number: "Q-123", status: "submitted", grandTotal: 100, createdAt: new Date(), accessToken: "quote-token-123" }] }));
 vi.mock("@/features/account/actions", () => ({ saveAddressAction: async () => ({}), defaultAddressAction: async () => ({}), removeAddressAction: async () => ({}), saveOrganisationAction: async () => ({}) }));
 
 describe("account surfaces", () => {
@@ -27,6 +27,6 @@ describe("account surfaces", () => {
   });
   it("opens authenticated quote links without secret tokens", async () => {
     render(await QuotesPage());
-    expect(screen.getByRole("link", { name: "Q-123" })).toHaveAttribute("href", "/quote/quote-123");
+    expect(screen.getByRole("link", { name: "Q-123" })).toHaveAttribute("href", "/quote/quote-token-123");
   });
 });

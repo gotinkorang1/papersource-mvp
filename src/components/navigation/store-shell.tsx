@@ -25,6 +25,7 @@ export async function StoreShell({ children }: { children: ReactNode }) {
       persist={persist}
       initialCartLines={initial.cartLines}
       initialQuoteLines={initial.quoteLines}
+      initialSyncError={initial.syncError}
     >
       <a
         href="#main-content"

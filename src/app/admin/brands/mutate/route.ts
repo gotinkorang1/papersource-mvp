@@ -32,6 +32,9 @@ export async function POST(request: Request) {
       next.searchParams.set("message", `${count} brand${count === 1 ? "" : "s"} updated.`);
       return NextResponse.redirect(next, 303);
     }
+    if (intent !== "save-brand" && intent !== "create-brand") {
+      throw new CatalogueAdminError("Unknown brand action.");
+    }
     const saved = await saveBrand({
       role: actor.role,
       brandId:

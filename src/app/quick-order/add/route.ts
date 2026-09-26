@@ -7,6 +7,7 @@ import {
 } from "@/lib/session/constants";
 import { readCustomerActor } from "@/lib/customer/require";
 import { readGuestSessionId } from "@/lib/session/guest";
+import { captureServerException } from "@/lib/observability/sentry";
 
 function withSessionCookie(response: NextResponse, sessionId: string, created: boolean) {
   if (created) {
@@ -44,7 +45,8 @@ export async function POST(request: Request) {
       destination,
       rows: parsed.rows,
     });
-  } catch {
+  } catch (error) {
+    captureServerException(error, { operation: "apply_quick_order", dependency: "database" });
     const back = new URL("/quick-order", origin);
     back.searchParams.set("error", "Quick order is temporarily unavailable. Please try again.");
     return withSessionCookie(NextResponse.redirect(back, 303), sessionId, created);

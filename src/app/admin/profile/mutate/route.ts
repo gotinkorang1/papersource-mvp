@@ -6,6 +6,7 @@ import { profiles } from "@/lib/db/schema";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { readStaffActor } from "@/lib/staff/require";
 import { recordAdminAudit } from "@/features/admin/audit";
+import { captureServerException } from "@/lib/observability/sentry";
 
 const nameSchema = z.string().trim().min(2, "Enter your full name.").max(120);
 const phoneSchema = z.string().trim().max(30).optional().default("");
@@ -37,6 +38,15 @@ export async function POST(request: Request) {
       destination.searchParams.set("success", "profile");
     }
   } catch (error) {
+    if (!(error instanceof Error && [
+      "Enter your full name.",
+      "Use at least 12 characters.",
+      "Passwords must match.",
+      "Could not update your password. Try again.",
+      "Could not update your profile. Try again.",
+    ].includes(error.message))) {
+      captureServerException(error, { operation: "staff_profile_mutation", dependency: "supabase" });
+    }
     const message = error instanceof Error && [
       "Enter your full name.",
       "Use at least 12 characters.",

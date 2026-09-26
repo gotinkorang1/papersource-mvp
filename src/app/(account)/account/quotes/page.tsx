@@ -20,7 +20,7 @@ export default async function AccountQuotesPage() {
       {rows.length === 0 ? (
         <p className="mt-6 text-slate">
           No quotations yet.{" "}
-          <Link href="/quick-order" className="underline">
+          <Link href="/quick-order" className="inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
             Quick Order
           </Link>
         </p>
@@ -39,7 +39,7 @@ export default async function AccountQuotesPage() {
               {rows.map((row) => (
                 <tr key={row.id} className="border-b border-border last:border-0 hover:bg-cream/40 dark:hover:bg-ink/20">
                   <td className="px-4 py-3" data-label="Number">
-                    <Link href={row.status === "draft" ? "/quote" : `/quote/${row.id}`} className="underline">
+                    <Link href={row.status === "draft" ? "/quote" : row.accessToken ? `/quote/${row.accessToken}` : "/account/quotes"} className="inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
                       {row.number ?? "Draft quote"}
                     </Link>
                   </td>

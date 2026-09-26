@@ -56,7 +56,9 @@ describe("customer authentication forms", () => {
     const user = userEvent.setup();
     await user.type(screen.getByLabelText("Email"), "ama@example.test");
     await user.click(screen.getByRole("button", { name: "Send reset link" }));
-    expect(screen.getByRole("button", { name: "Sending…" })).toBeDisabled();
+    const pendingButton = screen.getByRole("button", { name: "Sending…" });
+    expect(pendingButton).toBeDisabled();
+    expect(pendingButton.querySelector("span[aria-hidden='true']")).toBeInTheDocument();
     await act(async () => { finish({ status: "success", message: "If an account exists, check your email." }); });
     expect(screen.getByRole("status")).toHaveTextContent("If an account exists");
     expect(screen.getByRole("button", { name: "Send reset link" })).toBeEnabled();
@@ -77,7 +79,9 @@ describe("customer authentication forms", () => {
     actions.signOut.mockImplementation(() => new Promise<void>((resolve) => { finish = resolve; }));
     render(<SignOutButton />);
     await userEvent.click(screen.getByRole("button", { name: "Sign out" }));
-    expect(screen.getByRole("button", { name: "Signing out…" })).toBeDisabled();
+    const pendingButton = screen.getByRole("button", { name: "Signing out…" });
+    expect(pendingButton).toBeDisabled();
+    expect(pendingButton.querySelector("span[aria-hidden='true']")).toBeInTheDocument();
     await act(async () => { finish(); });
     await waitFor(() => expect(screen.getByRole("button", { name: "Sign out" })).toBeEnabled());
   });

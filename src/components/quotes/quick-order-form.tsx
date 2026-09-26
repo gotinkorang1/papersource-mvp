@@ -6,16 +6,29 @@ import { paperButton } from "@/components/commerce/paper-button";
 
 const EMPTY_ROWS = 8;
 
-function QuickOrderSubmitButton({ destination, label, className }: { destination: "quote" | "cart"; label: string; className: string }) {
+function QuickOrderSubmitButton({ destination, label, className, submittedDestination }: { destination: "quote" | "cart"; label: string; className: string; submittedDestination: "quote" | "cart" | null }) {
   const { pending } = useFormStatus();
-  return <button type="submit" name="destination" value={destination} disabled={pending} aria-busy={pending} className={`${className} disabled:cursor-wait disabled:opacity-60`}>{pending ? "Adding…" : label}</button>;
+  const busy = pending || submittedDestination === destination;
+  return <button type="submit" name="destination" value={destination} disabled={busy || (submittedDestination !== null && submittedDestination !== destination)} aria-busy={busy} aria-live="polite" className={`${className} disabled:cursor-wait disabled:opacity-60`}>
+    {busy ? <span aria-hidden="true" className="mr-2 inline-block size-3 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.1em]" /> : null}
+    {busy ? "Adding…" : label}
+  </button>;
 }
 
 export function QuickOrderForm() {
   const [rows, setRows] = useState(EMPTY_ROWS);
+  const [submittedDestination, setSubmittedDestination] = useState<"quote" | "cart" | null>(null);
 
   return (
-    <form action="/quick-order/add" method="post" className="mt-8">
+    <form
+      action="/quick-order/add"
+      method="post"
+      className="mt-8"
+      onSubmit={(event) => {
+        const submitter = (event.nativeEvent as SubmitEvent).submitter;
+        setSubmittedDestination(submitter instanceof HTMLButtonElement && submitter.value === "cart" ? "cart" : "quote");
+      }}
+    >
       <div className="overflow-x-auto rounded-md border border-border bg-white">
         <table className="w-full text-sm">
           <caption className="sr-only">SKU and quantity grid</caption>
@@ -68,8 +81,8 @@ export function QuickOrderForm() {
         </button>
       </div>
       <div className="mt-6 flex flex-wrap gap-3">
-        <QuickOrderSubmitButton destination="quote" label="Add all to Quote" className={paperButton({ variant: "quote" })} />
-        <QuickOrderSubmitButton destination="cart" label="Add all to Cart" className={paperButton({ variant: "secondary" })} />
+        <QuickOrderSubmitButton destination="quote" label="Add all to Quote" submittedDestination={submittedDestination} className={paperButton({ variant: "quote" })} />
+        <QuickOrderSubmitButton destination="cart" label="Add all to Cart" submittedDestination={submittedDestination} className={paperButton({ variant: "secondary" })} />
       </div>
     </form>
   );

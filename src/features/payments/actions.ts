@@ -41,40 +41,50 @@ export async function startPaystackPaymentAction(
 }
 
 export async function simulateMockPaystackSuccessAction(formData: FormData) {
-  if ((await getStoreSettings()).paymentMode === "live") {
-    throw new Error("Mock Paystack is disabled when live keys are configured.");
+  let orderNumber = "";
+  try {
+    if ((await getStoreSettings()).paymentMode === "live") {
+      throw new PaymentError("Mock Paystack is disabled when live keys are configured.");
+    }
+
+    const reference = z.string().min(8).parse(formData.get("reference"));
+    const identity = await readCommerceIdentity();
+    const db = getDb();
+    const [row] = await db
+      .select({
+        amount: payments.amount,
+        currency: payments.currency,
+        number: orders.number,
+        sessionId: orders.sessionId,
+      })
+      .from(payments)
+      .innerJoin(orders, eq(orders.id, payments.orderId))
+      .where(and(eq(payments.paystackReference, reference), documentOwner(orders, identity)))
+      .limit(1);
+
+    if (!row) throw new PaymentError("That mock payment was not found.");
+    orderNumber = row.number;
+
+    const raw = JSON.stringify({
+      event: "charge.success",
+      data: {
+        id: `mock_${reference}`,
+        status: "success",
+        reference,
+        amount: row.amount,
+        currency: row.currency,
+      },
+    });
+    await processPaystackWebhook(raw, signPaystackBody(raw));
+  } catch (error) {
+    const message = error instanceof PaymentError || error instanceof z.ZodError
+      ? "That test payment could not be completed. Please return to your order and try again."
+      : "Payment confirmation is temporarily unavailable. Please return to your order and try again.";
+    if (!(error instanceof PaymentError) && !(error instanceof z.ZodError)) {
+      captureServerException(error, { operation: "simulate_mock_paystack_success", dependency: "paystack" });
+    }
+    redirect(`/account/orders?error=${encodeURIComponent(message)}`);
   }
 
-  const reference = z.string().min(8).parse(formData.get("reference"));
-  const identity = await readCommerceIdentity();
-  const db = getDb();
-  const [row] = await db
-    .select({
-      amount: payments.amount,
-      currency: payments.currency,
-      number: orders.number,
-      sessionId: orders.sessionId,
-    })
-    .from(payments)
-    .innerJoin(orders, eq(orders.id, payments.orderId))
-    .where(and(eq(payments.paystackReference, reference), documentOwner(orders, identity)))
-    .limit(1);
-
-  if (!row) {
-    throw new Error("That mock payment was not found.");
-  }
-
-
-  const raw = JSON.stringify({
-    event: "charge.success",
-    data: {
-      id: `mock_${reference}`,
-      status: "success",
-      reference,
-      amount: row.amount,
-      currency: row.currency,
-    },
-  });
-  await processPaystackWebhook(raw, signPaystackBody(raw));
-  redirect(`/order/${row.number}`);
+  redirect(`/order/${orderNumber}`);
 }

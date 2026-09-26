@@ -8,8 +8,8 @@ export async function POST(request: Request) {
   const next = new URL("/admin/settings", origin);
   const actor = await readStaffActor();
   if (!actor) return NextResponse.redirect(new URL("/admin/login", origin), 303);
-  const form = await request.formData();
   try {
+    const form = await request.formData();
     await saveStoreSettings({ role: actor.role, actorId: actor.profileId, vatRateBps: String(form.get("vatRateBps") ?? ""), quoteExpiryDays: String(form.get("quoteExpiryDays") ?? ""), whatsappBusinessNumber: String(form.get("whatsappBusinessNumber") ?? ""), siteUrl: String(form.get("siteUrl") ?? ""), paymentsEnabled: String(form.get("paymentsEnabled") ?? "false"), paymentMode: String(form.get("paymentMode") ?? "test") });
     await recordAdminAudit({
       actorProfileId: actor.profileId,

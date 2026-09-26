@@ -20,7 +20,7 @@ export default async function AccountOrdersPage() {
       {rows.length === 0 ? (
         <p className="mt-6 text-slate">
           No orders on this account yet.{" "}
-          <Link href="/shop" className="underline">
+          <Link href="/shop" className="inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
             Shop
           </Link>
         </p>
@@ -39,7 +39,7 @@ export default async function AccountOrdersPage() {
               {rows.map((row) => (
                 <tr key={row.id} className="border-b border-border last:border-0 hover:bg-cream/40 dark:hover:bg-ink/20">
                   <td className="px-4 py-3" data-label="Number">
-                    <Link href={`/order/${row.number}`} className="underline">
+                    <Link href={`/order/${row.number}`} className="inline-flex min-h-11 items-center underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
                       {row.number}
                     </Link>
                   </td>

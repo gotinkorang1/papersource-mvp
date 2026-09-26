@@ -3,6 +3,7 @@ import Link from "next/link";
 import { listAdminProducts } from "@/features/catalogue/admin";
 import { paperButton } from "@/components/commerce/paper-button";
 import { AdminProductsView } from "@/components/admin/admin-products-view";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -40,7 +41,7 @@ export default async function AdminProductsPage({ searchParams }: { searchParams
         <label className="grid gap-1 text-xs font-medium text-slate">Search products<input name="q" defaultValue={filters.q ?? ""} placeholder="Name, SKU, brand or category" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink" /></label>
         <label className="grid gap-1 text-xs font-medium text-slate">Status<select name="status" defaultValue={filters.status ?? ""} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="">All statuses</option><option value="active">Active</option><option value="draft">Draft</option><option value="archived">Archived</option></select></label>
         <label className="grid gap-1 text-xs font-medium text-slate">Sort by<select name="sort" defaultValue={filters.sort ?? "updated"} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink"><option value="updated">Recently updated</option><option value="name">Name</option><option value="status">Status</option></select></label>
-        <button type="submit" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground">Filter</button>
+        <SubmitProgressButton idleLabel="Filter" pendingLabel="Filtering…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" />
       </form>
       <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} of {result.total} {result.total === 1 ? "product" : "products"}{filters.q || filters.status ? " matching your filters" : ""}.</p>
       {rows.length === 0 ? (

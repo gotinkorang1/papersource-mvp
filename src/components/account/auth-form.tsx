@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
 import { loginCustomerAction, registerCustomerAction, requestPasswordResetAction, updateCustomerPasswordAction } from "@/features/account/auth-actions";
@@ -15,6 +16,7 @@ const initialState: CustomerAuthFormState = {};
 
 export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) {
   const [state, formAction, pending] = useActionState(actions[mode], initialState);
+  const [showPassword, setShowPassword] = useState(false);
   const fields = [
     ...(mode === "register" ? [
       { name: "fullName", label: "Full name", type: "text", autoComplete: "name", required: true, maxLength: 120 },
@@ -41,15 +43,21 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
         return (
           <div key={field.name}>
             <label htmlFor={id} className="block text-sm text-ink">{label}</label>
-            <input {...field} id={id} disabled={pending} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
-              minLength={passwordHelp ? 12 : undefined}
-              className="mt-1 h-11 w-full rounded-md border border-border bg-background px-3 text-base text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20 disabled:opacity-60" />
+            <div className="relative mt-1">
+              <input {...field} type={field.type === "password" && showPassword ? "text" : field.type} id={id} disabled={pending} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
+                minLength={passwordHelp ? 12 : undefined}
+                className="h-11 w-full rounded-md border border-border bg-background px-3 pr-16 text-base text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20 disabled:opacity-60" />
+              {field.type === "password" ? <button type="button" className="absolute inset-y-0 right-0 min-w-14 px-3 text-xs font-semibold text-slate underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? "Hide" : "Show"}</button> : null}
+            </div>
             {passwordHelp ? <p id={`${id}-help`} className="mt-1 text-xs text-slate">Use 12–128 characters.</p> : null}
             {error ? <p id={`${id}-error`} className="mt-1 text-sm text-error">{error}</p> : null}
           </div>
         );
       })}
-      <button type="submit" disabled={pending} aria-busy={pending} className={paperButton({ className: "disabled:cursor-wait" })}>{pending ? pendingLabels[mode] : labels[mode]}</button>
+      <button type="submit" disabled={pending} aria-busy={pending} aria-live="polite" className={paperButton({ className: "disabled:cursor-wait" })}>
+        {pending ? <span aria-hidden="true" className="mr-2 inline-block size-3 animate-spin rounded-full border-2 border-current border-r-transparent align-[-0.1em]" /> : null}
+        {pending ? pendingLabels[mode] : labels[mode]}
+      </button>
       {mode === "reset" && state.status === "success" ? <Link href="/account" className="text-center text-sm text-ink underline">Continue to account</Link> : null}
     </form>
   );

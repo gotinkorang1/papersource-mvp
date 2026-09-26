@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { listAdminAuditLogs } from "@/features/admin/queries";
 import { requireStaffArea } from "@/lib/staff/require";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 
 export const metadata: Metadata = { title: "Audit logs" };
 
@@ -36,7 +37,7 @@ export default async function AdminLogsPage({
       <form className="mt-6 grid gap-3 rounded-xl border border-border bg-surface p-4 sm:grid-cols-[1fr_1fr_auto_auto]" method="get">
         <label className="text-sm text-slate">Action<input name="action" defaultValue={filters.action ?? ""} placeholder="e.g. quote" className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/20" /></label>
         <label className="text-sm text-slate">Resource type<input name="resourceType" defaultValue={filters.resourceType ?? ""} placeholder="e.g. product" className="mt-1 w-full rounded-md border border-border bg-background px-3 py-2 text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/20" /></label>
-        <button className="self-end rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" type="submit">Filter</button>
+        <SubmitProgressButton idleLabel="Filter" pendingLabel="Filtering…" className="self-end rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90" />
         <Link className="self-end rounded-md border border-border px-4 py-2 text-center text-sm font-medium text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" href="/admin/logs">Reset</Link>
       </form>
       {rows.length === 0 ? <p className="mt-8 rounded-lg border border-border bg-surface p-6 text-slate">No staff actions recorded yet.</p> : (

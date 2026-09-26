@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import Link from "next/link";
 import { and, eq } from "drizzle-orm";
-import { paperButton } from "@/components/commerce/paper-button";
+import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { simulateMockPaystackSuccessAction } from "@/features/payments/actions";
 import { getStoreSettings } from "@/features/settings/admin";
 import { formatGhs } from "@/lib/money";
@@ -64,11 +65,27 @@ export default async function MockPaystackPage({ params }: PageProps) {
       ) : (
         <form action={simulateMockPaystackSuccessAction} className="mt-8">
           <input type="hidden" name="reference" value={reference} />
-          <button type="submit" className={paperButton()}>
-            Simulate successful payment
-          </button>
+          <SubmitProgressButton
+            idleLabel="Simulate successful payment"
+            pendingLabel="Confirming payment…"
+            className="rounded-lg bg-ink px-4 py-3 text-sm font-semibold text-cream hover:bg-ink/90"
+          />
         </form>
       )}
+      <div className="mt-8 flex flex-wrap gap-3 text-sm font-semibold">
+        <Link
+          href={`/order/${row.number}`}
+          className="rounded-lg border border-ink/20 px-4 py-3 text-ink transition hover:border-ink/40 hover:bg-ink/5"
+        >
+          View order
+        </Link>
+        <Link
+          href="/account/orders"
+          className="rounded-lg border border-ink/20 px-4 py-3 text-slate transition hover:border-ink/40 hover:bg-ink/5"
+        >
+          Return to order history
+        </Link>
+      </div>
     </main>
   );
 }

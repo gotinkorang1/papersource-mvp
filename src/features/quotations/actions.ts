@@ -9,6 +9,7 @@ import {
 } from "@/features/quotations/repository";
 import { RfqError, submitGuestRfq } from "@/features/quotations/submit";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
+import { captureServerException } from "@/lib/observability/sentry";
 
 const lineSchema = z.object({
   variantId: z.string().uuid(),
@@ -20,21 +21,31 @@ export async function updateQuoteQuantityAction(formData: FormData) {
     variantId: formData.get("variantId"),
     quantity: formData.get("quantity"),
   });
-  if (!parsed.success) return;
-  const sessionId = await readCommerceIdentity(true);
-  await setQuoteLineQuantity(sessionId, parsed.data.variantId, parsed.data.quantity);
+  if (!parsed.success) redirect("/quote?warning=Enter a valid quantity.");
+  try {
+    const sessionId = await readCommerceIdentity(true);
+    await setQuoteLineQuantity(sessionId, parsed.data.variantId, parsed.data.quantity);
+  } catch (error) {
+    captureServerException(error, { operation: "update_quote_quantity", dependency: "database" });
+    redirect("/quote?warning=We could not update that item. Please try again.");
+  }
   revalidatePath("/", "layout");
   revalidatePath("/quote");
   revalidatePath("/request-quote");
-  redirect("/quote?notice=updated");
+  redirect(`/quote?notice=${parsed.data.quantity === 0 ? "removed" : "updated"}`);
 }
 
 export async function removeQuoteLineAction(formData: FormData) {
   const parsedVariantId = z.string().uuid().safeParse(formData.get("variantId"));
-  if (!parsedVariantId.success) return;
+  if (!parsedVariantId.success) redirect("/quote?warning=That quote item could not be found.");
   const variantId = parsedVariantId.data;
-  const sessionId = await readCommerceIdentity(true);
-  await removeQuoteLine(sessionId, variantId);
+  try {
+    const sessionId = await readCommerceIdentity(true);
+    await removeQuoteLine(sessionId, variantId);
+  } catch (error) {
+    captureServerException(error, { operation: "remove_quote_line", dependency: "database" });
+    redirect("/quote?warning=We could not remove that item. Please try again.");
+  }
   revalidatePath("/", "layout");
   revalidatePath("/quote");
   revalidatePath("/request-quote");
@@ -68,7 +79,8 @@ export async function submitRfqAction(
     if (error instanceof z.ZodError) {
       return { error: error.issues[0]?.message ?? "Check the quotation details." };
     }
-    throw error;
+    captureServerException(error, { operation: "submit_rfq", dependency: "database" });
+    return { error: "We could not submit your quotation request right now. Please review the form and try again." };
   }
   const received = new URLSearchParams({ number });
   if (!identity.profileId) received.set("token", token);

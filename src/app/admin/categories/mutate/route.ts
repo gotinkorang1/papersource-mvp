@@ -40,6 +40,9 @@ export async function POST(request: Request) {
       next.searchParams.set("message", intent === "remove-image" ? "Category image removed." : "Category image saved.");
       return NextResponse.redirect(next, 303);
     }
+    if (intent !== "save-category" && intent !== "create-category") {
+      throw new CatalogueAdminError("Unknown category action.");
+    }
     const parentRaw = String(formData.get("parentId") ?? "").trim();
     const saved = await saveCategory({
       role: actor.role,
