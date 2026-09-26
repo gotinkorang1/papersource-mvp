@@ -51,12 +51,16 @@ describe("CatalogueToolbar", () => {
 
   it("makes active filters individually removable", () => {
     render(<CatalogueToolbar count={2} query="paper" category="paper" categories={categories} brands={brands} />);
-    expect(screen.getByRole("link", { name: "Remove search filter" })).toHaveAttribute("href", "/shop?category=paper");
+    const removeSearch = screen.getByRole("link", { name: "Remove search filter" });
+    expect(removeSearch).toHaveAttribute("href", "/shop?category=paper");
+    expect(removeSearch).toHaveClass("min-h-11");
     expect(screen.getByRole("link", { name: "Remove category filter" })).toHaveAttribute("href", "/shop?q=paper");
   });
 
   it("clears filters without resetting the selected presentation mode", () => {
     render(<CatalogueToolbar count={2} query="paper" category="paper" view="content" categories={categories} brands={brands} />);
-    expect(screen.getByRole("link", { name: "Clear filters" })).toHaveAttribute("href", "/shop?view=content");
+    const clearFilters = screen.getByRole("link", { name: "Clear filters" });
+    expect(clearFilters).toHaveAttribute("href", "/shop?view=content");
+    expect(clearFilters).toHaveClass("min-h-11");
   });
 });

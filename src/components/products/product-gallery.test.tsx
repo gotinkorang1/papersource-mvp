@@ -16,6 +16,9 @@ describe("ProductGallery", () => {
     render(<ProductGallery alt="Paper" images={images} />);
 
     const gallery = screen.getByRole("region", { name: "Paper image gallery" });
+    expect(gallery).toHaveAttribute("aria-roledescription", "carousel");
+    expect(gallery).toHaveClass("focus-visible:outline-2");
+    expect(screen.getByRole("button", { name: "View image 1" })).toHaveClass("focus-visible:outline-2");
     gallery.focus();
     await user.keyboard("{ArrowRight}");
 

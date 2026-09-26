@@ -41,9 +41,9 @@ export function SelectAllCheckbox({ count, name = "productId", label = "products
           // count, indeterminate state, and accessible label stay in sync.
           form.dispatchEvent(new Event("change", { bubbles: true }));
         }}
-        className="size-4 rounded border-border accent-primary"
+        className="size-5 rounded border-border accent-primary focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
       />
-      <span aria-live="polite" className="rounded-full bg-muted px-2 py-0.5 text-[0.7rem] font-medium tabular-nums text-slate">{selected}</span>
+      <span aria-live="polite" aria-label={`${selected} ${label} selected`} className="rounded-full bg-muted px-2 py-0.5 text-[0.7rem] font-medium tabular-nums text-slate">{selected}</span>
     </span>
   );
 }

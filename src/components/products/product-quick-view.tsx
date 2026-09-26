@@ -102,7 +102,7 @@ export function ProductQuickView({
           ref={closeRef}
           onClick={onClose}
           aria-label="Close quick view"
-          className="absolute right-3 top-3 inline-flex size-10 items-center justify-center rounded-full border border-border text-slate transition hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          className="absolute right-3 top-3 inline-flex size-11 items-center justify-center rounded-full border border-border text-slate transition hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <X className="size-5" aria-hidden />
         </button>

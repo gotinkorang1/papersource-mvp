@@ -97,7 +97,7 @@ export function ProductCard({
             >
               {product.name}
             </Link>
-          </h3>{canEdit ? <Link href={`/admin/products/${product.id}`} className="inline-flex min-h-10 shrink-0 items-center text-[0.7rem] font-semibold text-ink underline underline-offset-2">Edit</Link> : null}</div>
+          </h3>{canEdit ? <Link href={`/admin/products/${product.id}`} className="inline-flex min-h-11 shrink-0 items-center rounded-md px-2 text-[0.7rem] font-semibold text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit</Link> : null}</div>
           {product.specLine ? <p className="mt-1 line-clamp-2 text-xs leading-4 text-slate sm:min-h-[2.5rem] sm:text-sm sm:leading-5">{product.specLine}</p> : null}
           <p className="mt-1 truncate font-mono text-[0.65rem] tracking-wide text-slate/80 sm:mt-2 sm:text-[0.7rem]">SKU {product.sku}</p>
         </div>
@@ -136,7 +136,7 @@ export function ProductCard({
         <button
           type="button"
           aria-describedby={`product-name-${product.id}`}
-          className="mt-1 inline-flex min-h-10 w-full items-center justify-between border-t border-border/70 pt-2 text-sm font-medium text-slate transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
+          className="mt-1 inline-flex min-h-11 w-full items-center justify-between border-t border-border/70 pt-2 text-sm font-medium text-slate transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink"
           onClick={() => setQuickOpen(true)}
         >
           <span>Quick view</span><ArrowUpRight className="size-4 transition-transform motion-safe:group-hover:translate-x-0.5 motion-safe:group-hover:-translate-y-0.5" aria-hidden />

@@ -50,12 +50,16 @@ describe("ProductListItem", () => {
     const addToQuote = vi.fn();
     render(<ProductListItem product={sampleProducts[0]} onAddToCart={addToCart} onAddToQuote={addToQuote} />);
 
-    await user.click(screen.getByRole("button", { name: "Add to Cart" }));
+    const cartButton = screen.getByRole("button", { name: "Add to Cart" });
+    const quoteButton = screen.getByRole("button", { name: "Add to Quote" });
+    expect(cartButton).toHaveClass("min-h-11");
+    expect(quoteButton).toHaveClass("min-h-11");
+    await user.click(cartButton);
     expect(addToCart).toHaveBeenCalledWith(sampleProducts[0], 1);
     expect(screen.getByRole("button", { name: "Added to Cart" })).toHaveTextContent("Added");
     expect(screen.getByRole("status")).toHaveTextContent("Added to cart.");
 
-    await user.click(screen.getByRole("button", { name: "Add to Quote" }));
+    await user.click(quoteButton);
     expect(addToQuote).toHaveBeenCalledWith(sampleProducts[0], 1);
     expect(screen.getByRole("button", { name: "Added to Quote" })).toHaveTextContent("Added");
     expect(screen.getByRole("status")).toHaveTextContent("Added to quote list.");

@@ -53,7 +53,7 @@ export function ProductPurchase({ product, savedLists = [] }: { product: Product
               {savedLists.map((list) => <option key={list.id} value={list.id}>{list.name}</option>)}
             </select>
           </label>
-          <SubmitProgressButton idleLabel="Save product" pendingLabel="Saving…" className="min-h-10 rounded-md border border-ink px-3 py-2 text-sm font-semibold text-ink hover:bg-card" />
+          <SubmitProgressButton idleLabel="Save product" pendingLabel="Saving…" className="inline-flex min-h-11 items-center justify-center rounded-md border border-ink px-3 py-2 text-sm font-semibold text-ink transition-colors hover:bg-card focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" />
         </form>
       ) : null}
       <p className="sr-only" role="status" aria-live="polite">{addedTo ? `Added to ${addedTo === "cart" ? "cart" : "quote list"}.` : ""}</p>

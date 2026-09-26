@@ -19,7 +19,7 @@ export function CopySkuButton({ sku }: { sku: string }) {
     }
   }
 
-  return <button type="button" onClick={copy} className="inline-flex min-h-8 items-center gap-2 rounded-md border border-border px-2.5 py-1 text-xs font-mono text-slate transition hover:border-ink hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" aria-label={`Copy SKU ${sku}`}>
+  return <button type="button" onClick={copy} className="inline-flex min-h-11 items-center gap-2 rounded-md border border-border px-3 py-2 text-xs font-mono text-slate transition hover:border-ink hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" aria-label={`Copy SKU ${sku}`}>
     <span>SKU {sku}</span><span aria-live="polite" className="font-sans text-[0.65rem] font-semibold uppercase tracking-wide text-ink">{copied ? "Copied" : failed ? "Copy unavailable" : "Copy"}</span>
   </button>;
 }

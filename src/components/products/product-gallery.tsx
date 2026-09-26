@@ -53,8 +53,9 @@ export function ProductGallery({
     <div className="mx-auto w-full max-w-xl">
       <div
         ref={galleryRef}
-        className="relative aspect-[4/5] touch-pan-y overflow-hidden border border-border bg-cream sm:aspect-square"
+        className="relative aspect-[4/5] touch-pan-y overflow-hidden border border-border bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:aspect-square"
         role="region"
+        aria-roledescription="carousel"
         aria-label={`${alt} image gallery`}
         tabIndex={0}
         onTouchStart={(event) => { touchStartX.current = event.touches[0]?.clientX ?? null; }}
@@ -70,7 +71,7 @@ export function ProductGallery({
         </> : <div className="m-8 h-[calc(100%-4rem)] border border-border bg-card" />}
       </div>
       {gallery.length > 1 ? <div className="mt-3 grid grid-cols-4 gap-2 sm:mt-4" aria-label="Product images">
-        {gallery.map((image, index) => <button key={`${image.src}-${index}`} type="button" aria-label={`View image ${index + 1}`} aria-pressed={index === activeIndex} onClick={() => setActiveIndex(index)} className={`relative aspect-square overflow-hidden rounded-md border-2 bg-cream transition ${index === activeIndex ? "border-ochre ring-2 ring-ochre/30" : "border-border hover:border-ink"}`}><Image src={image.src} alt="" fill sizes="96px" className="object-contain p-1" /></button>)}
+        {gallery.map((image, index) => <button key={`${image.src}-${index}`} type="button" aria-label={`View image ${index + 1}`} aria-pressed={index === activeIndex} onClick={() => setActiveIndex(index)} className={`relative aspect-square overflow-hidden rounded-md border-2 bg-cream transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${index === activeIndex ? "border-ochre ring-2 ring-ochre/30" : "border-border hover:border-ink"}`}><Image src={image.src} alt="" fill sizes="96px" className="object-contain p-1" /></button>)}
       </div> : null}
     </div>
   );

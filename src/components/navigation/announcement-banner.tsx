@@ -8,7 +8,7 @@ export function AnnouncementBanner() {
         <Sparkles className="size-3.5 shrink-0 text-ochre" aria-hidden />
         <span className="sm:hidden">Work essentials in Accra &amp; Tema.</span>
         <span className="hidden sm:inline">Workplace essentials, delivered across Accra &amp; Tema.</span>
-        <Link href="/delivery" className="inline-flex shrink-0 items-center gap-1 font-semibold text-ochre underline-offset-4 hover:underline">
+        <Link href="/delivery" className="inline-flex min-h-11 shrink-0 items-center gap-1 rounded-md px-2 font-semibold text-ochre underline-offset-4 hover:bg-ink/20 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ochre">
           See delivery zones <ArrowUpRight className="size-3.5" aria-hidden />
         </Link>
       </div>

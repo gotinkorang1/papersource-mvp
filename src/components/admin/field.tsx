@@ -1,7 +1,7 @@
 import type { ReactNode } from "react";
 
 export const adminFieldClass =
-  "mt-1 h-10 w-full rounded-md border border-border bg-background px-3 text-sm text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/20";
+  "mt-1 h-11 w-full rounded-md border border-border bg-background px-3 text-sm text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/20";
 
 export const adminAreaClass =
   "mt-1 min-h-24 w-full rounded-md border border-border bg-background px-3 py-2 text-sm text-ink outline-none transition focus:border-ink focus:ring-2 focus:ring-ink/20";

@@ -61,6 +61,7 @@ describe("ProductCard", () => {
     const sku = screen.getByText(`SKU ${longSkuProduct.sku}`);
     const cart = screen.getByRole("button", { name: "Add to Cart" });
     const quote = screen.getByRole("button", { name: "Add to Quote" });
+    const quickView = screen.getByRole("button", { name: "Quick view" });
 
     expect(container.querySelector("p.line-clamp-2")).not.toBeInTheDocument();
     expect(sku).toHaveClass("truncate");
@@ -68,6 +69,7 @@ describe("ProductCard", () => {
     expect(quote).toHaveAttribute("aria-label", "Add to Quote");
     expect(cart).toHaveClass("min-h-11");
     expect(quote).toHaveClass("min-h-11");
+    expect(quickView).toHaveClass("min-h-11");
     expect(container.querySelector(".sm\\:hidden")).toHaveTextContent("Cart");
     expect(container.querySelectorAll(".hidden.sm\\:inline")[0]).toHaveTextContent("Add to Cart");
     expect(container.querySelectorAll(".hidden.sm\\:inline")[1]).toHaveTextContent("Add to Quote");
@@ -88,6 +90,7 @@ describe("ProductCard", () => {
 
     await user.click(screen.getByRole("button", { name: "Quick view" }));
     const dialog = screen.getByRole("dialog");
+    expect(within(dialog).getByRole("button", { name: "Close quick view" })).toHaveClass("size-11");
     const cart = within(dialog).getByRole("button", { name: "Add to Cart" });
     const quote = within(dialog).getByRole("button", { name: "Add to Quote" });
 

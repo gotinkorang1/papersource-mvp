@@ -12,6 +12,7 @@ describe("PaperDrawer", () => {
     );
 
     const close = within(screen.getByRole("dialog", { name: "Cart" })).getByRole("button", { name: "Close Cart" });
+    expect(close).toHaveClass("size-11");
     expect(close).toHaveFocus();
 
     view.rerender(

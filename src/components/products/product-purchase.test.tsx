@@ -27,6 +27,9 @@ describe("product purchase", () => {
 
     expect(screen.getByLabelText("Save to list")).toBeInTheDocument();
     expect(screen.getByRole("option", { name: "Monthly supplies" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Save product" })).toBeInTheDocument();
+    const saveButton = screen.getByRole("button", { name: "Save product" });
+    expect(saveButton).toBeInTheDocument();
+    expect(saveButton).toHaveClass("min-h-11");
+    expect(saveButton).toHaveClass("focus-visible:outline-2");
   });
 });

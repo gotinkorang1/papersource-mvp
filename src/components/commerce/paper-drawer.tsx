@@ -114,7 +114,7 @@ export function PaperDrawer({
             ref={closeRef}
             onClick={onClose}
             aria-label={`Close ${title}`}
-            className="inline-flex size-10 shrink-0 items-center justify-center rounded-full border border-border text-slate transition-[background-color,color,transform] hover:-translate-y-0.5 hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-full border border-border text-slate transition-[background-color,color,transform] hover:-translate-y-0.5 hover:bg-cream hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink active:translate-y-0"
           >
             <X className="size-5" aria-hidden />
           </button>

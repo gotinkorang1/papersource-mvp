@@ -24,10 +24,10 @@ export function QuoteBasket() {
           {quoteLines.length > 0 && previewTotal > 0 ? (
             <div className="flex items-center justify-between gap-3">
               <p className="text-xs text-slate">Preview {formatGhs(previewTotal)} — final quote prices are set by PaperSource.</p>
-              <button type="button" onClick={clearQuote} className="shrink-0 text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear quote</button>
+              <button type="button" onClick={clearQuote} className="inline-flex min-h-11 shrink-0 items-center text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear quote</button>
             </div>
           ) : null}
-          {quoteLines.length > 0 && previewTotal === 0 ? <button type="button" onClick={clearQuote} className="self-end text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear quote</button> : null}
+          {quoteLines.length > 0 && previewTotal === 0 ? <button type="button" onClick={clearQuote} className="inline-flex min-h-11 self-end items-center text-xs font-medium text-error underline underline-offset-2 transition hover:text-error/80 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear quote</button> : null}
           <div className="flex flex-col gap-2">
             <Link
               href="/quote"
@@ -47,7 +47,7 @@ export function QuoteBasket() {
         </>
       }
     >
-      {syncError ? <div role="alert" className="mb-4 flex items-start justify-between gap-3 rounded-md border border-error/40 bg-error/10 px-3 py-2 text-sm text-error"><p>{syncError}</p><button type="button" onClick={clearSyncError} className="shrink-0 font-semibold underline underline-offset-2">Dismiss</button></div> : null}
+      {syncError ? <div role="alert" className="mb-4 flex items-start justify-between gap-3 rounded-md border border-error/40 bg-error/10 px-3 py-2 text-sm text-error"><p>{syncError}</p><button type="button" onClick={clearSyncError} className="inline-flex min-h-11 shrink-0 items-center font-semibold underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Dismiss</button></div> : null}
       {quoteLines.length === 0 ? (
         <p className="text-sm text-slate">
           No items on this quotation yet.{" "}

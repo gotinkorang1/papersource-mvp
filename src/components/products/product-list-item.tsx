@@ -75,7 +75,7 @@ export function ProductListItem({
         <div className="flex flex-wrap items-center gap-2"><PresentationBadges product={product} /><StockBadge level={product.stock} /></div>
         <div className="mt-2 flex flex-wrap items-start justify-between gap-2">
           <h3 className="min-w-0 text-base font-semibold leading-snug text-ink sm:text-lg"><Link href={`/product/${product.slug}`} className="hover:underline focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink">{product.name}</Link></h3>
-          {canEdit ? <Link href={`/admin/products/${product.id}`} className="text-xs font-semibold text-ink underline underline-offset-2">Edit</Link> : null}
+          {canEdit ? <Link href={`/admin/products/${product.id}`} className="inline-flex min-h-11 items-center rounded-md px-2 text-xs font-semibold text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit</Link> : null}
         </div>
         {product.specLine ? <p className={cn("mt-1 text-sm text-slate", content ? "line-clamp-3" : "line-clamp-2")}>{product.specLine}</p> : null}
         <p className="mt-1 truncate font-mono text-[0.68rem] tracking-wide text-slate/80">SKU {product.sku}</p>
@@ -85,10 +85,10 @@ export function ProductListItem({
       <div className="col-span-2 flex min-w-0 flex-col justify-center gap-3 border-t border-border/70 pt-3 sm:col-span-1 sm:min-w-[10rem] sm:items-end sm:border-t-0 sm:pt-0">
         <div className="hidden sm:block"><PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-lg font-semibold" /></div>
         <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:min-w-[10rem] sm:grid-cols-1">
-          <button type="button" aria-label={addedTo === "cart" ? "Added to Cart" : "Add to Cart"} disabled={out} onClick={() => { onAddToCart?.(product, 1); confirmAdded("cart"); }} className={cn(paperButton({ variant: "primary" }), "min-h-10 px-3 text-xs")}>
+          <button type="button" aria-label={addedTo === "cart" ? "Added to Cart" : "Add to Cart"} disabled={out} onClick={() => { onAddToCart?.(product, 1); confirmAdded("cart"); }} className={cn(paperButton({ variant: "primary" }), "min-h-11 px-3 text-xs")}>
             {addedTo === "cart" ? <><Check className="mr-1.5 size-3.5" aria-hidden />Added</> : <><ShoppingCart className="mr-1.5 size-3.5" aria-hidden />Cart</>}
           </button>
-          <QuoteButton aria-label={addedTo === "quote" ? "Added to Quote" : "Add to Quote"} onClick={() => { onAddToQuote?.(product, 1); confirmAdded("quote"); }} className="min-h-10 px-3 text-xs">
+          <QuoteButton aria-label={addedTo === "quote" ? "Added to Quote" : "Add to Quote"} onClick={() => { onAddToQuote?.(product, 1); confirmAdded("quote"); }} className="min-h-11 px-3 text-xs">
             {addedTo === "quote" ? <><Check className="mr-1.5 size-3.5" aria-hidden />Added</> : <><FileText className="mr-1.5 size-3.5" aria-hidden />Quote</>}
           </QuoteButton>
         </div>

@@ -37,7 +37,7 @@ export function QuickOrderForm() {
                     name="sku"
                     autoComplete="off"
                     spellCheck={false}
-                    className="h-10 w-full rounded-md border border-border bg-cream px-3 font-mono text-sm text-ink"
+                    className="h-11 w-full rounded-md border border-border bg-cream px-3 font-mono text-sm text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                   />
                 </td>
                 <td className="px-4 py-2">
@@ -50,7 +50,7 @@ export function QuickOrderForm() {
                     type="number"
                     min={1}
                     max={9999}
-                    className="h-10 w-24 rounded-md border border-border bg-cream px-3 tabular-nums text-ink"
+                    className="h-11 w-24 rounded-md border border-border bg-cream px-3 tabular-nums text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                   />
                 </td>
               </tr>
@@ -61,7 +61,7 @@ export function QuickOrderForm() {
       <div className="mt-4 flex flex-wrap gap-3">
         <button
           type="button"
-          className="text-sm text-ink underline"
+          className="inline-flex min-h-11 items-center text-sm text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
           onClick={() => setRows((current) => current + 4)}
         >
           Add more rows
