@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { CheckoutForm } from "@/components/checkout/checkout-form";
+import { paperButton } from "@/components/commerce/paper-button";
 import { listCustomerAddresses } from "@/features/account/addresses";
 import { listCartLines } from "@/features/cart/repository";
 import { formatGhs } from "@/lib/money";
@@ -35,13 +36,10 @@ export default async function CheckoutPage() {
         Nationwide orders wait for delivery terms — no fee is invented here.
       </p>
       {lines.length === 0 ? (
-        <p className="mt-6 text-slate">
-          Add items to your{" "}
-          <Link href="/cart" className="underline">
-            cart
-          </Link>{" "}
-          before placing an order.
-        </p>
+        <div className="mt-6 space-y-4">
+          <p className="text-slate">Add items to your cart before placing an order.</p>
+          <Link href="/cart" className={paperButton({ variant: "secondary" })}>Return to cart</Link>
+        </div>
       ) : (
         <ul className="mt-8 divide-y divide-border border-y border-border text-sm">
           {lines.map((line) => (
@@ -60,33 +58,34 @@ export default async function CheckoutPage() {
           </li>
         </ul>
       )}
-      <div className="mt-8">
-        <CheckoutForm
-          canPlaceOrder={lines.length > 0}
-          defaultEmail={customer?.email}
-          defaultAddress={
-            preferred
-              ? {
-                  fullName: preferred.fullName,
-                  phone: preferred.phone,
-                  region: preferred.region,
-                  cityTown: preferred.cityTown,
-                  areaSuburb: preferred.areaSuburb ?? "",
-                  streetLandmark: preferred.streetLandmark ?? "",
-                  ghanapostGps: preferred.ghanapostGps ?? "",
-                  deliveryInstructions: preferred.deliveryInstructions ?? "",
-                  deliveryArea:
-                    preferred.deliveryArea === "tema" || preferred.deliveryArea === "other"
-                      ? preferred.deliveryArea
-                      : "accra",
-                }
-              : customer
-                ? { fullName: customer.fullName, phone: customer.phone ?? "" }
-                : undefined
-          }
-          savedAddresses={saved.map((address) => ({ id: address.id, label: `${address.fullName} · ${address.cityTown}`, values: { fullName: address.fullName, phone: address.phone, region: address.region, cityTown: address.cityTown, areaSuburb: address.areaSuburb ?? "", streetLandmark: address.streetLandmark ?? "", ghanapostGps: address.ghanapostGps ?? "", deliveryInstructions: address.deliveryInstructions ?? "", deliveryArea: address.deliveryArea === "tema" || address.deliveryArea === "other" ? address.deliveryArea : "accra" } }))}
-        />
-      </div>
+      {lines.length > 0 ? (
+        <div className="mt-8">
+          <CheckoutForm
+            defaultEmail={customer?.email}
+            defaultAddress={
+              preferred
+                ? {
+                    fullName: preferred.fullName,
+                    phone: preferred.phone,
+                    region: preferred.region,
+                    cityTown: preferred.cityTown,
+                    areaSuburb: preferred.areaSuburb ?? "",
+                    streetLandmark: preferred.streetLandmark ?? "",
+                    ghanapostGps: preferred.ghanapostGps ?? "",
+                    deliveryInstructions: preferred.deliveryInstructions ?? "",
+                    deliveryArea:
+                      preferred.deliveryArea === "tema" || preferred.deliveryArea === "other"
+                        ? preferred.deliveryArea
+                        : "accra",
+                  }
+                : customer
+                  ? { fullName: customer.fullName, phone: customer.phone ?? "" }
+                  : undefined
+            }
+            savedAddresses={saved.map((address) => ({ id: address.id, label: `${address.fullName} · ${address.cityTown}`, values: { fullName: address.fullName, phone: address.phone, region: address.region, cityTown: address.cityTown, areaSuburb: address.areaSuburb ?? "", streetLandmark: address.streetLandmark ?? "", ghanapostGps: address.ghanapostGps ?? "", deliveryInstructions: address.deliveryInstructions ?? "", deliveryArea: address.deliveryArea === "tema" || address.deliveryArea === "other" ? address.deliveryArea : "accra" } }))}
+          />
+        </div>
+      ) : null}
     </main>
   );
 }

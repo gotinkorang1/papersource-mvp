@@ -35,13 +35,19 @@ export function CartDrawer() {
             >
               View cart
             </Link>
-            <Link
-              href="/checkout"
-              className={paperButton({ variant: "primary" })}
-              onClick={() => setCartOpen(false)}
-            >
-              Checkout
-            </Link>
+            {cartLines.length > 0 ? (
+              <Link
+                href="/checkout"
+                className={paperButton({ variant: "primary" })}
+                onClick={() => setCartOpen(false)}
+              >
+                Checkout
+              </Link>
+            ) : (
+              <button type="button" disabled className={paperButton({ variant: "primary" })}>
+                Checkout
+              </button>
+            )}
           </div>
         </>
       }

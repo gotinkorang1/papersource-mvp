@@ -42,9 +42,9 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
           <div key={field.name}>
             <label htmlFor={id} className="block text-sm text-ink">{label}</label>
             <input {...field} id={id} disabled={pending} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
-              minLength={passwordHelp ? 8 : undefined}
+              minLength={passwordHelp ? 12 : undefined}
               className="mt-1 h-11 w-full rounded-md border border-border bg-background px-3 text-base text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20 disabled:opacity-60" />
-            {passwordHelp ? <p id={`${id}-help`} className="mt-1 text-xs text-slate">Use 8–128 characters.</p> : null}
+            {passwordHelp ? <p id={`${id}-help`} className="mt-1 text-xs text-slate">Use 12–128 characters.</p> : null}
             {error ? <p id={`${id}-error`} className="mt-1 text-sm text-error">{error}</p> : null}
           </div>
         );

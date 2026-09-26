@@ -27,6 +27,7 @@ export async function updateCartQuantityAction(formData: FormData) {
   revalidatePath("/", "layout");
   revalidatePath("/cart");
   revalidatePath("/checkout");
+  redirect("/cart?notice=updated");
 }
 
 export async function removeCartLineAction(formData: FormData) {
@@ -38,6 +39,7 @@ export async function removeCartLineAction(formData: FormData) {
   revalidatePath("/", "layout");
   revalidatePath("/cart");
   revalidatePath("/checkout");
+  redirect("/cart?notice=removed");
 }
 
 export async function placeRetailOrderAction(

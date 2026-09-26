@@ -17,13 +17,13 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ added?: string; unknown?: string; quoteOnly?: string; notice?: string }>;
+  searchParams: Promise<{ added?: string; unknown?: string; quoteOnly?: string; notice?: string; warning?: string }>;
 };
 
 export default async function CartPage({ searchParams }: PageProps) {
   const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
   const lines = sessionId ? await listCartLines(sessionId) : [];
-  const { added, unknown, quoteOnly, notice } = await searchParams;
+  const { added, unknown, quoteOnly, notice, warning } = await searchParams;
   const subtotal = lines.reduce(
     (sum, line) => sum + line.unitPricePesewas * line.quantity,
     0,
@@ -46,8 +46,13 @@ export default async function CartPage({ searchParams }: PageProps) {
         </p>
       ) : null}
       {notice ? (
+        <p role="status" className="mt-3 text-sm text-paper-green">
+          {notice === "updated" ? "Quantity updated." : notice === "removed" ? "Item removed from cart." : notice}
+        </p>
+      ) : null}
+      {warning ? (
         <p role="alert" className="mt-3 text-sm text-error">
-          {notice}
+          {warning}
         </p>
       ) : null}
       {quoteOnly ? (
@@ -60,12 +65,10 @@ export default async function CartPage({ searchParams }: PageProps) {
         </p>
       ) : null}
       {lines.length === 0 ? (
-        <p className="mt-8 text-slate">
-          Your cart is empty.{" "}
-          <Link href="/shop" className="underline">
-            Shop workplace supplies
-          </Link>
-        </p>
+        <div className="mt-8 space-y-4">
+          <p className="text-slate">Your cart is empty. Browse the catalogue to add retail items for checkout.</p>
+          <Link href="/shop" className={paperButton({ variant: "primary" })}>Shop workplace supplies</Link>
+        </div>
       ) : (
         <div className="mt-8 space-y-6">
           <ul className="divide-y divide-border border-y border-border">
@@ -88,9 +91,10 @@ export default async function CartPage({ searchParams }: PageProps) {
                       id={`qty-${line.id}`}
                       name="quantity"
                       type="number"
+                      inputMode="numeric"
                       min={1}
                       defaultValue={line.quantity}
-                      className="h-10 w-16 rounded-md border border-border bg-cream px-2 text-sm tabular-nums"
+                      className="h-11 w-16 rounded-md border border-border bg-cream px-2 text-sm tabular-nums focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
                     />
                     <SubmitProgressButton idleLabel="Update" pendingLabel="Updating…" className="text-sm text-slate underline" />
                   </form>

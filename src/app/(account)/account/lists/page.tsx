@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { DeleteListForm } from "@/components/account/delete-list-form";
 import { requireCustomer } from "@/lib/customer/require";
 import { listSavedLists } from "@/features/saved-lists/repository";
 
@@ -28,7 +29,7 @@ export default async function AccountSavedListsPage({ searchParams }: { searchPa
       </section>
       <section className="mt-8" aria-labelledby="your-lists-heading">
         <div className="flex items-end justify-between gap-3"><div><p className="text-xs font-semibold uppercase tracking-[0.16em] text-slate">Your catalogue shortcuts</p><h2 id="your-lists-heading" className="mt-1 font-heading text-xl text-ink">Saved lists</h2></div><span className="text-sm text-slate">{lists.length} {lists.length === 1 ? "list" : "lists"}</span></div>
-        {lists.length ? <ul className="mt-4 grid gap-3 sm:grid-cols-2">{lists.map((list) => <li key={list.id} className="rounded-xl border border-border bg-surface p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><div><h3 className="font-heading text-lg text-ink"><Link href={`/account/lists/${list.id}`} className="underline underline-offset-4">{list.name}</Link></h3><p className="mt-1 text-sm text-slate">{list.organizationName ? `${list.organizationName} · ` : "Personal list · "}{list.itemCount} {list.itemCount === 1 ? "item" : "items"}</p></div><form action="/account/lists/mutate" method="post"><input type="hidden" name="intent" value="delete" /><input type="hidden" name="listId" value={list.id} /><SubmitProgressButton idleLabel="Delete" pendingLabel="Deleting…" className="text-sm text-slate underline underline-offset-4 hover:text-red-700" /></form></div>{list.description ? <p className="mt-3 text-sm text-slate">{list.description}</p> : null}<p className="mt-4 text-xs text-slate">Updated {list.updatedAt.toLocaleDateString("en-GH")}</p></li>)}</ul> : <div className="mt-4 rounded-xl border border-dashed border-border p-8 text-center"><p className="font-medium text-ink">No saved lists yet</p><p className="mt-1 text-sm text-slate">Create one above, then save products from the catalogue.</p></div>}
+        {lists.length ? <ul className="mt-4 grid gap-3 sm:grid-cols-2">{lists.map((list) => <li key={list.id} className="rounded-xl border border-border bg-surface p-5 shadow-sm"><div className="flex items-start justify-between gap-3"><div><h3 className="font-heading text-lg text-ink"><Link href={`/account/lists/${list.id}`} className="underline underline-offset-4">{list.name}</Link></h3><p className="mt-1 text-sm text-slate">{list.organizationName ? `${list.organizationName} · ` : "Personal list · "}{list.itemCount} {list.itemCount === 1 ? "item" : "items"}</p></div><DeleteListForm listId={list.id} /></div>{list.description ? <p className="mt-3 text-sm text-slate">{list.description}</p> : null}<p className="mt-4 text-xs text-slate">Updated {list.updatedAt.toLocaleDateString("en-GH")}</p></li>)}</ul> : <div className="mt-4 rounded-xl border border-dashed border-border p-8 text-center"><p className="font-medium text-ink">No saved lists yet</p><p className="mt-1 text-sm text-slate">Create one above, then save products from the catalogue.</p></div>}
       </section>
     </main>
   );

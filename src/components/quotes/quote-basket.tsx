@@ -36,13 +36,19 @@ export function QuoteBasket() {
             >
               View quote list
             </Link>
-            <Link
-              href="/request-quote"
-              className={paperButton({ variant: "quote" })}
-              onClick={() => setQuoteOpen(false)}
-            >
-              Request quotation
-            </Link>
+            {quoteLines.length > 0 ? (
+              <Link
+                href="/request-quote"
+                className={paperButton({ variant: "quote" })}
+                onClick={() => setQuoteOpen(false)}
+              >
+                Request quotation
+              </Link>
+            ) : (
+              <button type="button" disabled className={paperButton({ variant: "quote" })}>
+                Request quotation
+              </button>
+            )}
           </div>
         </>
       }

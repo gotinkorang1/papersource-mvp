@@ -28,4 +28,25 @@ describe("GhanaAddressForm", () => {
       screen.getByText(/nationwide delivery option and cost/i),
     ).toBeInTheDocument();
   });
+
+  it("clears a saved address when starting a new address", async () => {
+    const user = userEvent.setup();
+    render(
+      <GhanaAddressForm
+        savedAddresses={[{
+          id: "saved-1",
+          label: "Office · Accra",
+          values: { fullName: "Office Contact", phone: "0555001313" },
+        }]}
+      />,
+    );
+
+    const selector = screen.getByLabelText("Saved address");
+    await user.selectOptions(selector, "saved-1");
+    expect(screen.getByLabelText(/Full Name/)).toHaveValue("Office Contact");
+
+    await user.selectOptions(selector, "");
+    expect(screen.getByLabelText(/Full Name/)).toHaveValue("");
+    expect(screen.getByLabelText(/Phone Number/)).toHaveValue("");
+  });
 });

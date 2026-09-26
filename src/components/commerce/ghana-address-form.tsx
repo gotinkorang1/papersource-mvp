@@ -78,10 +78,11 @@ export function GhanaAddressForm({
   fieldErrors?: Record<string, string[] | undefined>;
   savedAddresses?: Array<{ id: string; label: string; values: Partial<GhanaAddressValues> }>;
 }) {
-  const [values, setValues] = useState<GhanaAddressValues>({
+  const [values, setValues] = useState<GhanaAddressValues>(() => ({
     ...empty,
     ...defaultValues,
-  });
+  }));
+  const [selectedAddressId, setSelectedAddressId] = useState("");
   const hydrated = useSyncExternalStore(
     () => () => {},
     () => true,
@@ -89,8 +90,13 @@ export function GhanaAddressForm({
   );
 
   function applySavedAddress(id: string) {
+    setSelectedAddressId(id);
     const address = savedAddresses?.find((entry) => entry.id === id);
-    if (address) setValues((current) => ({ ...current, ...address.values }));
+    if (address) {
+      setValues((current) => ({ ...current, ...address.values }));
+    } else {
+      setValues(empty);
+    }
   }
 
   function patch<K extends keyof GhanaAddressValues>(
@@ -118,7 +124,7 @@ export function GhanaAddressForm({
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
       <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
-      {savedAddresses?.length ? <Field id={`${id}-saved`} label="Saved address"><select id={`${id}-saved`} defaultValue="" onChange={(event) => applySavedAddress(event.target.value)} className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm text-ink"><option value="">Enter a new address</option>{savedAddresses.map((address) => <option key={address.id} value={address.id}>{address.label}</option>)}</select></Field> : null}
+      {savedAddresses?.length ? <Field id={`${id}-saved`} label="Saved address"><select id={`${id}-saved`} value={selectedAddressId} onChange={(event) => applySavedAddress(event.target.value)} className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm text-ink"><option value="">Enter a new address</option>{savedAddresses.map((address) => <option key={address.id} value={address.id}>{address.label}</option>)}</select></Field> : null}
       <Field id={`${id}-name`} label="Full Name" required>
         <Input
           id={`${id}-name`}

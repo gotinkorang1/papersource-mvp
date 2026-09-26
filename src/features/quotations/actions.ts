@@ -38,6 +38,7 @@ export async function removeQuoteLineAction(formData: FormData) {
   revalidatePath("/", "layout");
   revalidatePath("/quote");
   revalidatePath("/request-quote");
+  redirect("/quote?notice=removed");
 }
 
 export async function submitRfqAction(

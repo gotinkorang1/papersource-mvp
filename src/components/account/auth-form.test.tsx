@@ -27,6 +27,11 @@ describe("customer authentication forms", () => {
     expect(screen.getByLabelText("Password")).toHaveAttribute("autocomplete", autocomplete);
     expect(screen.getByRole("button", { name: button })).toBeEnabled();
   });
+  it("matches the password hint to the twelve-character policy", () => {
+    render(<CustomerAuthForm mode="register" />);
+    expect(screen.getByLabelText("Password")).toHaveAttribute("minlength", "12");
+    expect(screen.getByText("Use 12–128 characters.")).toBeInTheDocument();
+  });
   it("labels registration name and phone without mixing them with email", () => {
     render(<CustomerAuthForm mode="register" />);
     expect(screen.getByLabelText("Full name")).toHaveAttribute("autocomplete", "name");

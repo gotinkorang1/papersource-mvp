@@ -67,7 +67,7 @@ export async function POST(request: Request) {
   }
 
   if (parsed.invalid.length) {
-    next.searchParams.set("notice", parsed.invalid[0] ?? "");
+    next.searchParams.set("warning", parsed.invalid[0] ?? "");
   }
   if (result.unknown.length) {
     next.searchParams.set("unknown", result.unknown.join(", "));

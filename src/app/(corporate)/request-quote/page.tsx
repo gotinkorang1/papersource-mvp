@@ -8,6 +8,7 @@ import { listQuoteLines } from "@/features/quotations/repository";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { pageMetadata } from "@/lib/seo";
+import { paperButton } from "@/components/commerce/paper-button";
 
 export const metadata: Metadata = { ...pageMetadata({ title: "Request a stationery quote", description: "Send PaperSource Ghana your product list, quantities and delivery requirements for a tailored quotation.", path: "/request-quote" }), robots: { index: false, follow: true } };
 
@@ -27,13 +28,13 @@ export default async function RequestQuotePage() {
         PDF, Excel, Word or image attachments stay private.
       </p>
       {lines.length === 0 ? (
-        <p className="mt-8 text-slate">
-          Add lines to your{" "}
-          <Link href="/quote" className="underline">
-            quote list
-          </Link>{" "}
-          first.
-        </p>
+        <div className="mt-8 space-y-4">
+          <p className="text-slate">Add products to your quote list before requesting a tailored quotation.</p>
+          <div className="flex flex-wrap gap-3">
+            <Link href="/quote" className={paperButton({ variant: "quote" })}>Open quote list</Link>
+            <Link href="/quick-order" className={paperButton({ variant: "secondary" })}>Use Quick Order</Link>
+          </div>
+        </div>
       ) : (
         <>
           <ul className="mt-8 list-disc space-y-1 pl-5 text-sm text-ink">
