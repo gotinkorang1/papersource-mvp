@@ -8,12 +8,20 @@ export type GoogleShoppingFeedEntry = {
   description: string;
   link: string;
   imageLink?: string;
+  additionalImageLinks?: string[];
   availability: "in stock" | "out of stock";
   pricePesewas: number;
   brand: string;
   productType: string;
   gtin?: string | null;
+  author?: string;
+  specification?: string;
 };
+
+export function shoppingFeedTitle(input: { name: string; author?: string; specification?: string }) {
+  const identity = [input.name.trim(), input.author?.trim() ? `by ${input.author.trim()}` : ""].filter(Boolean).join(" ");
+  return [identity, input.specification?.trim() ?? ""].filter(Boolean).join(" — ");
+}
 
 function escapeXml(value: string) {
   return value.replace(/[<>&'\"]/g, (character) => ({ "<": "&lt;", ">": "&gt;", "&": "&amp;", "'": "&apos;", '\"': "&quot;" })[character] ?? character);
@@ -34,6 +42,9 @@ export function renderGoogleShoppingFeed(entries: GoogleShoppingFeedEntry[]) {
     tag("description", description),
     tag("link", entry.link),
     tag("image_link", entry.imageLink),
+    ...(entry.additionalImageLinks ?? [])
+      .filter((imageLink, index, links) => Boolean(imageLink) && imageLink !== entry.imageLink && links.indexOf(imageLink) === index)
+      .map((imageLink) => tag("additional_image_link", imageLink)),
     tag("availability", entry.availability),
     tag("price", `${pesewasToMajor(entry.pricePesewas)} GHS`),
     tag("brand", entry.brand),

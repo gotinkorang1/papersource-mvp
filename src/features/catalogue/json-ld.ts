@@ -15,11 +15,15 @@ export function productJsonLd(
 ) {
   const origin = new URL(canonical).origin;
   const attributes = product.attributes ?? [];
-  const bookAuthor = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "author")?.valueText.trim();
-  const bookIsbn = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "isbn")?.valueText.trim();
-  const bookPublisher = attributes.find((attribute) => attribute.namespace === "book" && attribute.key === "publisher")?.valueText.trim();
+  // Imported catalogue records use the bibliographic namespace, while
+  // manually managed books may use book. Treat both as book metadata so
+  // author, ISBN and publisher are not lost from structured data.
+  const bookAttributes = attributes.filter((attribute) => attribute.namespace === "book" || attribute.namespace === "bibliographic");
+  const bookAuthor = bookAttributes.find((attribute) => attribute.key === "author")?.valueText.trim();
+  const bookIsbn = bookAttributes.find((attribute) => attribute.key === "isbn")?.valueText.trim();
+  const bookPublisher = bookAttributes.find((attribute) => attribute.key === "publisher")?.valueText.trim();
   const validIsbn = bookIsbn && /^(?:\d{9}[\dX]|\d{13})$/.test(bookIsbn.replace(/[-\s]/g, "")) ? bookIsbn.replace(/[-\s]/g, "") : null;
-  const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || attributes.some((attribute) => attribute.namespace === "book"));
+  const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || bookAttributes.length);
   const description = productSeoDescription(product);
   const reviewEntities = reviews
     .filter((review) => Boolean(review.displayName?.trim() && review.body?.trim()))
@@ -75,9 +79,11 @@ export function productJsonLd(
     ...(bookAuthor ? { author: { "@type": "Person", name: bookAuthor } } : {}),
     ...(validIsbn ? { isbn: validIsbn } : {}),
     ...(bookPublisher ? { publisher: { "@type": "Organization", name: bookPublisher } } : {}),
-    ...(product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode)
+    ...((product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode))
       ? { gtin: product.barcode }
-      : {}),
+      : validIsbn
+        ? { gtin: validIsbn }
+        : {}),
     ...(reviews.length
       ? {
           aggregateRating: {

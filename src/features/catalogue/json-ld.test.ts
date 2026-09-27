@@ -76,6 +76,25 @@ describe("productJsonLd", () => {
     expect(json.offers.seller).toEqual({ "@id": "http://localhost:3000/#organization", "@type": "Organization", name: "PaperSource Ghana" });
   });
 
+  it("maps imported bibliographic attributes to book structured data", () => {
+    const json = productJsonLd(
+      {
+        ...product,
+        attributes: [
+          { namespace: "bibliographic", key: "author", valueText: "Jeff Kinney" },
+          { namespace: "bibliographic", key: "isbn", valueText: "9781637996959" },
+          { namespace: "bibliographic", key: "publisher", valueText: "Abrams" },
+        ],
+      },
+      "https://www.papersourcegh.com/product/diary-of-a-wimpy-kid-hot-mess-jeff-kinney",
+    );
+
+    expect(json.author).toEqual({ "@type": "Person", name: "Jeff Kinney" });
+    expect(json.isbn).toBe("9781637996959");
+    expect(json.gtin).toBe("9781637996959");
+    expect(json.publisher).toEqual({ "@type": "Organization", name: "Abrams" });
+  });
+
   it("references the global return and shipping policies without inventing a nationwide rate", () => {
     const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4");
 
