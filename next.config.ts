@@ -1,6 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  poweredByHeader: false,
   images: {
     remotePatterns: [{ protocol: "https", hostname: "res.cloudinary.com" }],
   },
@@ -14,6 +15,13 @@ const nextConfig: NextConfig = {
   experimental: {
     serverActions: {
       bodySizeLimit: "20mb",
+      allowedOrigins: [
+        "papersourcegh.com",
+        "www.papersourcegh.com",
+        "papersource-mvp.vercel.app",
+        "localhost:3000",
+        "127.0.0.1:3000",
+      ],
     },
   },
   async headers() {
