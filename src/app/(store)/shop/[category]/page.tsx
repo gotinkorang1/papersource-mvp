@@ -37,6 +37,7 @@ export async function generateMetadata({
     title: `${category.name} for Ghana workplaces`,
     description,
     path: `/shop/${category.slug}`,
+    keywords: [`${category.name} Ghana`, `${category.name} Accra`, `${category.name} supplier Ghana`],
     }),
     ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
   };

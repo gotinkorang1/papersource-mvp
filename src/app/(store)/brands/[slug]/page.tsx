@@ -33,6 +33,7 @@ export async function generateMetadata({
     title: `${brand.name} supplies in Ghana`,
     description: `${brand.name} workplace supplies from PaperSource. Accra and Tema delivery.`,
     path: `/brands/${brand.slug}`,
+    keywords: [`${brand.name} Ghana`, `${brand.name} Accra`, `${brand.name} stationery`],
     }),
     ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
   };

@@ -20,8 +20,9 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
   return {
     ...pageMetadata({
       title: "Shop workplace supplies in Ghana",
-      description: "Office stationery, paper, toner and workplace essentials from PaperSource. Accra and Tema delivery, nationwide on request.",
+      description: "Buy office stationery, A4 paper, printer toner, pens and workplace essentials from PaperSource Ghana. Delivery in Accra and Tema, nationwide supply on request.",
       path: "/shop",
+      keywords: ["A4 paper Ghana", "printer toner Ghana", "office stationery supplier Ghana", "stationery delivery Accra Tema"],
     }),
     ...(hasCatalogueVariant ? { robots: { index: false, follow: true } } : {}),
   };
@@ -65,7 +66,8 @@ export default async function ShopPage({ searchParams }: PageProps) {
         <h1 className="font-heading text-4xl font-semibold tracking-tight text-ink md:text-6xl">Shop workplace essentials</h1>
         <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate md:text-lg">
           One catalogue for retail checkout and bulk quotation. Add to Cart and
-          Add to Quote are independent.
+          Add to Quote are independent. Find A4 paper, pens, toner, files,
+          notebooks and school stationery for offices, schools and organisations in Ghana.
         </p>
         <div className="mt-5 flex flex-wrap gap-2" aria-label="Shopping options">
           {['Retail checkout', 'Bulk quotations', 'Accra & Tema delivery'].map((label) => <span key={label} className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-slate shadow-sm">{label}</span>)}

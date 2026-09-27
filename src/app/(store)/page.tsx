@@ -54,8 +54,8 @@ export default async function HomePage() {
           Everything your workplace needs.
         </h1>
         <p className="mt-6 max-w-2xl text-base leading-8 text-slate sm:text-lg md:text-xl">
-          Office stationery, paper, printing supplies and workplace essentials —
-          delivered across Accra &amp; Tema.
+          Office stationery, A4 paper, printer toner and workplace essentials —
+          supplied across Accra &amp; Tema for offices, schools and organisations.
         </p>
         <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
           <Link href="/shop" className={`${paperButton()} w-full sm:w-auto`}>

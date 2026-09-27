@@ -20,10 +20,16 @@ export const DEFAULT_DESCRIPTION =
 export const DEFAULT_SHARE_IMAGE = "/images/catalogue-stationery-generated.png";
 export const SEO_KEYWORDS = [
   "office supplies Ghana",
+  "office stationery supplier Ghana",
   "stationery supplier Accra",
-  "paper and printing supplies Ghana",
-  "bulk office supplies",
+  "A4 paper Ghana",
+  "printer toner Ghana",
   "school stationery Ghana",
+  "bulk stationery Accra",
+  "stationery delivery Accra Tema",
+  "buy office supplies online Ghana",
+  "paper and printing supplies Ghana",
+  "bulk office supplies Ghana",
   "workplace essentials Accra",
 ];
 
