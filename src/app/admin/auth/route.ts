@@ -3,8 +3,8 @@ import { z } from "zod";
 import { authenticateStaff, StaffAuthError } from "@/features/staff/login";
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(1),
+  email: z.string().trim().max(254).email(),
+  password: z.string().min(1).max(128),
 });
 
 export async function POST(request: Request) {
