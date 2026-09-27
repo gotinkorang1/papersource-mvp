@@ -5,7 +5,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({ title: "Stationery, delivery and quote FAQs", description: "Answers about PaperSource products, Ghana delivery zones, quotations, checkout, payment and returns.", path: "/faq" });
+export const metadata: Metadata = pageMetadata({ title: "Stationery, delivery and quote FAQs", description: "Answers about PaperSource products, Ghana delivery zones, shop pickup, quotations, checkout, payment and returns.", path: "/faq", keywords: ["stationery delivery FAQ Ghana", "shop pickup Accra", "bulk stationery quote Ghana"] });
 
 export default async function FaqPage() {
   const managed = await listPublishedFaqs();

@@ -2,6 +2,7 @@ export const FALLBACK_FAQS = [
   ["Can I buy as a guest?", "Yes. Guest checkout and guest quotation requests are supported. Creating an account adds order history, saved Ghana addresses and organisation tools."],
   ["What is the difference between Cart and Quote?", "Cart is for published-price retail checkout. Quote is for bulk, quote-only or procurement requests. They are separate lists."],
   ["Where do you deliver?", "Direct delivery is available across Accra and Tema. Nationwide delivery can be arranged on request."],
+  ["Can I pick up my order from the shop?", "Yes. Choose shop pickup at checkout and we will confirm when your order is ready for collection. Pickup is available from our Kanda or Asylum Down locations."],
   ["How do quotations work?", "Submit your requirements and contact details. Our team reviews the list, confirms pricing and delivery, and sends a quotation."],
   ["How can I pay?", "Published-price retail orders can use available Paystack card and Mobile Money options."],
   ["How do I contact the team?", "Email info@papersourcegh.com or call 0555 001 313 / 0552 767 156. Our locations are Kanda and Asylum Down."],
