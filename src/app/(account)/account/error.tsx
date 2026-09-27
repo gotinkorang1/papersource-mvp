@@ -1,8 +1,13 @@
 "use client";
 
 import Link from "next/link";
+import { useEffect } from "react";
 
-export default function AccountError({ reset }: { error: Error & { digest?: string }; reset: () => void }) {
+export default function AccountError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    console.error("PaperSource account area failed to render", { digest: error.digest });
+  }, [error]);
+
   return (
     <main role="alert" className="rounded-2xl border border-error/30 bg-surface p-6 shadow-sm sm:p-8">
       <p className="text-sm font-medium uppercase tracking-[0.16em] text-error">Account temporarily unavailable</p>
