@@ -3,7 +3,8 @@ import { listProductCards } from "@/features/catalogue";
 
 export async function GET(request: Request) {
   const query = new URL(request.url).searchParams.get("q")?.trim() ?? "";
-  if (query.length < 2) return NextResponse.json({ suggestions: [] });
+  // Keep autocomplete work bounded even when called outside the UI.
+  if (query.length < 2 || query.length > 80) return NextResponse.json({ suggestions: [] });
 
   try {
     const products = await listProductCards({ query });

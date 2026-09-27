@@ -53,12 +53,16 @@ export async function GET(request: Request) {
   }
 
   const healthy = checks.database === "ok";
+  const healthSecret = process.env.HEALTHCHECK_SECRET?.trim();
+  const detailed = Boolean(healthSecret && request.headers.get("authorization") === `Bearer ${healthSecret}`);
+  const payload: { status: "ok" | "degraded"; durationMs: number; checks?: typeof checks } = {
+    status: healthy ? "ok" : "degraded",
+    durationMs: Date.now() - startedAt,
+  };
+  if (detailed) payload.checks = checks;
+
   return NextResponse.json(
-    {
-      status: healthy ? "ok" : "degraded",
-      checks,
-      durationMs: Date.now() - startedAt,
-    },
+    payload,
     {
       status: healthy ? 200 : 503,
       headers: { "Cache-Control": "no-store" },
