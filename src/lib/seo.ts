@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { publicEnv } from "@/lib/env";
+import { socialLinks } from "@/lib/social";
 
 export const SITE_NAME = "PaperSource Ghana";
 // Keep one canonical host everywhere: metadata, JSON-LD, and sitemaps must agree.
@@ -127,6 +128,7 @@ export function siteJsonLd() {
         logo: absoluteUrl("/icons/papersource-logo.png"),
         email: "info@papersourcegh.com",
         telephone: "+233555001313",
+        sameAs: socialLinks.filter((link) => link.external).map((link) => link.href),
         parentOrganization: { "@type": "Organization", name: "NiiPlants Group Ghana Limited" },
         knowsAbout: ["Office stationery", "Books", "School supplies", "Paper and printing supplies", "Workplace essentials"],
         contactPoint: { "@type": "ContactPoint", telephone: "+233555001313", contactType: "customer service", areaServed: "GH", availableLanguage: "en" },

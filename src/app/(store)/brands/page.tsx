@@ -7,8 +7,9 @@ import { breadcrumbJsonLd } from "@/features/catalogue";
 
 export const metadata: Metadata = pageMetadata({
   title: "Office stationery brands in Ghana",
-  description: "Browse trusted paper, printer, writing and workplace supply brands available through PaperSource Ghana.",
+  description: "Browse trusted A4 paper, printer toner, writing and workplace supply brands available through PaperSource Ghana, with Accra and Tema delivery.",
   path: "/brands",
+  keywords: ["paper brands Ghana", "printer toner brands Ghana", "office stationery brands Accra"],
 });
 
 export default async function BrandsPage() {
@@ -21,7 +22,7 @@ export default async function BrandsPage() {
       <Breadcrumbs items={[{ label: "Brands" }]} />
       <h1 className="mt-5 font-heading text-4xl font-semibold tracking-tight text-ink md:text-6xl">Brands you can specify with confidence.</h1>
       <p className="mt-4 max-w-2xl text-lg leading-8 text-slate">
-        Workplace supplies from brands Ghanaian offices already specify.
+        Compare paper, printer toner, writing instruments and workplace supplies from brands Ghanaian offices, schools and organisations already specify.
       </p>
       <BrandDirectory brands={brands} />
     </main>
