@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { readSessionFlag, writeSessionFlag } from "@/lib/browser/session-storage";
 
+const INSTALL_PROMPT_TIMEOUT_MS = 8_000;
+
 export function isIosInstallable({ platform, userAgent, standalone, touchPoints = 0 }: { platform: string; userAgent: string; standalone: boolean; touchPoints?: number }) {
   const ios = /iPad|iPhone|iPod/.test(platform) || (platform === "MacIntel" && touchPoints > 1);
   return ios && /Safari/i.test(userAgent) && !/CriOS|FxiOS|EdgiOS/i.test(userAgent) && !standalone;
@@ -95,6 +97,17 @@ export function PwaRegister() {
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [admin, dismissKey]);
+
+  useEffect(() => {
+    if (updateAvailable || dismissed || (!installEvent && !iosInstall)) return;
+    const timeout = window.setTimeout(() => {
+      // Keep the install affordance helpful without leaving a permanent overlay
+      // over the storefront when the visitor chooses not to act immediately.
+      writeSessionFlag(dismissKey);
+      setDismissed(true);
+    }, INSTALL_PROMPT_TIMEOUT_MS);
+    return () => window.clearTimeout(timeout);
+  }, [dismissKey, dismissed, installEvent, iosInstall, updateAvailable]);
 
   if (updateAvailable) {
     return <div className="fixed inset-x-3 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-md flex-col gap-3 rounded-xl border border-border bg-card p-4 text-sm text-ink shadow-[0_18px_44px_rgba(16,42,67,0.2)] sm:inset-x-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]"><div className="flex min-w-0 items-start justify-between gap-3"><p><span className="font-semibold">PaperSource updated</span><span className="mt-0.5 block text-xs text-slate">Refresh to use the latest version.</span></p><button type="button" aria-label="Dismiss update notice" onClick={() => setUpdateAvailable(false)} className="-mr-1 -mt-1 inline-flex min-h-9 min-w-9 items-center justify-center rounded-md text-lg leading-none text-slate transition hover:bg-muted hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">×</button></div><button type="button" onClick={() => { let timeout = 0; const reload = () => { window.clearTimeout(timeout); window.location.reload(); }; navigator.serviceWorker.addEventListener("controllerchange", reload, { once: true }); void navigator.serviceWorker.ready.then((registration) => { registration.waiting?.postMessage({ type: "SKIP_WAITING" }); }); timeout = window.setTimeout(reload, 2500); }} className="min-h-11 w-full shrink-0 rounded-md bg-ink px-3 py-2 text-xs font-semibold text-white hover:bg-ink/90 sm:w-auto">Refresh</button></div>;
