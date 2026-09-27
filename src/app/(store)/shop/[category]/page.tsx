@@ -55,12 +55,16 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
   }
   const description = categorySeoDescription(category);
 
-  const products = await listProductCards({ categorySlug: category.slug });
+  // Product data and the optional staff session are independent reads. Run
+  // them together so category pages do not wait on authentication first.
+  const [products, staff] = await Promise.all([
+    listProductCards({ categorySlug: category.slug }),
+    readStaffActor(),
+  ]);
   const pageSize = 24;
   const totalPages = Math.max(1, Math.ceil(products.length / pageSize));
   const page = Math.min(Math.max(1, Number.parseInt(pageParam ?? "1", 10) || 1), totalPages);
   const visibleProducts = products.slice((page - 1) * pageSize, page * pageSize);
-  const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "categories", "write") : false;
   const viewMode = ["default", "grid", "list", "content"].includes(view ?? "") ? view as CatalogueViewMode : undefined;
   const image = categoryImageFor(category);

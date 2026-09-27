@@ -1,4 +1,4 @@
-import { and, eq, inArray, isNull } from "drizzle-orm";
+import { and, asc, eq, inArray, isNull } from "drizzle-orm";
 import { cache } from "react";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { productImageAlt } from "@/features/catalogue/product-metadata";
@@ -63,7 +63,7 @@ function descendantIds(
 
 const loadCatalogueContext = cache(async function loadCatalogueContext() {
   const db = getDb();
-  const [categoryRows, brandRows, zoneRows, imageRows] = await Promise.all([
+  const [categoryRows, brandRows, zoneRows] = await Promise.all([
     db
       .select()
       .from(categories)
@@ -73,14 +73,12 @@ const loadCatalogueContext = cache(async function loadCatalogueContext() {
       .from(brands)
       .where(and(eq(brands.active, true), isNull(brands.deletedAt))),
     db.select().from(deliveryZones).where(eq(deliveryZones.active, true)),
-    db.select().from(productImages).orderBy(productImages.position),
   ]);
 
   return {
     categoryRows,
     brandRows,
     deliveryBadge: storefrontDeliveryBadge(zoneRows),
-    imageRows,
   };
 });
 
@@ -161,7 +159,7 @@ export async function getBrandBySlugFromDb(
 
 async function loadActiveProducts() {
   const db = getDb();
-  const { categoryRows, brandRows, deliveryBadge, imageRows } = await loadCatalogueContext();
+  const { categoryRows, brandRows, deliveryBadge } = await loadCatalogueContext();
 
   const productRows = uniqueCatalogueProducts(await db
     .select({
@@ -183,7 +181,7 @@ async function loadActiveProducts() {
   const productIds = productRows.map((row) => row.product.id);
   const variantIds = productRows.map((row) => row.variant.id);
 
-  const [attributeRows, aliasRows, tierRows] = productIds.length
+  const [attributeRows, aliasRows, tierRows, imageRows] = productIds.length
     ? await Promise.all([
         db
           .select()
@@ -202,8 +200,13 @@ async function loadActiveProducts() {
               eq(priceTiers.active, true),
             ),
           ),
+        db
+          .select()
+          .from(productImages)
+          .where(inArray(productImages.productId, productIds))
+          .orderBy(asc(productImages.productId), asc(productImages.position), asc(productImages.id)),
       ])
-    : [[], [], []];
+    : [[], [], [], []];
 
   return {
     categoryRows,

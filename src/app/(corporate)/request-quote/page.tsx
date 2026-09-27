@@ -13,11 +13,15 @@ import { paperButton } from "@/components/commerce/paper-button";
 export const metadata: Metadata = { ...pageMetadata({ title: "Request a stationery quote", description: "Send PaperSource Ghana your product list, quantities and delivery requirements for a tailored quotation.", path: "/request-quote" }), robots: { index: false, follow: true } };
 
 export default async function RequestQuotePage() {
-  const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
-  const lines = sessionId ? await listQuoteLines(sessionId) : [];
-  const customer = isDatabaseConfigured() ? await readCustomerActor() : null;
-  const organization = customer ? await getCustomerOrganisation(customer.profileId) : null;
-  const saved = customer ? await listCustomerAddresses(customer.profileId) : [];
+  const databaseConfigured = isDatabaseConfigured();
+  const [sessionId, customer] = databaseConfigured
+    ? await Promise.all([readCommerceIdentity(), readCustomerActor()])
+    : [null, null] as const;
+  const [lines, organization, saved] = await Promise.all([
+    sessionId ? listQuoteLines(sessionId) : Promise.resolve([]),
+    customer ? getCustomerOrganisation(customer.profileId) : Promise.resolve(null),
+    customer ? listCustomerAddresses(customer.profileId) : Promise.resolve([]),
+  ]);
   const preferred = saved.find((address) => address.isDefault) ?? saved[0];
 
   return (
