@@ -66,7 +66,7 @@ export default function ContactPage() {
           <p className="text-sm tracking-[0.16em] text-slate uppercase">Visit us</p>
           <h2 id="asylum-down-location-heading" className="mt-3 text-2xl text-ink">PaperSource — Asylum Down</h2>
           <p className="mt-3 text-slate">Find our Asylum Down location on the map. Call ahead for product availability, collection guidance or delivery support.</p>
-          <a href="https://www.google.com/maps/search/?api=1&query=PaperSource%20-%20Asylum%20Down" target="_blank" rel="noreferrer" className="mt-6 inline-flex min-h-11 items-center rounded-md border border-ink px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream">Open in Google Maps</a>
+          <a href="https://www.google.com/maps/search/?api=1&query=PaperSource%20-%20Asylum%20Down" target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center rounded-md border border-ink px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream">Open in Google Maps</a>
         </div>
         <div className="min-h-80 overflow-hidden rounded-xl border border-border bg-cream shadow-sm sm:min-h-96">
           <iframe
