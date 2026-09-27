@@ -6,6 +6,7 @@ import {
   listBrandsFromDb,
   listBrandDirectoryFromDb,
   listDivisionCategoriesFromDb,
+  listIndexableDivisionCategoriesFromDb,
   listFeaturedProductCardsFromDb,
   listProductCardsFromDb,
 } from "./db-queries";
@@ -17,6 +18,7 @@ import {
   listBrandsFromSeed,
   listBrandDirectoryFromSeed,
   listDivisionCategoriesFromSeed,
+  listIndexableDivisionCategoriesFromSeed,
   listFeaturedProductCardsFromSeed,
   listProductCardsFromSeed,
 } from "./seed-queries";
@@ -58,6 +60,13 @@ export async function listDivisionCategories(): Promise<CatalogueCategoryView[]>
     return listDivisionCategoriesFromDb();
   }
   return listDivisionCategoriesFromSeed();
+}
+
+export async function listIndexableDivisionCategories(): Promise<CatalogueCategoryView[]> {
+  if (isDatabaseConfigured()) {
+    return listIndexableDivisionCategoriesFromDb();
+  }
+  return listIndexableDivisionCategoriesFromSeed();
 }
 
 export async function getCategoryBySlug(

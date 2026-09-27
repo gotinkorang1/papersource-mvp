@@ -98,6 +98,57 @@ export async function listDivisionCategoriesFromDb(): Promise<CatalogueCategoryV
     }));
 }
 
+/**
+ * Returns only top-level categories that contain at least one active,
+ * sellable product. Keeping this separate from the storefront directory
+ * prevents an empty admin-created category from being emitted in the sitemap.
+ */
+export async function listIndexableDivisionCategoriesFromDb(): Promise<CatalogueCategoryView[]> {
+  const { categoryRows } = await loadCatalogueContext();
+  const db = getDb();
+  const productRows = await db
+    .select({ categoryId: products.categoryId })
+    .from(products)
+    .innerJoin(productVariants, eq(productVariants.productId, products.id))
+    .innerJoin(categories, eq(categories.id, products.categoryId))
+    .where(
+      and(
+        eq(products.status, "active"),
+        isNull(products.deletedAt),
+        eq(productVariants.active, true),
+        eq(categories.active, true),
+        isNull(categories.deletedAt),
+      ),
+    );
+
+  const productCategoryIds = new Set(productRows.map((row) => row.categoryId));
+  const indexableRootIds = new Set<string>();
+  for (const category of categoryRows) {
+    if (!productCategoryIds.has(category.id)) continue;
+    let current: typeof category | undefined = category;
+    while (current) {
+      if (current.parentId === null) {
+        indexableRootIds.add(current.id);
+        break;
+      }
+      current = categoryRows.find((candidate) => candidate.id === current?.parentId);
+    }
+  }
+
+  return categoryRows
+    .filter((category) => category.parentId === null && indexableRootIds.has(category.id))
+    .sort((a, b) => a.position - b.position)
+    .map((category) => ({
+      id: category.id,
+      parentId: category.parentId,
+      name: category.name,
+      slug: category.slug,
+      caption: category.description ?? "",
+      position: category.position,
+      imagePublicId: category.imagePublicId,
+    }));
+}
+
 export async function getCategoryBySlugFromDb(
   slug: string,
 ): Promise<CatalogueCategoryView | null> {

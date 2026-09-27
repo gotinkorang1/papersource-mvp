@@ -3,7 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 vi.mock("@/features/catalogue", () => ({
   listBrands: async () => [{ slug: "example-brand" }],
   listBrandDirectory: async () => [{ slug: "catalogue-brand", name: "Catalogue Brand", categories: [] }],
-  listDivisionCategories: async () => [{ slug: "pens" }],
+  listIndexableDivisionCategories: async () => [{ slug: "pens" }],
   listProductCards: async () => [{ slug: "blue-pen", updatedAt: new Date("2026-09-10T00:00:00Z"), imageSrc: "https://cdn.example/blue-pen.jpg" }],
 }));
 vi.mock("@/features/content", () => ({

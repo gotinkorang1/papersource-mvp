@@ -135,6 +135,22 @@ export function listDivisionCategoriesFromSeed(): CatalogueCategoryView[] {
     }));
 }
 
+export function listIndexableDivisionCategoriesFromSeed(): CatalogueCategoryView[] {
+  const productCategoryIds = new Set(seedProducts.map((product) => product.categoryId));
+  return seedCategories
+    .filter((category) => category.parentId === null)
+    .filter((category) => descendantCategoryIds(category.slug)?.some((id) => productCategoryIds.has(id)))
+    .sort((a, b) => a.position - b.position)
+    .map((category) => ({
+      id: seedUuid("category", category.slug),
+      parentId: null,
+      name: category.name,
+      slug: category.slug,
+      caption: category.caption,
+      position: category.position,
+    }));
+}
+
 export function getShopMegaColumns() {
   return shopMegaColumns;
 }
