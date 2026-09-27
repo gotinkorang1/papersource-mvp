@@ -55,3 +55,11 @@ it("does not create cookies before Quick Order Origin validation", async () => {
   const request = new NextRequest("http://localhost:3000/quick-order/add", { method: "POST", headers: { origin: "https://foreign.example" } });
   expect((await proxy(request)).cookies.getAll()).toEqual([]);
 });
+it("blocks explicit cross-site state-changing requests before session work", async () => {
+  state.configured = true;
+  state.refresh = async () => { throw new Error("Auth must not run for a cross-site request"); };
+  const request = new NextRequest("http://localhost:3000/admin/settings/mutate", { method: "POST", headers: { origin: "https://foreign.example" } });
+  const response = await proxy(request);
+  expect(response.status).toBe(403);
+  expect(response.cookies.getAll()).toEqual([]);
+});

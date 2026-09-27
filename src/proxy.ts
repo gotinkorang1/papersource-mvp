@@ -8,7 +8,16 @@ import {
 } from "@/lib/session/constants";
 
 export async function proxy(request: NextRequest) {
-  // This handler validates Origin before creating its own guest cookie.
+  // Reject explicit cross-site state-changing requests before auth refresh or
+  // guest-cookie creation. Requests without an Origin header are kept
+  // compatible with signed webhooks and non-browser clients.
+  if (["POST", "PUT", "PATCH", "DELETE"].includes(request.method)) {
+    const requestOrigin = request.headers.get("origin");
+    if (requestOrigin && requestOrigin !== request.nextUrl.origin) {
+      return new NextResponse("Cross-site submissions are not allowed.", { status: 403 });
+    }
+  }
+
   if (request.nextUrl.pathname === "/quick-order/add") {
     return NextResponse.next();
   }
