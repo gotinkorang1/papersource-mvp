@@ -9,7 +9,7 @@ import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 import { categorySeoDescription } from "@/features/catalogue/seo-copy";
 import { breadcrumbJsonLd } from "@/features/catalogue";
 import { collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, absoluteUrl } from "@/lib/seo";
-import { categoryImageFallback, categoryImageFor } from "@/features/catalogue/category-images";
+import { categoryImageFor } from "@/features/catalogue/category-images";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import type { CatalogueViewMode } from "@/components/products/catalogue-view-mode";
@@ -72,7 +72,7 @@ export default async function ShopCategoryPage({ params, searchParams }: PagePro
       <Breadcrumbs items={[{ label: "Shop", href: "/shop" }, { label: category.name }]} />
       <div className="mt-4 grid items-center gap-6 md:grid-cols-[1fr_16rem]">
         <div><div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink md:text-4xl">{category.name}</h1>{canEdit ? <Link href={`/admin/categories#category-${category.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit category</Link> : null}</div><p className="mt-3 max-w-2xl text-slate">{description} Browse {products.length} active {products.length === 1 ? "product" : "products"} for workplaces, schools and everyday stationery needs.</p></div>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill priority loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 16rem" onError={(event) => { event.currentTarget.src = categoryImageFallback; }} className="object-cover" /></div>
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-sm"><Image src={image.src} alt={image.alt} fill priority loading="eager" fetchPriority="high" sizes="(max-width: 768px) 100vw, 16rem" className="object-cover" /></div>
       </div>
       <div className="mt-10">
         <ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} />
