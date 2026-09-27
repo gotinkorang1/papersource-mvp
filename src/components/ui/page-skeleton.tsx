@@ -3,7 +3,7 @@ export function PageSkeleton({ variant = "content" }: { variant?: "content" | "c
 
   return (
     <main role="status" aria-busy="true" aria-label={label} className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-      <div className="skeleton-shimmer space-y-5">
+      <div aria-hidden="true" className="skeleton-shimmer space-y-5">
         <div className="skeleton-block h-3 w-24 rounded-full" />
         <div className="skeleton-block h-10 max-w-xl rounded-lg md:h-14" />
         <div className="skeleton-block h-5 max-w-2xl rounded-lg" />
