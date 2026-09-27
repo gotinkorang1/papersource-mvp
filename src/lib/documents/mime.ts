@@ -58,6 +58,9 @@ export function assertAllowedDocument(input: {
   mime?: string | null;
   size: number;
 }) {
+  if (input.filename.trim().length === 0 || input.filename.length > 255) {
+    throw new DocumentUploadError("Use a valid filename up to 255 characters.");
+  }
   if (input.size <= 0) {
     throw new DocumentUploadError("That file is empty.");
   }

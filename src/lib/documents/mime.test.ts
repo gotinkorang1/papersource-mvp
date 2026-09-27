@@ -36,6 +36,15 @@ describe("document MIME allowlist", () => {
     ).toThrow(/15 MB/);
   });
 
+  it("rejects empty and oversized filenames", () => {
+    expect(() =>
+      assertAllowedDocument({ filename: "", mime: "application/pdf", size: 10 }),
+    ).toThrow(/valid filename/);
+    expect(() =>
+      assertAllowedDocument({ filename: `${"a".repeat(256)}.pdf`, mime: "application/pdf", size: 10 }),
+    ).toThrow(/valid filename/);
+  });
+
   it("strips path segments from filenames", () => {
     expect(safeFilename("..\\secret.pdf")).toBe("secret.pdf");
   });
