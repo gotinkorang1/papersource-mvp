@@ -40,5 +40,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     // Keep the static storefront discoverable if the catalogue database is temporarily unavailable.
   }
 
-  return entries;
+  // Keep one canonical sitemap entry per URL even if an import or taxonomy
+  // query temporarily returns duplicate catalogue records.
+  const uniqueEntries = new Map<string, MetadataRoute.Sitemap[number]>();
+  for (const entry of entries) {
+    if (!uniqueEntries.has(entry.url)) uniqueEntries.set(entry.url, entry);
+  }
+  return [...uniqueEntries.values()];
 }

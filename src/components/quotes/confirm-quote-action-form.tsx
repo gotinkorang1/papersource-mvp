@@ -20,7 +20,10 @@ export function ConfirmQuoteActionForm({
       action={action}
       method="post"
       onSubmit={(event) => {
-        if (!window.confirm(confirmation)) event.preventDefault();
+        if (!window.confirm(confirmation)) {
+          event.preventDefault();
+          event.currentTarget.dispatchEvent(new Event("submitcancelled"));
+        }
       }}
     >
       <input type="hidden" name="token" value={token} />

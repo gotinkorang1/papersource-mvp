@@ -97,10 +97,14 @@ export function productJsonLd(
       price: pesewasToMajor(product.unitPricePesewas),
       availability,
       itemCondition: "https://schema.org/NewCondition",
-      // Google requires one accurate nationwide rate and delivery window for
-      // offer-level shipping markup. PaperSource's city zones and nationwide
-      // quotes do not support that claim, so we do not publish a misleading
-      // country-wide shipping offer.
+      // Reference the global policy instead of inventing one nationwide rate.
+      // The live checkout calculates Accra/Tema fees and confirms nationwide
+      // delivery on request; Google supports this relationship through
+      // OfferShippingDetails.hasShippingService.
+      shippingDetails: {
+        "@type": "OfferShippingDetails",
+        hasShippingService: { "@id": `${origin}/#shipping-service` },
+      },
       hasMerchantReturnPolicy: { "@id": `${origin}/#return-policy` },
       seller: { "@id": `${origin}/#organization`, "@type": "Organization", name: "PaperSource Ghana" },
     },

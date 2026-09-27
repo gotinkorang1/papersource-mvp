@@ -27,14 +27,20 @@ export function SubmitProgressButton({
     const form = buttonRef.current?.form;
     if (!form) return;
     const handleSubmit = () => setSubmitted(true);
+    const handleCancelled = () => setSubmitted(false);
     const sync = () => setHasSelection(Array.from(form.elements).some((element) => element instanceof HTMLInputElement && element.type === "checkbox" && Boolean(element.name) && element.checked));
     form.addEventListener("submit", handleSubmit);
-    if (!requiresSelection) return () => form.removeEventListener("submit", handleSubmit);
+    form.addEventListener("submitcancelled", handleCancelled);
+    if (!requiresSelection) return () => {
+      form.removeEventListener("submit", handleSubmit);
+      form.removeEventListener("submitcancelled", handleCancelled);
+    };
     form.addEventListener("change", sync);
     form.addEventListener("reset", sync);
     sync();
     return () => {
       form.removeEventListener("submit", handleSubmit);
+      form.removeEventListener("submitcancelled", handleCancelled);
       form.removeEventListener("change", sync);
       form.removeEventListener("reset", sync);
     };

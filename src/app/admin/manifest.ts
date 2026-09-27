@@ -22,9 +22,9 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
-      { name: "Orders", short_name: "Orders", url: "/admin/orders", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Quotes", short_name: "Quotes", url: "/admin/quotes", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Products", short_name: "Products", url: "/admin/products", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Orders", short_name: "Orders", url: "/admin/orders", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Quotes", short_name: "Quotes", url: "/admin/quotes", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Products", short_name: "Products", url: "/admin/products", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
     ],
   };
 }

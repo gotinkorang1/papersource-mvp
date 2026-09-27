@@ -76,10 +76,13 @@ describe("productJsonLd", () => {
     expect(json.offers.seller).toEqual({ "@id": "http://localhost:3000/#organization", "@type": "Organization", name: "PaperSource Ghana" });
   });
 
-  it("references the global return policy without inventing a nationwide shipping rate", () => {
+  it("references the global return and shipping policies without inventing a nationwide rate", () => {
     const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4");
 
-    expect("shippingDetails" in json.offers).toBe(false);
+    expect(json.offers.shippingDetails).toEqual({
+      "@type": "OfferShippingDetails",
+      hasShippingService: { "@id": "http://localhost:3000/#shipping-service" },
+    });
     expect(json.offers.hasMerchantReturnPolicy).toEqual({ "@id": "http://localhost:3000/#return-policy" });
   });
 

@@ -21,10 +21,10 @@ export default function manifest(): MetadataRoute.Manifest {
       { src: "/images/catalogue-stationery-generated.png", sizes: "1200x900", type: "image/png", form_factor: "narrow", label: "PaperSource mobile shopping experience" },
     ],
     shortcuts: [
-      { name: "Shop products", short_name: "Shop", description: "Browse workplace supplies", url: "/shop", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Search catalogue", short_name: "Search", description: "Find a product quickly", url: "/search", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Request a quote", short_name: "Quote", description: "Build a bulk quote", url: "/quote", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Open cart", short_name: "Cart", description: "Review your cart", url: "/cart", icons: [{ src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Shop products", short_name: "Shop", description: "Browse workplace supplies", url: "/shop", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Search catalogue", short_name: "Search", description: "Find a product quickly", url: "/search", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Request a quote", short_name: "Quote", description: "Build a bulk quote", url: "/quote", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Open cart", short_name: "Cart", description: "Review your cart", url: "/cart", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
     ],
     icons: [
       { src: "/icon.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any" },

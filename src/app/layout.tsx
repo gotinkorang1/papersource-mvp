@@ -51,7 +51,12 @@ export const metadata: Metadata = {
       { url: "/icon.svg", type: "image/svg+xml", sizes: "512x512" },
       { url: "/icons/papersource-logo.png", type: "image/png", sizes: "512x512" },
     ],
-    shortcut: ["/icons/papersource-logo.png"],
+    // Keep the canonical SVG first so browsers that prioritize the shortcut
+    // declaration do not retain a stale hosting-provider favicon.
+    shortcut: [
+      { url: "/icon.svg", type: "image/svg+xml", sizes: "512x512" },
+      { url: "/icons/papersource-logo.png", type: "image/png", sizes: "512x512" },
+    ],
     apple: "/icons/papersource-logo.png",
   },
   appleWebApp: {

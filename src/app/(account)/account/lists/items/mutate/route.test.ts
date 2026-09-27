@@ -11,6 +11,7 @@ vi.mock("@/features/saved-lists/repository", () => ({
   SavedListError: class SavedListError extends Error {},
 }));
 vi.mock("@/lib/customer/commerce", () => ({ readCommerceIdentity: vi.fn(async () => ({ profileId: "owner", sessionId: null })) }));
+vi.mock("@/lib/observability/sentry", () => ({ captureServerException: vi.fn() }));
 vi.mock("@/features/cart/repository", () => ({ addVariantToCart: vi.fn(async () => undefined) }));
 vi.mock("@/features/quotations/repository", () => ({ addVariantToQuote: vi.fn(async () => undefined) }));
 

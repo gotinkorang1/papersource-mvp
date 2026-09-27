@@ -32,4 +32,12 @@ describe("sitemap", () => {
     expect(entries.some((entry) => entry.url.endsWith("/brands/catalogue-brand"))).toBe(true);
     expect(entries.some((entry) => entry.url.endsWith("/brands/example-brand"))).toBe(false);
   });
+
+  it("does not publish duplicate canonical URLs", async () => {
+    const { default: buildSitemap } = await import("./sitemap");
+    const entries = await buildSitemap();
+    const urls = entries.map((entry) => entry.url);
+
+    expect(new Set(urls).size).toBe(urls.length);
+  });
 });
