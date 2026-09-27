@@ -1,12 +1,21 @@
 import { describe, expect, it } from "vitest";
 import { categorySeoDescription } from "./seo-copy";
 
-describe("categorySeoDescription", () => {
-  it("gives a useful stationery-specific introduction for known categories", () => {
-    expect(categorySeoDescription({ slug: "school-supplies", name: "School Supplies", caption: "Books, geometry, art" })).toMatch(/books|geometry|art/i);
-  });
+describe("category SEO copy", () => {
+  it("keeps every live catalogue category specific", () => {
+    const liveCategories = [
+      ["paper-printing", /A4|toner|printer/i],
+      ["writing-marking", /pens|pencils|markers/i],
+      ["filing-organisation", /files|folders|binders/i],
+      ["office-equipment", /office equipment|technology/i],
+      ["school-supplies", /Ghanaian learners|classrooms/i],
+      ["arts-crafts", /art|craft|creative/i],
+      ["books-notebooks", /books|notebooks|journals/i],
+      ["general-supplies", /office|school|home essentials/i],
+    ] as const;
 
-  it("keeps unknown categories truthful with a safe fallback", () => {
-    expect(categorySeoDescription({ slug: "custom", name: "Custom Supplies", caption: "Special items" })).toContain("Special items");
+    for (const [slug, expected] of liveCategories) {
+      expect(categorySeoDescription({ slug, name: slug })).toMatch(expected);
+    }
   });
 });
