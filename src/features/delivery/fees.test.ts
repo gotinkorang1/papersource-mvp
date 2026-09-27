@@ -34,4 +34,8 @@ describe("zoneCodeForDeliveryArea", () => {
   it("maps Other Region to nationwide request", () => {
     expect(zoneCodeForDeliveryArea("other")).toBe("nationwide_request");
   });
+
+  it("maps shop pickup to the zero-fee pickup zone", () => {
+    expect(zoneCodeForDeliveryArea("pickup")).toBe("shop_pickup");
+  });
 });

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 import { readSessionFlag, writeSessionFlag } from "@/lib/browser/session-storage";
 
@@ -17,6 +17,7 @@ export function PwaRegister() {
   const [dismissed, setDismissed] = useState(() => readSessionFlag(dismissKey));
   const [updateAvailable, setUpdateAvailable] = useState(false);
   const [iosInstall, setIosInstall] = useState(false);
+  const installEventRef = useRef<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
     if (!("serviceWorker" in navigator)) return;
@@ -36,15 +37,48 @@ export function PwaRegister() {
     }).catch(() => undefined);
     const onInstall = (event: Event) => {
       event.preventDefault();
-      setInstallEvent(event as BeforeInstallPromptEvent);
+      const nextEvent = event as BeforeInstallPromptEvent;
+      installEventRef.current = nextEvent;
+      setInstallEvent(nextEvent);
     };
     const onInstalled = () => {
       writeSessionFlag(dismissKey);
       setDismissed(true);
+      installEventRef.current = null;
       setInstallEvent(null);
     };
     window.addEventListener("beforeinstallprompt", onInstall);
     window.addEventListener("appinstalled", onInstalled);
+    // Browsers only allow the native install prompt from a user gesture.
+    // Once the install event is available, use the visitor's first meaningful
+    // interaction (tap, click, or key press) to open it without requiring a
+    // separate install-button tap. The banner remains available for visitors
+    // who browse without interacting immediately.
+    let interacted = false;
+    let prompted = false;
+    const maybePromptInstall = () => {
+      const promptEvent = installEventRef.current;
+      if (!interacted || prompted || !promptEvent) return;
+      prompted = true;
+      void promptEvent.prompt().then((result) => {
+        if (result?.outcome === "accepted") {
+          writeSessionFlag(dismissKey);
+          setDismissed(true);
+        }
+        installEventRef.current = null;
+        setInstallEvent(null);
+      }).catch(() => {
+        installEventRef.current = null;
+        setInstallEvent(null);
+      });
+    };
+    const onFirstInteraction = () => {
+      interacted = true;
+      maybePromptInstall();
+    };
+    window.addEventListener("pointerdown", onFirstInteraction, { passive: true });
+    window.addEventListener("keydown", onFirstInteraction, { passive: true });
+    window.addEventListener("click", onFirstInteraction, { passive: true });
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible" && registration) {
         void registration.update().catch(() => undefined);
@@ -55,6 +89,9 @@ export function PwaRegister() {
       window.clearTimeout(iosTimeout);
       window.removeEventListener("beforeinstallprompt", onInstall);
       window.removeEventListener("appinstalled", onInstalled);
+      window.removeEventListener("pointerdown", onFirstInteraction);
+      window.removeEventListener("keydown", onFirstInteraction);
+      window.removeEventListener("click", onFirstInteraction);
       document.removeEventListener("visibilitychange", onVisibilityChange);
     };
   }, [admin, dismissKey]);
@@ -67,10 +104,10 @@ export function PwaRegister() {
   const promptEvent = installEvent;
   return (
     <div className="fixed inset-x-3 bottom-[calc(5rem+env(safe-area-inset-bottom))] z-40 mx-auto flex max-w-md flex-col gap-3 rounded-xl border border-border bg-card p-4 text-sm text-ink shadow-[0_18px_44px_rgba(16,42,67,0.2)] sm:inset-x-4 sm:flex-row sm:items-center sm:justify-between sm:gap-4 md:bottom-[calc(1.5rem+env(safe-area-inset-bottom))]">
-      <div className="flex min-w-0 items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-ochre bg-ink text-xs font-bold tracking-[0.12em] text-cream" aria-hidden="true">PS</span><p><span className="font-semibold">Install PaperSource</span><span className="mt-0.5 block text-xs text-slate">Shop, search and quote in one tap.</span></p></div>
+      <div className="flex min-w-0 items-center gap-3"><span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border-2 border-ochre bg-ink text-xs font-bold tracking-[0.12em] text-cream" aria-hidden="true">PS</span><p><span className="font-semibold">Install PaperSource</span><span className="mt-0.5 block text-xs text-slate">We&apos;ll offer installation after your next tap or click.</span></p></div>
       <div className="flex w-full shrink-0 items-center justify-end gap-2 sm:w-auto"><button type="button" onClick={() => { writeSessionFlag(dismissKey); setDismissed(true); }} className="min-h-11 rounded-md px-2 py-2 text-xs text-slate hover:text-ink">Not now</button><button type="button" onClick={() => { if (promptEvent) void promptEvent.prompt(); setInstallEvent(null); }} className="min-h-11 rounded-md bg-ink px-3 py-2 text-xs font-semibold text-white hover:bg-ink/90">Install</button></div>
     </div>
   );
 }
 
-type BeforeInstallPromptEvent = Event & { prompt: () => Promise<void> };
+type BeforeInstallPromptEvent = Event & { prompt: () => Promise<{ outcome?: "accepted" | "dismissed" } | void> };

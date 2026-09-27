@@ -28,10 +28,11 @@ export default async function CheckoutPage() {
   );
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-3xl text-ink">Checkout</h1>
-      <p className="mt-3 text-slate">
-        Ghana delivery. Prices are confirmed on the server. {deliveryBadge.label}.
+    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Secure checkout</p>
+      <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Complete your order</h1>
+      <p className="mt-3 max-w-3xl text-slate">
+        Ghana delivery or shop pickup. Prices are confirmed on the server. {deliveryBadge.label}.
         Accra and Tema orders can pay with Paystack after the order is recorded.
         Nationwide orders wait for delivery terms — no fee is invented here.
       </p>
@@ -41,7 +42,7 @@ export default async function CheckoutPage() {
           <Link href="/cart" className={paperButton({ variant: "secondary" })}>Return to cart</Link>
         </div>
       ) : (
-        <ul className="mt-8 divide-y divide-border border-y border-border text-sm">
+        <ul className="mt-8 divide-y divide-border rounded-2xl border border-border bg-card px-4 text-sm shadow-sm sm:px-6">
           {lines.map((line) => (
             <li key={line.id} className="flex justify-between gap-4 py-3">
               <span>
@@ -52,7 +53,7 @@ export default async function CheckoutPage() {
               </span>
             </li>
           ))}
-          <li className="flex justify-between py-3 font-medium text-ink">
+          <li className="flex justify-between py-4 font-semibold text-ink">
             <span>Goods (VAT inclusive)</span>
             <span className="tabular-nums">{formatGhs(goods)}</span>
           </li>
@@ -83,6 +84,7 @@ export default async function CheckoutPage() {
                   : undefined
             }
             savedAddresses={saved.map((address) => ({ id: address.id, label: `${address.fullName} · ${address.cityTown}`, values: { fullName: address.fullName, phone: address.phone, region: address.region, cityTown: address.cityTown, areaSuburb: address.areaSuburb ?? "", streetLandmark: address.streetLandmark ?? "", ghanapostGps: address.ghanapostGps ?? "", deliveryInstructions: address.deliveryInstructions ?? "", deliveryArea: address.deliveryArea === "tema" || address.deliveryArea === "other" ? address.deliveryArea : "accra" } }))}
+            allowPickup
           />
         </div>
       ) : null}

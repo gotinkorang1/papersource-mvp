@@ -22,8 +22,10 @@ export default async function RegisterPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-3xl text-ink">Create account</h1>
+    <main className="mx-auto max-w-lg px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <div className="rounded-3xl border border-border bg-muted/30 p-6 sm:p-9">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Set up your workspace</p>
+      <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink">Create account</h1>
       <p className="mt-3 text-slate">
         Save your details and keep track of orders and quotations. Your current cart and quote list stay separate and join your account when you sign in.
       </p>
@@ -35,6 +37,7 @@ export default async function RegisterPage({ searchParams }: PageProps) {
         </Link>
       </p>
       <p className="mt-3 text-sm text-ink"><Link href="/forgot-password" className="underline">Request a password reset</Link></p>
+      </div>
     </main>
   );
 }

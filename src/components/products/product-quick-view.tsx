@@ -92,11 +92,12 @@ export function ProductQuickView({
       role="dialog"
       aria-modal="true"
       aria-labelledby="quick-view-title"
+      aria-describedby="quick-view-description"
       onClick={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-xl border border-border bg-card p-5 shadow-lg sm:p-6" onClick={(event) => event.stopPropagation()}>
+      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-[0_24px_70px_rgba(16,42,67,0.24)] sm:p-7" onClick={(event) => event.stopPropagation()}>
         <button
           type="button"
           ref={closeRef}
@@ -106,9 +107,11 @@ export function ProductQuickView({
         >
           <X className="size-5" aria-hidden />
         </button>
-        <h2 id="quick-view-title" className="pr-12 text-xl text-ink">
+        <p className="pr-12 text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">Quick view</p>
+        <h2 id="quick-view-title" className="mt-2 pr-12 font-heading text-2xl font-semibold tracking-tight text-ink">
           {product.name}
         </h2>
+        <p id="quick-view-description" className="sr-only">Review pricing, availability, quantity and purchase options.</p>
         {product.specLine ? <p className="mt-1 text-sm text-slate">{product.specLine}</p> : null}
         <div className="mt-4 space-y-3">
           <PriceDisplay

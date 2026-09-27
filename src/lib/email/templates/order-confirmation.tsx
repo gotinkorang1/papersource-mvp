@@ -7,6 +7,7 @@ export type OrderConfirmationEmailProps = {
   totalLabel: string;
   orderUrl: string;
   nationwide: boolean;
+  pickup: boolean;
 };
 
 export function OrderConfirmationEmail({
@@ -15,6 +16,7 @@ export function OrderConfirmationEmail({
   totalLabel,
   orderUrl,
   nationwide,
+  pickup,
 }: OrderConfirmationEmailProps) {
   return (
     <PaperSourceEmail
@@ -25,7 +27,9 @@ export function OrderConfirmationEmail({
       <Text className="m-0 text-base leading-7 text-graphite">
         Hello {contactName}, {orderNumber} is confirmed at {totalLabel}{" "}
         including VAT.
-        {nationwide
+        {pickup
+          ? " Shop pickup is free. We will confirm when your order is ready for collection."
+          : nationwide
           ? " Nationwide delivery is on request — we will confirm the fee before payment. We will not invent a delivery total."
           : " Accra and Tema delivery is already in the total. Pay on the order page by card or MoMo."}
       </Text>
@@ -39,6 +43,7 @@ OrderConfirmationEmail.PreviewProps = {
   totalLabel: "GHS 78.99",
   orderUrl: "http://localhost:3000/order/PSO-2026-000018",
   nationwide: false,
+  pickup: false,
 } satisfies OrderConfirmationEmailProps;
 
 export default OrderConfirmationEmail;

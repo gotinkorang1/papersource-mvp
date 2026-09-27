@@ -14,11 +14,13 @@ export function CheckoutForm({
   defaultEmail,
   defaultAddress,
   savedAddresses,
+  allowPickup = false,
 }: {
   canPlaceOrder?: boolean;
   defaultEmail?: string;
   defaultAddress?: Partial<GhanaAddressValues>;
   savedAddresses?: Array<{ id: string; label: string; values: Partial<GhanaAddressValues> }>;
+  allowPickup?: boolean;
 }) {
   const [state, action, pending] = useActionState(placeRetailOrderAction, null);
 
@@ -33,6 +35,7 @@ export function CheckoutForm({
         action={canPlaceOrder ? action : undefined}
         defaultValues={defaultAddress}
         savedAddresses={savedAddresses}
+        allowPickup={allowPickup}
         fieldErrors={state?.fieldErrors}
         submitLabel={
           canPlaceOrder ? (pending ? "Placing order…" : "Place order") : undefined

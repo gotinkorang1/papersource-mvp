@@ -403,6 +403,7 @@ export async function getProductBySlugFromDb(
   const bundleContents = attributes
     .filter((attribute) => attribute.namespace === "bundle" && attribute.key === "item")
     .map((attribute) => attribute.valueText);
+  const seenImageSources = new Set<string>();
   const imageSources = ctx.imageRows
     .filter((image) => image.productId === row.product.id)
     .sort((a, b) => a.position - b.position)
@@ -410,7 +411,11 @@ export async function getProductBySlugFromDb(
       src: cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? "",
       alt: productImageAlt({ name: row.product.name, specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes), alt: image.alt }),
     }))
-    .filter((image) => image.src);
+    .filter((image) => {
+      if (!image.src || seenImageSources.has(image.src)) return false;
+      seenImageSources.add(image.src);
+      return true;
+    });
 
   return {
     ...toCardFromRow(row, ctx),

@@ -159,6 +159,7 @@ export async function placeRetailOrder(input: {
     contactName: input.address.fullName,
     grandTotalPesewas: order.grandTotal,
     nationwide: delivery.status === "pending_nationwide",
+    pickup: input.address.deliveryArea === "pickup",
   });
 
   return {

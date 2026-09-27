@@ -30,8 +30,9 @@ export default async function CartPage({ searchParams }: PageProps) {
   );
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-3xl text-ink">Cart</h1>
+    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Retail checkout</p>
+      <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Your cart</h1>
       <p className="mt-3 text-slate">
         Retail checkout only. Quote lines stay in Quote List.
       </p>
@@ -71,7 +72,7 @@ export default async function CartPage({ searchParams }: PageProps) {
         </div>
       ) : (
         <div className="mt-8 space-y-6">
-          <ul className="divide-y divide-border border-y border-border">
+          <ul className="divide-y divide-border rounded-2xl border border-border bg-card px-4 shadow-sm sm:px-6">
             {lines.map((line) => (
               <li key={line.id} className="flex flex-wrap items-start justify-between gap-4 py-4">
                 <div>
@@ -107,12 +108,7 @@ export default async function CartPage({ searchParams }: PageProps) {
               </li>
             ))}
           </ul>
-          <p className="text-ink">
-            Subtotal (preview) {formatGhs(subtotal)}
-          </p>
-          <Link href="/checkout" className={paperButton()}>
-            Checkout
-          </Link>
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-5"><p className="text-lg font-semibold text-ink">Subtotal <span className="tabular-nums">{formatGhs(subtotal)}</span></p><Link href="/checkout" className={paperButton()}>Continue to checkout</Link></div>
         </div>
       )}
     </main>

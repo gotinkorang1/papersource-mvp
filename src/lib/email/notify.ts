@@ -135,6 +135,7 @@ export async function notifyOrderPlaced(input: {
   contactName: string | null | undefined;
   grandTotalPesewas: number;
   nationwide: boolean;
+  pickup?: boolean;
 }) {
   const orderUrl = absoluteUrl(`/order/${input.orderNumber}`);
   const totalLabel = formatGhs(input.grandTotalPesewas);
@@ -149,6 +150,7 @@ export async function notifyOrderPlaced(input: {
       totalLabel,
       orderUrl,
       nationwide: input.nationwide,
+      pickup: input.pickup ?? false,
     }),
   });
   await sendTransactional({
@@ -161,6 +163,7 @@ export async function notifyOrderPlaced(input: {
       source: input.source,
       totalLabel,
       adminUrl: absoluteUrl(`/admin/orders/${input.orderId}`),
+      pickup: input.pickup ?? false,
     }),
   });
 }

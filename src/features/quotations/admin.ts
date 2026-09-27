@@ -215,8 +215,12 @@ export async function saveQuotePrices(input: {
     return { id: line.id, unitPrice, lineTotal };
   });
 
-  const deliveryFee =
-    input.deliveryFeePesewas === null ? quote.deliveryFee : input.deliveryFeePesewas;
+  const pickup = quote.addressSnapshot?.deliveryArea === "pickup";
+  const deliveryFee = pickup
+    ? 0
+    : input.deliveryFeePesewas === null
+      ? quote.deliveryFee
+      : input.deliveryFeePesewas;
   if (!Number.isInteger(deliveryFee) || deliveryFee < 0) {
     throw new QuoteAdminError("Delivery fee must be integer pesewas.");
   }

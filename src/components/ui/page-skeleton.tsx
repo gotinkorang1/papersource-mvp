@@ -1,6 +1,6 @@
 export function PageSkeleton({ variant = "content" }: { variant?: "content" | "catalogue" }) {
   return (
-    <main aria-busy="true" aria-label="Loading page" className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
+    <main role="status" aria-busy="true" aria-label={variant === "catalogue" ? "Loading catalogue" : "Loading page"} className="mx-auto w-full max-w-7xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
       <div className="skeleton-shimmer space-y-5">
         <div className="skeleton-block h-3 w-24 rounded-full" />
         <div className="skeleton-block h-10 max-w-xl rounded-lg md:h-14" />

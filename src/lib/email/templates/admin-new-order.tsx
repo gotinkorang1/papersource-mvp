@@ -6,6 +6,7 @@ export type AdminNewOrderEmailProps = {
   source: "cart" | "quote";
   totalLabel: string;
   adminUrl: string;
+  pickup: boolean;
 };
 
 export function AdminNewOrderEmail({
@@ -13,6 +14,7 @@ export function AdminNewOrderEmail({
   source,
   totalLabel,
   adminUrl,
+  pickup,
 }: AdminNewOrderEmailProps) {
   const origin = source === "quote" ? "a quotation" : "the retail cart";
   return (
@@ -23,7 +25,7 @@ export function AdminNewOrderEmail({
     >
       <Text className="m-0 text-base leading-7 text-graphite">
         {orderNumber} was placed from {origin}. Total {totalLabel} including
-        VAT.
+        VAT.{pickup ? " Customer selected shop pickup; confirm readiness before handover." : ""}
       </Text>
     </PaperSourceEmail>
   );
@@ -34,6 +36,7 @@ AdminNewOrderEmail.PreviewProps = {
   source: "cart",
   totalLabel: "GHS 78.99",
   adminUrl: "http://localhost:3000/admin/orders/preview-id",
+  pickup: false,
 } satisfies AdminNewOrderEmailProps;
 
 export default AdminNewOrderEmail;

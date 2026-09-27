@@ -283,8 +283,9 @@ export const seedProducts: SeedProduct[] = [
   },
 ];
 
-export const seedDeliveryZones = [
-  { code: "accra_central", name: "Accra Central", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 1, estimatedMinDays: 1, estimatedMaxDays: 2 },
+  export const seedDeliveryZones = [
+    { code: "shop_pickup", name: "Shop pickup", region: "Greater Accra", basePrice: 0, feeMode: "calculated" as const, sortOrder: 0, estimatedMinDays: 0, estimatedMaxDays: 0 },
+    { code: "accra_central", name: "Accra Central", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 1, estimatedMinDays: 1, estimatedMaxDays: 2 },
   { code: "accra_east", name: "Accra East", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 2, estimatedMinDays: 1, estimatedMaxDays: 2 },
   { code: "accra_west", name: "Accra West", region: "Greater Accra", basePrice: 2500, feeMode: "calculated" as const, sortOrder: 3, estimatedMinDays: 1, estimatedMaxDays: 2 },
   { code: "accra_north", name: "Accra North", region: "Greater Accra", basePrice: 2800, feeMode: "calculated" as const, sortOrder: 4, estimatedMinDays: 1, estimatedMaxDays: 2 },

@@ -3,9 +3,16 @@ import { beforeEach, describe, expect, it, vi } from "vitest";
 const mocks = vi.hoisted(() => ({ actor: vi.fn(), save: vi.fn(), remove: vi.fn(), setDefault: vi.fn(), saveOrg: vi.fn(), revalidate: vi.fn() }));
 vi.mock("server-only", () => ({}));
 vi.mock("@/lib/customer/require", () => ({ requireCustomer: mocks.actor }));
+vi.mock("@/lib/observability/sentry", () => ({ captureServerException: vi.fn() }));
 vi.mock("next/cache", () => ({ revalidatePath: mocks.revalidate }));
-vi.mock("@/features/account/addresses", async (original) => ({ ...await original<object>(), saveCustomerAddress: mocks.save, removeCustomerAddress: mocks.remove, setDefaultCustomerAddress: mocks.setDefault }));
+vi.mock("@/features/account/addresses", () => ({
+  AccountError: class AccountError extends Error {},
+  saveCustomerAddress: mocks.save,
+  removeCustomerAddress: mocks.remove,
+  setDefaultCustomerAddress: mocks.setDefault,
+}));
 vi.mock("@/features/account/organisation", () => ({ saveCustomerOrganisation: mocks.saveOrg }));
+vi.mock("@/features/account/profile", () => ({ saveCustomerProfile: vi.fn() }));
 
 const profileId = "01111111-1111-4111-8111-111111111111";
 const addressId = "02222222-2222-4222-8222-222222222222";

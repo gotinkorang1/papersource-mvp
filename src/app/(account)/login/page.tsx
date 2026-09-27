@@ -23,8 +23,10 @@ export default async function LoginPage({ searchParams }: PageProps) {
   }
 
   return (
-    <main className="mx-auto max-w-md px-4 py-16">
-      <h1 className="text-3xl text-ink">Sign in</h1>
+    <main className="mx-auto max-w-lg px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <div className="rounded-3xl border border-border bg-muted/30 p-6 sm:p-9">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Your PaperSource account</p>
+      <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink">Sign in</h1>
       <p className="mt-3 text-slate">
         Saved addresses, orders and quotations. Guest checkout still works
         without an account.
@@ -42,6 +44,7 @@ export default async function LoginPage({ searchParams }: PageProps) {
           Create an account
         </Link>
       </p>
+      </div>
     </main>
   );
 }

@@ -32,6 +32,7 @@ export default async function AdminQuoteDetailPage({
 
   const site = publicEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
   const customerUrl = quote.customerToken ? `${site}/quote/${quote.customerToken}` : null;
+  const pickup = quote.addressSnapshot?.deliveryArea === "pickup";
 
   return (
     <main>
@@ -75,7 +76,9 @@ export default async function AdminQuoteDetailPage({
         <div>
           <dt className="text-slate">Delivery</dt>
           <dd className="tabular-nums text-ink">
-            {quote.deliveryFeeStatus === "pending_nationwide"
+            {pickup
+              ? "Shop pickup · Free"
+              : quote.deliveryFeeStatus === "pending_nationwide"
               ? "To be confirmed"
               : formatGhs(quote.deliveryFee)}
           </dd>

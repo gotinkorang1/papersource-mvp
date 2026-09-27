@@ -26,6 +26,13 @@ const managementTeam = [
 
 const clientele = ["ABB", "Zenith", "Vitol", "USAID", "University of Ghana", "Saladin Ghana", "Promasidor", "Oloam", "MTN", "FAO", "DEME (Dredging International)", "Bosch", "Latex Foam", "Project Management International"] as const;
 
+const managementImages: Record<string, string> = {
+  "Theophilus Ayitey-Adjin": "/images/team/theophilus-ayitey-adjin.png",
+  "Frank Adjei": "/images/team/frank-adjei.png",
+  "Wilhemina Adoma Opoku": "/images/team/wilhemina-adoma-opoku.png",
+  "Kingdom Kededor Avisseh": "/images/team/kingdom-kededor-avisseh.png",
+};
+
 export default function AboutPage() {
   return (
     <main>
@@ -39,7 +46,7 @@ export default function AboutPage() {
       <section className="mx-auto grid max-w-6xl items-center gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[1.05fr_0.95fr] lg:gap-16 lg:px-8">
         <div>
           <p className="text-sm tracking-[0.16em] text-slate uppercase">About PaperSource</p>
-          <h1 className="mt-4 max-w-3xl text-4xl text-ink md:text-6xl">Workplace supplies, thoughtfully sourced.</h1>
+          <h1 className="mt-4 max-w-3xl font-heading text-4xl font-semibold tracking-tight text-ink md:text-6xl">Workplace supplies, thoughtfully sourced.</h1>
           <p className="mt-6 max-w-2xl text-lg text-slate">PaperSource helps offices, schools, businesses and homes find the everyday paper, stationery, printing supplies and workplace essentials they need.</p>
           <p className="mt-4 max-w-2xl text-slate">We are a subsidiary of <strong className="font-medium text-ink">NiiPlants Group Ghana Limited</strong>, building a dependable supply experience for customers across Ghana.</p>
         </div>
@@ -60,7 +67,7 @@ export default function AboutPage() {
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm tracking-[0.16em] text-slate uppercase">Management profile</p>
-          <h2 className="mt-3 text-3xl text-ink md:text-4xl">Practical leadership, close to the customer.</h2>
+          <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-ink md:text-4xl">Practical leadership, close to the customer.</h2>
           <p className="mt-5 text-slate">PaperSource is managed as a customer-focused operating business within NiiPlants Group Ghana Limited. Our management approach brings together catalogue discipline, procurement experience and a bias toward clear follow-through.</p>
           <p className="mt-4 text-slate">That means listening carefully to what a customer needs, separating retail orders from bulk quotations, and coordinating supply and delivery with the right level of detail. We are building for long-term relationships with individuals, schools, offices and organisations.</p>
         </div>
@@ -69,7 +76,7 @@ export default function AboutPage() {
       <section className="border-y border-border bg-cream/60 py-14 md:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <p className="text-sm tracking-[0.16em] text-slate uppercase">Our customers</p>
-          <h2 className="mt-3 max-w-3xl text-3xl text-ink md:text-4xl">Trusted by teams that keep Ghana moving.</h2>
+          <h2 className="mt-3 max-w-3xl font-heading text-3xl font-semibold tracking-tight text-ink md:text-4xl">Trusted by teams that keep Ghana moving.</h2>
           <p className="mt-4 max-w-2xl text-slate">We support organisations across technology, education, manufacturing, development, finance and operations with responsive workplace supply.</p>
           <ul className="mt-8 flex flex-wrap gap-3" aria-label="Selected clientele">
             {clientele.map((name) => <li key={name} className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-ink">{name}</li>)}
@@ -80,11 +87,19 @@ export default function AboutPage() {
       <section className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
         <div className="max-w-3xl">
           <p className="text-sm tracking-[0.16em] text-slate uppercase">Management team</p>
-          <h2 className="mt-3 text-3xl text-ink md:text-4xl">Experienced people behind the supply experience.</h2>
+          <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-ink md:text-4xl">Experienced people behind the supply experience.</h2>
           <p className="mt-4 text-slate">PaperSource is supported by a practical management team within NiiPlants Group Ghana Limited. Each leader brings a distinct discipline to the customer experience, from people and fleet operations to finance, logistics and growth.</p>
         </div>
         <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          {managementTeam.map(([name, role, bio]) => <PaperCard key={name} className="p-6"><h3 className="text-lg text-ink">{name}</h3><p className="mt-1 text-sm font-medium text-teal">{role}</p><p className="mt-4 text-sm leading-relaxed text-slate">{bio}</p></PaperCard>)}
+          {managementTeam.map(([name, role, bio]) => <PaperCard key={name} className="overflow-hidden p-0">
+            <div className="flex items-center gap-4 border-b border-border bg-muted/30 p-5">
+              <div className="relative grid size-16 shrink-0 place-items-center overflow-hidden rounded-2xl bg-paper-green/10 text-lg font-semibold text-paper-green">
+                {managementImages[name] ? <Image src={managementImages[name]} alt={`${name}, ${role}`} fill sizes="64px" className="object-cover" /> : name.split(" ").map((part) => part[0]).slice(0, 2).join("")}
+              </div>
+              <div className="min-w-0"><h3 className="font-heading text-lg leading-tight text-ink">{name}</h3><p className="mt-1 text-sm font-medium text-paper-green">{role}</p></div>
+            </div>
+            <p className="p-5 text-sm leading-relaxed text-slate">{bio}</p>
+          </PaperCard>)}
         </div>
       </section>
     </main>

@@ -53,6 +53,7 @@ export function RfqForm({ customer, organization, defaultAddress }: {
         submitLabel={pending ? "Submitting quotation…" : "Submit RFQ"}
         submitDisabled={pending}
         busy={pending}
+        allowPickup
       >
         <div className="space-y-4 border-t border-border pt-4">
           {organization ? (

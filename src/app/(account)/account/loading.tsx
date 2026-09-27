@@ -1,6 +1,6 @@
 export default function AccountLoading() {
   return (
-    <main aria-busy="true" aria-label="Loading your account" className="animate-pulse space-y-8">
+    <main role="status" aria-busy="true" aria-label="Loading your account" className="motion-safe:animate-pulse space-y-8">
       <div className="flex gap-2 overflow-hidden" aria-hidden="true">
         {["w-24", "w-20", "w-20", "w-24", "w-28"].map((width) => (
           <div key={width} className={`h-10 shrink-0 rounded-full bg-border/60 ${width}`} />

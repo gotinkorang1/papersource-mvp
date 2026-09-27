@@ -14,7 +14,7 @@ import {
 } from "@/features/catalogue";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
-import { cloudinaryImageUrl } from "@/lib/cloudinary";
+import { categoryImageFor } from "@/features/catalogue/category-images";
 import { absoluteUrl, pageMetadata, webPageJsonLd } from "@/lib/seo";
 import { ArrowRight, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Truck } from "lucide-react";
 
@@ -30,24 +30,6 @@ export default async function HomePage() {
   const featured = await listFeaturedProductCards();
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
-  const categoryImages: Record<string, { src: string; alt: string }> = {
-    paper: { src: "/images/close-up-view-back-school-concept.jpg", alt: "Paper, notebooks and colourful stationery" },
-    writing: { src: "/images/extreme-close-up-pen-taken-by-person-from-desk-organizer.jpg", alt: "Pens arranged in a desk organiser" },
-    filing: { src: "/images/ring-binder-used-stored-documents.jpg", alt: "Ring binder holding organised documents" },
-    "desk-essentials": { src: "/images/lightbox-still-life-arrangement.jpg", alt: "Everyday desk essentials arranged neatly" },
-    printing: { src: "/images/home-printer-based-toner.jpg", alt: "Home printer and printing supplies" },
-    technology: { src: "/images/female-graphic-designer-writing-diary.jpg", alt: "Creative professional working with office technology" },
-    "school-supplies": { src: "/images/school-stationery-with-accessories.jpg", alt: "School stationery and learning accessories" },
-    workplace: { src: "/images/still-life-documents-stack.jpg", alt: "Workplace documents and office supplies" },
-  };
-  const categoryImageFor = (category: (typeof categories)[number]) => {
-    const uploaded = category.imagePublicId ? cloudinaryImageUrl(category.imagePublicId, 800) : null;
-    if (uploaded) return { src: uploaded, alt: `${category.name} workplace supplies` };
-    const key = `${category.slug} ${category.name}`.toLocaleLowerCase();
-    const match = Object.entries(categoryImages).find(([alias]) => key.includes(alias));
-    return match?.[1] ?? { src: "/images/catalogue-stationery-generated.png", alt: `${category.name} workplace supplies` };
-  };
-
   return (
     <main className="overflow-hidden">
       <script
@@ -102,15 +84,22 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section aria-label="Why shop with PaperSource" className="mx-auto max-w-6xl px-4 py-8 sm:px-6 md:py-10 lg:px-8">
-        <div className="grid overflow-hidden rounded-2xl border border-border bg-card shadow-sm sm:grid-cols-3">
+      <section aria-labelledby="why-papersource" className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+        <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.18em] text-paper-green">A better way to restock</p>
+            <h2 id="why-papersource" className="mt-2 font-heading text-2xl tracking-tight text-ink sm:text-3xl">Everything your team needs, with less friction.</h2>
+          </div>
+          <p className="max-w-sm text-sm leading-6 text-slate">Clear prices for everyday orders, and a dedicated quote path when your requirements are larger.</p>
+        </div>
+        <div className="grid overflow-hidden rounded-2xl border border-border bg-card shadow-[0_14px_40px_rgba(16,42,67,0.06)] sm:grid-cols-3">
           {[
             { icon: Truck, title: "Delivery that keeps pace", body: "Accra and Tema delivery, with nationwide supply on request." },
             { icon: Layers3, title: "Retail or bulk", body: "Checkout everyday items or build a quote for larger requirements." },
             { icon: ShieldCheck, title: "A dependable partner", body: "Clear pricing, practical support and a team that follows through." },
           ].map(({ icon: Icon, title, body }, index) => (
-            <div key={title} className={`flex gap-3 p-5 sm:p-6 ${index > 0 ? "border-t border-border sm:border-l sm:border-t-0" : ""}`}>
-              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-paper-green/10 text-paper-green"><Icon className="size-5" aria-hidden /></span>
+            <div key={title} className={`group flex gap-3 p-5 transition-colors hover:bg-muted/40 sm:p-6 ${index > 0 ? "border-t border-border sm:border-l sm:border-t-0" : ""}`}>
+              <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-paper-green/10 text-paper-green transition-transform duration-200 group-hover:scale-105"><Icon className="size-5" aria-hidden /></span>
               <div><p className="font-semibold text-ink">{title}</p><p className="mt-1 text-sm leading-6 text-slate">{body}</p></div>
             </div>
           ))}

@@ -36,6 +36,7 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
   const canAccept = quote.status === "sent";
   const canCancel = quote.status === "submitted" || quote.status === "draft";
   const nationwide = quote.deliveryFeeStatus === "pending_nationwide";
+  const pickup = quote.addressSnapshot?.deliveryArea === "pickup";
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
@@ -82,7 +83,7 @@ export default async function CustomerQuotePage({ params, searchParams }: PagePr
         <div className="flex justify-between">
           <dt className="text-slate">Delivery</dt>
           <dd className="tabular-nums">
-            {nationwide ? "To be confirmed" : formatGhs(quote.deliveryFee)}
+            {pickup ? "Shop pickup · Free" : nationwide ? "To be confirmed" : formatGhs(quote.deliveryFee)}
           </dd>
         </div>
         <div className="flex justify-between font-medium">

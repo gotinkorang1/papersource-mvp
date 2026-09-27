@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { ghanaAddressSchema } from "@/features/checkout/address";
 import { organizationTypeEnum } from "@/lib/db/schema/enums";
 
 export type AccountActionState = {
@@ -8,7 +7,9 @@ export type AccountActionState = {
   errors?: Record<string, string[] | undefined>;
 };
 
-export const personalAddressSchema = ghanaAddressSchema.omit({ email: true }).extend({
+// Keep the account form schema independent from the checkout schema's
+// superRefine: Zod cannot omit/extend an object that already has refinements.
+export const personalAddressSchema = z.object({
   fullName: z.string().trim().min(1, "Full name is required").max(160),
   phone: z.string().trim().min(9, "Enter a phone number of at least 9 characters").max(30),
   region: z.string().trim().min(1, "Region is required").max(100),
@@ -17,6 +18,7 @@ export const personalAddressSchema = ghanaAddressSchema.omit({ email: true }).ex
   streetLandmark: z.string().trim().max(500),
   ghanapostGps: z.string().trim().max(50),
   deliveryInstructions: z.string().trim().max(1000),
+  deliveryArea: z.enum(["accra", "tema", "other", "pickup"]),
 });
 
 export const organisationSchema = z.object({

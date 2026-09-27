@@ -26,9 +26,10 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
   const { added, unknown, notice, warning } = await searchParams;
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-3xl text-ink">Quote list</h1>
-      <p className="mt-3 text-slate">
+    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Business purchasing</p>
+      <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Your quote list</h1>
+      <p className="mt-3 max-w-2xl text-slate">
         Procurement basket. This is not your retail cart. Final prices are set
         by PaperSource.
       </p>
@@ -54,7 +55,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
         </div>
       ) : (
         <div className="mt-8 space-y-6">
-          <table className="w-full text-sm">
+          <table className="w-full rounded-2xl border border-border bg-card text-sm shadow-sm">
             <caption className="sr-only">Quote lines</caption>
             <thead>
               <tr className="border-b border-border text-left text-slate">
@@ -100,9 +101,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
               ))}
             </tbody>
           </table>
-          <Link href="/request-quote" className={paperButton({ variant: "quote" })}>
-            Request quotation
-          </Link>
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-5"><p className="text-sm text-slate">Final prices are set by PaperSource after we review your requirements.</p><Link href="/request-quote" className={paperButton({ variant: "quote" })}>Request quotation</Link></div>
         </div>
       )}
     </main>

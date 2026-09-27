@@ -17,7 +17,7 @@ export type GhanaAddressValues = {
   streetLandmark: string;
   ghanapostGps: string;
   deliveryInstructions: string;
-  deliveryArea: "accra" | "tema" | "other";
+  deliveryArea: "accra" | "tema" | "other" | "pickup";
 };
 
 const empty: GhanaAddressValues = {
@@ -67,6 +67,7 @@ export function GhanaAddressForm({
   busy = false,
   fieldErrors,
   savedAddresses,
+  allowPickup = false,
 }: {
   id?: string;
   defaultValues?: Partial<GhanaAddressValues>;
@@ -77,6 +78,7 @@ export function GhanaAddressForm({
   busy?: boolean;
   fieldErrors?: Record<string, string[] | undefined>;
   savedAddresses?: Array<{ id: string; label: string; values: Partial<GhanaAddressValues> }>;
+  allowPickup?: boolean;
 }) {
   const [values, setValues] = useState<GhanaAddressValues>(() => ({
     ...empty,
@@ -156,6 +158,7 @@ export function GhanaAddressForm({
           onChange={(event) => patch("phone", event.target.value)}
         />
       </Field>
+      {values.deliveryArea !== "pickup" ? <>
       <Field id={`${id}-region`} label="Region" required>
         <Input
           id={`${id}-region`}
@@ -225,6 +228,7 @@ export function GhanaAddressForm({
           }
         />
       </Field>
+      </> : <p className="rounded-lg border border-paper-green/30 bg-paper-green/10 p-3 text-sm text-slate">We&apos;ll prepare your order for collection at our shop. We&apos;ll confirm when it is ready and share collection guidance by phone.</p>}
 
       <fieldset className="space-y-2">
         <legend className="text-sm font-medium text-ink">Delivery Area</legend>
@@ -240,6 +244,7 @@ export function GhanaAddressForm({
               ["accra", "Accra"],
               ["tema", "Tema"],
               ["other", "Other Region"],
+              ...(allowPickup ? [["pickup", "Pick up at our shop"] as const] : []),
             ] as const
           ).map(([value, label]) => (
             <label

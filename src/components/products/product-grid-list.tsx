@@ -65,8 +65,8 @@ export function ProductGridList({
           Try a broader search, browse the full catalogue, or send us your requirements for a tailored quote.
         </p>
         <div className="mt-5 flex flex-wrap justify-center gap-3">
-          <Link href="/shop" className="rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Browse all products</Link>
-          <Link href="/request-quote" className="rounded-md border border-border px-4 py-2 text-sm font-medium text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Request a quote</Link>
+          <Link href="/shop" className="inline-flex min-h-11 items-center rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Clear filters and browse all</Link>
+          <Link href="/request-quote" className="inline-flex min-h-11 items-center rounded-md border border-border px-4 py-2 text-sm font-medium text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Request a quote</Link>
         </div>
       </div>
     );

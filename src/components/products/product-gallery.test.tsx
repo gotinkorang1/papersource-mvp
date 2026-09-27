@@ -36,4 +36,21 @@ describe("ProductGallery", () => {
     expect(screen.getByText("1 of 2")).toBeInTheDocument();
     expect(screen.getByRole("img", { name: "Stationery set" })).toBeInTheDocument();
   });
+
+  it("keeps the primary image when the uploaded gallery contains duplicates", () => {
+    render(
+      <ProductGallery
+        alt="Paper"
+        src="/images/primary.jpg"
+        images={[
+          { src: "/images/primary.jpg", alt: "Primary upload" },
+          { src: "/images/secondary.jpg", alt: "Secondary upload" },
+        ]}
+      />,
+    );
+
+    expect(screen.getByRole("img", { name: "Paper" })).toBeInTheDocument();
+    expect(screen.getByText("1 of 2")).toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: /View image/ })).toHaveLength(2);
+  });
 });

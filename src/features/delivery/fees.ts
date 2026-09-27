@@ -32,8 +32,11 @@ export function resolveDeliveryFee(
 }
 
 export function zoneCodeForDeliveryArea(
-  area: "accra" | "tema" | "other",
+  area: "accra" | "tema" | "other" | "pickup",
 ): string {
+  if (area === "pickup") {
+    return "shop_pickup";
+  }
   if (area === "accra") {
     return "accra_central";
   }

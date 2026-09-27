@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Check, FileText, ShoppingCart } from "lucide-react";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { catalogueImage } from "@/components/products/product-card";
 import { paperButton } from "@/components/commerce/paper-button";
 import { PriceDisplay } from "@/components/commerce/price-display";
@@ -41,6 +41,7 @@ export function ProductListItem({
   const imageSource = catalogueImage(product);
   const [resolvedImageSource, setResolvedImageSource] = useState(imageSource);
   const [addedTo, setAddedTo] = useState<"cart" | "quote" | null>(null);
+  const feedbackTimer = useRef<number | null>(null);
 
   useEffect(() => {
     // List items can be reused for a different record during client navigation.
@@ -53,11 +54,23 @@ export function ProductListItem({
     // A reused row must not carry a success message over to another product.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setAddedTo(null);
+    if (feedbackTimer.current !== null) {
+      window.clearTimeout(feedbackTimer.current);
+      feedbackTimer.current = null;
+    }
   }, [product.id]);
+
+  useEffect(() => () => {
+    if (feedbackTimer.current !== null) window.clearTimeout(feedbackTimer.current);
+  }, []);
 
   const confirmAdded = (destination: "cart" | "quote") => {
     setAddedTo(destination);
-    window.setTimeout(() => setAddedTo((current) => current === destination ? null : current), 1800);
+    if (feedbackTimer.current !== null) window.clearTimeout(feedbackTimer.current);
+    feedbackTimer.current = window.setTimeout(() => {
+      setAddedTo((current) => current === destination ? null : current);
+      feedbackTimer.current = null;
+    }, 1800);
   };
 
   return (
@@ -85,7 +98,7 @@ export function ProductListItem({
       <div className="col-span-2 flex min-w-0 flex-col justify-center gap-3 border-t border-border/70 pt-3 sm:col-span-1 sm:min-w-[10rem] sm:items-end sm:border-t-0 sm:pt-0">
         <div className="hidden sm:block"><PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-lg font-semibold" /></div>
         <div className="grid w-full grid-cols-2 gap-2 sm:w-auto sm:min-w-[10rem] sm:grid-cols-1">
-          <button type="button" aria-label={addedTo === "cart" ? "Added to Cart" : "Add to Cart"} disabled={out} onClick={() => { onAddToCart?.(product, 1); confirmAdded("cart"); }} className={cn(paperButton({ variant: "primary" }), "min-h-11 px-3 text-xs")}>
+          <button type="button" aria-label={addedTo === "cart" ? "Added to Cart" : "Add to Cart"} title={out ? "Out of stock" : "Add to cart"} disabled={out} onClick={() => { onAddToCart?.(product, 1); confirmAdded("cart"); }} className={cn(paperButton({ variant: "primary" }), "min-h-11 px-3 text-xs")}>
             {addedTo === "cart" ? <><Check className="mr-1.5 size-3.5" aria-hidden />Added</> : <><ShoppingCart className="mr-1.5 size-3.5" aria-hidden />Cart</>}
           </button>
           <QuoteButton aria-label={addedTo === "quote" ? "Added to Quote" : "Add to Quote"} onClick={() => { onAddToQuote?.(product, 1); confirmAdded("quote"); }} className="min-h-11 px-3 text-xs">

@@ -29,6 +29,19 @@ describe("GhanaAddressForm", () => {
     ).toBeInTheDocument();
   });
 
+  it("offers shop pickup without requiring delivery address fields", async () => {
+    const user = userEvent.setup();
+    render(<GhanaAddressForm allowPickup />);
+
+    await user.click(screen.getByRole("radio", { name: "Pick up at our shop" }));
+
+    expect(screen.getByText(/prepare your order for collection/i)).toBeInTheDocument();
+    expect(screen.queryByLabelText("Region")).not.toBeInTheDocument();
+    expect(screen.queryByLabelText("City / Town")).not.toBeInTheDocument();
+    expect(screen.getByLabelText(/Full Name/)).toBeRequired();
+    expect(screen.getByLabelText(/Phone Number/)).toBeRequired();
+  });
+
   it("clears a saved address when starting a new address", async () => {
     const user = userEvent.setup();
     render(

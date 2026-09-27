@@ -17,11 +17,14 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   ]);
   return (
     <main>
-      <h1 className="text-3xl text-ink">Account</h1>
-      <p className="mt-3 text-slate">Signed in as {actor.fullName} · {actor.email}. Your retail cart and quote list stay separate.</p>
+      <section className="rounded-3xl border border-border bg-muted/30 p-6 sm:p-8">
+        <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Your workspace</p>
+        <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Welcome back, {actor.fullName.split(" ")[0]}.</h1>
+        <p className="mt-3 text-slate">Signed in as {actor.email}. Your retail cart and quote list stay separate.</p>
+      </section>
       {query.authError === "sign-out" ? <p role="alert" className="mt-4 text-error">We could not sign you out. Please try again.</p> : null}
       <section className="mt-8" aria-labelledby="account-actions">
-        <h2 id="account-actions" className="font-heading text-xl text-ink">What would you like to do?</h2>
+        <h2 id="account-actions" className="font-heading text-xl font-semibold text-ink">What would you like to do?</h2>
         <div className="mt-3 grid gap-3 sm:grid-cols-4">
           {[
             ["/shop", "Shop products", "Browse the catalogue"],
@@ -49,12 +52,12 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
         </Link>
       </div>
       <section className="mt-8" aria-labelledby="recent-orders">
-        <h2 id="recent-orders" className="font-heading text-xl text-ink">Recent orders</h2>
+        <h2 id="recent-orders" className="font-heading text-xl font-semibold text-ink">Recent orders</h2>
         {orders.length ? <ul className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface">{orders.slice(0, 3).map((order) => <li key={order.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"><Link href={`/order/${order.number}`} className="font-medium text-ink underline underline-offset-4">{order.number}</Link><span className="text-sm capitalize text-slate">{order.status.replaceAll("_", " ")} · <span className="tabular-nums">{formatGhs(order.grandTotal)}</span></span></li>)}</ul> : <p className="mt-3 text-slate">No orders yet. <Link href="/shop" className="underline">Shop products</Link></p>}
         <Link href="/account/orders" className="mt-3 inline-block text-sm underline">All orders</Link>
       </section>
       <section className="mt-8" aria-labelledby="recent-quotes">
-        <h2 id="recent-quotes" className="font-heading text-xl text-ink">Recent quotations</h2>
+        <h2 id="recent-quotes" className="font-heading text-xl font-semibold text-ink">Recent quotations</h2>
         {quotes.length ? <ul className="mt-3 divide-y divide-border rounded-xl border border-border bg-surface">{quotes.slice(0, 3).map((quote) => <li key={quote.id} className="flex flex-wrap items-center justify-between gap-2 px-4 py-3"><Link href={quote.status === "draft" ? "/quote" : quote.accessToken ? `/quote/${quote.accessToken}` : "/account/quotes"} className="font-medium text-ink underline underline-offset-4">{quote.number ?? "Draft quote"}</Link><span className="text-sm capitalize text-slate">{quote.status.replaceAll("_", " ")}</span></li>)}</ul> : <p className="mt-3 text-slate">No quotations yet. <Link href="/quick-order" className="underline">Start with Quick Order</Link></p>}
         <Link href="/account/quotes" className="mt-3 inline-block text-sm underline">All quotations</Link>
       </section>

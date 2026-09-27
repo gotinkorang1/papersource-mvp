@@ -108,6 +108,6 @@ export type AddressSnapshot = {
   streetLandmark: string;
   ghanapostGps: string;
   deliveryInstructions: string;
-  deliveryArea: "accra" | "tema" | "other";
+  deliveryArea: "accra" | "tema" | "other" | "pickup";
   email: string;
 };

@@ -75,6 +75,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   }
 
   const nationwide = order.deliveryFeeStatus === "pending_nationwide";
+  const pickup = typeof order.addressSnapshot === "object" && order.addressSnapshot !== null && "deliveryArea" in order.addressSnapshot && order.addressSnapshot.deliveryArea === "pickup";
   const awaitingPaystack = order.status === "pending_payment" && !nationwide;
   const confirming =
     Boolean(returnReference) && order.status === "pending_payment" && settings.paymentMode === "live";
@@ -90,6 +91,8 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
           ? "Payment is confirmed. Paystack card or MoMo was verified on the server."
           : nationwide
             ? "We'll contact you to confirm nationwide delivery before any payment is taken. No delivery fee was invented at checkout."
+          : pickup
+            ? "Your order is recorded. We will contact you when it is ready for collection at the PaperSource shop."
             : confirming
               ? "Confirming payment… Mobile Money can complete after you leave Paystack. This page does not mark the order paid from the URL."
               : "Your order is recorded. Payment has not been taken yet — Paystack card and MoMo will charge this pending total."}
@@ -110,7 +113,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
         <div className="flex justify-between">
           <dt className="text-slate">Delivery</dt>
           <dd className="tabular-nums text-ink">
-            {nationwide ? "To be confirmed" : formatGhs(order.deliveryFee)}
+            {pickup ? "Shop pickup · Free" : nationwide ? "To be confirmed" : formatGhs(order.deliveryFee)}
           </dd>
         </div>
         <div className="flex justify-between font-medium">

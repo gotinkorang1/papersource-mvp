@@ -211,6 +211,7 @@ export async function acceptQuoteByToken(input: {
     contactName: found.contactName ?? found.addressSnapshot?.fullName,
     grandTotalPesewas: found.grandTotal,
     nationwide,
+    pickup: addressSnapshot.deliveryArea === "pickup",
   });
 
   return { orderNumber: order.number, quoteStatus: quoteAfterAccept };

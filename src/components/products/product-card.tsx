@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
@@ -23,6 +23,12 @@ export function catalogueImage(product: ProductCardModel) {
   const name = `${product.name} ${product.specLine}`.toLowerCase();
   if (name.includes("book") || name.includes("novel")) return "/images/stack-books-with-library-scene.jpg";
   if (name.includes("toner") || name.includes("printer") || name.includes("ink")) return "/images/home-printer-based-toner.jpg";
+  if (name.includes("pen") || name.includes("pencil") || name.includes("marker") || name.includes("highlighter")) return "/images/extreme-close-up-pen-taken-by-person-from-desk-organizer.jpg";
+  if (name.includes("file") || name.includes("folder") || name.includes("binder") || name.includes("archive") || name.includes("document wallet")) return "/images/ring-binder-used-stored-documents.jpg";
+  if (name.includes("keyboard") || name.includes("mouse") || name.includes("drive") || name.includes("technology") || name.includes("calculator")) return "/images/female-graphic-designer-writing-diary.jpg";
+  if (name.includes("stapler") || name.includes("tape") || name.includes("scissor") || name.includes("desk")) return "/images/lightbox-still-life-arrangement.jpg";
+  if (name.includes("document") || name.includes("office") || name.includes("workplace")) return "/images/still-life-documents-stack.jpg";
+  if (name.includes("school") || name.includes("classroom") || name.includes("stationery")) return "/images/school-stationery-with-accessories.jpg";
   return "/images/set-school-stationery.jpg";
 }
 
@@ -51,6 +57,7 @@ export function ProductCard({
   const [resolvedImageSource, setResolvedImageSource] = useState(imageSource);
   const [quickOpen, setQuickOpen] = useState(false);
   const [addedTo, setAddedTo] = useState<"cart" | "quote" | null>(null);
+  const feedbackTimer = useRef<number | null>(null);
   const out = product.stock === "out";
   const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
 
@@ -67,11 +74,23 @@ export function ProductCard({
     setQuantity(1);
     setQuickOpen(false);
     setAddedTo(null);
+    if (feedbackTimer.current !== null) {
+      window.clearTimeout(feedbackTimer.current);
+      feedbackTimer.current = null;
+    }
   }, [product.id]);
+
+  useEffect(() => () => {
+    if (feedbackTimer.current !== null) window.clearTimeout(feedbackTimer.current);
+  }, []);
 
   const confirmAdded = (destination: "cart" | "quote") => {
     setAddedTo(destination);
-    window.setTimeout(() => setAddedTo((current) => current === destination ? null : current), 1800);
+    if (feedbackTimer.current !== null) window.clearTimeout(feedbackTimer.current);
+    feedbackTimer.current = window.setTimeout(() => {
+      setAddedTo((current) => current === destination ? null : current);
+      feedbackTimer.current = null;
+    }, 1800);
   };
 
   return (

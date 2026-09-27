@@ -79,7 +79,7 @@ export default async function ProductPage({ params }: PageProps) {
   ];
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-16">
+    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
       <ProductViewTracker productId={product.id} enabled={!canEdit} />
       <script
         type="application/ld+json"
@@ -112,14 +112,14 @@ export default async function ProductPage({ params }: PageProps) {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
         <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
-        <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-7">
-          <p className="text-sm text-slate">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,42,67,0.08)] sm:p-7">
+          <p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
               {product.brandName}
             </Link>
           </p>
           <div className="flex flex-wrap items-start justify-between gap-3">
-            <h1 className="mt-2 text-3xl leading-tight text-ink sm:text-4xl">{product.name}</h1>
+            <h1 className="mt-2 font-heading text-3xl font-semibold leading-tight tracking-tight text-ink sm:text-4xl">{product.name}</h1>
             {canEdit ? <Link href={`/admin/products/${product.id}`} className="mt-2 inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit product</Link> : null}
           </div>
           {product.specLine ? <p className="mt-2 text-slate">{product.specLine}</p> : null}
@@ -139,7 +139,7 @@ export default async function ProductPage({ params }: PageProps) {
           <div className="mt-8">
             <ProductPurchase product={product} savedLists={savedLists.map((list) => ({ id: list.id, name: list.name }))} />
           </div>
-          <div className="mt-8 grid gap-2 border-t border-border pt-6 text-xs text-slate sm:grid-cols-3">
+          <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-3 sm:p-4">
             <div><p className="font-semibold text-ink">Accra & Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div>
             <div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div>
             <div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div>

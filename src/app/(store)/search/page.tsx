@@ -36,12 +36,12 @@ export default async function SearchPage({ searchParams }: PageProps) {
       <Breadcrumbs items={[{ label: "Search" }]} />
       <div className="mt-8 max-w-2xl">
         <p className="text-xs font-semibold uppercase tracking-[0.18em] text-slate">Catalogue search</p>
-        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-ink sm:text-4xl">Find supplies that keep work moving.</h1>
+        <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink sm:text-5xl">Find supplies that keep work moving.</h1>
       </div>
       <p className="mt-4 max-w-2xl text-base text-slate sm:text-lg">
         Search paper, toner, pens, brands or SKU.
       </p>
-      <div className="mt-7 max-w-3xl rounded-2xl border border-border/80 bg-card p-3 shadow-[0_8px_28px_rgba(16,42,67,0.06)] sm:p-4">
+      <div className="mt-7 max-w-3xl rounded-2xl border border-border/80 bg-card p-3 shadow-[0_14px_38px_rgba(16,42,67,0.08)] sm:p-4">
         <HeaderSearch
           key={q}
           className="block w-full"
@@ -60,7 +60,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
             {products.length ? <p className="text-sm text-slate">{products.length} {products.length === 1 ? "product" : "products"}</p> : null}
           </div>
           <div className="mt-6">
-            {products.length ? <><ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} /><CataloguePagination basePath="/search" page={page} totalPages={totalPages} totalItems={products.length} query={viewMode ? { q, view: viewMode } : { q }} /></> : <div className="rounded-2xl border border-border bg-cream/60 p-6 sm:p-8"><h3 className="text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} viewMode={viewMode} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
+            {products.length ? <><ProductGridList products={visibleProducts} canEdit={canEdit} viewMode={viewMode} /><CataloguePagination basePath="/search" page={page} totalPages={totalPages} totalItems={products.length} query={viewMode ? { q, view: viewMode } : { q }} /></> : <div className="rounded-2xl border border-border bg-muted/40 p-6 sm:p-8"><p className="text-xs font-semibold uppercase tracking-[0.16em] text-paper-green">Try another route</p><h3 className="mt-2 font-heading text-xl font-semibold text-ink">No exact matches yet</h3><p className="mt-2 max-w-xl text-slate">Try a broader term, browse a popular category, or start with these workplace essentials.</p><PopularCategories categories={categories} /><div className="mt-8">{recommendations.length ? <ProductGridList products={recommendations} canEdit={canEdit} viewMode={viewMode} /> : <p className="text-sm text-slate">Browse the full <Link href="/shop" className="font-medium text-ink underline underline-offset-4">catalogue</Link> to keep exploring.</p>}</div></div>}
           </div>
         </div>
       ) : null}

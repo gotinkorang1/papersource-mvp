@@ -21,12 +21,15 @@ export default async function RequestQuotePage() {
   const preferred = saved.find((address) => address.isDefault) ?? saved[0];
 
   return (
-    <main className="mx-auto max-w-3xl px-4 py-16">
-      <h1 className="text-3xl text-ink">Request a quote</h1>
-      <p className="mt-3 text-slate">
+    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <div className="max-w-3xl rounded-3xl border border-border bg-muted/30 p-6 sm:p-10">
+      <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Tailored pricing</p>
+      <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Request a quote</h1>
+      <p className="mt-4 text-lg leading-8 text-slate">
         Guests can submit. Organisation, phone and email are required. Optional
         PDF, Excel, Word or image attachments stay private.
       </p>
+      </div>
       {lines.length === 0 ? (
         <div className="mt-8 space-y-4">
           <p className="text-slate">Add products to your quote list before requesting a tailored quotation.</p>
@@ -37,7 +40,7 @@ export default async function RequestQuotePage() {
         </div>
       ) : (
         <>
-          <ul className="mt-8 list-disc space-y-1 pl-5 text-sm text-ink">
+          <ul className="mt-8 rounded-2xl border border-border bg-card p-5 text-sm text-ink shadow-sm">
             {lines.map((line) => (
               <li key={line.id}>
                 {line.name} × {line.quantity}
