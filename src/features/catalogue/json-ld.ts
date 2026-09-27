@@ -103,9 +103,20 @@ export function productJsonLd(
       // OfferShippingDetails.hasShippingService.
       shippingDetails: {
         "@type": "OfferShippingDetails",
+        shippingDestination: {
+          "@type": "DefinedRegion",
+          addressCountry: "GH",
+        },
         hasShippingService: { "@id": `${origin}/#shipping-service` },
       },
-      hasMerchantReturnPolicy: { "@id": `${origin}/#return-policy` },
+      hasMerchantReturnPolicy: {
+        "@type": "MerchantReturnPolicy",
+        "@id": `${origin}/#return-policy`,
+        applicableCountry: "GH",
+        returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+        merchantReturnDays: 7,
+        url: `${origin}/returns`,
+      },
       seller: { "@id": `${origin}/#organization`, "@type": "Organization", name: "PaperSource Ghana" },
     },
   };

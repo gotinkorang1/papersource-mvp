@@ -81,9 +81,17 @@ describe("productJsonLd", () => {
 
     expect(json.offers.shippingDetails).toEqual({
       "@type": "OfferShippingDetails",
+      shippingDestination: { "@type": "DefinedRegion", addressCountry: "GH" },
       hasShippingService: { "@id": "http://localhost:3000/#shipping-service" },
     });
-    expect(json.offers.hasMerchantReturnPolicy).toEqual({ "@id": "http://localhost:3000/#return-policy" });
+    expect(json.offers.hasMerchantReturnPolicy).toEqual({
+      "@type": "MerchantReturnPolicy",
+      "@id": "http://localhost:3000/#return-policy",
+      applicableCountry: "GH",
+      returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
+      merchantReturnDays: 7,
+      url: "http://localhost:3000/returns",
+    });
   });
 
   it("adds Book signals only when book attributes exist", () => {
