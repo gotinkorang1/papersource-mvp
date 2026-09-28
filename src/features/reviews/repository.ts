@@ -14,10 +14,17 @@ export type ProductReview = {
 
 export async function listApprovedProductReviews(productId: string): Promise<ProductReview[]> {
   if (!isDatabaseConfigured()) return [];
-  return getDb().select({ id: productReviews.id, rating: productReviews.rating, title: productReviews.title, body: productReviews.body, displayName: productReviews.displayName, createdAt: productReviews.createdAt, verifiedPurchase: productReviews.verifiedPurchase })
-    .from(productReviews)
-    .where(and(eq(productReviews.productId, productId), eq(productReviews.status, "approved"), eq(productReviews.verifiedPurchase, true)))
-    .orderBy(desc(productReviews.createdAt));
+  try {
+    return await getDb().select({ id: productReviews.id, rating: productReviews.rating, title: productReviews.title, body: productReviews.body, displayName: productReviews.displayName, createdAt: productReviews.createdAt, verifiedPurchase: productReviews.verifiedPurchase })
+      .from(productReviews)
+      .where(and(eq(productReviews.productId, productId), eq(productReviews.status, "approved"), eq(productReviews.verifiedPurchase, true)))
+      .orderBy(desc(productReviews.createdAt));
+  } catch {
+    // Reviews are additive to the product page. If a hosted environment is
+    // still applying the verified-review migration, do not take the whole
+    // product route down because this optional query cannot run yet.
+    return [];
+  }
 }
 
 export async function findDeliveredOrderForReview(profileId: string, productId: string) {
