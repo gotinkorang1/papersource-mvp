@@ -14,8 +14,15 @@ const measurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
  * remain analytics-free and makes staging/production configuration explicit.
  */
 export function GoogleAnalytics() {
-  const [enabled, setEnabled] = useState(() => typeof window !== "undefined" && hasAnalyticsConsent());
+  // Resolve consent after hydration so a stored browser preference cannot
+  // change the initial server-rendered tree.
+  const [enabled, setEnabled] = useState(false);
   const pathname = usePathname();
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setEnabled(hasAnalyticsConsent()), 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   useEffect(() => {
     const onConsentChange = () => setEnabled(hasAnalyticsConsent());

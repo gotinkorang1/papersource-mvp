@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ANALYTICS_CONSENT_KEY } from "@/lib/analytics";
 
 export const CONSENT_EVENT = "papersource-analytics-consent-change";
@@ -16,14 +16,21 @@ export function dispatchAnalyticsConsent(value: "granted" | "denied") {
 }
 
 export function ConsentBanner() {
-  const [visible, setVisible] = useState(() => {
-    if (typeof window === "undefined") return false;
-    try {
-      return !window.localStorage.getItem(ANALYTICS_CONSENT_KEY);
-    } catch {
-      return true;
-    }
-  });
+  // Keep the first render identical on the server and browser. Reading
+  // localStorage during the state initializer causes a hydration mismatch for
+  // returning visitors who already chose a preference.
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      try {
+        setVisible(!window.localStorage.getItem(ANALYTICS_CONSENT_KEY));
+      } catch {
+        setVisible(true);
+      }
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, []);
 
   if (!visible) return null;
 
