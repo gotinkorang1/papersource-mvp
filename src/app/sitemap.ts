@@ -9,6 +9,17 @@ import { SITE_URL } from "@/lib/seo";
 export const revalidate = 3600;
 
 const publicRoutes = ["", "/shop", "/brands", "/about", "/contact", "/delivery", "/faq", "/returns", "/privacy", "/terms", "/business", "/schools", "/corporate-accounts", "/bulk-orders"];
+const SITEMAP_DATA_TIMEOUT_MS = 8_000;
+
+function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
+  return Promise.race([
+    promise,
+    new Promise<T>((_, reject) => {
+      const timer = setTimeout(() => reject(new Error("Sitemap data timed out.")), timeoutMs);
+      promise.finally(() => clearTimeout(timer)).catch(() => undefined);
+    }),
+  ]);
+}
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const entries: MetadataRoute.Sitemap = publicRoutes.map((path) => ({
@@ -18,12 +29,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   }));
 
   try {
-    const [categories, brands, products, pages] = await Promise.all([
+    const [categories, brands, products, pages] = await withTimeout(Promise.all([
       listIndexableDivisionCategories(),
       listBrandDirectory(),
       listProductCards(),
       listPublishedPages(),
-    ]);
+    ]), SITEMAP_DATA_TIMEOUT_MS);
     entries.push(
       ...categories.map((category) => ({ url: `${SITE_URL}/shop/${category.slug}`, changeFrequency: "daily" as const, priority: 0.8 })),
       ...brands.map((brand) => ({ url: `${SITE_URL}/brands/${brand.slug}`, changeFrequency: "weekly" as const, priority: 0.6 })),
