@@ -15,6 +15,7 @@ import type {
   ProductCardModel,
   QuoteLinePreview,
 } from "@/types/catalogue";
+import { pesewasToGhs, trackEcommerceEvent, trackEvent } from "@/lib/analytics";
 
 type DualPathPreview = {
   cartLines: CartLinePreview[];
@@ -141,6 +142,10 @@ export function DualPathPreviewProvider({
       setQuoteOpen(false);
       setCartOpen(true);
       setSyncError(null);
+      trackEcommerceEvent("add_to_cart", {
+        value: pesewasToGhs(product.unitPricePesewas * quantity),
+        items: [{ item_id: product.sku, item_name: product.name, price: pesewasToGhs(product.unitPricePesewas), quantity }],
+      });
 
       if (persist) {
         const requestId = ++syncRequestRef.current;
@@ -169,6 +174,11 @@ export function DualPathPreviewProvider({
       setCartOpen(false);
       setQuoteOpen(true);
       setSyncError(null);
+      trackEvent("generate_lead", {
+        currency: "GHS",
+        value: pesewasToGhs(product.unitPricePesewas * quantity),
+        items: [{ item_id: product.sku, item_name: product.name, quantity }],
+      });
 
       if (persist) {
         const requestId = ++syncRequestRef.current;

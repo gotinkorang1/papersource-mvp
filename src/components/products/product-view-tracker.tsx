@@ -2,10 +2,17 @@
 
 import { useEffect } from "react";
 import { ensureViewFingerprint } from "@/features/catalogue/view-tracking";
+import { pesewasToGhs, trackEcommerceEvent } from "@/lib/analytics";
 
-export function ProductViewTracker({ productId, enabled = true }: { productId: string; enabled?: boolean }) {
+export function ProductViewTracker({ productId, sku, productName, pricePesewas, enabled = true }: { productId: string; sku?: string; productName?: string; pricePesewas?: number; enabled?: boolean }) {
   useEffect(() => {
     if (!enabled) return;
+    if (sku && productName && typeof pricePesewas === "number") {
+      trackEcommerceEvent("view_item", {
+        value: pesewasToGhs(pricePesewas),
+        items: [{ item_id: sku, item_name: productName, price: pesewasToGhs(pricePesewas), quantity: 1 }],
+      });
+    }
     let fingerprint: string;
     try {
       // Some privacy modes expose localStorage but throw on access.
@@ -21,7 +28,7 @@ export function ProductViewTracker({ productId, enabled = true }: { productId: s
       body: JSON.stringify({ productId, fingerprint }),
       keepalive: true,
     }).catch(() => undefined);
-  }, [enabled, productId]);
+  }, [enabled, productId, pricePesewas, productName, sku]);
 
   return null;
 }

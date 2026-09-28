@@ -6,9 +6,10 @@ import { CatalogueViewModeControl, type CatalogueViewMode } from "@/components/p
 import { ProductListItem } from "@/components/products/product-list-item";
 import { useDualPathPreview } from "@/features/preview/dual-path-preview";
 import Link from "next/link";
-import { useEffect, useState, useTransition } from "react";
+import { useEffect, useRef, useState, useTransition } from "react";
 import type { ProductCardModel } from "@/types/catalogue";
 import { readLocalValue, writeLocalValue } from "@/lib/browser/local-storage";
+import { pesewasToGhs, trackEcommerceEvent } from "@/lib/analytics";
 
 const VIEW_MODE_STORAGE_KEY = "papersource.catalogue.view-mode";
 
@@ -28,6 +29,21 @@ export function ProductGridList({
   const { addToCart, addToQuote } = useDualPathPreview();
   const [viewMode, setSelectedViewMode] = useState<CatalogueViewMode>(controlledViewMode ?? "default");
   const [isPending, beginTransition] = useTransition();
+  const listTrackingKey = products.map((product) => product.id).join(",");
+  const trackedListKey = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!products.length || trackedListKey.current === listTrackingKey) return;
+    trackedListKey.current = listTrackingKey;
+    trackEcommerceEvent("view_item_list", {
+      items: products.map((product) => ({
+        item_id: product.sku,
+        item_name: product.name,
+        price: pesewasToGhs(product.unitPricePesewas),
+        quantity: 1,
+      })),
+    });
+  }, [listTrackingKey, products]);
 
   useEffect(() => {
     if (controlledViewMode) {

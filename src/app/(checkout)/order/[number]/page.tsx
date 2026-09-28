@@ -15,6 +15,7 @@ import { documentOwner } from "@/lib/customer/commerce-identity";
 import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
 import { PrintReceiptButton } from "@/components/orders/print-receipt-button";
 import { getStoreSettings } from "@/features/settings/admin";
+import { PurchaseAnalytics } from "@/components/analytics/purchase-analytics";
 
 export const metadata: Metadata = {
   title: "Order received",
@@ -124,14 +125,20 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   }
 
   const address = order.addressSnapshot as AddressSnapshot;
-  const [deliveryZone, itemGtins] = await Promise.all([
+  const [deliveryZone, itemRows] = await Promise.all([
     db
       .select({ estimatedMaxDays: deliveryZones.estimatedMaxDays })
       .from(deliveryZones)
       .where(eq(deliveryZones.id, order.deliveryZoneId))
       .limit(1),
     db
-      .select({ barcode: productVariants.barcode })
+      .select({
+        id: orderItems.variantId,
+        name: orderItems.nameSnapshot,
+        quantity: orderItems.quantity,
+        unitPrice: orderItems.unitPrice,
+        barcode: productVariants.barcode,
+      })
       .from(orderItems)
       .leftJoin(productVariants, eq(orderItems.variantId, productVariants.id))
       .where(eq(orderItems.orderId, order.id)),
@@ -148,7 +155,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
             deliveryZone[0]?.estimatedMaxDays ?? 2,
           ),
           gtins: [...new Set(
-            itemGtins
+            itemRows
               .map((item) => item.barcode)
               .filter((barcode): barcode is string => Boolean(barcode && /^(?:\d{8}|\d{12,14})$/.test(barcode))),
           )],
@@ -160,6 +167,12 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   const awaitingPaystack = order.status === "pending_payment" && !nationwide;
   const confirming =
     Boolean(returnReference) && order.status === "pending_payment" && settings.paymentMode === "live";
+  const purchaseItems = itemRows.map((item) => ({
+    id: item.id ?? item.name,
+    name: item.name,
+    quantity: item.quantity,
+    unitPricePesewas: item.unitPrice,
+  }));
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-16">
@@ -179,6 +192,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
               : "Your order is recorded. Payment has not been taken yet — Paystack card and MoMo will charge this pending total."}
       </p>
       <OrderStatusTimeline status={order.status} />
+      {order.status === "paid" ? <PurchaseAnalytics transactionId={order.number} valuePesewas={order.grandTotal} taxPesewas={order.taxTotal} shippingPesewas={order.deliveryFee} items={purchaseItems} /> : null}
       <div className="mt-6 print:hidden">
         <PrintReceiptButton />
       </div>

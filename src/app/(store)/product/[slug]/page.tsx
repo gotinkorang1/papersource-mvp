@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: PageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
-      <ProductViewTracker productId={product.id} enabled={!canEdit} />
+      <ProductViewTracker productId={product.id} sku={product.sku} productName={product.name} pricePesewas={product.unitPricePesewas} enabled={!canEdit} />
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

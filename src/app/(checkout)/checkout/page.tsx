@@ -9,6 +9,7 @@ import { readCustomerActor } from "@/lib/customer/require";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { getStorefrontDeliveryBadge } from "@/features/delivery/queries";
+import { CheckoutAnalytics } from "@/components/analytics/checkout-analytics";
 
 export const metadata: Metadata = {
   title: "Checkout",
@@ -61,6 +62,7 @@ export default async function CheckoutPage() {
       )}
       {lines.length > 0 ? (
         <div className="mt-8">
+          <CheckoutAnalytics lines={lines.map((line) => ({ id: line.id, name: line.name, quantity: line.quantity, unitPricePesewas: line.unitPricePesewas }))} />
           <CheckoutForm
             defaultEmail={customer?.email}
             defaultAddress={
