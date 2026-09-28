@@ -1,13 +1,17 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { paperButton } from "@/components/commerce/paper-button";
-import { pageMetadata } from "@/lib/seo";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { breadcrumbJsonLd } from "@/features/catalogue";
+import { absoluteUrl, pageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = pageMetadata({ title: "Workplace supplies for Ghanaian businesses", description: "PaperSource supplies Accra and Tema offices with paper, toner and stationery. Build a quote list, request pricing, and keep retail checkout separate.", path: "/business" });
+export const metadata: Metadata = pageMetadata({ title: "Business stationery supplier in Accra, Tema and Ghana", description: "PaperSource supplies Ghanaian offices with A4 paper, printer toner and stationery. Build a bulk quote for Accra and Tema delivery while keeping retail checkout separate.", path: "/business", keywords: ["business stationery supplier Accra", "office supplies Tema", "corporate stationery Ghana", "bulk office supplies Ghana"] });
 
 export default function BusinessPage() {
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Home", href: "/" }, { name: "Business", href: "/business" }], absoluteUrl("/"))) }} />
+      <Breadcrumbs items={[{ label: "Business" }]} />
       <div className="max-w-3xl rounded-3xl border border-border bg-muted/30 p-6 sm:p-10">
       <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Business procurement</p>
       <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-6xl">Procurement without a second catalogue.</h1>

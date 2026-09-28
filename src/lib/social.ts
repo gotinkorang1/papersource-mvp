@@ -1,8 +1,10 @@
 export type SocialLink = { label: string; href: string; external?: boolean };
 
 const configured = [
-  ["Instagram", process.env.NEXT_PUBLIC_INSTAGRAM_URL],
-  ["Facebook", process.env.NEXT_PUBLIC_FACEBOOK_URL],
+  // Keep the verified public profiles available in every environment. The
+  // public env vars can still override these values for a future rebrand.
+  ["Instagram", process.env.NEXT_PUBLIC_INSTAGRAM_URL ?? "https://www.instagram.com/papersourcegh/"],
+  ["Facebook", process.env.NEXT_PUBLIC_FACEBOOK_URL ?? "https://www.facebook.com/papersourcegh"],
   ["LinkedIn", process.env.NEXT_PUBLIC_LINKEDIN_URL],
   ["TikTok", process.env.NEXT_PUBLIC_TIKTOK_URL],
 ] as const;

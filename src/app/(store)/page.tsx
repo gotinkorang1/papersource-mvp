@@ -8,6 +8,7 @@ import { ProductGridList } from "@/components/products/product-grid-list";
 import { Testimonials } from "@/components/marketing/testimonials";
 import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
 import { WorkdayCarousel } from "@/components/marketing/workday-carousel";
+import { SocialActivitySection } from "@/components/marketing/social-activity-section";
 import {
   listDivisionCategories,
   listFeaturedProductCards,
@@ -186,6 +187,8 @@ export default async function HomePage() {
       </section>
 
       <Testimonials />
+
+      <SocialActivitySection />
 
       <CorporateBanner
         title="Procurement without the paperwork headache."

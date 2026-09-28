@@ -5,6 +5,7 @@ import { listDivisionCategories } from "@/features/catalogue";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { normalizeShopCategoryLinks } from "./shop-menu-model";
 import { BUSINESS_PHONE_NUMBERS } from "@/lib/seo";
+import { GROUP_LINKS } from "@/lib/group-links";
 
 export async function StoreFooter() {
   const [managedLinks, categories] = await Promise.all([
@@ -49,6 +50,17 @@ export async function StoreFooter() {
             <Link href="/delivery" className="inline-flex min-h-11 w-fit items-center hover:text-ink hover:underline underline-offset-4">Delivery</Link>
             <Link href="/faq" className="inline-flex min-h-11 w-fit items-center hover:text-ink hover:underline underline-offset-4">FAQs</Link>
             <Link href="/returns" className="inline-flex min-h-11 w-fit items-center hover:text-ink hover:underline underline-offset-4">Returns</Link>
+          </nav>
+        </div>
+        <div>
+          <p className="font-semibold text-ink">Our group</p>
+          <p className="mt-3 max-w-xs text-xs leading-5">PaperSource is part of the NiiPlants Group network. Explore our related companies and services.</p>
+          <nav className="mt-2 grid gap-1" aria-label="NiiPlants Group websites">
+            {GROUP_LINKS.map((link) => (
+              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 w-fit items-center text-sm hover:text-ink hover:underline underline-offset-4" title={link.description}>
+                {link.label}
+              </a>
+            ))}
           </nav>
         </div>
         <div>

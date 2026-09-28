@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { PaperCard } from "@/components/commerce/paper-card";
 import { pageMetadata, SITE_URL } from "@/lib/seo";
+import { GROUP_LINKS } from "@/lib/group-links";
 
 export const metadata: Metadata = pageMetadata({
   title: "About PaperSource",
@@ -81,6 +82,23 @@ export default function AboutPage() {
           <ul className="mt-8 flex flex-wrap gap-3" aria-label="Selected clientele">
             {clientele.map((name) => <li key={name} className="rounded-full border border-border bg-card px-4 py-2 text-sm font-medium text-ink">{name}</li>)}
           </ul>
+        </div>
+      </section>
+
+      <section className="border-b border-border bg-card py-14 md:py-20">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <p className="text-sm tracking-[0.16em] text-slate uppercase">Our group</p>
+          <h2 className="mt-3 max-w-3xl font-heading text-3xl font-semibold tracking-tight text-ink md:text-4xl">Part of a connected Ghanaian business group.</h2>
+          <p className="mt-4 max-w-2xl text-slate">PaperSource works alongside related NiiPlants Group companies across logistics, business services and technology. Visit the official group websites to learn more.</p>
+          <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+            {GROUP_LINKS.map((link) => (
+              <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="group rounded-xl border border-border bg-cream/50 p-5 transition hover:-translate-y-0.5 hover:border-ochre hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">
+                <span className="font-heading text-lg font-semibold text-ink group-hover:text-paper-green">{link.label}</span>
+                <span className="mt-2 block text-sm leading-5 text-slate">{link.description}</span>
+                <span className="mt-4 inline-flex text-sm font-semibold text-paper-green">Visit website <span aria-hidden className="ml-1 transition-transform group-hover:translate-x-0.5">↗</span></span>
+              </a>
+            ))}
+          </div>
         </div>
       </section>
 

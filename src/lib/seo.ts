@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { publicEnv } from "@/lib/env";
 import { socialLinks } from "@/lib/social";
+import { GROUP_LINKS } from "@/lib/group-links";
 
 export const SITE_NAME = "PaperSource Ghana";
 // Keep the public brand name separate from the verified storefront listing
@@ -135,7 +136,7 @@ export function siteJsonLd() {
         email: "info@papersourcegh.com",
         telephone: BUSINESS_PHONE_NUMBERS[0],
         sameAs: socialLinks.filter((link) => link.external).map((link) => link.href),
-        parentOrganization: { "@type": "Organization", name: "NiiPlants Group Ghana Limited" },
+        parentOrganization: { "@type": "Organization", name: "NiiPlants Group Ghana Limited", url: GROUP_LINKS[0].href },
         knowsAbout: ["Office stationery", "Books", "School supplies", "Paper and printing supplies", "Workplace essentials"],
         contactPoint: BUSINESS_PHONE_NUMBERS.map((telephone) => ({ "@type": "ContactPoint", telephone, contactType: "customer service", areaServed: "GH", availableLanguage: "en" })),
         hasMerchantReturnPolicy: { "@id": returnPolicyId },
