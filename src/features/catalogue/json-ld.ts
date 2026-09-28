@@ -113,6 +113,25 @@ export function productJsonLd(
           "@type": "DefinedRegion",
           addressCountry: "GH",
         },
+        // The storefront promise for standard Accra/Tema delivery is 1–2
+        // business days. Keep this bounded estimate in structured data rather
+        // than inventing a single nationwide shipping price; checkout still
+        // calculates the exact zone fee server-side.
+        deliveryTime: {
+          "@type": "ShippingDeliveryTime",
+          handlingTime: {
+            "@type": "QuantitativeValue",
+            minValue: 0,
+            maxValue: 1,
+            unitCode: "DAY",
+          },
+          transitTime: {
+            "@type": "QuantitativeValue",
+            minValue: 1,
+            maxValue: 2,
+            unitCode: "DAY",
+          },
+        },
         hasShippingService: { "@id": `${origin}/#shipping-service` },
       },
       hasMerchantReturnPolicy: {

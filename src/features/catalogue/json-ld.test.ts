@@ -101,6 +101,11 @@ describe("productJsonLd", () => {
     expect(json.offers.shippingDetails).toEqual({
       "@type": "OfferShippingDetails",
       shippingDestination: { "@type": "DefinedRegion", addressCountry: "GH" },
+      deliveryTime: {
+        "@type": "ShippingDeliveryTime",
+        handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "DAY" },
+        transitTime: { "@type": "QuantitativeValue", minValue: 1, maxValue: 2, unitCode: "DAY" },
+      },
       hasShippingService: { "@id": "http://localhost:3000/#shipping-service" },
     });
     expect(json.offers.hasMerchantReturnPolicy).toEqual({
