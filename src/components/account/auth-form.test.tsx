@@ -2,11 +2,13 @@ import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 const actions = vi.hoisted(() => ({ login: vi.fn(), register: vi.fn(), forgot: vi.fn(), reset: vi.fn(), signOut: vi.fn(), actor: vi.fn() }));
+const supabase = vi.hoisted(() => ({ signInWithOAuth: vi.fn() }));
 vi.mock("@/features/account/auth-actions", () => ({
   loginCustomerAction: actions.login, registerCustomerAction: actions.register,
   requestPasswordResetAction: actions.forgot, updateCustomerPasswordAction: actions.reset, signOutCustomerAction: actions.signOut,
 }));
 vi.mock("@/lib/customer/require", () => ({ readCustomerActor: actions.actor }));
+vi.mock("@/lib/supabase/client", () => ({ createSupabaseBrowserClient: () => ({ auth: supabase }) }));
 import { CustomerAuthForm } from "./auth-form";
 import { SignOutButton } from "./sign-out-button";
 import LoginPage from "@/app/(account)/login/page";
@@ -16,6 +18,7 @@ import ResetPasswordPage from "@/app/(account)/reset-password/page";
 beforeEach(() => {
   vi.resetAllMocks();
   actions.actor.mockResolvedValue(null);
+  supabase.signInWithOAuth.mockResolvedValue({ data: { url: "https://provider.example.test/oauth" }, error: null });
 });
 describe("customer authentication forms", () => {
   it.each([
@@ -31,6 +34,26 @@ describe("customer authentication forms", () => {
     render(<CustomerAuthForm mode="register" />);
     expect(screen.getByLabelText("Password")).toHaveAttribute("minlength", "12");
     expect(screen.getByText("Use 12–128 characters.")).toBeInTheDocument();
+  });
+  it("offers Google, Facebook and Microsoft sign-in on login and sends a safe callback destination", async () => {
+    render(<CustomerAuthForm mode="login" next="/checkout" />);
+    expect(screen.getByRole("button", { name: "Continue with Google" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Continue with Facebook" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Continue with Microsoft" })).toBeEnabled();
+
+    await userEvent.click(screen.getByRole("button", { name: "Continue with Microsoft" }));
+
+    expect(supabase.signInWithOAuth).toHaveBeenCalledWith({
+      provider: "azure",
+      options: { redirectTo: expect.stringMatching(/^http:\/\/localhost:\d+\/auth\/confirm\?next=%2Fcheckout$/) },
+    });
+  });
+  it("does not expose provider error details", async () => {
+    supabase.signInWithOAuth.mockResolvedValueOnce({ data: { url: null }, error: { message: "private client secret" } });
+    render(<CustomerAuthForm mode="register" />);
+    await userEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(/Google sign-in is unavailable/i);
+    expect(screen.queryByText("private client secret")).not.toBeInTheDocument();
   });
   it("labels registration name and phone without mixing them with email", () => {
     render(<CustomerAuthForm mode="register" />);

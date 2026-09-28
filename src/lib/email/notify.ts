@@ -11,6 +11,7 @@ import { QuoteReadyEmail } from "@/lib/email/templates/quote-ready";
 import { QuoteReceivedEmail } from "@/lib/email/templates/quote-received";
 import { QuoteRevisedEmail } from "@/lib/email/templates/quote-revised";
 import { QuoteExpiringEmail } from "@/lib/email/templates/quote-expiring";
+import { ReviewRequestEmail } from "@/lib/email/templates/review-request";
 
 function greetingName(value: string | null | undefined) {
   const trimmed = value?.trim();
@@ -185,6 +186,28 @@ export async function notifyPaymentConfirmed(input: {
       orderNumber: input.orderNumber,
       totalLabel: formatGhs(input.grandTotalPesewas),
       orderUrl: absoluteUrl(`/order/${input.orderNumber}`),
+    }),
+  });
+}
+
+export async function notifyReviewRequest(input: {
+  orderId: string;
+  orderNumber: string;
+  email: string | null | undefined;
+  contactName: string | null | undefined;
+  products: { name: string; url: string }[];
+}) {
+  if (!input.products.length) return;
+  await sendTransactional({
+    event: "review-request",
+    entityId: input.orderId,
+    to: input.email,
+    subject: `How did ${input.orderNumber} go?`,
+    react: createElement(ReviewRequestEmail, {
+      contactName: greetingName(input.contactName),
+      orderNumber: input.orderNumber,
+      orderUrl: absoluteUrl(`/order/${input.orderNumber}`),
+      products: input.products,
     }),
   });
 }

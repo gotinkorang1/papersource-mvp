@@ -1,4 +1,5 @@
-import { index, integer, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { boolean, index, integer, pgTable, text, timestamp, uniqueIndex, uuid } from "drizzle-orm/pg-core";
+import { orders } from "./orders";
 import { products } from "./catalogue";
 import { profiles } from "./identity";
 
@@ -6,6 +7,8 @@ export const productReviews = pgTable("product_reviews", {
   id: uuid("id").primaryKey().defaultRandom(),
   productId: uuid("product_id").notNull().references(() => products.id, { onDelete: "cascade" }),
   profileId: uuid("profile_id").notNull().references(() => profiles.id, { onDelete: "cascade" }),
+  orderId: uuid("order_id").references(() => orders.id, { onDelete: "set null" }),
+  verifiedPurchase: boolean("verified_purchase").notNull().default(false),
   rating: integer("rating").notNull(),
   title: text("title"),
   body: text("body").notNull(),

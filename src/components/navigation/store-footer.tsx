@@ -4,6 +4,7 @@ import { SocialLinks } from "@/components/navigation/social-links";
 import { listDivisionCategories } from "@/features/catalogue";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { normalizeShopCategoryLinks } from "./shop-menu-model";
+import { BUSINESS_PHONE_NUMBERS } from "@/lib/seo";
 
 export async function StoreFooter() {
   const [managedLinks, categories] = await Promise.all([
@@ -53,7 +54,7 @@ export async function StoreFooter() {
         <div>
           <p className="font-semibold text-ink">Visit and contact</p>
           <p className="mt-3">Kanda · Asylum Down</p>
-          <p className="mt-2 flex flex-wrap items-center gap-x-2"><a href="tel:+233555001313" className="inline-flex min-h-11 items-center hover:text-ink hover:underline underline-offset-4">0555 001 313</a><span aria-hidden>·</span><a href="tel:+233552767156" className="inline-flex min-h-11 items-center hover:text-ink hover:underline underline-offset-4">0552 767 156</a></p>
+          <p className="mt-2 flex flex-wrap items-center gap-x-2">{BUSINESS_PHONE_NUMBERS.map((phone, index) => <span key={phone} className="inline-flex items-center gap-x-2"><a href={`tel:${phone}`} className="inline-flex min-h-11 items-center hover:text-ink hover:underline underline-offset-4">{index === 0 ? "0555 001 313" : "0552 767 156"}</a>{index < BUSINESS_PHONE_NUMBERS.length - 1 ? <span aria-hidden>·</span> : null}</span>)}</p>
           <a href="mailto:info@papersourcegh.com" className="mt-2 inline-flex min-h-11 items-center hover:text-ink hover:underline underline-offset-4">info@papersourcegh.com</a>
           <p className="mt-2 text-xs">WhatsApp for questions and quote discussion — not checkout.</p>
         </div>

@@ -8,7 +8,7 @@ import { StockBadge } from "@/components/commerce/stock-badge";
 import { OfficeBundleCard } from "@/components/products/office-bundle-card";
 import { ProductGallery } from "@/components/products/product-gallery";
 import { ProductPurchase } from "@/components/products/product-purchase";
-import { breadcrumbJsonLd, getProductBySlug, listApprovedProductReviews, listProductCards, productJsonLd } from "@/features/catalogue";
+import { breadcrumbJsonLd, findDeliveredOrderForReview, getProductBySlug, listApprovedProductReviews, listProductCards, productJsonLd } from "@/features/catalogue";
 import { absoluteUrl, notFoundPageMetadata, pageMetadata, productSeoTitle, SITE_URL } from "@/lib/seo";
 import { ProductEngagement } from "@/components/products/product-engagement";
 import { CopySkuButton } from "@/components/products/copy-sku-button";
@@ -63,9 +63,10 @@ export default async function ProductPage({ params }: PageProps) {
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   const customer = await readCustomerActor();
   const savedLists = customer ? await listSavedLists(customer) : [];
-  const [reviews, relatedProducts] = await Promise.all([
+  const [reviews, relatedProducts, reviewOrderId] = await Promise.all([
     listApprovedProductReviews(product.id),
     listProductCards({ categorySlug: product.categorySlug }),
+    customer ? findDeliveredOrderForReview(customer.profileId, product.id) : Promise.resolve(null),
   ]);
   const related = relatedProducts.filter((entry) => entry.id !== product.id).slice(0, 4);
   const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
@@ -161,7 +162,7 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-sm font-medium uppercase tracking-[0.16em] text-slate">Keep exploring</p><h2 id="related-products-heading" className="mt-2 text-2xl text-ink">More from {product.categoryName}</h2></div><Link href={`/shop/${product.divisionSlug}`} className="text-sm font-semibold text-ink underline underline-offset-4">View all</Link></div>
         <div className="mt-6"><ProductGridList products={related} canEdit={canEdit} /></div>
       </section> : null}
-      <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} nextPath={`/product/${product.slug}`} />
+      <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} canReview={Boolean(reviewOrderId)} nextPath={`/product/${product.slug}`} />
     </main>
   );
 }

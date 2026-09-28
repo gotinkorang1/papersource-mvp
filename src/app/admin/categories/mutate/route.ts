@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { bulkSetCategoriesActive, CatalogueAdminError, saveCategory, updateCategoryImage } from "@/features/catalogue/admin";
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
       const active = String(formData.get("active")) === "true";
       const count = await bulkSetCategoriesActive(actor.role, ids, active);
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "categories_bulk_visibility_updated", resourceType: "category", metadata: { count, active } });
+      revalidateTag("catalogue", "max");
       next.searchParams.set("message", `${count} categor${count === 1 ? "y" : "ies"} updated.`);
       return NextResponse.redirect(next, 303);
     }
@@ -36,6 +38,7 @@ export async function POST(request: Request) {
       const categoryId = uuid.parse(formData.get("categoryId"));
       const saved = await updateCategoryImage({ role: actor.role, categoryId, imagePublicId: intent === "remove-image" ? null : String(formData.get("imagePublicId") ?? "") });
       await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "remove-image" ? "category_image_removed" : "category_image_updated", resourceType: "category", resourceId: saved.id });
+      revalidateTag("catalogue", "max");
       if (wantsJson) return NextResponse.json({ ok: true, item: saved });
       next.searchParams.set("message", intent === "remove-image" ? "Category image removed." : "Category image saved.");
       return NextResponse.redirect(next, 303);
@@ -59,6 +62,7 @@ export async function POST(request: Request) {
       active: String(formData.get("active") ?? "true") === "true",
     });
     await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "save-category" ? "category_updated" : "category_created", resourceType: "category", resourceId: saved.id });
+    revalidateTag("catalogue", "max");
     if (wantsJson) return NextResponse.json({ item: { id: saved.id, name: saved.name, parentId: saved.parentId } });
   } catch (error) {
     const message = error instanceof CatalogueAdminError

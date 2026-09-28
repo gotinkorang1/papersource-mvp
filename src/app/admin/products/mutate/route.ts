@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
 import {
@@ -80,6 +81,7 @@ export async function POST(request: Request) {
       const count = await bulkUpdateProducts(actor.role, ids, status);
       const productsUrl = new URL("/admin/products", origin);
       productsUrl.searchParams.set("message", `${count} product${count === 1 ? "" : "s"} updated.`);
+      revalidateTag("catalogue", "max");
       return NextResponse.redirect(productsUrl, 303);
     }
     if (intent === "create-product") {
@@ -104,6 +106,7 @@ export async function POST(request: Request) {
         })),
       });
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "catalogue_product_created", resourceType: "product", resourceId: created.id });
+      revalidateTag("catalogue", "max");
       return NextResponse.redirect(new URL(`/admin/products/${created.id}`, origin), 303);
     }
 
@@ -274,7 +277,9 @@ export async function POST(request: Request) {
   if (isJsonRequest(request)) {
     const error = next.searchParams.get("error");
     if (error) return NextResponse.json({ error }, { status: 400 });
+    revalidateTag("catalogue", "max");
     return NextResponse.json({ ok: true });
   }
+  revalidateTag("catalogue", "max");
   return NextResponse.redirect(next, 303);
 }

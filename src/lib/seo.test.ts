@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { breadcrumbJsonLd } from "@/features/catalogue/json-ld";
 import * as seo from "./seo";
-import { SITE_URL, absoluteUrl, collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
+import { BUSINESS_MAP_URL, BUSINESS_PHONE_NUMBERS, LOCAL_BUSINESS_NAME, SITE_URL, absoluteUrl, collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, seoDescription, siteJsonLd, webPageJsonLd } from "./seo";
 
 describe("canonical host", () => {
   it("uses the live www destination for every public URL", () => {
@@ -19,7 +19,7 @@ describe("siteJsonLd", () => {
       "@graph": expect.arrayContaining([
         expect.objectContaining({ "@type": "Organization", name: "PaperSource Ghana", knowsAbout: expect.arrayContaining(["Office stationery", "Books", "School supplies"]) }),
         expect.objectContaining({ "@type": "WebSite", name: "PaperSource Ghana" }),
-        expect.objectContaining({ "@type": ["LocalBusiness", "Store"], areaServed: expect.arrayContaining(["Accra", "Tema"]) }),
+        expect.objectContaining({ "@type": ["LocalBusiness", "Store"], name: LOCAL_BUSINESS_NAME, areaServed: expect.arrayContaining(["Accra", "Tema"]), hasMap: BUSINESS_MAP_URL }),
       ]),
     });
 
@@ -30,8 +30,12 @@ describe("siteJsonLd", () => {
     const organization = json["@graph"].find((item: { "@type": string | string[] }) => item["@type"] === "Organization") as Record<string, unknown> | undefined;
     expect(organization?.hasMerchantReturnPolicy).toEqual({ "@id": expect.stringContaining("#return-policy") });
     expect(organization?.hasShippingService).toEqual({ "@id": expect.stringContaining("#shipping-service") });
+    const localBusiness = json["@graph"].find((item: { "@type": string | string[] }) => Array.isArray(item["@type"]) && item["@type"].includes("LocalBusiness")) as Record<string, unknown> | undefined;
+    expect(localBusiness?.telephone).toBe(BUSINESS_PHONE_NUMBERS[0]);
+    expect(localBusiness?.contactPoint).toHaveLength(BUSINESS_PHONE_NUMBERS.length);
+    expect(localBusiness).not.toHaveProperty("openingHoursSpecification");
     expect(json["@graph"]).toEqual(expect.arrayContaining([
-      expect.objectContaining({ "@type": "MerchantReturnPolicy", merchantReturnDays: 7, returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow" }),
+    expect.objectContaining({ "@type": "MerchantReturnPolicy", merchantReturnDays: 7, returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow", merchantReturnLink: expect.stringContaining("/returns") }),
       expect.objectContaining({ "@type": "ShippingService", areaServed: expect.arrayContaining(["Accra", "Tema", "Ghana"]) }),
     ]));
 

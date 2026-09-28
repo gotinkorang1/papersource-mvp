@@ -16,3 +16,4 @@ export {
 } from "./queries";
 export { productJsonLd, breadcrumbJsonLd } from "./json-ld";
 export { listApprovedProductReviews } from "@/features/reviews/repository";
+export { findDeliveredOrderForReview } from "@/features/reviews/repository";

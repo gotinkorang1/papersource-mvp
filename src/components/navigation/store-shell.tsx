@@ -8,6 +8,7 @@ import { loadGuestDualPath } from "@/features/preview/actions";
 import { DualPathPreviewProvider } from "@/features/preview/dual-path-preview";
 import { isDatabaseConfigured } from "@/lib/db/client";
 import { AnnouncementBanner } from "@/components/navigation/announcement-banner";
+import { GoogleCustomerReviewsBadge } from "@/components/marketing/google-customer-reviews-badge";
 
 export async function StoreShell({ children }: { children: ReactNode }) {
   const persist = isDatabaseConfigured();
@@ -37,6 +38,7 @@ export async function StoreShell({ children }: { children: ReactNode }) {
       <StoreHeader />
       <div id="main-content" className="flex flex-1 flex-col pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0">{children}</div>
       <StoreFooter />
+      <GoogleCustomerReviewsBadge />
       <MobileNav />
       <CartDrawer />
       <QuoteBasket />

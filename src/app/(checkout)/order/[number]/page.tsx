@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import Script from "next/script";
 import { and, eq } from "drizzle-orm";
 import { PayNowButton } from "@/components/checkout/pay-now-button";
 import { fulfillSuccessfulPayment } from "@/features/payments/fulfill";
 import { verifyPaystackTransaction } from "@/lib/paystack/client";
 import { formatGhs } from "@/lib/money";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
-import { orders } from "@/lib/db/schema";
+import { deliveryZones, orderItems, orders, productVariants } from "@/lib/db/schema";
+import type { AddressSnapshot } from "@/lib/db/schema/identity";
 import { readCommerceIdentity } from "@/lib/customer/commerce";
 import { documentOwner } from "@/lib/customer/commerce-identity";
 import { OrderStatusTimeline } from "@/components/orders/order-status-timeline";
@@ -23,6 +25,53 @@ type PageProps = {
   params: Promise<{ number: string }>;
   searchParams: Promise<{ reference?: string; trxref?: string }>;
 };
+
+function estimatedDeliveryDate(createdAt: Date, maximumDays: number) {
+  const date = new Date(createdAt);
+  date.setUTCDate(date.getUTCDate() + Math.max(1, maximumDays));
+  return date.toISOString().slice(0, 10);
+}
+
+function GoogleCustomerReviewsOptIn({
+  orderId,
+  email,
+  estimatedDeliveryDate: deliveryDate,
+  gtins,
+}: {
+  orderId: string;
+  email: string;
+  estimatedDeliveryDate: string;
+  gtins: string[];
+}) {
+  const payload = JSON.stringify({
+    merchant_id: 5859106353,
+    order_id: orderId,
+    email,
+    delivery_country: "GH",
+    estimated_delivery_date: deliveryDate,
+    ...(gtins.length ? { products: gtins.map((gtin) => ({ gtin })) } : {}),
+  })
+    .replaceAll("<", "\\u003c")
+    .replaceAll(">", "\\u003e")
+    .replaceAll("&", "\\u0026");
+
+  return (
+    <>
+      <Script id="google-customer-reviews-opt-in" strategy="afterInteractive">
+        {`window.renderOptIn = function() {
+  window.gapi.load("surveyoptin", function() {
+    window.gapi.surveyoptin.render(${payload});
+  });
+};`}
+      </Script>
+      <Script
+        id="google-customer-reviews-platform"
+        src="https://apis.google.com/js/platform.js?onload=renderOptIn"
+        strategy="afterInteractive"
+      />
+    </>
+  );
+}
 
 export default async function OrderPage({ params, searchParams }: PageProps) {
   if (!isDatabaseConfigured()) {
@@ -73,6 +122,38 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
   if (!order) {
     notFound();
   }
+
+  const address = order.addressSnapshot as AddressSnapshot;
+  const [deliveryZone, itemGtins] = await Promise.all([
+    db
+      .select({ estimatedMaxDays: deliveryZones.estimatedMaxDays })
+      .from(deliveryZones)
+      .where(eq(deliveryZones.id, order.deliveryZoneId))
+      .limit(1),
+    db
+      .select({ barcode: productVariants.barcode })
+      .from(orderItems)
+      .leftJoin(productVariants, eq(orderItems.variantId, productVariants.id))
+      .where(eq(orderItems.orderId, order.id)),
+  ]);
+  const googleCustomerReviews =
+    order.source === "cart" &&
+    order.status === "paid" &&
+    Boolean(address.email) &&
+    order.deliveryFeeStatus !== "pending_nationwide"
+      ? {
+          email: address.email,
+          estimatedDeliveryDate: estimatedDeliveryDate(
+            order.createdAt,
+            deliveryZone[0]?.estimatedMaxDays ?? 2,
+          ),
+          gtins: [...new Set(
+            itemGtins
+              .map((item) => item.barcode)
+              .filter((barcode): barcode is string => Boolean(barcode && /^(?:\d{8}|\d{12,14})$/.test(barcode))),
+          )],
+        }
+      : null;
 
   const nationwide = order.deliveryFeeStatus === "pending_nationwide";
   const pickup = typeof order.addressSnapshot === "object" && order.addressSnapshot !== null && "deliveryArea" in order.addressSnapshot && order.addressSnapshot.deliveryArea === "pickup";
@@ -125,6 +206,14 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
         <div className="mt-8">
           <PayNowButton orderId={order.id} />
         </div>
+      ) : null}
+      {googleCustomerReviews ? (
+        <GoogleCustomerReviewsOptIn
+          orderId={order.number}
+          email={googleCustomerReviews.email}
+          estimatedDeliveryDate={googleCustomerReviews.estimatedDeliveryDate}
+          gtins={googleCustomerReviews.gtins}
+        />
       ) : null}
       <p className="mt-8">
         <Link href="/shop" className="underline">

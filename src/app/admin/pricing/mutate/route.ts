@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
 import {
@@ -66,5 +67,6 @@ export async function POST(request: Request) {
     next.searchParams.set("error", message);
   }
 
+  revalidateTag("catalogue", "max");
   return NextResponse.redirect(next, 303);
 }

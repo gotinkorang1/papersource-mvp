@@ -5,7 +5,7 @@ import { readVerifiedCustomerIdentity, type CustomerActor } from "@/lib/customer
 import { safeCustomerReturnPath } from "@/lib/customer/return-path";
 
 type AuthClient = Pick<SupabaseClient["auth"],
-  "signUp" | "signInWithPassword" | "verifyOtp" | "resetPasswordForEmail" | "updateUser" | "signOut" | "getClaims">;
+  "signUp" | "signInWithPassword" | "verifyOtp" | "exchangeCodeForSession" | "resetPasswordForEmail" | "updateUser" | "signOut" | "getClaims">;
 
 export type CustomerAuthResult =
   | { status: "error"; message: string; fieldErrors?: Record<string, string[]> }
@@ -25,6 +25,7 @@ const registerSchema = loginSchema.extend({
 const confirmSchema = z.object({
   tokenHash: z.string().min(1).max(2048), type: z.enum(["email", "recovery"]), next: z.unknown().optional(),
 });
+const oauthConfirmSchema = z.object({ code: z.string().min(1).max(4096), next: z.unknown().optional() });
 const resetRequestSchema = z.object({ email });
 const passwordSchema = z.object({ password: newPassword, confirmPassword: z.string().max(128) })
   .refine((input) => input.password === input.confirmPassword, { path: ["confirmPassword"], message: "Passwords must match." });
@@ -116,6 +117,17 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
         const { data, error } = await auth.verifyOtp({ token_hash: tokenHash, type });
         if (error || !data.session) return failure(confirmationFailure);
         return finishSignIn(type === "recovery" ? "/reset-password" : safeCustomerReturnPath(next), confirmationFailure);
+      } catch { return failure(confirmationFailure); }
+    },
+
+    async confirmOAuth(input: unknown): Promise<CustomerAuthResult> {
+      const parsed = oauthConfirmSchema.safeParse(input);
+      if (!parsed.success) return failure(confirmationFailure);
+      const destination = safeCustomerReturnPath(parsed.data.next);
+      try {
+        const { data, error } = await auth.exchangeCodeForSession(parsed.data.code);
+        if (error || !data.session) return failure(confirmationFailure);
+        return finishSignIn(destination, confirmationFailure);
       } catch { return failure(confirmationFailure); }
     },
 

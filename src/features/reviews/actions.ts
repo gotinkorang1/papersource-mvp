@@ -27,6 +27,7 @@ export async function submitReviewAction(_previous: ReviewActionState, formData:
     await createProductReview({ ...parsed.data, profileId: actor.profileId });
   } catch (error) {
     if (error instanceof Error && error.message.includes("unique")) return { message: "You have already reviewed this product." };
+    if (error instanceof Error && error.message.includes("delivered order")) return { message: "Reviews are available after you have received this product." };
     return { message: "We could not submit your review. Please try again." };
   }
   return { success: true, message: "Thanks — your review is awaiting approval." };

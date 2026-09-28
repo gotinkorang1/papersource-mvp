@@ -109,6 +109,7 @@ describe("productJsonLd", () => {
       applicableCountry: "GH",
       returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
       merchantReturnDays: 7,
+      merchantReturnLink: "http://localhost:3000/returns",
       url: "http://localhost:3000/returns",
     });
   });

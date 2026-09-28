@@ -1,5 +1,5 @@
 import { and, asc, eq, inArray, isNull } from "drizzle-orm";
-import { cache } from "react";
+import { unstable_cache } from "next/cache";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { productImageAlt } from "@/features/catalogue/product-metadata";
 import { decorateProductPresentation } from "@/features/catalogue/presentation";
@@ -61,7 +61,7 @@ function descendantIds(
   return [...ids];
 }
 
-const loadCatalogueContext = cache(async function loadCatalogueContext() {
+const loadCatalogueContext = unstable_cache(async function loadCatalogueContext() {
   const db = getDb();
   const [categoryRows, brandRows, zoneRows] = await Promise.all([
     db
@@ -80,7 +80,7 @@ const loadCatalogueContext = cache(async function loadCatalogueContext() {
     brandRows,
     deliveryBadge: storefrontDeliveryBadge(zoneRows),
   };
-});
+}, ["catalogue-context"], { revalidate: 300, tags: ["catalogue"] });
 
 export async function listDivisionCategoriesFromDb(): Promise<CatalogueCategoryView[]> {
   const { categoryRows } = await loadCatalogueContext();
@@ -208,7 +208,7 @@ export async function getBrandBySlugFromDb(
   return { id: brand.id, name: brand.name, slug: brand.slug };
 }
 
-async function loadActiveProducts() {
+const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
   const db = getDb();
   const { categoryRows, brandRows, deliveryBadge } = await loadCatalogueContext();
 
@@ -269,7 +269,7 @@ async function loadActiveProducts() {
     tierRows,
     imageRows,
   };
-}
+}, ["catalogue-active-products"], { revalidate: 300, tags: ["catalogue"] });
 
 export async function listBrandDirectoryFromDb() {
   const db = getDb();

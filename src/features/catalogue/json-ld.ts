@@ -121,6 +121,7 @@ export function productJsonLd(
         applicableCountry: "GH",
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 7,
+        merchantReturnLink: `${origin}/returns`,
         url: `${origin}/returns`,
       },
       seller: { "@id": `${origin}/#organization`, "@type": "Organization", name: "PaperSource Ghana" },

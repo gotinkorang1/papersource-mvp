@@ -52,6 +52,7 @@ export const orders = pgTable(
       .notNull()
       .references(() => deliveryZones.id),
     notes: text("notes"),
+    reviewInvitationSentAt: timestamp("review_invitation_sent_at", { withTimezone: true }),
     ...timestamps,
   },
   (table) => [

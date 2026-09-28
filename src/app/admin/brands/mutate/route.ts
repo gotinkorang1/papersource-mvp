@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { z } from "zod";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { bulkSetBrandsActive, CatalogueAdminError, saveBrand } from "@/features/catalogue/admin";
@@ -29,6 +30,7 @@ export async function POST(request: Request) {
       const active = String(formData.get("active")) === "true";
       const count = await bulkSetBrandsActive(actor.role, ids, active);
       await recordAdminAudit({ actorProfileId: actor.profileId, action: "brands_bulk_visibility_updated", resourceType: "brand", metadata: { count, active } });
+      revalidateTag("catalogue", "max");
       next.searchParams.set("message", `${count} brand${count === 1 ? "" : "s"} updated.`);
       return NextResponse.redirect(next, 303);
     }
@@ -46,6 +48,7 @@ export async function POST(request: Request) {
       active: String(formData.get("active") ?? "true") === "true",
     });
     await recordAdminAudit({ actorProfileId: actor.profileId, action: intent === "save-brand" ? "brand_updated" : "brand_created", resourceType: "brand", resourceId: saved.id });
+    revalidateTag("catalogue", "max");
     if (wantsJson) return NextResponse.json({ item: { id: saved.id, name: saved.name } });
   } catch (error) {
     const message = error instanceof CatalogueAdminError

@@ -7,7 +7,7 @@ const actor = { profileId: "18cc3e14-1525-4b7f-b4bd-174d5518461d", email: "ama@e
 const registration = { email: " AMA@EXAMPLE.TEST ", password: "  password!1234  ", fullName: " Ama ", phone: " 0241234567 ", next: "/checkout" };
 const claims = { sub: actor.profileId, email: actor.email, role: "authenticated", is_anonymous: false, user_metadata: { full_name: "Ama" } };
 const auth = {
-  signUp: vi.fn(), signInWithPassword: vi.fn(), verifyOtp: vi.fn(),
+  signUp: vi.fn(), signInWithPassword: vi.fn(), verifyOtp: vi.fn(), exchangeCodeForSession: vi.fn(),
   resetPasswordForEmail: vi.fn(), updateUser: vi.fn(), signOut: vi.fn(), getClaims: vi.fn(),
 };
 const synchronizeProfile = vi.fn();
@@ -20,6 +20,7 @@ beforeEach(() => {
   auth.signUp.mockResolvedValue({ data: { user: null, session: null }, error: null });
   auth.signInWithPassword.mockResolvedValue({ data: { user: { id: "untrusted-response-id" }, session: {} }, error: null });
   auth.verifyOtp.mockResolvedValue({ data: { user: { id: "untrusted-response-id" }, session: {} }, error: null });
+  auth.exchangeCodeForSession.mockResolvedValue({ data: { user: { id: "untrusted-response-id" }, session: {} }, error: null });
   auth.getClaims.mockResolvedValue({ data: { claims }, error: null });
   auth.resetPasswordForEmail.mockResolvedValue({ data: {}, error: null });
   auth.updateUser.mockResolvedValue({ data: { user: { id: actor.profileId } }, error: null });
@@ -113,6 +114,12 @@ describe("customer Auth operations", () => {
 
   it("forces recovery to password reset regardless of supplied next", async () => {
     expect(await service().confirm({ tokenHash: "valid-token-hash", type: "recovery", next: "/admin" })).toMatchObject({ status: "signed_in", next: "/reset-password" });
+  });
+
+  it("exchanges an OAuth callback code before synchronizing the verified customer", async () => {
+    expect(await service().confirmOAuth({ code: "oauth-code", next: "/checkout" })).toEqual({ status: "signed_in", customer: { ...actor, fullName: "Saved name" }, next: "/checkout" });
+    expect(auth.exchangeCodeForSession).toHaveBeenCalledWith("oauth-code");
+    expect(synchronizeProfile).toHaveBeenCalledWith(actor);
   });
 
   it.each([{ tokenHash: "", type: "email" }, { tokenHash: "a".repeat(2049), type: "email" }, { tokenHash: "token", type: "invite" }, { tokenHash: "token", type: "sms" }, null])("rejects invalid confirmation before exchange: %j", async (input) => {

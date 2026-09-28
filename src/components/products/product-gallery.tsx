@@ -86,8 +86,8 @@ export function ProductGallery({
           </> : null}
         </> : <div className="m-8 h-[calc(100%-4rem)] border border-border bg-card" />}
       </div>
-      {displayGallery.length > 1 ? <div className="mt-3 grid grid-cols-4 gap-2 sm:mt-4" aria-label="Product images">
-        {displayGallery.map((image, index) => <button key={`${image.src}-${index}`} type="button" aria-label={`View image ${index + 1}`} aria-pressed={index === activeIndex} onClick={() => setActiveIndex(index)} className={`relative aspect-square overflow-hidden rounded-md border-2 bg-cream transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${index === activeIndex ? "border-ochre ring-2 ring-ochre/30" : "border-border hover:border-ink"}`}><Image src={image.src} alt="" fill sizes="96px" onError={() => markFailed(image.src)} className="object-contain p-1" /></button>)}
+      {displayGallery.length > 1 ? <div role="group" className="mt-3 grid grid-cols-4 gap-2 sm:mt-4" aria-label="Product images">
+        {displayGallery.map((image, index) => <button key={`${image.src}-${index}`} type="button" aria-label={`View image ${index + 1}: ${image.alt || alt}`} aria-pressed={index === activeIndex} onClick={() => setActiveIndex(index)} className={`relative aspect-square overflow-hidden rounded-md border-2 bg-cream transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${index === activeIndex ? "border-ochre ring-2 ring-ochre/30" : "border-border hover:border-ink"}`}><Image src={image.src} alt="" fill sizes="96px" onError={() => markFailed(image.src)} className="object-contain p-1" /></button>)}
       </div> : null}
     </div>
   );

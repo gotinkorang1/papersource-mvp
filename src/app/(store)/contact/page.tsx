@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { absoluteUrl, pageMetadata, SITE_URL } from "@/lib/seo";
+import { absoluteUrl, BUSINESS_MAP_URL, BUSINESS_PHONE_NUMBERS, LOCAL_BUSINESS_NAME, pageMetadata, SITE_URL } from "@/lib/seo";
 
 export const metadata: Metadata = pageMetadata({
   title: "Contact PaperSource",
-  description: "Contact PaperSource in Ghana by phone, email or at our Kanda and Asylum Down locations.",
+  description: "Contact PaperSource - Asylum Down in Ghana by phone, email or at our Kanda and Asylum Down location.",
   path: "/contact",
 });
 
@@ -25,9 +25,10 @@ export default function ContactPage() {
             mainEntity: {
               "@type": "LocalBusiness",
               "@id": `${SITE_URL}/#local-business`,
-              name: "PaperSource Ghana",
+              name: LOCAL_BUSINESS_NAME,
               email: "info@papersourcegh.com",
-              telephone: "+233555001313",
+              telephone: BUSINESS_PHONE_NUMBERS[0],
+              hasMap: BUSINESS_MAP_URL,
               areaServed: ["Accra", "Tema", "Ghana"],
               address: {
                 "@type": "PostalAddress",
@@ -35,14 +36,14 @@ export default function ContactPage() {
                 addressRegion: "Greater Accra",
                 addressCountry: "GH",
               },
-              contactPoint: {
+              contactPoint: BUSINESS_PHONE_NUMBERS.map((telephone) => ({
                 "@type": "ContactPoint",
-                telephone: "+233555001313",
+                telephone,
                 email: "info@papersourcegh.com",
                 contactType: "customer service",
                 areaServed: "GH",
                 availableLanguage: "en",
-              },
+              })),
             },
           }),
         }}
@@ -53,7 +54,7 @@ export default function ContactPage() {
           <h1 className="mt-4 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Let&apos;s make your next order easier.</h1>
           <p className="mt-5 text-lg text-slate">Our team can help with product questions, bulk requirements, delivery and quotations.</p>
           <div className="mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
-            <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">Phone</p><p className="mt-2 flex flex-wrap gap-x-3 gap-y-1"><a href="tel:+233555001313" className="font-medium text-ink underline underline-offset-2">0555 001 313</a><a href="tel:+233552767156" className="font-medium text-ink underline underline-offset-2">0552 767 156</a></p></div>
+            <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">Phone</p><p className="mt-2 flex flex-wrap gap-x-3 gap-y-1">{BUSINESS_PHONE_NUMBERS.map((phone, index) => <a key={phone} href={`tel:${phone}`} className="font-medium text-ink underline underline-offset-2">{index === 0 ? "0555 001 313" : "0552 767 156"}</a>)}</p></div>
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">Email</p><a href="mailto:info@papersourcegh.com" className="mt-2 inline-block font-medium text-ink underline underline-offset-2">info@papersourcegh.com</a></div>
             <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:col-span-2 lg:col-span-1"><p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">Visit us</p><p className="mt-2 text-slate">Kanda · Asylum Down</p></div>
           </div>
@@ -64,9 +65,9 @@ export default function ContactPage() {
       <section className="mt-12 grid gap-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-stretch" aria-labelledby="asylum-down-location-heading">
         <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
           <p className="text-sm tracking-[0.16em] text-slate uppercase">Visit us</p>
-          <h2 id="asylum-down-location-heading" className="mt-3 text-2xl text-ink">PaperSource — Asylum Down</h2>
+          <h2 id="asylum-down-location-heading" className="mt-3 text-2xl text-ink">{LOCAL_BUSINESS_NAME}</h2>
           <p className="mt-3 text-slate">Find our Asylum Down location on the map. Call ahead for product availability, collection guidance or delivery support.</p>
-          <a href="https://www.google.com/maps/search/?api=1&query=PaperSource%20-%20Asylum%20Down" target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center rounded-md border border-ink px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream">Open in Google Maps</a>
+          <a href={BUSINESS_MAP_URL} target="_blank" rel="noopener noreferrer" className="mt-6 inline-flex min-h-11 items-center rounded-md border border-ink px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream">Open in Google Maps</a>
         </div>
         <div className="min-h-80 overflow-hidden rounded-xl border border-border bg-cream shadow-sm sm:min-h-96">
           <iframe

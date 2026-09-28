@@ -3,6 +3,12 @@ import { publicEnv } from "@/lib/env";
 import { socialLinks } from "@/lib/social";
 
 export const SITE_NAME = "PaperSource Ghana";
+// Keep the public brand name separate from the verified storefront listing
+// name used for local search. This avoids changing every page title while
+// keeping the Google Business Profile name consistent in LocalBusiness data.
+export const LOCAL_BUSINESS_NAME = "PaperSource - Asylum Down";
+export const BUSINESS_PHONE_NUMBERS = ["+233555001313", "+233552767156"] as const;
+export const BUSINESS_MAP_URL = "https://www.google.com/maps/search/?api=1&query=PaperSource%20-%20Asylum%20Down";
 // Keep one canonical host everywhere: metadata, JSON-LD, and sitemaps must agree.
 // The deployment URL may override this for previews, while production defaults to
 // the public host documented in docs/SEO.md.
@@ -127,26 +133,36 @@ export function siteJsonLd() {
         url: SITE_URL,
         logo: absoluteUrl("/icons/papersource-logo.png"),
         email: "info@papersourcegh.com",
-        telephone: "+233555001313",
+        telephone: BUSINESS_PHONE_NUMBERS[0],
         sameAs: socialLinks.filter((link) => link.external).map((link) => link.href),
         parentOrganization: { "@type": "Organization", name: "NiiPlants Group Ghana Limited" },
         knowsAbout: ["Office stationery", "Books", "School supplies", "Paper and printing supplies", "Workplace essentials"],
-        contactPoint: { "@type": "ContactPoint", telephone: "+233555001313", contactType: "customer service", areaServed: "GH", availableLanguage: "en" },
+        contactPoint: BUSINESS_PHONE_NUMBERS.map((telephone) => ({ "@type": "ContactPoint", telephone, contactType: "customer service", areaServed: "GH", availableLanguage: "en" })),
         hasMerchantReturnPolicy: { "@id": returnPolicyId },
         hasShippingService: { "@id": shippingServiceId },
       },
       {
         "@type": ["LocalBusiness", "Store"],
         "@id": `${SITE_URL}/#local-business`,
-        name: SITE_NAME,
+        name: LOCAL_BUSINESS_NAME,
         url: SITE_URL,
         image: absoluteUrl(DEFAULT_SHARE_IMAGE),
         parentOrganization: { "@id": organizationId },
         email: "info@papersourcegh.com",
-        telephone: "+233555001313",
+        telephone: BUSINESS_PHONE_NUMBERS[0],
+        contactPoint: BUSINESS_PHONE_NUMBERS.map((telephone) => ({
+          "@type": "ContactPoint",
+          telephone,
+          contactType: "customer service",
+          areaServed: "GH",
+          availableLanguage: "en",
+        })),
+        hasMap: BUSINESS_MAP_URL,
         areaServed: ["Accra", "Tema", "Ghana"],
         address: { "@type": "PostalAddress", addressLocality: "Accra", addressRegion: "Greater Accra", addressCountry: "GH" },
         priceRange: "GHS",
+        // Do not publish guessed hours. Add openingHoursSpecification only
+        // after the owner confirms the exact hours shown in Google Business Profile.
       },
       {
         "@type": "MerchantReturnPolicy",
@@ -155,6 +171,7 @@ export function siteJsonLd() {
         returnPolicyCountry: "GH",
         returnPolicyCategory: "https://schema.org/MerchantReturnFiniteReturnWindow",
         merchantReturnDays: 7,
+        merchantReturnLink: absoluteUrl("/returns"),
         // Returns are reviewed case by case (collection, replacement, or
         // refund), so do not promise one method or fee arrangement here.
         url: absoluteUrl("/returns"),

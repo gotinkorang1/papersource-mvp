@@ -22,6 +22,8 @@ const files = [
   "drizzle/0015_rls_child_scope.sql",
   "drizzle/0016_move_pg_trgm_to_extensions.sql",
   "drizzle/0017_payment_controls.sql",
+  "drizzle/0018_verified_product_reviews.sql",
+  "drizzle/0019_review_invitation_tracking.sql",
 ];
 
 function run(command, args) {
