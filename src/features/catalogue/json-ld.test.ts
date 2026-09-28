@@ -72,7 +72,7 @@ describe("productJsonLd", () => {
       "http://localhost:3000/product/double-a-premium-a4",
     );
     expect(json.category).toBe("Copier Paper");
-    expect(json.gtin).toBe("123456789012");
+    expect(json.gtin12).toBe("123456789012");
     expect(json.offers.seller).toEqual({ "@id": "http://localhost:3000/#organization", "@type": "Organization", name: "PaperSource Ghana" });
   });
 
@@ -91,7 +91,7 @@ describe("productJsonLd", () => {
 
     expect(json.author).toEqual({ "@type": "Person", name: "Jeff Kinney" });
     expect(json.isbn).toBe("9781637996959");
-    expect(json.gtin).toBe("9781637996959");
+    expect(json.gtin13).toBe("9781637996959");
     expect(json.publisher).toEqual({ "@type": "Organization", name: "Abrams" });
   });
 

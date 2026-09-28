@@ -2,6 +2,14 @@ import { pesewasToMajor } from "@/lib/money";
 import type { ProductDetailModel } from "@/types/catalogue";
 import { productSeoDescription } from "./product-metadata";
 
+type StructuredGtin = { gtin8?: string; gtin12?: string; gtin13?: string; gtin14?: string };
+
+function structuredGtin(value: string): StructuredGtin {
+  const normalized = value.replace(/[-\s]/g, "");
+  const field = ({ 8: "gtin8", 12: "gtin12", 13: "gtin13", 14: "gtin14" } as const)[normalized.length as 8 | 12 | 13 | 14];
+  return field ? { [field]: normalized } as StructuredGtin : {};
+}
+
 export function productJsonLd(
   product: ProductDetailModel,
   canonical: string,
@@ -80,9 +88,9 @@ export function productJsonLd(
     ...(validIsbn ? { isbn: validIsbn } : {}),
     ...(bookPublisher ? { publisher: { "@type": "Organization", name: bookPublisher } } : {}),
     ...((product.barcode && /^(?:\d{8}|\d{12,14})$/.test(product.barcode))
-      ? { gtin: product.barcode }
+      ? structuredGtin(product.barcode)
       : validIsbn
-        ? { gtin: validIsbn }
+        ? structuredGtin(validIsbn)
         : {}),
     ...(reviews.length
       ? {
