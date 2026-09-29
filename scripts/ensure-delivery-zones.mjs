@@ -4,6 +4,7 @@ import { config } from "dotenv";
 config({ path: ".env.local" });
 if (!process.env.DATABASE_URL) throw new Error("DATABASE_URL is required");
 const zones = [
+  ["Shop pickup", "Greater Accra", "shop_pickup", 0, "calculated", 0, 0, 0],
   ["Accra Central", "Greater Accra", "accra_central", 2500, "calculated", 1, 2, 1],
   ["Accra East", "Greater Accra", "accra_east", 2500, "calculated", 1, 2, 2],
   ["Accra West", "Greater Accra", "accra_west", 2500, "calculated", 1, 2, 3],

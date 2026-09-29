@@ -24,6 +24,8 @@ const files = [
   "drizzle/0017_payment_controls.sql",
   "drizzle/0018_verified_product_reviews.sql",
   "drizzle/0019_review_invitation_tracking.sql",
+  "drizzle/0020_shop_pickup.sql",
+  "drizzle/0021_delivery_zones.sql",
 ];
 
 function run(command, args) {
