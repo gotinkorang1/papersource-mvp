@@ -57,12 +57,14 @@ export async function placeRetailOrderAction(
   _prev: { error: string; fieldErrors?: Record<string, string[]> } | null,
   formData: FormData,
 ): Promise<{ error: string; fieldErrors?: Record<string, string[]> } | null> {
-  const identity = await readCommerceIdentity();
-  if (!identity.profileId && !identity.sessionId) {
-    return { error: "Your session expired. Add items to the cart and try again." };
-  }
   let number: string;
   try {
+    // Keep identity resolution inside the guarded path so cookie/session failures
+    // return the same recoverable checkout state as other server-side failures.
+    const identity = await readCommerceIdentity();
+    if (!identity.profileId && !identity.sessionId) {
+      return { error: "Your session expired. Add items to the cart and try again." };
+    }
     const address = addressFromFormData(formData);
     const order = await placeRetailOrder({
       sessionId: identity.sessionId,
@@ -71,7 +73,10 @@ export async function placeRetailOrderAction(
     });
     number = order.number;
   } catch (error) {
-    if (error instanceof CheckoutError) {
+    // Server actions can load the same module through separate server bundles;
+    // keep the name check as a safe fallback so expected checkout errors do not
+    // become the generic message.
+    if (error instanceof CheckoutError || (error instanceof Error && error.name === "CheckoutError")) {
       return { error: error.message };
     }
     if (error instanceof z.ZodError) {
