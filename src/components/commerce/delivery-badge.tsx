@@ -6,5 +6,12 @@ export function DeliveryBadge({ zone }: { zone: DeliveryBadgeModel }) {
       ? "Nationwide delivery can be arranged on request"
       : zone.label;
 
-  return <p className="text-sm text-slate">{text}</p>;
+  return (
+    <div className="space-y-0.5 text-sm text-slate">
+      <p>{text}</p>
+      {zone.pickupAvailable ? (
+        <p className="font-medium text-paper-green">Shop pickup available</p>
+      ) : null}
+    </div>
+  );
 }

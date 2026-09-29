@@ -84,6 +84,7 @@ export type CartLinePreview = {
 export type DeliveryBadgeModel = {
   label: string;
   feeMode: DeliveryFeeMode;
+  pickupAvailable?: boolean;
 };
 
 export type QuoteStatus =

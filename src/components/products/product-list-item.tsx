@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Check, FileText, ShoppingCart } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import { catalogueImage } from "@/components/products/product-card";
+import { DeliveryBadge } from "@/components/commerce/delivery-badge";
 import { paperButton } from "@/components/commerce/paper-button";
 import { PriceDisplay } from "@/components/commerce/price-display";
 import { QuoteButton } from "@/components/commerce/quote-button";
@@ -92,6 +93,7 @@ export function ProductListItem({
         </div>
         {product.specLine ? <p className={cn("mt-1 text-sm text-slate", content ? "line-clamp-3" : "line-clamp-2")}>{product.specLine}</p> : null}
         <p className="mt-1 truncate font-mono text-[0.68rem] tracking-wide text-slate/80">SKU {product.sku}</p>
+        <div className="mt-2"><DeliveryBadge zone={product.deliveryBadge} /></div>
         <div className="mt-2 sm:hidden"><PriceDisplay pesewas={product.unitPricePesewas} unitLabel={product.unitLabel} className="text-base font-semibold" /></div>
         {content ? <p className="mt-3 line-clamp-3 max-w-2xl text-sm leading-6 text-slate">{product.specLine ? `${product.specLine}. ` : ""}{product.stock === "out" ? "Currently out of stock; contact us for availability and delivery support across Accra and Tema." : product.stock === "low" ? "Limited stock available with clear pricing and delivery support across Accra and Tema." : "Available with clear pricing, stock visibility, and delivery support across Accra and Tema."}</p> : null}
       </div>

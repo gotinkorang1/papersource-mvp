@@ -2,6 +2,7 @@ import type { DeliveryBadgeModel } from "@/types/catalogue";
 import type { DeliveryFeeMode } from "@/types/commerce";
 
 export type DeliveryZoneInput = {
+  code?: string;
   name: string;
   region: string;
   feeMode: DeliveryFeeMode;
@@ -12,6 +13,9 @@ export function storefrontDeliveryBadge(
   zones: DeliveryZoneInput[],
 ): DeliveryBadgeModel {
   const active = zones.filter((zone) => zone.active !== false);
+  const pickupAvailable = active.some(
+    (zone) => zone.code === "shop_pickup" || /shop\s*pickup|pickup/i.test(zone.name),
+  );
   const hasAccra = active.some(
     (zone) => zone.feeMode === "calculated" && /accra/i.test(zone.name),
   );
@@ -23,6 +27,7 @@ export function storefrontDeliveryBadge(
     return {
       label: "Accra & Tema delivery available",
       feeMode: "calculated",
+      pickupAvailable,
     };
   }
 
@@ -30,11 +35,13 @@ export function storefrontDeliveryBadge(
     return {
       label: "Nationwide delivery can be arranged on request",
       feeMode: "on_request",
+      pickupAvailable,
     };
   }
 
   return {
     label: "Delivery options vary by location",
     feeMode: "calculated",
+    pickupAvailable,
   };
 }

@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { ArrowUpRight, Check } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
+import { DeliveryBadge } from "@/components/commerce/delivery-badge";
 import { PaperCard } from "@/components/commerce/paper-card";
 import { paperButton } from "@/components/commerce/paper-button";
 import { PriceDisplay } from "@/components/commerce/price-display";
@@ -126,7 +127,7 @@ export function ProductCard({
           className="text-lg font-semibold sm:text-xl"
         />
         {bulkTiers.length > 0 ? <div className="rounded-lg border border-border/70 bg-cream/60 px-3 py-2"><BulkPriceTable tiers={bulkTiers} unitLabel={product.unitLabel} /></div> : null}
-        <p className="line-clamp-1 text-[0.68rem] text-slate sm:text-xs">{product.deliveryBadge.label}</p>
+        <DeliveryBadge zone={product.deliveryBadge} />
         <QuantitySelector
           value={quantity}
           onChange={setQuantity}
