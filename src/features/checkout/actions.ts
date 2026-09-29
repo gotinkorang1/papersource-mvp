@@ -77,7 +77,24 @@ export async function placeRetailOrderAction(
     if (error instanceof z.ZodError) {
       return { error: "Check the highlighted delivery details.", fieldErrors: error.flatten().fieldErrors as Record<string, string[]> };
     }
-    captureServerException(error, { operation: "place_retail_order", dependency: "database" });
+    const details = error instanceof Error ? error : new Error(String(error));
+    const databaseCode = (error as { code?: unknown; cause?: { code?: unknown } })?.code
+      ?? (error as { cause?: { code?: unknown } })?.cause?.code;
+    // Keep customer data out of logs while preserving enough context to
+    // diagnose hosted checkout failures from the production runtime logs.
+    console.error("[checkout] order placement failed", {
+      name: details.name,
+      message: details.message,
+      code: typeof databaseCode === "string" ? databaseCode : undefined,
+    });
+    captureServerException(error, {
+      operation: "place_retail_order",
+      dependency: "database",
+      extra: {
+        error_name: details.name,
+        database_code: typeof databaseCode === "string" ? databaseCode : undefined,
+      },
+    });
     return { error: "We could not place your order right now. Please review your details and try again." };
   }
   redirect(`/order/${number}`);
