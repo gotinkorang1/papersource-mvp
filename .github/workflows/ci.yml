@@ -23,6 +23,13 @@ jobs:
       - run: pnpm audit --prod --audit-level=moderate
       - run: pnpm lint
       - run: pnpm exec tsc --noEmit
+      # If the repository has the hosted connection secret, fail the release
+      # before deployment when critical commerce schema or pickup zones drift.
+      - name: Verify hosted commerce schema
+        if: ${{ secrets.DATABASE_URL != '' }}
+        env:
+          DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        run: pnpm db:verify-hosted
       # Keep the deploy artifact itself covered, not just its source checks.
       - run: pnpm run build
         env:
