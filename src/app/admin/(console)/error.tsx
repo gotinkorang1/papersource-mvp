@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { captureClientBoundaryError } from "@/lib/observability/client-sentry";
 
 export default function AdminError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
     // Keep the browser console useful without exposing server details in the UI.
     console.error("Admin workspace failed to render", { digest: error.digest });
+    captureClientBoundaryError(error, "admin", error.digest);
   }, [error]);
 
   return (

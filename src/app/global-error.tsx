@@ -1,10 +1,12 @@
 "use client";
 
 import { useEffect } from "react";
+import { captureClientBoundaryError } from "@/lib/observability/client-sentry";
 
 export default function GlobalError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
     console.error("PaperSource root layout failed to render", { digest: error.digest });
+    captureClientBoundaryError(error, "global", error.digest);
   }, [error]);
 
   return (

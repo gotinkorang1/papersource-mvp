@@ -2,11 +2,13 @@
 
 import Link from "next/link";
 import { useEffect } from "react";
+import { captureClientBoundaryError } from "@/lib/observability/client-sentry";
 
 export default function StoreError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
   useEffect(() => {
     // Keep diagnostics available without exposing implementation details to customers.
     console.error("PaperSource storefront failed to render", { digest: error.digest });
+    captureClientBoundaryError(error, "storefront", error.digest);
   }, [error]);
 
   return (
