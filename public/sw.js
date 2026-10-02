@@ -41,9 +41,12 @@ self.addEventListener("fetch", (event) => {
   ];
   if (request.method !== "GET" || url.origin !== self.location.origin || privatePrefixes.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) return;
   event.respondWith(fetch(request).then((response) => {
-    if (response.ok && (request.mode === "navigate" || response.headers.get("content-type")?.includes("image/"))) {
+    const cacheControl = response.headers.get("cache-control") || "";
+    const vary = response.headers.get("vary") || "";
+    const isPublicCacheable = !/(?:private|no-store)/i.test(cacheControl) && !/cookie/i.test(vary);
+    if (response.ok && isPublicCacheable && (request.mode === "navigate" || response.headers.get("content-type")?.includes("image/"))) {
       const copy = response.clone();
-      caches.open(CACHE_NAME).then((cache) => cache.put(request, copy));
+      event.waitUntil(caches.open(CACHE_NAME).then((cache) => cache.put(request, copy)).catch(() => undefined));
     }
     return response;
   }).catch(() => caches.match(request).then((cached) => cached ?? caches.match("/offline.html"))));
