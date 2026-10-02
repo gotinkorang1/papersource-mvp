@@ -9,6 +9,7 @@ const instagramUrl = socialLinks.find((link) => link.label === "Instagram")?.hre
 // gate so production never renders that broken iframe by accident.
 const facebookPageId = process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID?.trim();
 const facebookEmbedEnabled = process.env.NEXT_PUBLIC_FACEBOOK_EMBED_ENABLED === "true" && Boolean(facebookPageId);
+const facebookEmbedHref = facebookPageId ? `https://www.facebook.com/${facebookPageId}` : facebookUrl;
 
 /**
  * The Page Plugin keeps the homepage current without storing or duplicating
@@ -16,7 +17,7 @@ const facebookEmbedEnabled = process.env.NEXT_PUBLIC_FACEBOOK_EMBED_ENABLED === 
  * the catalogue or the first meaningful paint.
  */
 export function SocialActivitySection() {
-  const facebookEmbed = `https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(facebookUrl)}&tabs=timeline&width=500&height=620&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false`;
+  const facebookEmbed = `https://www.facebook.com/plugins/page.php?href=${encodeURIComponent(facebookEmbedHref)}&tabs=timeline&width=500&height=620&small_header=false&adapt_container_width=true&hide_cover=false&show_facepile=false`;
 
   return (
     <section className="border-y border-border bg-background py-14 sm:py-16 md:py-20" aria-labelledby="social-activity-heading">
