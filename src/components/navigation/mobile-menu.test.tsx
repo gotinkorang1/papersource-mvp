@@ -52,7 +52,9 @@ describe("MobileMenu", () => {
   it("shows live product categories when supplied", () => {
     render(<MobileMenu categories={[{ name: "Paper", slug: "paper" }, { name: "Writing", slug: "writing" }]} />);
     fireEvent.click(screen.getByRole("button", { name: "Open menu" }));
-    expect(screen.getByRole("link", { name: "Paper" })).toHaveAttribute("href", "/shop/paper");
-    expect(screen.getByRole("link", { name: "Writing" })).toHaveAttribute("href", "/shop/writing");
+    // Legacy slugs must be normalized so navigation does not send crawlers or
+    // customers through avoidable redirect hops.
+    expect(screen.getByRole("link", { name: "Paper" })).toHaveAttribute("href", "/shop/paper-printing");
+    expect(screen.getByRole("link", { name: "Writing" })).toHaveAttribute("href", "/shop/writing-marking");
   });
 });
