@@ -60,6 +60,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
   const croppingRef = useRef(false);
   const [uploadingAll, setUploadingAll] = useState(false);
   const [savingAll, setSavingAll] = useState(false);
+  const [savedImageCount, setSavedImageCount] = useState(imageCount);
   const [uploadProgress, setUploadProgress] = useState<{ done: number; total: number } | null>(null);
 
   itemsRef.current = items;
@@ -176,7 +177,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
         body.append("alt", item.alt);
         // Use the pending batch index, not the local preview index. Saved or
         // failed rows can remain in the preview list between batches.
-        body.append("position", String(imageCount + pendingIndex));
+        body.append("position", String(savedImageCount + pendingIndex));
       });
       const response = await fetch("/admin/products/mutate", {
         method: "POST",
@@ -185,6 +186,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
       });
       const result = (await response.json()) as { ok?: boolean; error?: string };
       if (!response.ok || !result.ok) throw new Error(result.error ?? "Could not save these images.");
+      setSavedImageCount((count) => count + pending.length);
       setItems((current) => current.map((entry, itemIndex) => pending.some(({ index }) => index === itemIndex) ? { ...entry, status: "saved" } : entry));
       setNotice(`${pending.length} image${pending.length === 1 ? "" : "s"} saved to the product.`);
     } catch (error) {
@@ -215,7 +217,7 @@ export function ProductImageManager({ productId, imageCount }: { productId: stri
     }
   }
 
-  const canAdd = imageCount + items.length < 4;
+  const canAdd = savedImageCount + items.filter((item) => item.status !== "saved").length < 4;
   return (
     <div className="mt-4 space-y-5">
       <div className="rounded-lg border border-dashed border-border bg-cream/30 p-4 dark:bg-ink/30">
