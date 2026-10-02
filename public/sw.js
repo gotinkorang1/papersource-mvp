@@ -39,7 +39,9 @@ self.addEventListener("fetch", (event) => {
     "/reset-password",
     "/signup",
   ];
-  if (request.method !== "GET" || url.origin !== self.location.origin || privatePrefixes.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) return;
+  // Query-driven pages (pagination, filters, tracking parameters) are not
+  // stable offline documents and could otherwise grow the cache indefinitely.
+  if (request.method !== "GET" || url.origin !== self.location.origin || url.search || privatePrefixes.some((prefix) => url.pathname === prefix || url.pathname.startsWith(`${prefix}/`))) return;
   event.respondWith(fetch(request).then((response) => {
     const cacheControl = response.headers.get("cache-control") || "";
     const vary = response.headers.get("vary") || "";
