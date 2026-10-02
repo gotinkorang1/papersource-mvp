@@ -743,7 +743,12 @@ export async function addProductImages(input: {
     if (images.some((image) => existing.some((item) => item.cloudinaryPublicId === image.cloudinaryPublicId))) {
       throw new CatalogueAdminError("One or more images are already attached to this product.");
     }
-    await tx.insert(productImages).values(images.map((image) => ({ productId: input.productId, ...image })));
+    // Client positions are only an ordering hint. Normalize them on the
+    // server so concurrent tabs cannot create duplicate or colliding slots.
+    const ordered = [...images]
+      .sort((left, right) => left.position - right.position)
+      .map((image, index) => ({ ...image, position: existing.length + index }));
+    await tx.insert(productImages).values(ordered.map((image) => ({ productId: input.productId, ...image })));
   });
   return images.length;
 }
