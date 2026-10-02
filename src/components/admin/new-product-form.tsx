@@ -55,25 +55,26 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
   }
 
   async function uploadAll() {
-    const pending = images.map((image, index) => ({ image, index })).filter(({ image }) => image.status === "ready" || image.status === "error");
+    const pending = images.filter((image) => image.status === "ready" || image.status === "error");
     if (!pending.length) return;
     setUploading(true);
     setNotice(`Uploading 0 of ${pending.length} images…`);
     let failed = 0;
     try {
       for (let completed = 0; completed < pending.length; completed += 1) {
-        const { image, index } = pending[completed];
-        setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "uploading", error: undefined } : entry));
+        const image = pending[completed];
+        if (!imagesRef.current.some((entry) => entry.file === image.file)) continue;
+        setImages((current) => current.map((entry) => entry.file === image.file ? { ...entry, status: "uploading", error: undefined } : entry));
         const body = new FormData();
         body.append("file", image.file);
         try {
           const response = await fetch("/admin/products/upload-image", { method: "POST", body });
           const result = (await response.json()) as { publicId?: string; error?: string };
           if (!response.ok || !result.publicId) throw new Error(result.error ?? "Upload failed.");
-          setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, publicId: result.publicId, status: "uploaded" } : entry));
+          setImages((current) => current.map((entry) => entry.file === image.file ? { ...entry, publicId: result.publicId, status: "uploaded" } : entry));
         } catch (error) {
           failed += 1;
-          setImages((current) => current.map((entry, itemIndex) => itemIndex === index ? { ...entry, status: "error", error: error instanceof Error ? error.message : "Upload failed." } : entry));
+          setImages((current) => current.map((entry) => entry.file === image.file ? { ...entry, status: "error", error: error instanceof Error ? error.message : "Upload failed." } : entry));
         }
         setNotice(`Uploading ${completed + 1} of ${pending.length} images…`);
       }
