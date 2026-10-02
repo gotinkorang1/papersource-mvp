@@ -3,7 +3,12 @@ import { SITE_URL } from "@/lib/seo";
 
 const facebookUrl = socialLinks.find((link) => link.label === "Facebook")?.href ?? "https://www.facebook.com/papersourcegh";
 const instagramUrl = socialLinks.find((link) => link.label === "Instagram")?.href ?? "https://www.instagram.com/papersourcegh/";
-const facebookEmbedEnabled = process.env.NEXT_PUBLIC_FACEBOOK_EMBED_ENABLED === "true";
+// Meta's Page Plugin can return a successful HTTP response containing its own
+// error screen when a page is unpublished, restricted, or the plugin cannot
+// resolve the page identity. Require an explicit Page ID as a second safety
+// gate so production never renders that broken iframe by accident.
+const facebookPageId = process.env.NEXT_PUBLIC_FACEBOOK_PAGE_ID?.trim();
+const facebookEmbedEnabled = process.env.NEXT_PUBLIC_FACEBOOK_EMBED_ENABLED === "true" && Boolean(facebookPageId);
 
 /**
  * The Page Plugin keeps the homepage current without storing or duplicating
