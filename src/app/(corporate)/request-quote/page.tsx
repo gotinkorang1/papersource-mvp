@@ -58,7 +58,7 @@ export default async function RequestQuotePage() {
                 region: preferred.region, cityTown: preferred.cityTown,
                 areaSuburb: preferred.areaSuburb ?? "", streetLandmark: preferred.streetLandmark ?? "",
                 ghanapostGps: preferred.ghanapostGps ?? "", deliveryInstructions: preferred.deliveryInstructions ?? "",
-                deliveryArea: preferred.deliveryArea === "tema" || preferred.deliveryArea === "other" ? preferred.deliveryArea : "accra",
+                deliveryArea: preferred.deliveryArea === "tema" || preferred.deliveryArea === "other" || preferred.deliveryArea === "pickup" ? preferred.deliveryArea : "accra",
               } : undefined} />
           </div>
         </>

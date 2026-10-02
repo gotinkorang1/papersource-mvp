@@ -11,7 +11,7 @@ export function DualPathCounts() {
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
 
   return (
-    <div className="flex items-center gap-3 text-sm">
+    <div className="hidden items-center gap-3 text-sm sm:flex">
       <button
         type="button"
         className={`inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${quoteOpen ? "text-ink" : "text-graphite"}`}

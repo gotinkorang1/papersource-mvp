@@ -39,6 +39,7 @@ export function CategoryImageManager({ categoryId, imagePublicId }: { categoryId
     finally { setBusy(false); }
   }
   async function remove() {
+    if (!window.confirm("Remove this category image?")) return;
     setBusy(true); setStatus("Removing image…"); const body = new FormData(); body.append("intent", "remove-image"); body.append("categoryId", categoryId);
     try { const response = await fetch("/admin/categories/mutate", { method: "POST", body, headers: { Accept: "application/json", "X-Requested-With": "XMLHttpRequest" } }); if (!response.ok) throw new Error("Could not remove image."); setSavedImagePublicId(null); setStatus("Category image removed."); }
     catch (error) { setStatus(error instanceof Error ? error.message : "Could not remove image."); }

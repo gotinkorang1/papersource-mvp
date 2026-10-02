@@ -27,6 +27,7 @@ describe("dual-path counts", () => {
 
     expect(screen.getByLabelText("Quote list, 0 items")).toBeInTheDocument();
     expect(screen.getByLabelText("Cart, 0 items")).toBeInTheDocument();
+    expect(screen.getByLabelText("Quote list, 0 items").parentElement).toHaveClass("hidden", "sm:flex");
 
     await user.click(screen.getByRole("button", { name: "Add to Quote" }));
 

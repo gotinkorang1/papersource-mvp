@@ -60,6 +60,8 @@
 
 :root {
   color-scheme: light;
+  /* Keep the layout width stable when dialogs lock body scrolling. */
+  scrollbar-gutter: stable;
   --ps-ink: #102a43;
   --ps-paper-green: #1f6b57;
   /* Darkened for WCAG AA contrast when used as text on cream surfaces. */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import Link from "next/link";
 import {
   GhanaAddressForm,
   type GhanaAddressValues,
@@ -27,9 +28,10 @@ export function CheckoutForm({
   return (
     <div className="space-y-4">
       {state?.error ? (
-        <p role="alert" className="border border-error/40 bg-cream px-4 py-3 text-sm text-error">
-          {state.error}
-        </p>
+        <div role="alert" className="border border-error/40 bg-cream px-4 py-3 text-sm text-error">
+          <p>{state.error}</p>
+          <p className="mt-2 text-xs text-slate">Your cart is still saved. Check the highlighted details and try again. If the problem continues, <Link href="/contact" className="font-semibold text-ink underline underline-offset-2">contact our team</Link>.</p>
+        </div>
       ) : null}
       <GhanaAddressForm
         action={canPlaceOrder ? action : undefined}

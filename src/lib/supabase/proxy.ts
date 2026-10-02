@@ -9,6 +9,15 @@ export async function refreshSupabaseSession(request: NextRequest) {
   const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
   if (!url || !key) return response;
 
+  // Anonymous storefront requests do not have a session to refresh. Avoid
+  // making an Auth round trip for them; this keeps public browsing cheap and
+  // reduces unnecessary Supabase egress while preserving refresh behavior for
+  // both unchunked and chunked SSR auth cookies.
+  const hasAuthCookie = request.cookies.getAll().some(({ name }) =>
+    name.startsWith("sb-") && name.includes("-auth-token"),
+  );
+  if (!hasAuthCookie) return response;
+
   const supabase = createServerClient(url, key, {
     cookies: {
       getAll: () => request.cookies.getAll(),

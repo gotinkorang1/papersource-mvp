@@ -36,7 +36,7 @@ it("forwards Auth refresh cookies and cache headers without losing guest identit
     await cookies.setAll?.([{ name: "sb-test-auth-token.0", value: "new-0", options: { path: "/", sameSite: "lax" } }], { "Cache-Control": "private, no-store", "Pragma": "no-cache" });
     await cookies.setAll?.([{ name: "sb-test-auth-token.1", value: "new-1", options: { path: "/", secure: true } }], { "Expires": "0" });
   };
-  const request = new NextRequest("http://localhost:3000/account");
+  const request = new NextRequest("http://localhost:3000/account", { headers: { cookie: "sb-test-auth-token.0=existing-token" } });
   const response = await proxy(request);
   for (const suffix of ["0", "1"]) {
     expect(response.cookies.get(`sb-test-auth-token.${suffix}`)?.value).toBe(`new-${suffix}`);
@@ -48,6 +48,13 @@ it("forwards Auth refresh cookies and cache headers without losing guest identit
   expect(response.headers.get("cache-control")).toContain("no-store");
   expect(response.headers.get("pragma")).toBe("no-cache");
   expect(response.headers.get("expires")).toBe("0");
+});
+it("skips the Auth refresh request for anonymous visitors", async () => {
+  state.configured = true;
+  let refreshCalls = 0;
+  state.refresh = async () => { refreshCalls += 1; };
+  await proxy(new NextRequest("http://localhost:3000/shop"));
+  expect(refreshCalls).toBe(0);
 });
 it("does not create cookies before Quick Order Origin validation", async () => {
   state.configured = true;

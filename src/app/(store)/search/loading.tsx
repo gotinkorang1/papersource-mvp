@@ -15,8 +15,8 @@ export default function SearchLoading() {
               {Array.from({ length: 5 }, (_, index) => <div key={index} className="skeleton-block h-9 rounded-lg" />)}
             </div>
           </aside>
-          <section className="grid grid-cols-2 gap-4 md:grid-cols-3">
-            {Array.from({ length: 9 }, (_, index) => <div key={index} className="skeleton-block h-64 rounded-xl border border-border" />)}
+          <section className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-3">
+            {Array.from({ length: 9 }, (_, index) => <div key={index} className="skeleton-block h-32 rounded-xl border border-border sm:h-64" />)}
           </section>
         </div>
       </div>

@@ -12,8 +12,8 @@ export default function CategoryLoading() {
           <div className="skeleton-block aspect-[4/3] rounded-xl border border-border" />
         </div>
         <div className="skeleton-block h-20 rounded-2xl border border-border" />
-        <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
-          {Array.from({ length: 8 }, (_, index) => <div key={index} className="skeleton-block h-64 rounded-xl border border-border" />)}
+        <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 md:grid-cols-4">
+          {Array.from({ length: 8 }, (_, index) => <div key={index} className="skeleton-block h-32 rounded-xl border border-border sm:h-64" />)}
         </div>
       </div>
     </main>

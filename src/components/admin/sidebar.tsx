@@ -50,7 +50,11 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
       return;
     }
     navWasOpen.current = true;
-    activeLinkRef.current?.focus();
+    // Focus the current section when available; otherwise land on the first
+    // permitted destination so opening the mobile menu is immediately usable
+    // with a keyboard or screen reader.
+    const firstLink = document.getElementById("admin-navigation")?.querySelector<HTMLAnchorElement>("a[href]");
+    (activeLinkRef.current ?? firstLink)?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") setNavOpen(false);
     };
@@ -114,7 +118,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   return (
     <>
       <a href="#admin-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-card focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-ink focus:shadow-lg focus:outline-2 focus:outline-offset-2 focus:outline-ink">Skip to content</a>
-      <button ref={accountTriggerRef} type="button" aria-expanded={accountOpen} aria-controls="admin-account-panel" onClick={() => setAccountOpen((open) => !open)} className="fixed right-4 top-[calc(0.75rem+env(safe-area-inset-top))] z-40 inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-card/95 px-2.5 text-sm font-semibold text-ink shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:right-6">
+      <button ref={accountTriggerRef} type="button" aria-label={accountOpen ? "Close staff account menu" : "Open staff account menu"} aria-expanded={accountOpen} aria-controls="admin-account-panel" onClick={() => setAccountOpen((open) => !open)} className="fixed right-4 top-[calc(0.75rem+env(safe-area-inset-top))] z-40 inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-card/95 px-2.5 text-sm font-semibold text-ink shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:right-6">
         <span className="flex size-6 items-center justify-center rounded-full bg-ink text-[0.6rem] font-bold tracking-[0.12em] text-cream" aria-hidden="true">PS</span>
         <span className="hidden sm:inline">Administrator</span>
         <span className="text-xs" aria-hidden="true">{accountOpen ? "×" : "⌄"}</span>

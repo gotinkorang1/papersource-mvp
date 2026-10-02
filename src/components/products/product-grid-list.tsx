@@ -89,12 +89,33 @@ export function ProductGridList({
   }
 
   return (
-    <div className="space-y-5" aria-busy={isPending || undefined}>
+    <div className={`space-y-5 transition-opacity duration-150 motion-reduce:transition-none ${isPending ? "opacity-60" : "opacity-100"}`} aria-busy={isPending || undefined} data-view-pending={isPending || undefined}>
       {showViewModeControl ? <div className="flex flex-wrap items-center justify-between gap-3"><p className="text-sm text-slate" aria-live="polite">{isPending ? "Updating view…" : `${products.length} ${products.length === 1 ? "product" : "products"}`}</p><CatalogueViewModeControl value={viewMode} onChange={setViewMode} compact /></div> : null}
       {viewMode === "list" || viewMode === "content" ? (
         <div data-catalogue-view={viewMode} className="grid gap-3">
           {products.map((product, index) => <ProductListItem key={product.id} product={product} variant={viewMode} onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} priority={index === 0} />)}
         </div>
+      ) : viewMode === "default" ? (
+        <>
+          <div data-catalogue-view="list" className="grid gap-3 sm:hidden">
+            {products.map((product, index) => <ProductListItem key={`mobile-${product.id}`} product={product} variant="list" onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} priority={index === 0} />)}
+          </div>
+          <ProductGrid className="hidden sm:grid">
+            {products.map((product, index) => (
+              <div key={`desktop-${product.id}`} data-catalogue-view="default">
+                <ProductCard
+                  product={product}
+                  className="motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2"
+                  style={{ animationDelay: `${Math.min(index, 11) * 45}ms` }}
+                  onAddToCart={addToCart}
+                  onAddToQuote={addToQuote}
+                  canEdit={canEdit}
+                  priority={index === 0}
+                />
+              </div>
+            ))}
+          </ProductGrid>
+        </>
       ) : (
         <ProductGrid className={viewMode === "grid" ? "sm:grid-cols-3 xl:grid-cols-5" : undefined}>
           {products.map((product, index) => (

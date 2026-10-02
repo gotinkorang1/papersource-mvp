@@ -9,6 +9,7 @@ export function ProfileForm({ fullName, phone }: { fullName: string; phone: stri
   const error = (field: string) => state.errors?.[field]?.join(" ");
   return (
     <form action={action} className="mt-8 grid max-w-xl gap-5 rounded-xl border border-border bg-surface p-5 shadow-sm" aria-busy={pending}>
+      <fieldset disabled={pending} className="contents">
       <div className="space-y-1.5">
         <label htmlFor="profile-name" className="block text-sm font-medium text-ink">Full name</label>
         <input id="profile-name" name="fullName" required maxLength={160} autoComplete="name" defaultValue={fullName} aria-invalid={Boolean(error("fullName"))} aria-describedby={error("fullName") ? "profile-name-error" : undefined} className="min-h-11 w-full rounded-md border border-border bg-background px-3 py-2 text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20" />
@@ -22,6 +23,7 @@ export function ProfileForm({ fullName, phone }: { fullName: string; phone: stri
       <p className="text-sm text-slate">Email is managed through your sign-in provider and cannot be changed here.</p>
       {state.message ? <p role={state.success ? "status" : "alert"} className={state.success ? "text-sm text-paper-green" : "text-sm text-error"}>{state.message}</p> : null}
       <button type="submit" disabled={pending} className="min-h-11 rounded-lg bg-ink px-5 py-2.5 font-medium text-cream transition hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-not-allowed disabled:opacity-60">{pending ? "Saving…" : "Save profile"}</button>
+      </fieldset>
     </form>
   );
 }

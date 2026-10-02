@@ -61,6 +61,7 @@ export function GhanaAddressForm({
   id = "ghana-address",
   defaultValues,
   action,
+  hiddenInputs,
   children,
   submitLabel,
   submitDisabled,
@@ -72,6 +73,7 @@ export function GhanaAddressForm({
   id?: string;
   defaultValues?: Partial<GhanaAddressValues>;
   action?: ComponentProps<"form">["action"];
+  hiddenInputs?: Array<{ name: string; value: string }>;
   children?: ReactNode;
   submitLabel?: string;
   submitDisabled?: boolean;
@@ -127,6 +129,8 @@ export function GhanaAddressForm({
       onSubmit={action ? undefined : (event) => event.preventDefault()}
     >
       <input type="hidden" name="deliveryArea" value={values.deliveryArea} />
+      {hiddenInputs?.map((input) => <input key={input.name} type="hidden" name={input.name} value={input.value} />)}
+      <fieldset disabled={busy} className="contents">
       {savedAddresses?.length ? <Field id={`${id}-saved`} label="Saved address"><select id={`${id}-saved`} value={selectedAddressId} onChange={(event) => applySavedAddress(event.target.value)} className="h-11 w-full rounded-lg border border-border bg-card px-3 text-sm text-ink"><option value="">{hasDefaultAddress ? "Use details below" : "Enter a new address"}</option>{savedAddresses.map((address) => <option key={address.id} value={address.id}>{address.label}</option>)}</select></Field> : null}
       <Field id={`${id}-name`} label="Full Name" required>
         <Input
@@ -273,6 +277,7 @@ export function GhanaAddressForm({
           {submitLabel}
         </button>
       ) : null}
+      </fieldset>
     </form>
   );
 }

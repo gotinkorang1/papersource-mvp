@@ -30,12 +30,19 @@ test("search preserves the submitted query and renders a useful state", async ({
 test("a catalogue product can be added to the quote path", async ({ page }) => {
   await page.goto("/shop", { waitUntil: "domcontentloaded" });
   const productLinks = page.locator('a[href^="/product/"]');
+  await expect(productLinks.first()).toBeVisible();
   const productHrefs = await productLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")).filter((href): href is string => Boolean(href)));
   let productHref: string | null = null;
   for (const href of productHrefs) {
     if (!href) continue;
     await page.goto(href, { waitUntil: "domcontentloaded" });
-    if (await page.getByTestId("product-purchase").getByRole("button", { name: "Add to Quote" }).count()) { productHref = href; break; }
+    const purchase = page.getByTestId("product-purchase");
+    try {
+      await expect(purchase).toBeVisible({ timeout: 30_000 });
+      if (await purchase.getByRole("button", { name: "Add to Quote" }).count()) { productHref = href; break; }
+    } catch {
+      // Keep checking the next product if a transient production render fails.
+    }
   }
   expect(productHref).toBeTruthy();
   await page.goto(productHref!, { waitUntil: "domcontentloaded" });

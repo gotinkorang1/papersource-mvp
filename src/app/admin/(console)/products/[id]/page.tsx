@@ -6,6 +6,7 @@ import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/compo
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { ProductImageManager } from "@/components/admin/product-image-manager";
 import { SavedProductImageEditor } from "@/components/admin/saved-product-image-editor";
+import { ConfirmSubmitForm } from "@/components/admin/confirm-submit-form";
 import { ProductTaxonomyPicker } from "@/components/admin/product-taxonomy-picker";
 import { paperButton } from "@/components/commerce/paper-button";
 import { getAdminProduct, listTaxonomyOptions } from "@/features/catalogue/admin";
@@ -341,12 +342,12 @@ export default async function AdminProductDetailPage({
                   <form action="/admin/products/mutate" method="post"><input type="hidden" name="intent" value="move-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><input type="hidden" name="direction" value="down" /><SubmitProgressButton idleLabel="↓ Later" pendingLabel="Moving…" ariaLabel="Move image later" disabled={imageIndex === product.images.length - 1} className="min-h-8 px-2 text-xs" /></form>
                 </div> : null}
                 {canWrite ? (
-                  <form action="/admin/products/mutate" method="post">
+                  <ConfirmSubmitForm action="/admin/products/mutate" method="post" confirmation="Remove this product image? This cannot be undone.">
                     <input type="hidden" name="intent" value="remove-image" />
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="imageId" value={image.id} />
                     <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
-                  </form>
+                  </ConfirmSubmitForm>
                 ) : null}
               </li>
             ))}

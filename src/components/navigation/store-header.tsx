@@ -33,7 +33,7 @@ export async function StoreHeader() {
   );
   return (
     <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/95 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-card/80">
-      <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center gap-2 px-3 py-2 sm:gap-5 sm:px-6 sm:py-3 lg:px-8">
+      <div className="mx-auto flex min-h-14 w-full max-w-7xl items-center gap-2 px-3 py-1.5 sm:min-h-16 sm:gap-5 sm:px-6 sm:py-3 lg:px-8">
         <Wordmark />
         <nav
           className="hidden items-center gap-3 text-sm font-medium text-graphite lg:flex lg:gap-5"

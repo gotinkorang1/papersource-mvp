@@ -97,7 +97,7 @@ export function CatalogueToolbar({ count, query = "", category = "", brand = "",
   };
 
   return (
-    <section aria-label="Catalogue filters" aria-busy={isNavigating || undefined} className="rounded-2xl border border-border/80 bg-card p-3 shadow-[0_8px_28px_rgba(16,42,67,0.06)] sm:p-4">
+    <section aria-label="Catalogue filters" aria-busy={isNavigating || undefined} data-navigation-pending={isNavigating || undefined} className={`rounded-2xl border border-border/80 bg-card p-3 shadow-[0_8px_28px_rgba(16,42,67,0.06)] transition-opacity duration-150 motion-reduce:transition-none sm:p-4 ${isNavigating ? "opacity-70" : "opacity-100"}`}>
       <div className="mb-3 flex items-center justify-between gap-3">
         <div className="min-w-0"><p className="truncate text-sm font-semibold text-ink">Find the right supplies</p><p className="mt-0.5 hidden text-xs text-slate sm:block">Search the catalogue, then refine when you need to.</p></div>
         <p className="shrink-0 rounded-full bg-cream px-2.5 py-1 text-xs font-semibold text-slate" aria-live="polite">{count} {count === 1 ? "result" : "results"}</p>

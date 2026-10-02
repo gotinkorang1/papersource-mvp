@@ -14,27 +14,29 @@ export function OrganisationForm({ values }: { values: { name: string; type: str
   function errorProps(field: string) { return { "aria-invalid": Boolean(errors(field)?.length), "aria-describedby": errors(field)?.length ? `org-${field}-error` : undefined }; }
   return (
     <form action={action} className="mt-8 grid max-w-xl gap-4 rounded-xl border border-border bg-surface p-5 shadow-sm" aria-busy={pending}>
+      <fieldset disabled={pending} className="contents">
       <div className="space-y-1.5">
         <label htmlFor="org-name" className="block text-sm font-medium">Organisation name *</label>
         <input id="org-name" name="name" required maxLength={200} autoComplete="organization" defaultValue={values.name} className={fieldClass} {...errorProps("name")} />
-        <p id="org-name-error" className="text-sm text-error">{errors("name")?.join(" ")}</p>
+        {errors("name")?.length ? <p id="org-name-error" className="text-sm text-error">{errors("name")?.join(" ")}</p> : null}
       </div>
       <div className="space-y-1.5">
         <label htmlFor="org-type" className="block text-sm font-medium">Type</label>
         <select id="org-type" name="type" defaultValue={values.type} className={fieldClass} {...errorProps("type")}>
           {types.map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
-        <p id="org-type-error" className="text-sm text-error">{errors("type")?.join(" ")}</p>
+        {errors("type")?.length ? <p id="org-type-error" className="text-sm text-error">{errors("type")?.join(" ")}</p> : null}
       </div>
       {(["email", "phone"] as const).map((field) => (
         <div key={field} className="space-y-1.5">
           <label htmlFor={`org-${field}`} className="block text-sm font-medium">{field === "email" ? "Email" : "Phone"}</label>
           <input id={`org-${field}`} name={field} type={field === "email" ? "email" : "tel"} autoComplete={field === "email" ? "email" : "tel"} defaultValue={values[field]} className={fieldClass} {...errorProps(field)} />
-          <p id={`org-${field}-error`} className="text-sm text-error">{errors(field)?.join(" ")}</p>
+          {errors(field)?.length ? <p id={`org-${field}-error`} className="text-sm text-error">{errors(field)?.join(" ")}</p> : null}
         </div>
       ))}
       {state.message ? <p role={state.success ? "status" : "alert"} className={state.success ? "text-sm text-ink" : "text-sm text-error"}>{state.message}</p> : null}
       <button type="submit" disabled={pending} aria-busy={pending} className={paperButton({ className: "disabled:cursor-wait" })}>{pending ? "Saving…" : "Save organisation"}</button>
+      </fieldset>
     </form>
   );
 }

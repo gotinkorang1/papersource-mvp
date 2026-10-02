@@ -13,8 +13,8 @@ export function AddressForm({ addressId, defaultValues, isDefault = false }: {
   const [state, action, pending] = useActionState(saveAddressAction, {} as AccountActionState);
   return (
     <GhanaAddressForm id={`address-${addressId ?? "new"}`} action={action} defaultValues={defaultValues}
+      hiddenInputs={addressId ? [{ name: "addressId", value: addressId }] : undefined}
       submitLabel={pending ? "Saving…" : "Save address"} submitDisabled={pending} busy={pending} fieldErrors={state.errors}>
-      {addressId ? <input type="hidden" name="addressId" value={addressId} /> : null}
       <label className="flex items-center gap-2 text-sm text-ink">
         <input type="checkbox" name="isDefault" value="true" defaultChecked={isDefault} />
         Default address

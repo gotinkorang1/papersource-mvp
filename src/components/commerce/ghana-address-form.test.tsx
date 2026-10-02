@@ -71,4 +71,12 @@ describe("GhanaAddressForm", () => {
     expect(button).toBeDisabled();
     expect(button.querySelector("span[aria-hidden='true']")).toBeInTheDocument();
   });
+
+  it("keeps mutation identifiers submitted while the form is busy", () => {
+    render(<GhanaAddressForm hiddenInputs={[{ name: "addressId", value: "saved-1" }]} busy />);
+
+    const addressId = document.querySelector<HTMLInputElement>('input[name="addressId"]');
+    expect(addressId).toHaveValue("saved-1");
+    expect(addressId).not.toBeDisabled();
+  });
 });

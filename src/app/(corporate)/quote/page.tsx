@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { FileText } from "lucide-react";
 import {
   removeQuoteLineAction,
   updateQuoteQuantityAction,
@@ -46,9 +47,11 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
       {notice ? <p role="status" className="mt-3 text-sm text-paper-green">{notice === "updated" ? "Quantity updated." : notice === "removed" ? "Item removed from quote list." : notice}</p> : null}
       {warning ? <p role="alert" className="mt-3 text-sm text-error">{warning}</p> : null}
       {lines.length === 0 ? (
-        <div className="mt-8 space-y-4">
-          <p className="text-slate">No items on this quotation yet. Add products from the catalogue or use Quick Order for known SKUs.</p>
-          <div className="flex flex-wrap gap-3">
+        <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-6 sm:p-8">
+          <FileText className="size-8 text-paper-green" aria-hidden="true" />
+          <h2 className="mt-4 text-xl font-semibold text-ink">Build your quote list</h2>
+          <p className="mt-2 max-w-lg text-slate">Add products from the catalogue or enter known SKUs with Quick Order. We will review your requirements and confirm final pricing.</p>
+          <div className="mt-5 flex flex-wrap gap-3">
             <Link href="/shop" className={paperButton({ variant: "quote" })}>Add products to quote</Link>
             <Link href="/quick-order" className={paperButton({ variant: "secondary" })}>Use Quick Order</Link>
           </div>

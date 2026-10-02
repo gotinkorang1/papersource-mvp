@@ -40,11 +40,16 @@ test("health endpoint exposes non-sensitive readiness checks", async ({ request 
   expect(isLocalTarget ? [200, 503] : [200]).toContain(response.status());
   const body = await response.json();
   expect(isLocalTarget ? ["ok", "degraded"] : ["ok"]).toContain(body.status);
-  expect(["ok", "not_configured"]).toContain(body.checks?.database);
-  expect(["configured", "not_configured"]).toContain(body.checks?.observability);
-  expect(["configured", "test_mode", "not_configured"]).toContain(body.checks?.integrations?.paystack);
-  expect(["configured", "mock_mode", "not_configured"]).toContain(body.checks?.integrations?.email);
-  expect(["configured", "not_configured"]).toContain(body.checks?.integrations?.cloudinary);
+  // Detailed dependency states are intentionally returned only when the
+  // health secret is supplied. Public probes should verify the safe summary;
+  // authenticated probes can additionally validate every check below.
+  if (body.checks) {
+    expect(["ok", "not_configured"]).toContain(body.checks.database);
+    expect(["configured", "not_configured"]).toContain(body.checks.observability);
+    expect(["configured", "test_mode", "not_configured"]).toContain(body.checks.integrations?.paystack);
+    expect(["configured", "mock_mode", "not_configured"]).toContain(body.checks.integrations?.email);
+    expect(["configured", "not_configured"]).toContain(body.checks.integrations?.cloudinary);
+  }
   const serialized = JSON.stringify(body);
   expect(serialized).not.toMatch(/DATABASE_URL|SENTRY_DSN|PAYSTACK_SECRET_KEY|CLOUDINARY_API_SECRET|RESEND_API_KEY/);
   expect(typeof body.durationMs).toBe("number");

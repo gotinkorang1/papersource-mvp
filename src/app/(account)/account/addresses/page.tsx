@@ -17,7 +17,7 @@ export default async function AccountAddressesPage() {
         {rows.map((row) => (
           <li key={row.id} className="rounded-xl border border-border bg-surface p-5 text-sm shadow-sm transition-shadow hover:shadow-md">
             <p className="font-medium text-ink">{row.fullName}{row.isDefault ? " · Default" : ""}</p>
-            <p className="text-slate">{row.phone} · {row.cityTown}, {row.region}</p>
+            <p className="text-slate">{row.phone} · {row.deliveryArea === "pickup" ? "Shop pickup" : `${row.cityTown}, ${row.region}`}</p>
             <p className="text-slate">{[row.areaSuburb, row.streetLandmark, row.ghanapostGps].filter(Boolean).join(" · ")}</p>
             <div className="mt-2 flex flex-wrap gap-x-6">
               {!row.isDefault ? <AddressMutationButton addressId={row.id} intent="default" /> : null}
@@ -29,7 +29,7 @@ export default async function AccountAddressesPage() {
                 fullName: row.fullName, phone: row.phone, region: row.region, cityTown: row.cityTown,
                 areaSuburb: row.areaSuburb ?? "", streetLandmark: row.streetLandmark ?? "",
                 ghanapostGps: row.ghanapostGps ?? "", deliveryInstructions: row.deliveryInstructions ?? "",
-                deliveryArea: row.deliveryArea === "tema" || row.deliveryArea === "other" ? row.deliveryArea : "accra",
+                deliveryArea: row.deliveryArea === "tema" || row.deliveryArea === "other" || row.deliveryArea === "pickup" ? row.deliveryArea : "accra",
               }} />
             </details>
           </li>

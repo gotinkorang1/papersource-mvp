@@ -1,6 +1,6 @@
 export default function AdminLoading() {
   return (
-    <main className="mx-auto min-w-0 max-w-7xl" aria-busy="true" aria-label="Loading operations dashboard">
+    <main role="status" className="mx-auto min-w-0 max-w-7xl" aria-busy="true" aria-label="Loading operations dashboard">
       <div className="skeleton-shimmer space-y-3">
         <div className="skeleton-block h-3 w-28 rounded" />
         <div className="skeleton-block h-10 w-52 rounded-lg" />

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { ShoppingBag } from "lucide-react";
 import {
   removeCartLineAction,
   updateCartQuantityAction,
@@ -66,9 +67,11 @@ export default async function CartPage({ searchParams }: PageProps) {
         </p>
       ) : null}
       {lines.length === 0 ? (
-        <div className="mt-8 space-y-4">
-          <p className="text-slate">Your cart is empty. Browse the catalogue to add retail items for checkout.</p>
-          <Link href="/shop" className={paperButton({ variant: "primary" })}>Shop workplace supplies</Link>
+        <div className="mt-8 rounded-2xl border border-dashed border-border bg-card p-6 sm:p-8">
+          <ShoppingBag className="size-8 text-paper-green" aria-hidden="true" />
+          <h2 className="mt-4 text-xl font-semibold text-ink">Your cart is ready when you are</h2>
+          <p className="mt-2 max-w-lg text-slate">Browse workplace supplies and add retail items here when you are ready to check out.</p>
+          <Link href="/shop" className={paperButton({ variant: "primary", className: "mt-5" })}>Shop workplace supplies</Link>
         </div>
       ) : (
         <div className="mt-8 space-y-6">

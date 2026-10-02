@@ -27,6 +27,7 @@ describe("MobileNav", () => {
   it("keeps the quote tab active on nested quote routes", () => {
     render(<MobileNav />);
 
+    expect(screen.getByRole("navigation", { name: "Mobile" })).toHaveAttribute("data-mobile-nav");
     expect(screen.getByRole("button", { name: /quote list/i })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("button", { name: /cart/i })).not.toHaveAttribute("aria-current");
   });
