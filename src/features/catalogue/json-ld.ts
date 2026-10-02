@@ -33,7 +33,12 @@ export function productJsonLd(
   const validIsbn = bookIsbn && /^(?:\d{9}[\dX]|\d{13})$/.test(bookIsbn.replace(/[-\s]/g, "")) ? bookIsbn.replace(/[-\s]/g, "") : null;
   const isBook = Boolean(bookAuthor || validIsbn || bookPublisher || bookAttributes.length);
   const description = productSeoDescription(product);
-  const reviewEntities = reviews
+  // Keep structured data truthful even if a stale or malformed review record
+  // reaches this presentation boundary. The repository normally returns only
+  // approved, verified reviews, but validation here prevents invalid ratings
+  // from producing misleading AggregateRating markup.
+  const validReviews = reviews.filter((review) => Number.isFinite(review.rating) && review.rating >= 1 && review.rating <= 5);
+  const reviewEntities = validReviews
     .filter((review) => Boolean(review.displayName?.trim() && review.body?.trim()))
     .map((review) => ({
       "@type": "Review",
@@ -92,12 +97,12 @@ export function productJsonLd(
       : validIsbn
         ? structuredGtin(validIsbn)
         : {}),
-    ...(reviews.length
+    ...(validReviews.length
       ? {
           aggregateRating: {
             "@type": "AggregateRating",
-            ratingValue: (reviews.reduce((sum, review) => sum + review.rating, 0) / reviews.length).toFixed(1),
-            reviewCount: reviews.length,
+            ratingValue: (validReviews.reduce((sum, review) => sum + review.rating, 0) / validReviews.length).toFixed(1),
+            reviewCount: validReviews.length,
             bestRating: 5,
             worstRating: 1,
           },

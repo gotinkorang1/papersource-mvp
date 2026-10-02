@@ -25,6 +25,17 @@ describe("productJsonLd", () => {
     expect(productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4").aggregateRating).toBeUndefined();
   });
 
+  it("ignores malformed ratings instead of publishing misleading markup", () => {
+    const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4", [
+      { rating: 5 },
+      { rating: 0 },
+      { rating: 6 },
+      { rating: Number.NaN },
+    ]);
+
+    expect(json.aggregateRating).toEqual(expect.objectContaining({ ratingValue: "5.0", reviewCount: 1 }));
+  });
+
   it("publishes individual approved reviews when complete review copy exists", () => {
     const json = productJsonLd(product, "http://localhost:3000/product/double-a-premium-a4", [{
       rating: 5,
