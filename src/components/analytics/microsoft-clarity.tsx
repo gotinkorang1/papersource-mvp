@@ -7,6 +7,12 @@ import { CONSENT_EVENT } from "@/components/analytics/consent-banner";
 
 const projectId = publicEnv.NEXT_PUBLIC_CLARITY_PROJECT_ID;
 
+declare global {
+  interface Window {
+    clarity?: (...args: unknown[]) => void;
+  }
+}
+
 /**
  * Loads Microsoft Clarity only after the shared analytics consent choice.
  * The project ID is public, but keeping it configurable prevents local and
@@ -21,7 +27,16 @@ export function MicrosoftClarity() {
   }, []);
 
   useEffect(() => {
-    const onConsentChange = () => setEnabled(hasAnalyticsConsent());
+    const onConsentChange = (event: Event) => {
+      const granted = (event as CustomEvent<string>).detail === "granted";
+      setEnabled(granted);
+      if (typeof window.clarity === "function") {
+        window.clarity("consentv2", {
+          ad_Storage: "denied",
+          analytics_Storage: granted ? "granted" : "denied",
+        });
+      }
+    };
     window.addEventListener(CONSENT_EVENT, onConsentChange);
     return () => window.removeEventListener(CONSENT_EVENT, onConsentChange);
   }, []);

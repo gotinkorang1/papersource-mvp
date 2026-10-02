@@ -6,6 +6,7 @@ import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { normalizeShopCategoryLinks } from "./shop-menu-model";
 import { BUSINESS_PHONE_NUMBERS } from "@/lib/seo";
 import { GROUP_LINKS } from "@/lib/group-links";
+import { AnalyticsPreferences } from "@/components/analytics/analytics-preferences";
 
 export async function StoreFooter() {
   const [managedLinks, categories] = await Promise.all([
@@ -50,6 +51,7 @@ export async function StoreFooter() {
             <Link href="/delivery" className="inline-flex min-h-11 w-fit items-center hover:text-ink hover:underline underline-offset-4">Delivery</Link>
             <Link href="/faq" className="inline-flex min-h-11 w-fit items-center hover:text-ink hover:underline underline-offset-4">FAQs</Link>
             <Link href="/returns" className="inline-flex min-h-11 w-fit items-center hover:text-ink hover:underline underline-offset-4">Returns</Link>
+            <span className="inline-flex min-h-11 w-fit items-center text-xs"><AnalyticsPreferences /></span>
           </nav>
         </div>
         <div>

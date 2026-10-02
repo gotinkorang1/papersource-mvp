@@ -25,7 +25,18 @@ export function GoogleAnalytics() {
   }, []);
 
   useEffect(() => {
-    const onConsentChange = () => setEnabled(hasAnalyticsConsent());
+    const onConsentChange = (event: Event) => {
+      const granted = (event as CustomEvent<string>).detail === "granted";
+      setEnabled(granted);
+      if (typeof window.gtag === "function") {
+        window.gtag("consent", "update", {
+          analytics_storage: granted ? "granted" : "denied",
+          ad_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied",
+        });
+      }
+    };
     window.addEventListener(CONSENT_EVENT, onConsentChange);
     return () => window.removeEventListener(CONSENT_EVENT, onConsentChange);
   }, []);
