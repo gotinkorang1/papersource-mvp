@@ -299,9 +299,9 @@ export const shopMegaColumns = [
   {
     title: "Paper & writing",
     links: [
-      { label: "Paper", href: "/shop/paper" },
-      { label: "Writing", href: "/shop/writing" },
-      { label: "Desk", href: "/shop/desk-essentials" },
+      { label: "Paper", href: "/shop/paper-printing" },
+      { label: "Writing", href: "/shop/writing-marking" },
+      { label: "Desk", href: "/shop/desk-accessories" },
       { label: "Schools", href: "/shop/school-supplies" },
     ],
   },

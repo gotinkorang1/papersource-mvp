@@ -13,6 +13,7 @@ export {
   listBrandDirectory,
   getBrandBySlug,
   getShopMegaColumns,
+  canonicalCategorySlug,
 } from "./queries";
 export { productJsonLd, breadcrumbJsonLd } from "./json-ld";
 export { listApprovedProductReviews } from "@/features/reviews/repository";

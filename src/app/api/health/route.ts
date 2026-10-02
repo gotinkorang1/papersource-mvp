@@ -61,11 +61,14 @@ export async function GET(request: Request) {
   };
   if (detailed) payload.checks = checks;
 
+  const responseHeaders: Record<string, string> = { "Cache-Control": "no-store" };
+  if (!healthy) responseHeaders["Retry-After"] = "60";
+
   return NextResponse.json(
     payload,
     {
       status: healthy ? 200 : 503,
-      headers: { "Cache-Control": "no-store" },
+      headers: responseHeaders,
     },
   );
 }

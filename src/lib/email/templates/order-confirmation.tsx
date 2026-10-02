@@ -41,7 +41,7 @@ OrderConfirmationEmail.PreviewProps = {
   contactName: "Kwame Asante",
   orderNumber: "PSO-2026-000018",
   totalLabel: "GHS 78.99",
-  orderUrl: "http://localhost:3000/order/PSO-2026-000018",
+  orderUrl: "https://www.papersourcegh.com/order/PSO-2026-000018",
   nationwide: false,
   pickup: false,
 } satisfies OrderConfirmationEmailProps;

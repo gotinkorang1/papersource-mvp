@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { createDeliveryZone, deleteDeliveryZone, DeliveryAdminError, updateDeliveryZone } from "@/features/delivery/admin";
 import { readStaffActor } from "@/lib/staff/require";
@@ -39,6 +40,8 @@ export async function POST(request: Request) {
       auditMetadata = { fields: ["name", "region", "code", "pricing", "timing", "active"] };
     }
     await recordAdminAudit({ actorProfileId: actor.profileId, action: auditAction!, resourceType: "delivery_zone", resourceId: auditResourceId, metadata: auditMetadata });
+    revalidateTag("delivery", "max");
+    revalidateTag("catalogue", "max");
   } catch (error) {
     next.searchParams.set("error", error instanceof DeliveryAdminError ? error.message : "Could not update delivery zones. Please check the fields and try again.");
   }

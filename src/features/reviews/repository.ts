@@ -1,4 +1,5 @@
 import { and, desc, eq } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { orderItems, orders, productReviews, productVariants, products } from "@/lib/db/schema";
 
@@ -15,10 +16,7 @@ export type ProductReview = {
 export async function listApprovedProductReviews(productId: string): Promise<ProductReview[]> {
   if (!isDatabaseConfigured()) return [];
   try {
-    return await getDb().select({ id: productReviews.id, rating: productReviews.rating, title: productReviews.title, body: productReviews.body, displayName: productReviews.displayName, createdAt: productReviews.createdAt, verifiedPurchase: productReviews.verifiedPurchase })
-      .from(productReviews)
-      .where(and(eq(productReviews.productId, productId), eq(productReviews.status, "approved"), eq(productReviews.verifiedPurchase, true)))
-      .orderBy(desc(productReviews.createdAt));
+    return await loadApprovedProductReviews(productId);
   } catch {
     // Reviews are additive to the product page. If a hosted environment is
     // still applying the verified-review migration, do not take the whole
@@ -26,6 +24,13 @@ export async function listApprovedProductReviews(productId: string): Promise<Pro
     return [];
   }
 }
+
+const loadApprovedProductReviews = unstable_cache(async function loadApprovedProductReviews(productId: string) {
+    return await getDb().select({ id: productReviews.id, rating: productReviews.rating, title: productReviews.title, body: productReviews.body, displayName: productReviews.displayName, createdAt: productReviews.createdAt, verifiedPurchase: productReviews.verifiedPurchase })
+      .from(productReviews)
+      .where(and(eq(productReviews.productId, productId), eq(productReviews.status, "approved"), eq(productReviews.verifiedPurchase, true)))
+      .orderBy(desc(productReviews.createdAt));
+}, ["approved-product-reviews"], { revalidate: 300, tags: ["reviews"] });
 
 export async function findDeliveredOrderForReview(profileId: string, productId: string) {
   const [eligible] = await getDb()

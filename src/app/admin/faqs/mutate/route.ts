@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { saveFaq } from "@/features/content/admin";
 import { readStaffActor } from "@/lib/staff/require";
@@ -17,6 +18,7 @@ export async function POST(request: Request) {
       status: String(form.get("status") || "draft"),
     });
     await recordAdminAudit({ actorProfileId: actor.profileId, action: id ? "faq_updated" : "faq_created", resourceType: "faq", resourceId: id });
+    revalidateTag("content", "max");
   } catch {
     next.searchParams.set("error", "Could not save FAQ. Please check the fields and try again.");
   }

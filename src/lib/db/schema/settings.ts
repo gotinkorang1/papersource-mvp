@@ -7,7 +7,7 @@ export const storeSettings = pgTable("store_settings", {
   vatRateBps: integer("vat_rate_bps").notNull().default(1500),
   quoteExpiryDays: integer("quote_expiry_days").notNull().default(14),
   whatsappBusinessNumber: text("whatsapp_business_number"),
-  siteUrl: text("site_url").notNull().default("http://localhost:3000"),
+  siteUrl: text("site_url").notNull().default("https://www.papersourcegh.com"),
   paymentsEnabled: boolean("payments_enabled").notNull().default(true),
   paymentMode: paymentModeEnum("payment_mode").notNull().default("test"),
   updatedBy: uuid("updated_by").references(() => profiles.id, { onDelete: "set null" }),

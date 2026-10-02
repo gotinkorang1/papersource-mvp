@@ -5,7 +5,7 @@ import { QuoteAdminActions } from "@/components/admin/quote-admin-actions";
 import { getQuoteForAdmin } from "@/features/quotations/admin";
 import { formatGhs } from "@/lib/money";
 import { signedDocumentPath } from "@/lib/documents/sign";
-import { publicEnv } from "@/lib/env";
+import { SITE_URL } from "@/lib/seo";
 import { requireStaffArea } from "@/lib/staff/require";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
 
@@ -30,7 +30,7 @@ export default async function AdminQuoteDetailPage({
     notFound();
   }
 
-  const site = publicEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  const site = SITE_URL;
   const customerUrl = quote.customerToken ? `${site}/quote/${quote.customerToken}` : null;
   const pickup = quote.addressSnapshot?.deliveryArea === "pickup";
 

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { savePage } from "@/features/content/admin";
 import { readStaffActor } from "@/lib/staff/require";
@@ -18,6 +19,7 @@ export async function POST(request: Request) {
       status: String(form.get("status") || "draft"),
     });
     await recordAdminAudit({ actorProfileId: actor.profileId, action: id ? "content_page_updated" : "content_page_created", resourceType: "content_page", resourceId: id });
+    revalidateTag("content", "max");
   } catch {
     next.searchParams.set("error", "Could not save page. Please check the fields and try again.");
   }

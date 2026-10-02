@@ -65,14 +65,14 @@ const loadCatalogueContext = unstable_cache(async function loadCatalogueContext(
   const db = getDb();
   const [categoryRows, brandRows, zoneRows] = await Promise.all([
     db
-      .select()
+      .select({ id: categories.id, parentId: categories.parentId, name: categories.name, slug: categories.slug, description: categories.description, position: categories.position, imagePublicId: categories.imagePublicId })
       .from(categories)
       .where(and(eq(categories.active, true), isNull(categories.deletedAt))),
     db
-      .select()
+      .select({ id: brands.id, name: brands.name, slug: brands.slug })
       .from(brands)
       .where(and(eq(brands.active, true), isNull(brands.deletedAt))),
-    db.select().from(deliveryZones).where(eq(deliveryZones.active, true)),
+    db.select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active }).from(deliveryZones).where(eq(deliveryZones.active, true)),
   ]);
 
   return {
@@ -103,7 +103,7 @@ export async function listDivisionCategoriesFromDb(): Promise<CatalogueCategoryV
  * sellable product. Keeping this separate from the storefront directory
  * prevents an empty admin-created category from being emitted in the sitemap.
  */
-export async function listIndexableDivisionCategoriesFromDb(): Promise<CatalogueCategoryView[]> {
+const loadIndexableDivisionCategories = unstable_cache(async function loadIndexableDivisionCategories() {
   const { categoryRows } = await loadCatalogueContext();
   const db = getDb();
   const productRows = await db
@@ -147,14 +147,16 @@ export async function listIndexableDivisionCategoriesFromDb(): Promise<Catalogue
       position: category.position,
       imagePublicId: category.imagePublicId,
     }));
+}, ["catalogue-indexable-divisions"], { revalidate: 300, tags: ["catalogue"] });
+
+export async function listIndexableDivisionCategoriesFromDb(): Promise<CatalogueCategoryView[]> {
+  return loadIndexableDivisionCategories();
 }
 
-export async function getCategoryBySlugFromDb(
-  slug: string,
-): Promise<CatalogueCategoryView | null> {
+const loadCategoryBySlug = unstable_cache(async function loadCategoryBySlug(slug: string) {
   const db = getDb();
   const [category] = await db
-    .select()
+    .select({ id: categories.id, parentId: categories.parentId, name: categories.name, slug: categories.slug, description: categories.description, position: categories.position, imagePublicId: categories.imagePublicId })
     .from(categories)
     .where(
       and(
@@ -178,6 +180,12 @@ export async function getCategoryBySlugFromDb(
     position: category.position,
     imagePublicId: category.imagePublicId,
   };
+}, ["catalogue-category-by-slug"], { revalidate: 300, tags: ["catalogue"] });
+
+export async function getCategoryBySlugFromDb(
+  slug: string,
+): Promise<CatalogueCategoryView | null> {
+  return loadCategoryBySlug(slug);
 }
 
 export async function listBrandsFromDb(): Promise<CatalogueBrandView[]> {
@@ -189,12 +197,10 @@ export async function listBrandsFromDb(): Promise<CatalogueBrandView[]> {
   }));
 }
 
-export async function getBrandBySlugFromDb(
-  slug: string,
-): Promise<CatalogueBrandView | null> {
+const loadBrandBySlug = unstable_cache(async function loadBrandBySlug(slug: string) {
   const db = getDb();
   const [brand] = await db
-    .select()
+    .select({ id: brands.id, name: brands.name, slug: brands.slug })
     .from(brands)
     .where(
       and(eq(brands.slug, slug), eq(brands.active, true), isNull(brands.deletedAt)),
@@ -206,6 +212,12 @@ export async function getBrandBySlugFromDb(
   }
 
   return { id: brand.id, name: brand.name, slug: brand.slug };
+}, ["catalogue-brand-by-slug"], { revalidate: 300, tags: ["catalogue"] });
+
+export async function getBrandBySlugFromDb(
+  slug: string,
+): Promise<CatalogueBrandView | null> {
+  return loadBrandBySlug(slug);
 }
 
 const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
@@ -214,9 +226,9 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
 
   const productRows = uniqueCatalogueProducts(await db
     .select({
-      product: products,
-      variant: productVariants,
-      stock: inventory,
+      product: { id: products.id, name: products.name, slug: products.slug, brandId: products.brandId, categoryId: products.categoryId, productType: products.productType, description: products.description, createdAt: products.createdAt, updatedAt: products.updatedAt },
+      variant: { id: productVariants.id, productId: productVariants.productId, sku: productVariants.sku, barcode: productVariants.barcode, unitLabel: productVariants.unitLabel, baseUnitPrice: productVariants.baseUnitPrice, active: productVariants.active },
+      stock: { variantId: inventory.variantId, onHand: inventory.onHand, reserved: inventory.reserved, lowStockThreshold: inventory.lowStockThreshold },
     })
     .from(products)
     .innerJoin(productVariants, eq(productVariants.productId, products.id))
@@ -235,15 +247,15 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
   const [attributeRows, aliasRows, tierRows, imageRows] = productIds.length
     ? await Promise.all([
         db
-          .select()
+          .select({ productId: productAttributes.productId, namespace: productAttributes.namespace, key: productAttributes.key, valueText: productAttributes.valueText, position: productAttributes.position })
           .from(productAttributes)
           .where(inArray(productAttributes.productId, productIds)),
         db
-          .select()
+          .select({ productId: productAliases.productId, alias: productAliases.alias })
           .from(productAliases)
           .where(inArray(productAliases.productId, productIds)),
         db
-          .select()
+          .select({ variantId: priceTiers.variantId, minimumQuantity: priceTiers.minimumQuantity, maximumQuantity: priceTiers.maximumQuantity, unitPrice: priceTiers.unitPrice, requestQuote: priceTiers.requestQuote })
           .from(priceTiers)
           .where(
             and(
@@ -252,7 +264,7 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
             ),
           ),
         db
-          .select()
+          .selectDistinctOn([productImages.productId], { id: productImages.id, productId: productImages.productId, cloudinaryPublicId: productImages.cloudinaryPublicId, alt: productImages.alt, position: productImages.position })
           .from(productImages)
           .where(inArray(productImages.productId, productIds))
           .orderBy(asc(productImages.productId), asc(productImages.position), asc(productImages.id)),
@@ -271,7 +283,47 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
   };
 }, ["catalogue-active-products"], { revalidate: 300, tags: ["catalogue"] });
 
-export async function listBrandDirectoryFromDb() {
+const loadProductDetailContext = unstable_cache(async function loadProductDetailContext(slug: string) {
+  const db = getDb();
+  const { categoryRows, brandRows, deliveryBadge } = await loadCatalogueContext();
+  const [row] = await db
+    .select({
+      product: { id: products.id, name: products.name, slug: products.slug, brandId: products.brandId, categoryId: products.categoryId, productType: products.productType, description: products.description, createdAt: products.createdAt, updatedAt: products.updatedAt },
+      variant: { id: productVariants.id, productId: productVariants.productId, sku: productVariants.sku, barcode: productVariants.barcode, unitLabel: productVariants.unitLabel, baseUnitPrice: productVariants.baseUnitPrice, active: productVariants.active },
+      stock: { variantId: inventory.variantId, onHand: inventory.onHand, reserved: inventory.reserved, lowStockThreshold: inventory.lowStockThreshold },
+    })
+    .from(products)
+    .innerJoin(productVariants, eq(productVariants.productId, products.id))
+    .leftJoin(inventory, eq(inventory.variantId, productVariants.id))
+    .where(and(eq(products.slug, slug), eq(products.status, "active"), isNull(products.deletedAt), eq(productVariants.active, true)))
+    .limit(1);
+
+  if (!row) return null;
+
+  const [attributeRows, aliasRows, tierRows, imageRows] = await Promise.all([
+    db
+      .select({ productId: productAttributes.productId, namespace: productAttributes.namespace, key: productAttributes.key, valueText: productAttributes.valueText, position: productAttributes.position })
+      .from(productAttributes)
+      .where(eq(productAttributes.productId, row.product.id)),
+    db
+      .select({ productId: productAliases.productId, alias: productAliases.alias })
+      .from(productAliases)
+      .where(eq(productAliases.productId, row.product.id)),
+    db
+      .select({ variantId: priceTiers.variantId, minimumQuantity: priceTiers.minimumQuantity, maximumQuantity: priceTiers.maximumQuantity, unitPrice: priceTiers.unitPrice, requestQuote: priceTiers.requestQuote })
+      .from(priceTiers)
+      .where(and(eq(priceTiers.variantId, row.variant.id), eq(priceTiers.active, true))),
+    db
+      .select({ id: productImages.id, productId: productImages.productId, cloudinaryPublicId: productImages.cloudinaryPublicId, alt: productImages.alt, position: productImages.position })
+      .from(productImages)
+      .where(eq(productImages.productId, row.product.id))
+      .orderBy(asc(productImages.position), asc(productImages.id)),
+  ]);
+
+  return { categoryRows, brandRows, deliveryBadge, productRows: [row], attributeRows, aliasRows, tierRows, imageRows };
+}, ["catalogue-product-detail"], { revalidate: 300, tags: ["catalogue"] });
+
+const loadBrandDirectory = unstable_cache(async function loadBrandDirectory() {
   const db = getDb();
   const rows = await db
     .select({
@@ -303,6 +355,10 @@ export async function listBrandDirectoryFromDb() {
     directory.set(row.brandId, entry);
   }
   return [...directory.values()];
+}, ["catalogue-brand-directory"], { revalidate: 300, tags: ["catalogue"] });
+
+export async function listBrandDirectoryFromDb() {
+  return loadBrandDirectory();
 }
 
 function toCardFromRow(
@@ -435,11 +491,9 @@ export async function listProductCardsFromDb(
 export async function getProductBySlugFromDb(
   slug: string,
 ): Promise<ProductDetailModel | null> {
-  const ctx = await loadActiveProducts();
-  const row = ctx.productRows.find((entry) => entry.product.slug === slug);
-  if (!row) {
-    return null;
-  }
+  const ctx = await loadProductDetailContext(slug);
+  if (!ctx) return null;
+  const row = ctx.productRows[0];
 
   const category = ctx.categoryRows.find((entry) => entry.id === row.product.categoryId);
   const division = category?.parentId
@@ -459,8 +513,6 @@ export async function getProductBySlugFromDb(
     .map((attribute) => attribute.valueText);
   const seenImageSources = new Set<string>();
   const imageSources = ctx.imageRows
-    .filter((image) => image.productId === row.product.id)
-    .sort((a, b) => a.position - b.position)
     .map((image) => ({
       src: cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? "",
       alt: productImageAlt({ name: row.product.name, specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes), alt: image.alt }),

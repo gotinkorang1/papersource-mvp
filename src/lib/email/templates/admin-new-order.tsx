@@ -35,7 +35,7 @@ AdminNewOrderEmail.PreviewProps = {
   orderNumber: "PSO-2026-000018",
   source: "cart",
   totalLabel: "GHS 78.99",
-  adminUrl: "http://localhost:3000/admin/orders/preview-id",
+  adminUrl: "https://www.papersourcegh.com/admin/orders/preview-id",
   pickup: false,
 } satisfies AdminNewOrderEmailProps;
 

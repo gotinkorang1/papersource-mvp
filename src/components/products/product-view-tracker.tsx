@@ -22,11 +22,20 @@ export function ProductViewTracker({ productId, sku, productName, pricePesewas, 
       return;
     }
 
+    const eventKey = `papersource.product-view.${productId}.${new Date().toISOString().slice(0, 10)}`;
+    try {
+      if (window.sessionStorage.getItem(eventKey)) return;
+    } catch {
+      // Continue without the client-side duplicate guard when storage is blocked.
+    }
+
     void fetch("/api/catalogue/view", {
       method: "POST",
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ productId, fingerprint }),
       keepalive: true,
+    }).then(() => {
+      try { window.sessionStorage.setItem(eventKey, "1"); } catch { /* best effort */ }
     }).catch(() => undefined);
   }, [enabled, productId, pricePesewas, productName, sku]);
 

@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 export const dynamic = "force-dynamic";
 
 type PageProps = {
-  searchParams: Promise<{ error?: string }>;
+  searchParams: Promise<{ error?: string; retryable?: string }>;
 };
 
 export default async function AdminLoginPage({ searchParams }: PageProps) {
@@ -24,7 +24,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
     }
   }
 
-  const { error } = await searchParams;
+  const { error, retryable } = await searchParams;
 
   return (
     <main className="flex min-h-screen items-center justify-center bg-cream px-4 py-10 sm:py-16">
@@ -36,7 +36,7 @@ export default async function AdminLoginPage({ searchParams }: PageProps) {
           to profiles assigned an entry in <code>admin_roles</code>.
         </p>
         <div className="mt-6">
-          <StaffLoginForm error={error} />
+          <StaffLoginForm error={error} retryable={retryable === "1"} />
         </div>
       </div>
     </main>

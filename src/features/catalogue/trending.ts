@@ -1,4 +1,5 @@
-import { and, count, gte, inArray } from "drizzle-orm";
+import { count, gte } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 import { getDb } from "@/lib/db/client";
 import { productViewEvents } from "@/lib/db/schema";
 
@@ -53,14 +54,28 @@ export async function recordProductOpen(input: { productId: string; fingerprint:
   return Boolean(inserted);
 }
 
-export async function listTrendingProductIds(productIds: string[], now = new Date()) {
-  const ids = [...new Set(productIds.filter(Boolean))];
-  if (!ids.length) return new Map<string, number>();
+async function queryTrendingProductCounts(now: Date) {
   const windowStart = new Date(now.getTime() - TRENDING_WINDOW_DAYS * 24 * 60 * 60 * 1000);
   const rows = await getDb()
     .select({ productId: productViewEvents.productId, opens: count(productViewEvents.id) })
     .from(productViewEvents)
-    .where(and(inArray(productViewEvents.productId, ids), gte(productViewEvents.occurredAt, windowStart)))
+    .where(gte(productViewEvents.occurredAt, windowStart))
     .groupBy(productViewEvents.productId);
   return new Map(rows.map((row) => [row.productId, Number(row.opens)]));
+}
+
+const loadTrendingProductCounts = unstable_cache(async function loadTrendingProductCounts() {
+  return queryTrendingProductCounts(new Date());
+}, ["catalogue-trending-counts"], { revalidate: 60, tags: ["catalogue-trending"] });
+
+export async function listTrendingProductIds(productIds: string[], now?: Date) {
+  const ids = [...new Set(productIds.filter(Boolean))];
+  if (!ids.length) return new Map<string, number>();
+  // Keep explicit timestamps deterministic for callers that need a specific
+  // reporting window; storefront calls without one use the short-lived cache.
+  const counts = now ? await queryTrendingProductCounts(now) : await loadTrendingProductCounts();
+  return new Map(ids.flatMap((id) => {
+    const opens = counts.get(id);
+    return opens === undefined ? [] : [[id, opens] as const];
+  }));
 }

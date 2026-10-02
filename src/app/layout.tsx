@@ -7,6 +7,7 @@ import "./globals.css";
 import { PwaRegister } from "@/components/pwa/pwa-register";
 import { PwaSplash } from "@/components/pwa/pwa-splash";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
+import { MicrosoftClarity } from "@/components/analytics/microsoft-clarity";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
 import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, SEO_KEYWORDS, SITE_NAME, SITE_URL, siteJsonLd } from "@/lib/seo";
 
@@ -101,6 +102,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         <PwaRegister />
         <Analytics />
         <GoogleAnalytics />
+        <MicrosoftClarity />
         <ConsentBanner />
       </body>
     </html>

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { saveNavigation } from "@/features/content/admin";
 import { readStaffActor } from "@/lib/staff/require";
@@ -18,6 +19,7 @@ export async function POST(request: Request) {
       active: String(form.get("active") || "false") === "true",
     });
     await recordAdminAudit({ actorProfileId: actor.profileId, action: id ? "navigation_item_updated" : "navigation_item_created", resourceType: "navigation_item", resourceId: id });
+    revalidateTag("content", "max");
   } catch {
     next.searchParams.set("error", "Could not save navigation item. Please check the fields and try again.");
   }

@@ -1,8 +1,5 @@
-import { and, eq, isNull } from "drizzle-orm";
 import { NextResponse } from "next/server";
 import { recordProductOpen } from "@/features/catalogue/trending";
-import { getDb } from "@/lib/db/client";
-import { products } from "@/lib/db/schema";
 import { validateProductViewPayload } from "@/features/catalogue/view-route";
 
 export async function POST(request: Request) {
@@ -14,8 +11,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ ok: false }, { status: 400, headers });
     }
     const { productId, fingerprint } = payload;
-    const [product] = await getDb().select({ id: products.id }).from(products).where(and(eq(products.id, productId), isNull(products.deletedAt))).limit(1);
-    if (!product) return NextResponse.json({ ok: false }, { status: 404, headers });
+    // The insert's foreign key is the source of truth. Avoid a second round
+    // trip for an analytics event; this endpoint is deliberately non-critical.
     await recordProductOpen({ productId, fingerprint });
     return NextResponse.json({ ok: true }, { status: 202, headers });
   } catch {

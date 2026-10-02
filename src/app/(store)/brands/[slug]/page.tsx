@@ -31,7 +31,7 @@ export async function generateMetadata({
   return {
     ...pageMetadata({
     title: `${brand.name} supplies in Ghana`,
-    description: `${brand.name} workplace supplies from PaperSource. Accra and Tema delivery.`,
+    description: `${brand.name} office and workplace supplies from PaperSource Ghana. Shop paper, writing and printing essentials with delivery across Accra and Tema.`,
     path: `/brands/${brand.slug}`,
     keywords: [`${brand.name} Ghana`, `${brand.name} Accra`, `${brand.name} stationery`],
     }),
@@ -61,7 +61,7 @@ export default async function BrandPage({ params, searchParams }: PageProps) {
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-16">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${brand.name} supplies in Ghana`, description: `${brand.name} workplace supplies from PaperSource Ghana.`, url: absoluteUrl(`/brands/${brand.slug}`), totalItems: products.length, items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: collectionItemPosition(page, pageSize, index) })) })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(collectionPageJsonLd({ name: `${brand.name} supplies in Ghana`, description: `${brand.name} office and workplace supplies from PaperSource Ghana, with delivery across Accra and Tema.`, url: absoluteUrl(`/brands/${brand.slug}`), totalItems: products.length, items: visibleProducts.map((product, index) => ({ name: product.name, url: absoluteUrl(`/product/${product.slug}`), position: collectionItemPosition(page, pageSize, index) })) })) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Brands", href: "/brands" }, { name: brand.name, href: `/brands/${brand.slug}` }], absoluteUrl("/").replace(/\/$/, ""))) }} />
       <Breadcrumbs items={[{ label: "Brands", href: "/brands" }, { label: brand.name }]} />
       <div className="flex flex-wrap items-start gap-3"><h1 className="text-3xl text-ink">{brand.name}</h1>{canEdit ? <Link href={`/admin/brands#brand-${brand.id}`} className="inline-flex min-h-9 items-center rounded-md border border-border px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Edit brand</Link> : null}</div>

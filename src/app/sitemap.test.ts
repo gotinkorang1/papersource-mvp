@@ -1,9 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 
 vi.mock("@/features/catalogue", () => ({
+  canonicalCategorySlug: (slug: string) => slug === "paper" ? "paper-printing" : slug,
   listBrands: async () => [{ slug: "example-brand" }],
   listBrandDirectory: async () => [{ slug: "catalogue-brand", name: "Catalogue Brand", categories: [] }],
-  listIndexableDivisionCategories: async () => [{ slug: "pens" }],
+  listIndexableDivisionCategories: async () => [{ slug: "pens" }, { slug: "paper" }],
   listProductCards: async () => [{ slug: "blue-pen", updatedAt: new Date("2026-09-10T00:00:00Z"), imageSrc: "https://cdn.example/blue-pen.jpg" }],
 }));
 vi.mock("@/features/content", () => ({
@@ -31,6 +32,8 @@ describe("sitemap", () => {
     expect(entries.some((entry) => entry.url.endsWith("/quick-order"))).toBe(false);
     expect(entries.some((entry) => entry.url.endsWith("/brands/catalogue-brand"))).toBe(true);
     expect(entries.some((entry) => entry.url.endsWith("/brands/example-brand"))).toBe(false);
+    expect(entries.some((entry) => entry.url.endsWith("/shop/paper"))).toBe(false);
+    expect(entries.some((entry) => entry.url.endsWith("/shop/paper-printing"))).toBe(true);
   });
 
   it("does not publish duplicate canonical URLs", async () => {

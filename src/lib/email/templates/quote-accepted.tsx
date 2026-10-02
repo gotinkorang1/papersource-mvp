@@ -32,7 +32,7 @@ QuoteAcceptedEmail.PreviewProps = {
   contactName: "Ama Mensah",
   quoteNumber: "PSQ-00219",
   orderNumber: "PSO-2026-000017",
-  orderUrl: "http://localhost:3000/order/PSO-2026-000017",
+  orderUrl: "https://www.papersourcegh.com/order/PSO-2026-000017",
 } satisfies QuoteAcceptedEmailProps;
 
 export default QuoteAcceptedEmail;

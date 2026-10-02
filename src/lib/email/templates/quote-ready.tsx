@@ -33,7 +33,7 @@ QuoteReadyEmail.PreviewProps = {
   contactName: "Ama Mensah",
   quoteNumber: "PSQ-00219",
   totalLabel: "GHS 1,240.00",
-  quoteUrl: "http://localhost:3000/quote/preview-token",
+  quoteUrl: "https://www.papersourcegh.com/quote/preview-token",
 } satisfies QuoteReadyEmailProps;
 
 export default QuoteReadyEmail;

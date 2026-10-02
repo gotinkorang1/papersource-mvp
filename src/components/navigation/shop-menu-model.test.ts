@@ -14,9 +14,20 @@ describe("shop menu catalogue model", () => {
     expect(links.filter((link) => link.href === "/shop/school-supplies")).toHaveLength(1);
   });
 
+  it("normalizes legacy live category slugs before creating links", () => {
+    const links = buildShopMenuColumns([
+      { name: "Paper", slug: "paper" },
+      { name: "Paper & Printing", slug: "paper-printing" },
+    ]).flatMap((column) => column.links);
+
+    expect(links).toEqual([{ label: "Paper", href: "/shop/paper-printing" }]);
+  });
+
   it("keeps the fallback catalogue when no live categories are available", () => {
     const links = buildShopMenuColumns([]).flatMap((column) => column.links);
     expect(links).toContainEqual({ label: "Workplace", href: "/shop/workplace" });
+    expect(links).toContainEqual({ label: "Paper", href: "/shop/paper-printing" });
+    expect(links).not.toContainEqual({ label: "Paper", href: "/shop/paper" });
   });
 
   it("skips malformed live category links", () => {
@@ -27,7 +38,7 @@ describe("shop menu catalogue model", () => {
       { name: "Paper duplicate", slug: "PAPER" },
     ]).flatMap((column) => column.links);
 
-    expect(links).toEqual([{ label: "Paper", href: "/shop/paper" }]);
+    expect(links).toEqual([{ label: "Paper", href: "/shop/paper-printing" }]);
   });
 
   it("ignores runtime records with missing text fields", () => {

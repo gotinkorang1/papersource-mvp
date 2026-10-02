@@ -3,6 +3,7 @@ import { documentOwner } from "@/lib/customer/commerce-identity";
 import { initializePaystackTransaction } from "@/lib/paystack/client";
 import { pesewasToPaystackAmount } from "@/lib/paystack/amount";
 import { publicEnv } from "@/lib/env";
+import { SITE_URL } from "@/lib/seo";
 import { getDb } from "@/lib/db/client";
 import { getStoreSettings } from "@/features/settings/admin";
 import { orders, payments } from "@/lib/db/schema";
@@ -18,7 +19,7 @@ export class PaymentError extends Error {
 const OPEN_STATUSES = ["initialized", "pending"] as const;
 
 function siteUrl() {
-  return publicEnv.NEXT_PUBLIC_SITE_URL || "http://localhost:3000";
+  return publicEnv.NEXT_PUBLIC_SITE_URL || SITE_URL;
 }
 
 export async function initializeOrderPayment(input: {

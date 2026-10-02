@@ -33,7 +33,7 @@ QuoteRevisedEmail.PreviewProps = {
   contactName: "Ama Mensah",
   previousNumber: "PSQ-2026-000219",
   quoteNumber: "PSQ-2026-000220",
-  quoteUrl: "http://localhost:3000/quote/preview-token",
+  quoteUrl: "https://www.papersourcegh.com/quote/preview-token",
 } satisfies QuoteRevisedEmailProps;
 
 export default QuoteRevisedEmail;

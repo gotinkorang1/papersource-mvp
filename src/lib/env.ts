@@ -8,6 +8,7 @@ const publicEnvSchema = z.object({
   NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: z.string().optional(),
   NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY: z.string().optional(),
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  NEXT_PUBLIC_CLARITY_PROJECT_ID: z.string().optional(),
 });
 
 export const publicEnv = publicEnvSchema.parse({
@@ -18,6 +19,7 @@ export const publicEnv = publicEnvSchema.parse({
   NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
+  NEXT_PUBLIC_CLARITY_PROJECT_ID: process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID,
 });
 
 export function assertServerSecret(name: string, value: string | undefined) {

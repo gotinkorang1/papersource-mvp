@@ -6,7 +6,7 @@ vi.mock("@/lib/email/render-html", () => ({
   renderText: async () => "RFQ-2026-000238",
 }));
 
-import { isLiveEmail } from "@/lib/email/config";
+import { isLiveEmail, siteUrl } from "@/lib/email/config";
 import { sendTransactional } from "@/lib/email/send";
 import { customerEmailFromSnapshot } from "@/lib/email/snapshot";
 import { listMockInbox, resetMockInbox } from "@/lib/email/transport";
@@ -17,6 +17,14 @@ afterEach(() => {
 });
 
 describe("email transport", () => {
+  it("normalises the production apex host for transactional links", () => {
+    const previous = process.env.NEXT_PUBLIC_SITE_URL;
+    process.env.NEXT_PUBLIC_SITE_URL = "https://papersourcegh.com/";
+    expect(siteUrl()).toBe("https://www.papersourcegh.com");
+    if (previous === undefined) delete process.env.NEXT_PUBLIC_SITE_URL;
+    else process.env.NEXT_PUBLIC_SITE_URL = previous;
+  });
+
   it("stays on the mock inbox unless EMAIL_MODE is live", () => {
     expect(isLiveEmail()).toBe(false);
     process.env.EMAIL_MODE = "live";

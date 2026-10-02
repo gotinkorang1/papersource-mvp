@@ -34,8 +34,8 @@ export function ReviewRequestEmail({ contactName, orderNumber, orderUrl, product
 ReviewRequestEmail.PreviewProps = {
   contactName: "Kwame Asante",
   orderNumber: "PSO-2026-000018",
-  orderUrl: "http://localhost:3000/order/PSO-2026-000018",
-  products: [{ name: "A4 Copier Paper", url: "http://localhost:3000/product/a4-copier-paper" }],
+  orderUrl: "https://www.papersourcegh.com/order/PSO-2026-000018",
+  products: [{ name: "A4 Copier Paper", url: "https://www.papersourcegh.com/product/a4-copier-paper" }],
 } satisfies ReviewRequestEmailProps;
 
 export default ReviewRequestEmail;

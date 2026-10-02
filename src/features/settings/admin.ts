@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { unstable_cache } from "next/cache";
 import { z } from "zod";
 import { getDb, isDatabaseConfigured } from "@/lib/db/client";
 import { storeSettings } from "@/lib/db/schema";
@@ -10,7 +11,7 @@ export const DEFAULT_STORE_SETTINGS = {
   vatRateBps: 1500,
   quoteExpiryDays: 14,
   whatsappBusinessNumber: null as string | null,
-  siteUrl: "http://localhost:3000",
+  siteUrl: "https://www.papersourcegh.com",
   paymentsEnabled: true,
   paymentMode: "test" as const,
   updatedAt: null as Date | null,
@@ -72,6 +73,10 @@ export function parseStoreSettings(input: StoreSettingsForm) {
 
 export async function getStoreSettings() {
   if (!isDatabaseConfigured()) return DEFAULT_STORE_SETTINGS;
+  return loadStoreSettings();
+}
+
+const loadStoreSettings = unstable_cache(async function loadStoreSettings() {
   try {
     const [row] = await getDb().select().from(storeSettings).where(eq(storeSettings.id, "store")).limit(1);
     return row ?? DEFAULT_STORE_SETTINGS;
@@ -82,7 +87,7 @@ export async function getStoreSettings() {
     if (code === "42P01") return DEFAULT_STORE_SETTINGS;
     throw error;
   }
-}
+}, ["store-settings"], { revalidate: 60, tags: ["settings"] });
 
 export async function saveStoreSettings(input: StoreSettingsForm & { role: StaffRole; actorId: string }) {
   if (!canAccessAdmin(input.role, "settings", "write")) {

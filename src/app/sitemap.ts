@@ -1,5 +1,5 @@
 import type { MetadataRoute } from "next";
-import { listBrandDirectory, listIndexableDivisionCategories, listProductCards } from "@/features/catalogue";
+import { canonicalCategorySlug, listBrandDirectory, listIndexableDivisionCategories, listProductCards } from "@/features/catalogue";
 import { listPublishedPages } from "@/features/content";
 import { SITE_URL } from "@/lib/seo";
 
@@ -36,7 +36,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       listPublishedPages(),
     ]), SITEMAP_DATA_TIMEOUT_MS);
     entries.push(
-      ...categories.map((category) => ({ url: `${SITE_URL}/shop/${category.slug}`, changeFrequency: "daily" as const, priority: 0.8 })),
+      ...categories.map((category) => ({ url: `${SITE_URL}/shop/${canonicalCategorySlug(category.slug)}`, changeFrequency: "daily" as const, priority: 0.8 })),
       ...brands.map((brand) => ({ url: `${SITE_URL}/brands/${brand.slug}`, changeFrequency: "weekly" as const, priority: 0.6 })),
       ...products.map((product) => ({
         url: `${SITE_URL}/product/${product.slug}`,

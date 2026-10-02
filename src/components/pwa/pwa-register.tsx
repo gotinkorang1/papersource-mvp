@@ -63,7 +63,12 @@ export function PwaRegister() {
     };
     window.addEventListener("beforeinstallprompt", onInstall);
     window.addEventListener("appinstalled", onInstalled);
-    setDismissed(readSessionFlag(dismissKey) || isInstallSuppressed(dismissKey));
+    // Defer browser-storage hydration until after the effect commits. This
+    // avoids a synchronous state update during effect setup and keeps the
+    // install banner stable when switching between storefront and admin.
+    const dismissedTimeout = window.setTimeout(() => {
+      setDismissed(readSessionFlag(dismissKey) || isInstallSuppressed(dismissKey));
+    }, 0);
     const onVisibilityChange = () => {
       if (document.visibilityState === "visible" && registration) {
         void registration.update().catch(() => undefined);
@@ -72,6 +77,7 @@ export function PwaRegister() {
     document.addEventListener("visibilitychange", onVisibilityChange, { passive: true });
     return () => {
       window.clearTimeout(iosTimeout);
+      window.clearTimeout(dismissedTimeout);
       window.removeEventListener("beforeinstallprompt", onInstall);
       window.removeEventListener("appinstalled", onInstalled);
       document.removeEventListener("visibilitychange", onVisibilityChange);

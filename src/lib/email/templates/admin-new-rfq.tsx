@@ -32,7 +32,7 @@ AdminNewRfqEmail.PreviewProps = {
   quoteNumber: "RFQ-2026-000238",
   organizationName: "Harbour Logistics",
   contactName: "Ama Mensah",
-  adminUrl: "http://localhost:3000/admin/quotes/preview-id",
+  adminUrl: "https://www.papersourcegh.com/admin/quotes/preview-id",
 } satisfies AdminNewRfqEmailProps;
 
 export default AdminNewRfqEmail;

@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidateTag } from "next/cache";
 import { recordAdminAudit } from "@/features/admin/audit";
 import { setReviewStatus } from "@/features/reviews/admin";
 import { readStaffActor } from "@/lib/staff/require";
@@ -15,6 +16,7 @@ export async function POST(request: Request) {
     if (!/^[0-9a-f-]{36}$/i.test(id) || !["approved", "rejected"].includes(status)) throw new Error("Invalid review action.");
     await setReviewStatus(actor.role, id, status as "approved" | "rejected");
     await recordAdminAudit({ actorProfileId: actor.profileId, action: `review_${status}`, resourceType: "product_review", resourceId: id });
+    revalidateTag("reviews", "max");
   } catch (error) {
     next.searchParams.set("error", error instanceof Error && error.message === "Invalid review action." ? error.message : "Could not update review. Please try again.");
   }

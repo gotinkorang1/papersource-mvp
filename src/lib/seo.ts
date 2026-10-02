@@ -24,7 +24,7 @@ function canonicalSiteUrl(raw: string) {
 
 export const SITE_URL = canonicalSiteUrl(publicEnv.NEXT_PUBLIC_SITE_URL || "https://www.papersourcegh.com");
 export const DEFAULT_DESCRIPTION =
-  "Office stationery, paper, printing supplies and workplace essentials delivered across Accra and Tema. Nationwide supply on request.";
+  "Shop office stationery, A4 paper, printer toner, school supplies and workplace essentials from PaperSource Ghana, with Accra, Tema and nationwide supply.";
 export const DEFAULT_SHARE_IMAGE = "/images/catalogue-stationery-generated.png";
 export const SEO_KEYWORDS = [
   "office supplies Ghana",

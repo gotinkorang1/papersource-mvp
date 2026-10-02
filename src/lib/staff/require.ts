@@ -25,21 +25,28 @@ export async function readStaffActor(): Promise<StaffActor | null> {
   const email = data.user?.email?.trim().toLowerCase();
   if (error || !email) return null;
 
-  const db = getDb();
-  const [row] = await db
-    .select({
-      profileId: profiles.id,
-      email: profiles.email,
-      fullName: profiles.fullName,
-      phone: profiles.phone,
-      role: adminRoles.role,
-    })
-    .from(adminRoles)
-    .innerJoin(profiles, eq(profiles.id, adminRoles.profileId))
-    .where(eq(profiles.email, email))
-    .limit(1);
+  try {
+    const db = getDb();
+    const [row] = await db
+      .select({
+        profileId: profiles.id,
+        email: profiles.email,
+        fullName: profiles.fullName,
+        phone: profiles.phone,
+        role: adminRoles.role,
+      })
+      .from(adminRoles)
+      .innerJoin(profiles, eq(profiles.id, adminRoles.profileId))
+      .where(eq(profiles.email, email))
+      .limit(1);
 
-  return row ?? null;
+    return row ?? null;
+  } catch {
+    // Identity is optional on public pages and on the login screen. If the
+    // hosted database is temporarily restricted, fail closed without turning
+    // the page into a 500; protected routes still redirect to sign-in.
+    return null;
+  }
 }
 
 export async function requireStaff(): Promise<StaffActor> {

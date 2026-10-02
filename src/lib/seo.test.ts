@@ -59,6 +59,12 @@ describe("productSeoTitle", () => {
 });
 
 describe("pageMetadata", () => {
+  it("keeps the default storefront description useful for search previews", () => {
+    expect(seo.DEFAULT_DESCRIPTION.length).toBeGreaterThanOrEqual(120);
+    expect(seo.DEFAULT_DESCRIPTION.length).toBeLessThanOrEqual(160);
+    expect(seo.DEFAULT_DESCRIPTION).toContain("Ghana");
+  });
+
   it("keeps unknown public pages out of search results and canonical clusters", () => {
     expect(notFoundPageMetadata("Brand not found")).toMatchObject({
       title: "Brand not found",

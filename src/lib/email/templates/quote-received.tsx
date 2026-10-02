@@ -30,7 +30,7 @@ export function QuoteReceivedEmail({
 QuoteReceivedEmail.PreviewProps = {
   contactName: "Ama Mensah",
   quoteNumber: "RFQ-2026-000238",
-  quoteUrl: "http://localhost:3000/quote/preview-token",
+  quoteUrl: "https://www.papersourcegh.com/quote/preview-token",
 } satisfies QuoteReceivedEmailProps;
 
 export default QuoteReceivedEmail;

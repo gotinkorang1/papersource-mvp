@@ -21,7 +21,12 @@ export async function POST(request: Request) {
     const response = NextResponse.redirect(new URL("/admin", origin), 303);
     return response;
   } catch (error) {
-    if (error instanceof StaffAuthError || error instanceof z.ZodError) {
+    if (error instanceof StaffAuthError) {
+      loginUrl.searchParams.set("error", error.message);
+      if (error.code === "unavailable") loginUrl.searchParams.set("retryable", "1");
+      return NextResponse.redirect(loginUrl, 303);
+    }
+    if (error instanceof z.ZodError) {
       loginUrl.searchParams.set("error", "That staff sign-in is not valid.");
       return NextResponse.redirect(loginUrl, 303);
     }
