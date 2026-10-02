@@ -3,7 +3,9 @@ import { renderGoogleShoppingFeed, shoppingFeedTitle } from "@/features/catalogu
 import { absoluteUrl } from "@/lib/seo";
 
 export const revalidate = 3600;
-export const dynamic = "force-dynamic";
+// Keep the feed on ISR rather than forcing a database query for every crawler
+// request. Product and price changes are reflected on the next hourly refresh,
+// while repeated Merchant Center fetches are served from the edge cache.
 
 export async function GET() {
   const cards = await listProductCards();
