@@ -23,8 +23,13 @@ export function ProductViewTracker({ productId, sku, productName, pricePesewas, 
     }
 
     const eventKey = `papersource.product-view.${productId}.${new Date().toISOString().slice(0, 10)}`;
+    let sessionStorageAvailable = false;
     try {
       if (window.sessionStorage.getItem(eventKey)) return;
+      // Claim the daily slot before the request starts so rapid navigation does
+      // not send duplicate view events while the first request is in flight.
+      window.sessionStorage.setItem(eventKey, "pending");
+      sessionStorageAvailable = true;
     } catch {
       // Continue without the client-side duplicate guard when storage is blocked.
     }
@@ -35,8 +40,12 @@ export function ProductViewTracker({ productId, sku, productName, pricePesewas, 
       body: JSON.stringify({ productId, fingerprint }),
       keepalive: true,
     }).then(() => {
+      if (!sessionStorageAvailable) return;
       try { window.sessionStorage.setItem(eventKey, "1"); } catch { /* best effort */ }
-    }).catch(() => undefined);
+    }).catch(() => {
+      if (!sessionStorageAvailable) return;
+      try { window.sessionStorage.removeItem(eventKey); } catch { /* best effort */ }
+    });
   }, [enabled, productId, pricePesewas, productName, sku]);
 
   return null;
