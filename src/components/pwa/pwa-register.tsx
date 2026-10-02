@@ -35,6 +35,8 @@ export function PwaRegister() {
   const installEventRef = useRef<BeforeInstallPromptEvent | null>(null);
 
   useEffect(() => {
+    // Do not let a production service worker make local development appear stale.
+    if (process.env.NODE_ENV !== "production") return;
     if (!("serviceWorker" in navigator)) return;
     const iosStandalone = Boolean((window.navigator as Navigator & { standalone?: boolean }).standalone);
     const iosInstallable = isIosInstallable({ platform: navigator.platform, userAgent: navigator.userAgent, standalone: iosStandalone, touchPoints: navigator.maxTouchPoints });
