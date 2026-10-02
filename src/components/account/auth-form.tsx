@@ -43,11 +43,11 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
       const client = createSupabaseBrowserClient();
       const callback = new URL("/auth/confirm", window.location.origin);
       callback.searchParams.set("next", safeCustomerReturnPath(next));
-      const { error } = await client.auth.signInWithOAuth({
+      const { data, error } = await client.auth.signInWithOAuth({
         provider,
         options: { redirectTo: callback.toString() },
       });
-      if (error) setSocialError(`${provider === "azure" ? "Microsoft" : provider[0].toUpperCase() + provider.slice(1)} sign-in is unavailable right now. Try email sign-in instead.`);
+      if (error || !data?.url) setSocialError(`${provider === "azure" ? "Microsoft" : provider[0].toUpperCase() + provider.slice(1)} sign-in is unavailable right now. Try email sign-in instead.`);
     } catch {
       setSocialError("Social sign-in is unavailable right now. Try email sign-in instead.");
     } finally {

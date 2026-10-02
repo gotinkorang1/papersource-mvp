@@ -55,6 +55,12 @@ describe("customer authentication forms", () => {
     expect(await screen.findByRole("alert")).toHaveTextContent(/Google sign-in is unavailable/i);
     expect(screen.queryByText("private client secret")).not.toBeInTheDocument();
   });
+  it("shows a safe error when the provider returns no redirect URL", async () => {
+    supabase.signInWithOAuth.mockResolvedValueOnce({ data: { url: null }, error: null });
+    render(<CustomerAuthForm mode="login" />);
+    await userEvent.click(screen.getByRole("button", { name: "Continue with Google" }));
+    expect(await screen.findByRole("alert")).toHaveTextContent(/Google sign-in is unavailable/i);
+  });
   it("labels registration name and phone without mixing them with email", () => {
     render(<CustomerAuthForm mode="register" />);
     expect(screen.getByLabelText("Full name")).toHaveAttribute("autocomplete", "name");
@@ -114,6 +120,11 @@ describe("customer authentication forms", () => {
     expect(screen.getByRole("alert")).toHaveTextContent(/invalid or expired/i);
     expect(screen.getByRole("link", { name: "Forgot password?" })).toHaveAttribute("href", "/forgot-password");
     expect(screen.getByRole("link", { name: "Create an account" })).toHaveAttribute("href", "/register?next=%2Faccount");
+  });
+  it("shows a neutral social-login message for provider callback failures", async () => {
+    render(await LoginPage({ searchParams: Promise.resolve({ authError: "oauth", error: "access_denied" }) }));
+    expect(screen.getByRole("alert")).toHaveTextContent(/Social sign-in was cancelled or is temporarily unavailable/i);
+    expect(screen.queryByText("access_denied")).not.toBeInTheDocument();
   });
   it("registration does not reflect arbitrary provider errors from the query string", async () => {
     render(await RegisterPage({ searchParams: Promise.resolve({ error: "private-token-detail", next: "/checkout" }) }));

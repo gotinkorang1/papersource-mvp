@@ -8,13 +8,23 @@ import { GUEST_SESSION_COOKIE, isGuestSessionId } from "@/lib/session/constants"
 
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
-  const failurePath = type === "recovery" ? "/forgot-password?authError=confirmation" : "/login?authError=confirmation";
+  const isOAuthFailure = request.nextUrl.searchParams.has("error") || request.nextUrl.searchParams.has("error_code");
+  const failurePath = type === "recovery"
+    ? "/forgot-password?authError=confirmation"
+    : isOAuthFailure
+      ? "/login?authError=oauth"
+      : "/login?authError=confirmation";
   // Construct a clean URL; never carry token_hash or other untrusted query data.
   const response = NextResponse.redirect(new URL(failurePath, request.url), 303);
   response.headers.set("Cache-Control", "private, no-cache, no-store, must-revalidate, max-age=0");
   response.headers.set("Pragma", "no-cache");
   response.headers.set("Expires", "0");
   response.headers.set("Referrer-Policy", "no-referrer");
+
+  // OAuth providers can redirect here after a user cancels or after the
+  // provider rejects the request. Do not pass provider-supplied details into
+  // the auth service or reflect them in the UI; return a stable, neutral state.
+  if (isOAuthFailure) return response;
 
   const url = publicEnv.NEXT_PUBLIC_SUPABASE_URL;
   const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;

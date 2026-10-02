@@ -74,6 +74,13 @@ describe("token hash confirmation callback with real Supabase SSR", () => {
     expect(boundary.merge).not.toHaveBeenCalled();
     expect(response.cookies.getAll()).toEqual([]);
   });
+  it("returns a neutral login state when an OAuth provider rejects the request", async () => {
+    const response = await GET(request("error=access_denied&error_code=provider_rejected&error_description=private-detail"));
+    expect(response.status).toBe(303);
+    expect(response.headers.get("location")).toBe("https://papersourcegh.com/login?authError=oauth");
+    expect(calls).toEqual([]);
+    expect(await response.text()).not.toContain("private-detail");
+  });
   it("offers recovery after an expired token without reflecting secrets", async () => {
     rejectToken = true;
     const response = await GET(request("token_hash=private-hash&type=recovery"));
