@@ -2,6 +2,7 @@ import { createHash } from "node:crypto";
 import { NextResponse } from "next/server";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
+import { hasSupportedImageSignature } from "@/lib/images/validation";
 
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
 const MAX_MULTIPART_BYTES = MAX_IMAGE_BYTES + 128 * 1024;
@@ -38,6 +39,7 @@ export async function POST(request: Request) {
     if (!(file instanceof File)) return NextResponse.json({ error: "Choose an image file first." }, { status: 400 });
     if (!ALLOWED_TYPES.has(file.type)) return NextResponse.json({ error: "Use a JPG, PNG, WebP, or AVIF image." }, { status: 400 });
     if (file.size > MAX_IMAGE_BYTES) return NextResponse.json({ error: "Each image must be 2 MB or smaller." }, { status: 400 });
+    if (!(await hasSupportedImageSignature(file))) return NextResponse.json({ error: "That file is not a valid image." }, { status: 400 });
     const { cloudName, apiKey, apiSecret } = credentials();
     const timestamp = Math.floor(Date.now() / 1000).toString();
     const folder = "papersource/categories";
