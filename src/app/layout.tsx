@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import type { Viewport } from "next";
 import type { ReactNode } from "react";
-import { Analytics } from "@vercel/analytics/next";
 import { Inter, Manrope } from "next/font/google";
 import "./globals.css";
 import { PwaRegister } from "@/components/pwa/pwa-register";
@@ -9,6 +8,7 @@ import { PwaSplash } from "@/components/pwa/pwa-splash";
 import { GoogleAnalytics } from "@/components/analytics/google-analytics";
 import { MicrosoftClarity } from "@/components/analytics/microsoft-clarity";
 import { ConsentBanner } from "@/components/analytics/consent-banner";
+import { ConsentAwareVercelAnalytics } from "@/components/analytics/vercel-analytics";
 import { DEFAULT_DESCRIPTION, DEFAULT_SHARE_IMAGE, SEO_KEYWORDS, SITE_NAME, SITE_URL, siteJsonLd } from "@/lib/seo";
 
 const inter = Inter({
@@ -100,7 +100,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
         {children}
         <PwaSplash />
         <PwaRegister />
-        <Analytics />
+        <ConsentAwareVercelAnalytics />
         <GoogleAnalytics />
         <MicrosoftClarity />
         <ConsentBanner />
