@@ -4,6 +4,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+const MAX_MULTIPART_BYTES = MAX_IMAGE_BYTES + 128 * 1024;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 
 function credentials() {
@@ -31,6 +32,8 @@ export async function POST(request: Request) {
   const actor = await readStaffActor();
   if (!actor || !canAccessAdmin(actor.role, "categories", "write")) return NextResponse.json({ error: "You do not have permission to upload category images." }, { status: 403 });
   try {
+    const contentLength = Number(request.headers.get("content-length") ?? 0);
+    if (contentLength > MAX_MULTIPART_BYTES) return NextResponse.json({ error: "Each image must be 2 MB or smaller." }, { status: 413 });
     const file = (await request.formData()).get("file");
     if (!(file instanceof File)) return NextResponse.json({ error: "Choose an image file first." }, { status: 400 });
     if (!ALLOWED_TYPES.has(file.type)) return NextResponse.json({ error: "Use a JPG, PNG, WebP, or AVIF image." }, { status: 400 });

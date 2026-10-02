@@ -4,6 +4,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 
 const MAX_IMAGE_BYTES = 2 * 1024 * 1024;
+const MAX_MULTIPART_BYTES = MAX_IMAGE_BYTES + 128 * 1024;
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp", "image/avif"]);
 
 function cloudinaryCredentials() {
@@ -44,6 +45,8 @@ export async function POST(request: Request) {
   }
 
   try {
+    const contentLength = Number(request.headers.get("content-length") ?? 0);
+    if (contentLength > MAX_MULTIPART_BYTES) return NextResponse.json({ error: "Each image must be 2 MB or smaller." }, { status: 413 });
     const form = await request.formData();
     const file = form.get("file");
     if (!(file instanceof File)) return NextResponse.json({ error: "Choose an image file first." }, { status: 400 });
