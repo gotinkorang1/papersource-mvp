@@ -3,7 +3,7 @@ import { expect, test } from "@playwright/test";
 test("catalogue and product pages expose dual-path CTAs", async ({ page }) => {
   test.setTimeout(90_000);
   await page.goto("/shop", { waitUntil: "domcontentloaded" });
-  const productLinks = page.locator('a[href^="/product/"]');
+  const productLinks = page.locator('a[href^="/product/"]:visible');
   await expect(productLinks.first()).toBeVisible();
   const productHrefs = await productLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")).filter((href): href is string => Boolean(href)));
   let productHref: string | null = null;
@@ -29,7 +29,7 @@ test("search preserves the submitted query and renders a useful state", async ({
 
 test("a catalogue product can be added to the quote path", async ({ page }) => {
   await page.goto("/shop", { waitUntil: "domcontentloaded" });
-  const productLinks = page.locator('a[href^="/product/"]');
+  const productLinks = page.locator('a[href^="/product/"]:visible');
   await expect(productLinks.first()).toBeVisible();
   const productHrefs = await productLinks.evaluateAll((links) => links.map((link) => link.getAttribute("href")).filter((href): href is string => Boolean(href)));
   let productHref: string | null = null;

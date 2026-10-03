@@ -52,7 +52,7 @@ export function ConsentBanner() {
   if (!visible) return null;
 
   return (
-    <aside aria-label="Analytics cookie preferences" className="fixed inset-x-3 bottom-3 z-[60] mx-auto max-w-xl rounded-2xl border border-border bg-card p-4 shadow-[0_18px_60px_rgba(16,42,67,0.2)] sm:inset-x-auto sm:right-6 sm:bottom-6">
+    <aside aria-label="Analytics cookie preferences" className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-xl rounded-2xl border border-border bg-card p-4 shadow-[0_18px_60px_rgba(16,42,67,0.2)] sm:inset-x-auto sm:right-6 sm:bottom-6">
       <p className="text-sm font-semibold text-ink">Help us improve PaperSource</p>
       <p className="mt-1 text-sm leading-6 text-slate">Allow optional analytics and session insights so we can understand which products and checkout steps need improvement. We do not use this choice to send marketing, and you can decline without affecting the shop.</p>
       <div className="mt-3 flex flex-wrap items-center justify-end gap-2">

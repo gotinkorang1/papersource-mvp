@@ -60,7 +60,7 @@ test.describe("catalogue presentation modes", () => {
 
   test("clears all filters while retaining the selected presentation mode", async ({ page }) => {
     await page.goto("/shop?q=paper&category=paper&view=content", { waitUntil: "commit", timeout: 30000 });
-    const clearFilters = page.getByRole("link", { name: "Clear filters" });
+    const clearFilters = page.getByRole("link", { name: "Clear filters", exact: true });
     await expect(clearFilters).toBeVisible({ timeout: 15000 });
     await clearFilters.click();
     await expect(page).toHaveURL(/\/shop\?view=content$/);
