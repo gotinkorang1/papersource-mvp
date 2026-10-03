@@ -18,6 +18,7 @@ function QuickOrderSubmitButton({ destination, label, className, submittedDestin
 export function QuickOrderForm() {
   const [rows, setRows] = useState(EMPTY_ROWS);
   const [submittedDestination, setSubmittedDestination] = useState<"quote" | "cart" | null>(null);
+  const submitted = submittedDestination !== null;
 
   return (
     <form
@@ -29,6 +30,7 @@ export function QuickOrderForm() {
         setSubmittedDestination(submitter instanceof HTMLButtonElement && submitter.value === "cart" ? "cart" : "quote");
       }}
     >
+      <fieldset disabled={submitted} className="contents">
       <div className="overflow-x-auto rounded-md border border-border bg-white">
         <table className="w-full text-sm">
           <caption className="sr-only">SKU and quantity grid</caption>
@@ -74,12 +76,14 @@ export function QuickOrderForm() {
       <div className="mt-4 flex flex-wrap gap-3">
         <button
           type="button"
-          className="inline-flex min-h-11 items-center text-sm text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
+          disabled={submitted}
+          className="inline-flex min-h-11 items-center text-sm text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink disabled:cursor-wait disabled:opacity-60"
           onClick={() => setRows((current) => current + 4)}
         >
-          Add more rows
+          {submitted ? "Adding…" : "Add more rows"}
         </button>
       </div>
+      </fieldset>
       <div className="mt-6 flex flex-wrap gap-3">
         <QuickOrderSubmitButton destination="quote" label="Add all to Quote" submittedDestination={submittedDestination} className={paperButton({ variant: "quote" })} />
         <QuickOrderSubmitButton destination="cart" label="Add all to Cart" submittedDestination={submittedDestination} className={paperButton({ variant: "secondary" })} />

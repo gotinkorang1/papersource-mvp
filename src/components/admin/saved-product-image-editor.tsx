@@ -53,6 +53,8 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
   const [busy, setBusy] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const dialogRef = useRef<HTMLDivElement>(null);
   const busyRef = useRef(false);
   useEffect(() => {
     busyRef.current = busy;
@@ -61,12 +63,30 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
   useEffect(() => {
     if (!open) return;
     const previousFocus = document.activeElement instanceof HTMLElement ? document.activeElement : null;
+    closeRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape" && !busyRef.current) setOpen(false);
+      if (event.key !== "Tab") return;
+      const focusable = Array.from(dialogRef.current?.querySelectorAll<HTMLElement>(
+        'button:not([disabled]), a[href], input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ) ?? []);
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (event.shiftKey && document.activeElement === first) {
+        event.preventDefault();
+        last.focus();
+      } else if (!event.shiftKey && document.activeElement === last) {
+        event.preventDefault();
+        first.focus();
+      }
     };
     window.addEventListener("keydown", onKeyDown);
     return () => {
       window.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = previousOverflow;
       if (previousFocus instanceof HTMLElement) previousFocus.focus();
     };
   }, [open]);
@@ -101,8 +121,8 @@ export function SavedProductImageEditor({ productId, imageId, imageUrl }: { prod
     <>
       <button ref={triggerRef} type="button" className="text-xs text-slate underline" onClick={() => { setNotice(null); setOpen(true); }}>Crop</button>
       {open ? <div className="fixed inset-0 z-50 grid place-items-center bg-ink/70 p-4" role="dialog" aria-modal="true" aria-labelledby={`saved-crop-${imageId}`}>
-        <div className="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-xl">
-          <div className="flex items-start justify-between gap-4"><div><h3 id={`saved-crop-${imageId}`} className="font-heading text-xl text-ink">Crop saved image</h3><p className="mt-1 text-sm text-slate">The cropped replacement keeps this image’s position and alt text.</p></div><button type="button" className="text-sm text-slate underline" onClick={() => setOpen(false)} disabled={busy}>Close</button></div>
+        <div ref={dialogRef} className="w-full max-w-md rounded-xl border border-border bg-card p-5 shadow-xl">
+          <div className="flex items-start justify-between gap-4"><div><h3 id={`saved-crop-${imageId}`} className="font-heading text-xl text-ink">Crop saved image</h3><p className="mt-1 text-sm text-slate">The cropped replacement keeps this image’s position and alt text.</p></div><button ref={closeRef} type="button" className="text-sm text-slate underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" onClick={() => setOpen(false)} disabled={busy}>Close</button></div>
           <div className="relative mt-4 h-56 overflow-hidden rounded-lg border border-border bg-ink/10"><NextImage src={imageUrl} alt="Current saved product image" fill sizes="(max-width: 448px) 100vw, 448px" className="object-contain" /></div>
           <div className="mt-4 flex flex-wrap gap-2">{ratios.map((value) => <button key={value} type="button" onClick={() => setRatio(value)} className={`rounded-full border px-3 py-1.5 text-sm ${ratio === value ? "border-paper-green bg-paper-green text-white" : "border-border text-ink"}`}>{value}</button>)}</div>
           {notice ? <p role="alert" className="mt-3 text-sm text-red-700">{notice}</p> : null}

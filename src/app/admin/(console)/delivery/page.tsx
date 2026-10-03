@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { ConfirmSubmitForm } from "@/components/admin/confirm-submit-form";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminDeliveryZones } from "@/features/delivery/admin";
 import { formatGhs, pesewasToMajor } from "@/lib/money";
@@ -47,11 +48,11 @@ export default async function AdminDeliveryPage({ searchParams }: { searchParams
               <SubmitProgressButton idleLabel="Save zone" pendingLabel="Saving zone…" className={paperButton()} />
             </div>
           </form>
-          <form action="/admin/delivery/mutate" method="post" className="mt-2">
+          <ConfirmSubmitForm action="/admin/delivery/mutate" method="post" className="mt-2" confirmation="Delete this delivery zone? Existing orders will keep their saved delivery details.">
             <input type="hidden" name="intent" value="delete-zone" />
             <input type="hidden" name="zoneId" value={zone.id} />
             <SubmitProgressButton idleLabel="Delete zone" pendingLabel="Deleting zone…" className={paperButton({ variant: "ghost" })} />
-          </form>
+          </ConfirmSubmitForm>
         </> : null}
       </section>)}
     </div>

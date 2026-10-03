@@ -22,7 +22,7 @@ const socialProviders = [
 
 export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) {
   const [state, formAction, pending] = useActionState(actions[mode], initialState);
-  const [showPassword, setShowPassword] = useState(false);
+  const [visiblePasswords, setVisiblePasswords] = useState<Record<string, boolean>>({});
   const [socialPending, setSocialPending] = useState<string | null>(null);
   const [socialError, setSocialError] = useState<string | null>(null);
   const fields = [
@@ -88,10 +88,10 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
           <div key={field.name}>
             <label htmlFor={id} className="block text-sm text-ink">{label}</label>
             <div className="relative mt-1">
-              <input {...field} type={field.type === "password" && showPassword ? "text" : field.type} id={id} disabled={pending} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
+              <input {...field} type={field.type === "password" && visiblePasswords[field.name] ? "text" : field.type} id={id} disabled={pending} aria-invalid={error ? true : undefined} aria-describedby={describedBy}
                 minLength={passwordHelp ? 12 : undefined}
                 className="h-11 w-full rounded-md border border-border bg-background px-3 pr-16 text-base text-ink outline-none transition focus-visible:border-ink focus-visible:ring-2 focus-visible:ring-ink/20 disabled:opacity-60" />
-              {field.type === "password" ? <button type="button" className="absolute inset-y-0 right-0 min-w-14 px-3 text-xs font-semibold text-slate underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" aria-label={showPassword ? "Hide password" : "Show password"} aria-pressed={showPassword} onClick={() => setShowPassword((visible) => !visible)}>{showPassword ? "Hide" : "Show"}</button> : null}
+              {field.type === "password" ? <button type="button" className="absolute inset-y-0 right-0 min-w-14 px-3 text-xs font-semibold text-slate underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" aria-label={visiblePasswords[field.name] ? `Hide ${label.toLowerCase()}` : `Show ${label.toLowerCase()}`} aria-pressed={visiblePasswords[field.name] ?? false} onClick={() => setVisiblePasswords((current) => ({ ...current, [field.name]: !current[field.name] }))}>{visiblePasswords[field.name] ? "Hide" : "Show"}</button> : null}
             </div>
             {passwordHelp ? <p id={`${id}-help`} className="mt-1 text-xs text-slate">Use 12–128 characters.</p> : null}
             {error ? <p id={`${id}-error`} className="mt-1 text-sm text-error">{error}</p> : null}

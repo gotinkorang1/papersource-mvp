@@ -362,12 +362,12 @@ export default async function AdminProductDetailPage({
               <li key={alias.id} className="flex items-center justify-between gap-3">
                 <span>{alias.alias}</span>
                 {canWrite ? (
-                  <form action="/admin/products/mutate" method="post">
+                  <ConfirmSubmitForm action="/admin/products/mutate" method="post" confirmation="Remove this search alias?">
                     <input type="hidden" name="intent" value="remove-alias" />
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="aliasId" value={alias.id} />
                     <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
-                  </form>
+                  </ConfirmSubmitForm>
                 ) : null}
               </li>
             ))}
@@ -396,12 +396,12 @@ export default async function AdminProductDetailPage({
                   {attribute.namespace}.{attribute.key}: {attribute.valueText}
                 </span>
                 {canWrite ? (
-                  <form action="/admin/products/mutate" method="post">
+                  <ConfirmSubmitForm action="/admin/products/mutate" method="post" confirmation="Remove this product attribute?">
                     <input type="hidden" name="intent" value="remove-attribute" />
                     <input type="hidden" name="productId" value={product.id} />
                     <input type="hidden" name="attributeId" value={attribute.id} />
                     <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
-                  </form>
+                  </ConfirmSubmitForm>
                 ) : null}
               </li>
             ))}
@@ -434,12 +434,12 @@ export default async function AdminProductDetailPage({
                     {item.quantity} × {item.sku}
                   </span>
                   {canWrite ? (
-                    <form action="/admin/products/mutate" method="post">
+                    <ConfirmSubmitForm action="/admin/products/mutate" method="post" confirmation="Remove this office-pack item?">
                       <input type="hidden" name="intent" value="remove-bundle-item" />
                       <input type="hidden" name="productId" value={product.id} />
                       <input type="hidden" name="bundleItemId" value={item.id} />
                       <SubmitProgressButton idleLabel="Remove" pendingLabel="Removing…" className="h-auto min-h-0 bg-transparent px-0 text-sm text-ink underline hover:bg-transparent" />
-                    </form>
+                    </ConfirmSubmitForm>
                   ) : null}
                 </li>
               ))}

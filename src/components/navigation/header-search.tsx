@@ -107,7 +107,7 @@ export function HeaderSearch({
         id={inputId}
         type="search"
         value={query}
-        onChange={(event) => { const next = event.target.value; setQuery(next); setRequestError(false); setOpen(next.trim().length >= 2); if (next.trim().length < 2) setSuggestions([]); }}
+        onChange={(event) => { const next = event.target.value; const shortQuery = next.trim().length < 2; setQuery(next); setRequestError(false); if (shortQuery) { setLoading(false); setSuggestions([]); } setOpen(!shortQuery); }}
         onFocus={() => { if (suggestions.length) setOpen(true); }}
         onKeyDown={(event) => {
           if (!open || !suggestions.length) return;

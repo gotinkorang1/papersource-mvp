@@ -23,6 +23,7 @@ export function CategoryImageManager({ categoryId, imagePublicId }: { categoryId
   function choose(next?: File) {
     if (!next) return;
     if (!types.includes(next.type) || next.size > 2 * 1024 * 1024) { setStatus("Use a JPG, PNG, WebP or AVIF image under 2 MB."); return; }
+    if (preview) URL.revokeObjectURL(preview);
     setFile(next); setPreview(URL.createObjectURL(next)); setUploadedId(null); setStatus(null);
   }
   async function upload() {

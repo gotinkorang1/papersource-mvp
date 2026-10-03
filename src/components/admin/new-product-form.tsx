@@ -16,6 +16,7 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
   const inputRef = useRef<HTMLInputElement>(null);
   const [images, setImages] = useState<PendingImage[]>([]);
   const imagesRef = useRef<PendingImage[]>([]);
+  const [submitted, setSubmitted] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
   const [cropIndex, setCropIndex] = useState<number | null>(null);
@@ -28,6 +29,15 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
   useEffect(() => () => {
     for (const image of imagesRef.current) URL.revokeObjectURL(image.preview);
   }, []);
+  useEffect(() => {
+    if (images.length === 0 || submitted) return;
+    const warn = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+    window.addEventListener("beforeunload", warn);
+    return () => window.removeEventListener("beforeunload", warn);
+  }, [images.length, submitted]);
   useEffect(() => {
     croppingRef.current = isCropping;
   }, [isCropping]);
@@ -143,7 +153,7 @@ export function NewProductForm({ brands, categories }: { brands: Option[]; categ
   }
 
   return (
-    <form action="/admin/products/mutate" method="post" className="mt-8 grid max-w-2xl gap-4 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
+    <form action="/admin/products/mutate" method="post" onSubmit={() => setSubmitted(true)} className="mt-8 grid max-w-2xl gap-4 rounded-xl border border-border bg-card p-4 shadow-sm sm:p-6">
       <input type="hidden" name="intent" value="create-product" />
       <label className="block text-sm"><span className="text-ink">Name *</span><input name="name" required className={adminFieldClass} /></label>
       <label className="block text-sm"><span className="text-ink">Slug (optional)</span><input name="slug" className={adminFieldClass} placeholder="auto from name" /></label>
