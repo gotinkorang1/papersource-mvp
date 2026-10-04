@@ -46,6 +46,12 @@ yarn-error.log*
 # local private document store (mock Storage)
 /.data
 
+# local agent and browser artifacts; never part of a production release
+/.codex-local-preserve/
+/.playwright-cli/
+/.superpowers/
+/tmp-*.jpg
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts
