@@ -11,6 +11,7 @@ export const desktopNavigation: readonly NavigationLink[] = [
 
 export const mobileMenuLinks: readonly NavigationLink[] = [
   { label: "Brands", href: "/brands" },
+  { label: "Buying guides", href: "/guides" },
   { label: "Bulk Orders", href: "/bulk-orders" },
   { label: "Quick Order", href: "/quick-order" },
   { label: "Delivery", href: "/delivery" },

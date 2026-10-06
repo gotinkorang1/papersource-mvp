@@ -15,6 +15,7 @@ describe("storefront navigation model", () => {
   it("puts important secondary destinations in the mobile menu", () => {
     expect(mobileMenuLinks.map((item) => item.label)).toEqual([
       "Brands",
+      "Buying guides",
       "Bulk Orders",
       "Quick Order",
       "Delivery",

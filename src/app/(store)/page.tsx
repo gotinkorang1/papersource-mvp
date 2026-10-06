@@ -13,6 +13,7 @@ import {
   listDivisionCategories,
   listFeaturedProductCards,
 } from "@/features/catalogue";
+import { SEO_GUIDES } from "@/features/content/seo-guides";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { categoryImageFor } from "@/features/catalogue/category-images";
@@ -187,6 +188,18 @@ export default async function HomePage() {
       </section>
 
       <Testimonials />
+
+      <section className="border-t border-border/70 bg-card py-14 sm:py-16" aria-labelledby="buying-guides">
+        <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between gap-4">
+            <div><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Useful guidance</p><h2 id="buying-guides" className="mt-2 text-3xl tracking-tight text-ink sm:text-4xl">Make a more confident choice</h2></div>
+            <Link href="/guides" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-paper-green sm:inline-flex">All guides <ArrowRight className="size-4" aria-hidden /></Link>
+          </div>
+          <p className="mt-3 max-w-2xl text-slate">Practical advice for offices, schools and organisations buying stationery and workplace supplies in Ghana.</p>
+          <div className="mt-7 grid gap-4 md:grid-cols-3">{SEO_GUIDES.slice(0, 3).map((guide) => <article key={guide.slug} className="rounded-2xl border border-border bg-background p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><h3 className="font-heading text-xl text-ink"><Link href={`/guides/${guide.slug}`} className="underline-offset-4 hover:underline">{guide.title}</Link></h3><p className="mt-2 text-sm leading-6 text-slate">{guide.description}</p><Link href={`/guides/${guide.slug}`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline underline-offset-4">Read guide</Link></article>)}</div>
+          <Link href="/guides" className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline underline-offset-4 sm:hidden">Browse all buying guides →</Link>
+        </div>
+      </section>
 
       <SocialActivitySection />
 

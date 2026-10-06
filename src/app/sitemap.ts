@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 import { canonicalCategorySlug, listBrandDirectory, listIndexableDivisionCategories, listProductCards } from "@/features/catalogue";
 import { listPublishedPages } from "@/features/content";
+import { SEO_GUIDES, seoGuideUrl } from "@/features/content/seo-guides";
 import { SITE_URL } from "@/lib/seo";
 
 // Product/category discovery changes through the admin catalogue, not on every
@@ -8,7 +9,7 @@ import { SITE_URL } from "@/lib/seo";
 // still picking up catalogue edits promptly.
 export const revalidate = 3600;
 
-const publicRoutes = ["", "/shop", "/brands", "/about", "/contact", "/delivery", "/faq", "/returns", "/privacy", "/terms", "/business", "/schools", "/corporate-accounts", "/bulk-orders"];
+const publicRoutes = ["", "/shop", "/brands", "/about", "/contact", "/delivery", "/faq", "/returns", "/privacy", "/terms", "/business", "/schools", "/corporate-accounts", "/bulk-orders", "/guides"];
 const SITEMAP_DATA_TIMEOUT_MS = 8_000;
 
 function withTimeout<T>(promise: Promise<T>, timeoutMs: number): Promise<T> {
@@ -46,6 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       })),
       ...pages.map((page) => ({ url: `${SITE_URL}/pages/${page.slug}`, lastModified: page.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
+      ...SEO_GUIDES.map((guide) => ({ url: seoGuideUrl(guide.slug), changeFrequency: "monthly" as const, priority: 0.6 })),
     );
   } catch {
     // Keep the static storefront discoverable if the catalogue database is temporarily unavailable.

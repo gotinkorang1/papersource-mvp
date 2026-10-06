@@ -10,6 +10,6 @@ export const FALLBACK_FAQS = [
 
 export const FALLBACK_NAVIGATION = {
   header: [{ label: "Shop", href: "/shop" }, { label: "About", href: "/about" }, { label: "Contact", href: "/contact" }],
-  footer: [{ label: "Shop products", href: "/shop" }, { label: "About us", href: "/about" }, { label: "Delivery", href: "/delivery" }, { label: "FAQs", href: "/faq" }],
+  footer: [{ label: "Shop products", href: "/shop" }, { label: "Buying guides", href: "/guides" }, { label: "About us", href: "/about" }, { label: "Delivery", href: "/delivery" }, { label: "FAQs", href: "/faq" }],
   mobile: [{ label: "Home", href: "/" }, { label: "Shop", href: "/shop" }, { label: "Search", href: "/search" }, { label: "Quote", href: "/quote" }, { label: "Cart", href: "/cart" }],
 } as const;
