@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import Image from "next/image";
 import { paperButton } from "@/components/commerce/paper-button";
@@ -7,7 +8,6 @@ import { CategoryTile } from "@/components/products/category-tile";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { Testimonials } from "@/components/marketing/testimonials";
 import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
-import { WorkdayCarousel } from "@/components/marketing/workday-carousel";
 import { SocialActivitySection } from "@/components/marketing/social-activity-section";
 import {
   listDivisionCategories,
@@ -19,6 +19,11 @@ import { readStaffActor } from "@/lib/staff/require";
 import { categoryImageFor } from "@/features/catalogue/category-images";
 import { absoluteUrl, pageMetadata, webPageJsonLd } from "@/lib/seo";
 import { ArrowRight, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Truck } from "lucide-react";
+
+const WorkdayCarousel = dynamic(
+  () => import("@/components/marketing/workday-carousel").then((module) => module.WorkdayCarousel),
+  { loading: () => <div aria-hidden className="mx-auto h-[28rem] max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8" /> },
+);
 
 export const metadata: Metadata = pageMetadata({
   title: "Office supplies and stationery in Ghana",
