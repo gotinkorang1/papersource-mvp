@@ -12,9 +12,9 @@ export function GoogleCustomerReviewsBadge() {
       <Script
         id="merchantWidgetScript"
         src="https://www.gstatic.com/shopping/merchant/merchantwidget.js"
-        strategy="afterInteractive"
+        strategy="lazyOnload"
       />
-      <Script id="merchant-widget-init" strategy="afterInteractive">
+      <Script id="merchant-widget-init" strategy="lazyOnload">
         {`(() => {
   const script = document.getElementById("merchantWidgetScript");
   const start = () => {

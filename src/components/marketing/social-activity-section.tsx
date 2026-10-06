@@ -1,5 +1,6 @@
 import { socialLinks } from "@/lib/social";
 import { SITE_URL } from "@/lib/seo";
+import { LazyFacebookFrame } from "@/components/marketing/lazy-facebook-frame";
 
 const facebookUrl = socialLinks.find((link) => link.label === "Facebook")?.href ?? "https://www.facebook.com/papersourcegh";
 const instagramUrl = socialLinks.find((link) => link.label === "Instagram")?.href ?? "https://www.instagram.com/papersourcegh/";
@@ -40,16 +41,7 @@ export function SocialActivitySection() {
               <a href={facebookUrl} target="_blank" rel="noreferrer" className="text-xs font-semibold text-paper-green underline underline-offset-4 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Open Page</a>
             </div>
             <div className="bg-muted/20 p-2 sm:p-4">
-              {facebookEmbedEnabled ? <iframe
-                title="Latest PaperSource Ghana Facebook activity"
-                src={facebookEmbed}
-                loading="lazy"
-                scrolling="no"
-                frameBorder="0"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allow="clipboard-write; encrypted-media; picture-in-picture; web-share"
-                className="mx-auto block h-[620px] w-full max-w-[500px] border-0 bg-card"
-              /> : <div className="grid min-h-[220px] place-items-center rounded-xl border border-border bg-card p-6 text-center"><div><p className="font-semibold text-ink">Follow our latest updates on Facebook</p><p className="mt-2 text-sm leading-6 text-slate">Open the PaperSource Ghana Page for current arrivals, workplace tips and announcements.</p><a href={facebookUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Open Facebook Page</a></div></div>}
+              {facebookEmbedEnabled ? <LazyFacebookFrame title="Latest PaperSource Ghana Facebook activity" src={facebookEmbed} minHeight={620} className="mx-auto block h-[620px] w-full max-w-[500px] border-0 bg-card" /> : <div className="grid min-h-[220px] place-items-center rounded-xl border border-border bg-card p-6 text-center"><div><p className="font-semibold text-ink">Follow our latest updates on Facebook</p><p className="mt-2 text-sm leading-6 text-slate">Open the PaperSource Ghana Page for current arrivals, workplace tips and announcements.</p><a href={facebookUrl} target="_blank" rel="noreferrer" className="mt-5 inline-flex min-h-11 items-center justify-center rounded-lg bg-ink px-4 py-2.5 text-sm font-semibold text-white hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Open Facebook Page</a></div></div>}
               {facebookEmbedEnabled ? <p className="px-2 pb-2 text-center text-xs leading-5 text-slate sm:px-0">If the feed does not load, <a href={facebookUrl} target="_blank" rel="noreferrer" className="font-semibold text-ink underline underline-offset-4 hover:text-paper-green">open our Facebook Page</a> to see the latest updates.</p> : null}
             </div>
             <div className="border-t border-border bg-card p-4 sm:p-5">
@@ -57,16 +49,7 @@ export function SocialActivitySection() {
                 <p className="font-semibold text-ink">Join the conversation</p>
                 <p className="mt-1 text-xs leading-5 text-slate">Use your Facebook account to comment on PaperSource updates without leaving this page.</p>
               </div>
-              {facebookEmbedEnabled ? <iframe
-                title="Comments on PaperSource Ghana updates"
-                src={`https://www.facebook.com/plugins/comments.php?href=${encodeURIComponent(SITE_URL)}&width=500&numposts=5&order=reverse_time&colorscheme=light`}
-                loading="lazy"
-                scrolling="no"
-                frameBorder="0"
-                referrerPolicy="strict-origin-when-cross-origin"
-                allow="clipboard-write; encrypted-media; picture-in-picture; web-share"
-                className="block min-h-[220px] w-full border-0 bg-card"
-              /> : <a href={`${facebookUrl}?sk=reviews`} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-ink hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Comment on Facebook</a>}
+              {facebookEmbedEnabled ? <LazyFacebookFrame title="Comments on PaperSource Ghana updates" src={`https://www.facebook.com/plugins/comments.php?href=${encodeURIComponent(SITE_URL)}&width=500&numposts=5&order=reverse_time&colorscheme=light`} minHeight={220} className="block min-h-[220px] w-full border-0 bg-card" /> : <a href={`${facebookUrl}?sk=reviews`} target="_blank" rel="noreferrer" className="inline-flex min-h-11 items-center justify-center rounded-lg border border-border px-4 py-2.5 text-sm font-semibold text-ink hover:bg-cream focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Comment on Facebook</a>}
               <p className="mt-3 text-xs leading-5 text-slate">Meta may require sign-in before you can like or comment.</p>
             </div>
           </div>
