@@ -15,11 +15,14 @@ type AuthOperation = "login" | "register" | "requestPasswordReset" | "updatePass
 async function execute(operation: AuthOperation, input: unknown): Promise<CustomerAuthFormState> {
   let result: CustomerAuthResult;
   try {
-    if (!publicEnv.NEXT_PUBLIC_SITE_URL) throw new Error("Missing site origin");
+    // Keep recovery and sign-in available when the optional public site URL
+    // was not duplicated into the deployment environment. The canonical
+    // production origin is also used by SEO and transactional email.
+    const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL || "https://www.papersourcegh.com";
     const client = await createSupabaseServerClient();
     const service = createCustomerAuthService({
       auth: client.auth,
-      siteUrl: publicEnv.NEXT_PUBLIC_SITE_URL,
+      siteUrl,
       synchronizeProfile: synchronizeCustomerProfile,
     });
     result = await service[operation](input);

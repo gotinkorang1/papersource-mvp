@@ -5,6 +5,7 @@ import { mergeGuestCommerce } from "@/features/account/merge";
 import { synchronizeCustomerProfile } from "@/lib/customer/profiles";
 import { publicEnv } from "@/lib/env";
 import { GUEST_SESSION_COOKIE, isGuestSessionId } from "@/lib/session/constants";
+import { SITE_URL } from "@/lib/seo";
 
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
@@ -26,9 +27,9 @@ export async function GET(request: NextRequest) {
   // the auth service or reflect them in the UI; return a stable, neutral state.
   if (isOAuthFailure) return response;
 
-  const url = publicEnv.NEXT_PUBLIC_SUPABASE_URL;
-  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-  const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL;
+  const url = publicEnv.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL?.trim();
+  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
+  const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL || SITE_URL;
   if (!url || !key || !siteUrl) return response;
 
   try {
