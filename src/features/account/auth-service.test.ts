@@ -122,6 +122,10 @@ describe("customer Auth operations", () => {
     expect(synchronizeProfile).toHaveBeenCalledWith(actor);
   });
 
+  it("sends a PKCE recovery callback to the password form", async () => {
+    expect(await service().confirmOAuth({ code: "recovery-code", type: "recovery", next: "/account" })).toMatchObject({ status: "signed_in", next: "/reset-password" });
+  });
+
   it.each([{ tokenHash: "", type: "email" }, { tokenHash: "a".repeat(2049), type: "email" }, { tokenHash: "token", type: "invite" }, { tokenHash: "token", type: "sms" }, null])("rejects invalid confirmation before exchange: %j", async (input) => {
     expect(await service().confirm(input)).toMatchObject({ status: "error" });
     expect(auth.verifyOtp).not.toHaveBeenCalled();

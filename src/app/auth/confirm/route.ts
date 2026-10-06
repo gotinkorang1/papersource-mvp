@@ -48,7 +48,7 @@ export async function GET(request: NextRequest) {
     const service = createCustomerAuthService({ auth: client.auth, siteUrl, synchronizeProfile: synchronizeCustomerProfile });
     const code = request.nextUrl.searchParams.get("code");
     const result = code
-      ? await service.confirmOAuth({ code, next: request.nextUrl.searchParams.get("next") })
+      ? await service.confirmOAuth({ code, type, next: request.nextUrl.searchParams.get("next") })
       : await service.confirm({
           tokenHash: request.nextUrl.searchParams.get("token_hash"),
           type,

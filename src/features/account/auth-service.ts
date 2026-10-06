@@ -25,7 +25,7 @@ const registerSchema = loginSchema.extend({
 const confirmSchema = z.object({
   tokenHash: z.string().min(1).max(2048), type: z.enum(["email", "recovery"]), next: z.unknown().optional(),
 });
-const oauthConfirmSchema = z.object({ code: z.string().min(1).max(4096), next: z.unknown().optional() });
+const oauthConfirmSchema = z.object({ code: z.string().min(1).max(4096), next: z.unknown().optional(), type: z.enum(["recovery"]).optional() });
 const resetRequestSchema = z.object({ email });
 const passwordSchema = z.object({ password: newPassword, confirmPassword: z.string().max(128) })
   .refine((input) => input.password === input.confirmPassword, { path: ["confirmPassword"], message: "Passwords must match." });
@@ -123,7 +123,7 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
     async confirmOAuth(input: unknown): Promise<CustomerAuthResult> {
       const parsed = oauthConfirmSchema.safeParse(input);
       if (!parsed.success) return failure(confirmationFailure);
-      const destination = safeCustomerReturnPath(parsed.data.next);
+      const destination = parsed.data.type === "recovery" ? "/reset-password" : safeCustomerReturnPath(parsed.data.next);
       try {
         const { data, error } = await auth.exchangeCodeForSession(parsed.data.code);
         if (error || !data.session) return failure(confirmationFailure);
