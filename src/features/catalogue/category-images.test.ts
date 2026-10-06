@@ -10,4 +10,11 @@ describe("category image mapping", () => {
     expect(images.every((image) => image.alt.length > 0)).toBe(true);
     expect(new Set(images.map((image) => image.src)).size).toBe(images.length);
   });
+
+  it("keeps the live storefront division categories visually distinct", () => {
+    const liveSlugs = ["paper-printing", "writing-marking", "filing-organisation", "office-equipment", "school-supplies", "arts-crafts", "desk-accessories", "general-supplies", "books-notebooks", "workplace"];
+    const images = liveSlugs.map((slug) => categoryImageFor({ slug, name: slug, imagePublicId: null }));
+
+    expect(new Set(images.map((image) => image.src)).size).toBe(liveSlugs.length);
+  });
 });
