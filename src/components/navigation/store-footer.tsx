@@ -13,7 +13,9 @@ export async function StoreFooter() {
     listActiveNavigation("footer"),
     listDivisionCategories().catch(() => []),
   ]);
-  const exploreLinks = managedLinks.length ? managedLinks : FALLBACK_NAVIGATION.footer;
+  const exploreLinks = managedLinks.length
+    ? (managedLinks.some((link) => link.href === "/guides") ? managedLinks : [...managedLinks, { id: "seo-guides", label: "Buying guides", href: "/guides", placement: "footer", position: Number.MAX_SAFE_INTEGER, active: true }])
+    : FALLBACK_NAVIGATION.footer;
   const categoryLinks = normalizeShopCategoryLinks(categories);
   return (
     <footer className="mt-auto border-t border-border bg-card pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-ink">
