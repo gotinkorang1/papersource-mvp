@@ -11,7 +11,7 @@ import { safeCustomerReturnPath } from "./return-path";
 export type { CustomerActor } from "./identity";
 
 export const readCustomerActor = cache(async (): Promise<CustomerActor | null> => {
-  if (!isDatabaseConfigured() || !publicEnv.NEXT_PUBLIC_SUPABASE_URL || !publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY) return null;
+  if (!isDatabaseConfigured() || !publicEnv.NEXT_PUBLIC_SUPABASE_URL || (!publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && !publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY)) return null;
   const supabase = await createSupabaseServerClient();
   const identity = await readVerifiedCustomerIdentity(supabase.auth);
   if (!identity) return null;

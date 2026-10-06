@@ -6,7 +6,7 @@ import { publicEnv } from "@/lib/env";
 export async function refreshSupabaseSession(request: NextRequest) {
   let response = NextResponse.next({ request });
   const url = publicEnv.NEXT_PUBLIC_SUPABASE_URL;
-  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
+  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY;
   if (!url || !key) return response;
 
   // Anonymous storefront requests do not have a session to refresh. Avoid

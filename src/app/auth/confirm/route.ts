@@ -28,7 +28,7 @@ export async function GET(request: NextRequest) {
   if (isOAuthFailure) return response;
 
   const url = publicEnv.NEXT_PUBLIC_SUPABASE_URL || process.env.SUPABASE_URL?.trim();
-  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
+  const key = publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY || publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY || process.env.SUPABASE_PUBLISHABLE_KEY?.trim();
   const siteUrl = publicEnv.NEXT_PUBLIC_SITE_URL || SITE_URL;
   if (!url || !key || !siteUrl) return response;
 
