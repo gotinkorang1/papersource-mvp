@@ -5,6 +5,8 @@ export const FALLBACK_FAQS = [
   ["Can I pick up my order from the shop?", "Yes. Choose shop pickup at checkout and we will confirm when your order is ready for collection. Pickup is available from our Kanda or Asylum Down locations."],
   ["How do quotations work?", "Submit your requirements and contact details. Our team reviews the list, confirms pricing and delivery, and sends a quotation."],
   ["How can I pay?", "Published-price retail orders can use available Paystack card and Mobile Money options."],
+  ["Are PaperSource prices VAT inclusive?", "Yes. Prices shown for published-price products are in Ghana cedis and include applicable VAT unless stated otherwise."],
+  ["What if I need a product or quantity that is not listed?", "Use the quote path and tell us the product, specification and quantity you need. Our team can review larger or special procurement requirements."],
   ["How do I contact the team?", "Email info@papersourcegh.com or call 0555 001 313 / 0552 767 156. Our locations are Kanda and Asylum Down."],
 ] as const;
 
