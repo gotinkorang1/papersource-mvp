@@ -10,9 +10,13 @@ import { SITE_URL } from "@/lib/seo";
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
   const isOAuthFailure = request.nextUrl.searchParams.has("error") || request.nextUrl.searchParams.has("error_code");
+  // Google/Microsoft/Facebook callbacks use a PKCE `code` without an Auth
+  // `type`. Keep provider failures distinct from expired email links so the
+  // login page gives the correct next step.
+  const isOAuthCallback = !type && request.nextUrl.searchParams.has("code");
   const failurePath = type === "recovery"
     ? "/forgot-password?authError=confirmation"
-    : isOAuthFailure
+    : isOAuthFailure || isOAuthCallback
       ? "/login?authError=oauth"
       : "/login?authError=confirmation";
   // Construct a clean URL; never carry token_hash or other untrusted query data.

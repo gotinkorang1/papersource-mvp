@@ -81,6 +81,11 @@ describe("token hash confirmation callback with real Supabase SSR", () => {
     expect(calls).toEqual([]);
     expect(await response.text()).not.toContain("private-detail");
   });
+  it("labels a failed PKCE provider exchange as social sign-in", async () => {
+    const response = await GET(request("code=private-oauth-code"));
+    expect(response.headers.get("location")).toBe("https://papersourcegh.com/login?authError=oauth");
+    expect(await response.text()).not.toContain("private-oauth-code");
+  });
   it("offers recovery after an expired token without reflecting secrets", async () => {
     rejectToken = true;
     const response = await GET(request("token_hash=private-hash&type=recovery"));
