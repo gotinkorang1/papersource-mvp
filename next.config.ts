@@ -13,6 +13,10 @@ const nextConfig: NextConfig = {
     incomingRequests: { ignore: [/^\/auth\/confirm(?:\?|$)/] },
   },
   experimental: {
+    // Inline the small Tailwind-generated stylesheet into the initial HTML.
+    // This removes the first-load CSS request waterfall on slow mobile
+    // connections; Next still emits cacheable links for client navigations.
+    inlineCss: true,
     serverActions: {
       bodySizeLimit: "20mb",
       allowedOrigins: [
