@@ -10,6 +10,8 @@ export type SeoGuide = {
   links: SeoGuideLink[];
 };
 
+export const SEO_GUIDES_UPDATED_AT = "2026-10-06";
+
 // These guides are deliberately practical and location-specific. They are
 // static so crawlers can discover them without a database request or a CMS
 // session, while catalogue links keep the content useful to shoppers.

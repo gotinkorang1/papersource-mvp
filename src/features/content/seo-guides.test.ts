@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { SEO_GUIDES, getSeoGuide, seoGuideUrl } from "./seo-guides";
+import { SEO_GUIDES, SEO_GUIDES_UPDATED_AT, getSeoGuide, seoGuideUrl } from "./seo-guides";
 
 describe("SEO buying guides", () => {
   it("provides a useful Ghana-focused guide set with unique slugs", () => {
@@ -17,5 +17,9 @@ describe("SEO buying guides", () => {
 
   it("keeps every guide addressable for sitemap discovery", () => {
     expect(SEO_GUIDES.every((guide) => seoGuideUrl(guide.slug).startsWith("https://www.papersourcegh.com/guides/"))).toBe(true);
+  });
+
+  it("publishes a valid review date for freshness metadata", () => {
+    expect(Number.isNaN(Date.parse(SEO_GUIDES_UPDATED_AT))).toBe(false);
   });
 });

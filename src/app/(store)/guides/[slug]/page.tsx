@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
-import { SEO_GUIDES, SEO_GUIDE_SLUGS, getSeoGuide, seoGuideUrl } from "@/features/content/seo-guides";
+import { SEO_GUIDES, SEO_GUIDES_UPDATED_AT, SEO_GUIDE_SLUGS, getSeoGuide, seoGuideUrl } from "@/features/content/seo-guides";
 import { breadcrumbJsonLd } from "@/features/catalogue";
 import { pageMetadata, webPageJsonLd } from "@/lib/seo";
 
@@ -27,13 +27,14 @@ export default async function GuidePage({ params }: Props) {
   const relatedGuides = SEO_GUIDES.filter((candidate) => candidate.slug !== guide.slug).slice(0, 3);
   return (
     <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd({ name: guide.title, description: guide.description, url })) }} />
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: guide.title, description: guide.description, url, inLanguage: "en-GH", isPartOf: { "@id": `${url.split("/guides/")[0]}/#website` }, author: { "@type": "Organization", name: "PaperSource Ghana" }, publisher: { "@type": "Organization", name: "PaperSource Ghana" } }) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(webPageJsonLd({ name: guide.title, description: guide.description, url, dateModified: SEO_GUIDES_UPDATED_AT })) }} />
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify({ "@context": "https://schema.org", "@type": "Article", headline: guide.title, description: guide.description, url, datePublished: SEO_GUIDES_UPDATED_AT, dateModified: SEO_GUIDES_UPDATED_AT, inLanguage: "en-GH", isPartOf: { "@id": `${url.split("/guides/")[0]}/#website` }, author: { "@type": "Organization", name: "PaperSource Ghana" }, publisher: { "@type": "Organization", name: "PaperSource Ghana" } }) }} />
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd([{ name: "Guides", href: "/guides" }, { name: guide.title, href: `/guides/${guide.slug}` }], url.split("/guides/")[0])) }} />
       <Breadcrumbs items={[{ label: "Guides", href: "/guides" }, { label: guide.title }]} />
       <p className="text-sm uppercase tracking-[0.16em] text-slate">PaperSource Ghana guide</p>
       <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-6xl">{guide.title}</h1>
       <p className="mt-5 max-w-3xl text-lg leading-relaxed text-slate">{guide.intro}</p>
+      <p className="mt-3 text-xs text-slate">Reviewed {new Date(SEO_GUIDES_UPDATED_AT).toLocaleDateString("en-GH", { dateStyle: "long" })}</p>
       <div className="mt-10 space-y-9">
         {guide.sections.map((section) => <section key={section.heading}><h2 className="font-heading text-2xl text-ink md:text-3xl">{section.heading}</h2><div className="mt-3 space-y-3 text-base leading-8 text-slate md:text-lg">{section.paragraphs.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}</div></section>)}
       </div>
