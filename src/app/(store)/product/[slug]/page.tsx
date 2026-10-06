@@ -20,6 +20,7 @@ import { bookMetadata, productSeoDescription, productSeoKeywords } from "@/featu
 import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
 import { ProductViewTracker } from "@/components/products/product-view-tracker";
+import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -94,22 +95,7 @@ export default async function ProductPage({ params }: PageProps) {
           __html: JSON.stringify(breadcrumbJsonLd(crumbs, origin)),
         }}
       />
-      <nav aria-label="Breadcrumb" className="text-sm text-slate">
-        <ol className="flex flex-wrap gap-1">
-          {crumbs.map((crumb, index) => (
-            <li key={crumb.href} className="flex gap-1">
-              {index > 0 ? <span aria-hidden>/</span> : null}
-              {index === crumbs.length - 1 ? (
-                <span className="text-ink">{crumb.name}</span>
-              ) : (
-                <Link href={crumb.href} className="hover:text-ink">
-                  {crumb.name}
-                </Link>
-              )}
-            </li>
-          ))}
-        </ol>
-      </nav>
+      <Breadcrumbs items={crumbs.map((crumb, index) => ({ label: crumb.name, href: index === crumbs.length - 1 ? undefined : crumb.href }))} />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
         <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
