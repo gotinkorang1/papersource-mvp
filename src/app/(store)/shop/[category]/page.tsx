@@ -8,7 +8,7 @@ import { CataloguePagination } from "@/components/products/catalogue-pagination"
 import { getCategoryBySlug, listProductCards } from "@/features/catalogue";
 import { categorySeoDescription } from "@/features/catalogue/seo-copy";
 import { breadcrumbJsonLd } from "@/features/catalogue";
-import { collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { collectionItemPosition, collectionPageJsonLd, notFoundPageMetadata, pageMetadata, absoluteUrl, keywordsForCategory } from "@/lib/seo";
 import { categoryImageFor } from "@/features/catalogue/category-images";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
@@ -37,7 +37,7 @@ export async function generateMetadata({
     title: `${category.name} for Ghana workplaces`,
     description,
     path: `/shop/${category.slug}`,
-    keywords: [`${category.name} Ghana`, `${category.name} Accra`, `${category.name} supplier Ghana`],
+    keywords: keywordsForCategory(category.slug, category.name),
     }),
     ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
   };

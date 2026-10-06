@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { publicEnv } from "@/lib/env";
 import { socialLinks } from "@/lib/social";
 import { GROUP_LINKS } from "@/lib/group-links";
+import { keywordsForCategory, TOP_GHANA_KEYWORDS } from "@/lib/seo-keywords";
 
 export const SITE_NAME = "PaperSource Ghana";
 // Keep the public brand name separate from the verified storefront listing
@@ -26,20 +27,10 @@ export const SITE_URL = canonicalSiteUrl(publicEnv.NEXT_PUBLIC_SITE_URL || "http
 export const DEFAULT_DESCRIPTION =
   "Shop office stationery, A4 paper, printer toner, school supplies and workplace essentials from PaperSource Ghana, with Accra, Tema and nationwide supply.";
 export const DEFAULT_SHARE_IMAGE = "/images/catalogue-stationery-generated.png";
-export const SEO_KEYWORDS = [
-  "office supplies Ghana",
-  "office stationery supplier Ghana",
-  "stationery supplier Accra",
-  "A4 paper Ghana",
-  "printer toner Ghana",
-  "school stationery Ghana",
-  "bulk stationery Accra",
-  "stationery delivery Accra Tema",
-  "buy office supplies online Ghana",
-  "paper and printing supplies Ghana",
-  "bulk office supplies Ghana",
-  "workplace essentials Accra",
-];
+// Keep the default metadata focused. The full 350-term research map is
+// applied by page intent through keywordsForCategory/keywordsForProduct.
+export const SEO_KEYWORDS = TOP_GHANA_KEYWORDS;
+export { keywordsForCategory };
 
 export function absoluteUrl(path = "/") {
   return new URL(path, SITE_URL).toString();

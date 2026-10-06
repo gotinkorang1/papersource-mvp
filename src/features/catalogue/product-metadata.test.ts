@@ -73,7 +73,7 @@ describe("productSeoDescription", () => {
   });
 
   it("creates useful fallback copy for incomplete products", () => {
-    expect(productSeoDescription({ name: "Notebook", brandName: "BIC", categoryName: "Writing", description: "  " })).toBe("Notebook by BIC. Shop Writing from PaperSource Ghana.");
+    expect(productSeoDescription({ name: "Notebook", brandName: "BIC", categoryName: "Writing", description: "  " })).toBe("Notebook by BIC. Shop Writing from PaperSource Ghana with Accra, Tema and nationwide supply on request.");
   });
 });
 

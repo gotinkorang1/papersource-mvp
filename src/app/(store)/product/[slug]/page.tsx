@@ -16,7 +16,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { ProductGridList } from "@/components/products/product-grid-list";
 import { visibleBulkTiers } from "@/features/catalogue/pricing";
-import { bookMetadata, productSeoDescription } from "@/features/catalogue/product-metadata";
+import { bookMetadata, productSeoDescription, productSeoKeywords } from "@/features/catalogue/product-metadata";
 import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
 import { ProductViewTracker } from "@/components/products/product-view-tracker";
@@ -46,7 +46,7 @@ export async function generateMetadata({
     path: `/product/${product.slug}`,
     image: product.imageSrc,
     modifiedTime: product.updatedAt,
-    keywords: [product.name, product.brandName, product.categoryName, product.specLine],
+    keywords: productSeoKeywords({ name: product.name, brandName: product.brandName, categoryName: product.categoryName, description: seoDescription, specLine: product.specLine }),
   });
 }
 

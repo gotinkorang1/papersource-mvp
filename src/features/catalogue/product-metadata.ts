@@ -1,3 +1,5 @@
+import { keywordsForProduct } from "@/lib/seo-keywords";
+
 type ProductAttribute = {
   namespace: string;
   key: string;
@@ -28,7 +30,13 @@ function normalized(value: string) {
 }
 
 export function productSeoDescription({ name, brandName, categoryName, description }: ProductSeoDescriptionInput) {
-  return description.trim() || `${name} by ${brandName}. Shop ${categoryName || "stationery and books"} from PaperSource Ghana.`;
+  const supplied = description.trim();
+  if (supplied) return supplied;
+  return `${name} by ${brandName}. Shop ${categoryName || "stationery and books"} from PaperSource Ghana with Accra, Tema and nationwide supply on request.`;
+}
+
+export function productSeoKeywords(input: ProductSeoDescriptionInput & { specLine?: string }) {
+  return keywordsForProduct(input);
 }
 
 export function productImageAlt({ name, specLine = "", alt }: ProductImageAltInput) {

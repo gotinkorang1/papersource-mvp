@@ -7,6 +7,7 @@ import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { CataloguePagination } from "@/components/products/catalogue-pagination";
 import { breadcrumbJsonLd } from "@/features/catalogue";
 import { collectionItemPosition, collectionPageJsonLd, pageMetadata, absoluteUrl } from "@/lib/seo";
+import { TOP_GHANA_KEYWORDS } from "@/lib/seo-keywords";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import type { CatalogueViewMode } from "@/components/products/catalogue-view-mode";
@@ -22,7 +23,7 @@ export async function generateMetadata({ searchParams }: PageProps): Promise<Met
       title: "Shop workplace supplies in Ghana",
       description: "Buy office stationery, A4 paper, printer toner, pens and workplace essentials from PaperSource Ghana. Delivery in Accra and Tema, nationwide supply on request.",
       path: "/shop",
-      keywords: ["A4 paper Ghana", "printer toner Ghana", "office stationery supplier Ghana", "stationery delivery Accra Tema"],
+      keywords: [...TOP_GHANA_KEYWORDS, "stationery delivery Accra Tema", "bulk office supplies Ghana", "school supplies Ghana"],
     }),
     ...(hasCatalogueVariant ? { robots: { index: false, follow: true } } : {}),
   };
