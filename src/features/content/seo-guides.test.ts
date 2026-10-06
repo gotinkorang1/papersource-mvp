@@ -21,5 +21,6 @@ describe("SEO buying guides", () => {
 
   it("publishes a valid review date for freshness metadata", () => {
     expect(Number.isNaN(Date.parse(SEO_GUIDES_UPDATED_AT))).toBe(false);
+    expect(SEO_GUIDES_UPDATED_AT).toBe("2026-10-06");
   });
 });

@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 import { canonicalCategorySlug, listBrandDirectory, listIndexableDivisionCategories, listProductCards } from "@/features/catalogue";
 import { listPublishedPages } from "@/features/content";
-import { SEO_GUIDES, seoGuideUrl } from "@/features/content/seo-guides";
+import { SEO_GUIDES, SEO_GUIDES_UPDATED_AT, seoGuideUrl } from "@/features/content/seo-guides";
 import { SITE_URL } from "@/lib/seo";
 
 // Product/category discovery changes through the admin catalogue, not on every
@@ -47,7 +47,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
         priority: 0.7,
       })),
       ...pages.map((page) => ({ url: `${SITE_URL}/pages/${page.slug}`, lastModified: page.updatedAt, changeFrequency: "monthly" as const, priority: 0.5 })),
-      ...SEO_GUIDES.map((guide) => ({ url: seoGuideUrl(guide.slug), changeFrequency: "monthly" as const, priority: 0.6 })),
+      ...SEO_GUIDES.map((guide) => ({ url: seoGuideUrl(guide.slug), lastModified: SEO_GUIDES_UPDATED_AT, changeFrequency: "monthly" as const, priority: 0.6 })),
     );
   } catch {
     // Keep the static storefront discoverable if the catalogue database is temporarily unavailable.
