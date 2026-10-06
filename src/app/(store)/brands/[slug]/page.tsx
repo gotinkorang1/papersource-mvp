@@ -21,7 +21,7 @@ export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
   const { slug } = await params;
-  const { page } = await searchParams;
+  const { page, view } = await searchParams;
   const brand = await getBrandBySlug(slug);
 
   if (!brand) {
@@ -35,7 +35,9 @@ export async function generateMetadata({
     path: `/brands/${brand.slug}`,
     keywords: [`${brand.name} Ghana`, `${brand.name} Accra`, `${brand.name} stationery`],
     }),
-    ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
+    // Brand filters are navigation state; consolidate indexing on the clean
+    // first-page brand URL to avoid duplicate crawl variants.
+    ...(view || (page && Number.parseInt(page, 10) > 1) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 

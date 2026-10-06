@@ -24,7 +24,7 @@ export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
   const { category: slug } = await params;
-  const { page } = await searchParams;
+  const { page, view } = await searchParams;
   const category = await getCategoryBySlug(slug);
 
   if (!category) {
@@ -39,7 +39,9 @@ export async function generateMetadata({
     path: `/shop/${category.slug}`,
     keywords: keywordsForCategory(category.slug, category.name),
     }),
-    ...(page && Number.parseInt(page, 10) > 1 ? { robots: { index: false, follow: true } } : {}),
+    // View toggles and later pagination are UX state, not standalone search
+    // landing pages. Keep the clean category URL as the only indexable form.
+    ...(view || (page && Number.parseInt(page, 10) > 1) ? { robots: { index: false, follow: true } } : {}),
   };
 }
 
