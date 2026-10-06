@@ -10,7 +10,9 @@ describe("SEO buying guides", () => {
   });
 
   it("keeps guide links internal and resolves canonical URLs", () => {
-    expect(SEO_GUIDES.flatMap((guide) => guide.links).every((link) => link.href.startsWith("/"))).toBe(true);
+    const guideLinks = SEO_GUIDES.flatMap((guide) => guide.links);
+    expect(guideLinks.every((link) => link.href.startsWith("/"))).toBe(true);
+    expect(guideLinks.some((link) => link.href === "/shop/writing")).toBe(false);
     expect(getSeoGuide("shop-pickup-guide")?.title).toContain("pickup");
     expect(seoGuideUrl("shop-pickup-guide")).toBe("https://www.papersourcegh.com/guides/shop-pickup-guide");
   });

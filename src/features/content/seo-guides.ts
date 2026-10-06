@@ -58,7 +58,7 @@ export const SEO_GUIDES: SeoGuide[] = [
       { heading: "Core classroom supplies", paragraphs: ["Plan exercise and drawing books, pencils, pens, erasers, rulers, sharpeners, coloured pencils, markers, paper and folders. Teachers may also need board markers, correction supplies and storage labels.", "Separate learner packs from shared classroom stock. Label bulk cartons by class or department before delivery to make distribution faster."] },
       { heading: "Plan ahead for term starts", paragraphs: ["Request quantities early enough to allow substitutions when a particular brand or pack is unavailable. A quote lets the school compare quantities, delivery requirements and approved alternatives in one conversation."] },
     ],
-    links: [{ label: "Shop school supplies", href: "/shop/school-supplies" }, { label: "Explore writing supplies", href: "/shop/writing" }, { label: "Get a school quote", href: "/request-quote" }],
+    links: [{ label: "Shop school supplies", href: "/shop/school-supplies" }, { label: "Explore writing supplies", href: "/shop/writing-marking" }, { label: "Get a school quote", href: "/request-quote" }],
   },
   {
     slug: "bulk-stationery-procurement-guide",
