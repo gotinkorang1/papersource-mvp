@@ -8,6 +8,7 @@ import { loginCustomerAction, registerCustomerAction, requestPasswordResetAction
 import type { CustomerAuthFormState } from "@/features/account/auth-actions-state";
 import { safeCustomerReturnPath } from "@/lib/customer/return-path";
 import { createSupabaseBrowserClient } from "@/lib/supabase/client";
+import { socialAuthEnabled } from "@/lib/env";
 
 type Mode = "login" | "register" | "forgot" | "reset";
 const actions = { login: loginCustomerAction, register: registerCustomerAction, forgot: requestPasswordResetAction, reset: updateCustomerPasswordAction };
@@ -63,7 +64,7 @@ export function CustomerAuthForm({ mode, next }: { mode: Mode; next?: string }) 
           {state.message}
         </p>
       ) : null}
-      {(mode === "login" || mode === "register") ? (
+      {(socialAuthEnabled && (mode === "login" || mode === "register")) ? (
         <>
           <div className="grid gap-2" aria-label="Social sign-in options">
             {socialProviders.map(({ provider, label, mark }) => (

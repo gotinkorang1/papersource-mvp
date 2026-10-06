@@ -12,6 +12,7 @@ const publicEnvSchema = z.object({
   NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY: z.string().optional(),
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME: z.string().optional(),
   NEXT_PUBLIC_CLARITY_PROJECT_ID: z.string().optional(),
+  NEXT_PUBLIC_SOCIAL_AUTH_ENABLED: z.enum(["true", "false"]).optional(),
 });
 
 export const publicEnv = publicEnvSchema.parse({
@@ -24,7 +25,13 @@ export const publicEnv = publicEnvSchema.parse({
   NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME:
     process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME,
   NEXT_PUBLIC_CLARITY_PROJECT_ID: process.env.NEXT_PUBLIC_CLARITY_PROJECT_ID,
+  NEXT_PUBLIC_SOCIAL_AUTH_ENABLED: process.env.NEXT_PUBLIC_SOCIAL_AUTH_ENABLED,
 });
+
+// Social OAuth stays off by default while Supabase Auth is restricted. Tests
+// keep the controls enabled so the callback contract remains covered.
+export const socialAuthEnabled = process.env.NODE_ENV === "test"
+  || publicEnv.NEXT_PUBLIC_SOCIAL_AUTH_ENABLED === "true";
 
 export function assertServerSecret(name: string, value: string | undefined) {
   if (name.startsWith("NEXT_PUBLIC_")) {
