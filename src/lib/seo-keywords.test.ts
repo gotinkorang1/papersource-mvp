@@ -3,9 +3,9 @@ import { GHANA_KEYWORD_CLUSTERS, GHANA_SEO_KEYWORDS, keywordsForCategory, keywor
 
 describe("Ghana SEO keyword map", () => {
   it("contains 350 unique, non-empty research phrases", () => {
-    expect(Object.keys(GHANA_KEYWORD_CLUSTERS)).toHaveLength(35);
-    expect(GHANA_SEO_KEYWORDS).toHaveLength(350);
-    expect(new Set(GHANA_SEO_KEYWORDS).size).toBe(350);
+    expect(Object.keys(GHANA_KEYWORD_CLUSTERS)).toHaveLength(85);
+    expect(GHANA_SEO_KEYWORDS).toHaveLength(850);
+    expect(new Set(GHANA_SEO_KEYWORDS).size).toBe(850);
     expect(GHANA_SEO_KEYWORDS.every((keyword) => keyword.trim().length > 0)).toBe(true);
   });
 
