@@ -3,19 +3,20 @@ import Link from "next/link";
 import { listAdminAuditLogs } from "@/features/admin/queries";
 import { requireStaffArea } from "@/lib/staff/require";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 
 export const metadata: Metadata = { title: "Audit logs" };
 
 export default async function AdminLogsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ action?: string; resourceType?: string }>;
+  searchParams: Promise<{ action?: string; resourceType?: string; page?: string }>;
 }) {
   const actor = await requireStaffArea("logs", "read");
   const filters = await searchParams;
   let rows;
   try {
-    rows = await listAdminAuditLogs(actor.role, filters);
+    rows = await listAdminAuditLogs(actor.role, { ...filters, page: Number(filters.page) });
   } catch (error) {
     if (error && typeof error === "object" && "code" in error && error.code === "42P01") {
       return (
@@ -40,13 +41,14 @@ export default async function AdminLogsPage({
         <SubmitProgressButton idleLabel="Filter" pendingLabel="Filtering…" className="self-end rounded-md bg-ink px-4 py-2 text-sm font-medium text-paper transition hover:opacity-90" />
         <Link className="self-end rounded-md border border-border px-4 py-2 text-center text-sm font-medium text-ink transition hover:bg-muted focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink" href="/admin/logs">Reset</Link>
       </form>
-      {rows.length === 0 ? <p className="mt-8 rounded-lg border border-border bg-surface p-6 text-slate">No staff actions recorded yet.</p> : (
+      {rows.rows.length === 0 ? <p className="mt-8 rounded-lg border border-border bg-surface p-6 text-slate">No staff actions recorded yet.</p> : (
         <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-surface shadow-sm">
           <table className="admin-responsive-table w-full min-w-[680px] text-sm">
             <caption className="sr-only">Audit logs</caption>
             <thead className="bg-muted/60"><tr className="border-b border-border text-left text-slate"><th scope="col" className="px-4 py-3 font-medium">When</th><th scope="col" className="px-4 py-3 font-medium">Actor</th><th scope="col" className="px-4 py-3 font-medium">Action</th><th scope="col" className="px-4 py-3 font-medium">Resource</th></tr></thead>
-            <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="whitespace-nowrap px-4 py-3 text-slate" data-label="When">{row.createdAt.toLocaleString("en-GH")}</td><td className="px-4 py-3" data-label="Actor"><span className="font-medium text-ink">{row.actorName ?? "System"}</span>{row.actorEmail ? <span className="block text-xs text-slate">{row.actorEmail}</span> : null}</td><td className="px-4 py-3 capitalize text-ink" data-label="Action">{row.action.replaceAll("_", " ")}</td><td className="px-4 py-3 text-slate" data-label="Resource">{row.resourceType}{row.resourceId ? ` · ${row.resourceId}` : ""}</td></tr>)}</tbody>
+            <tbody>{rows.rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="whitespace-nowrap px-4 py-3 text-slate" data-label="When">{row.createdAt.toLocaleString("en-GH")}</td><td className="px-4 py-3" data-label="Actor"><span className="font-medium text-ink">{row.actorName ?? "System"}</span>{row.actorEmail ? <span className="block text-xs text-slate">{row.actorEmail}</span> : null}</td><td className="px-4 py-3 capitalize text-ink" data-label="Action">{row.action.replaceAll("_", " ")}</td><td className="px-4 py-3 text-slate" data-label="Resource">{row.resourceType}{row.resourceId ? ` · ${row.resourceId}` : ""}</td></tr>)}</tbody>
           </table>
+          <AdminPagination pathname="/admin/logs" params={{ action: filters.action, resourceType: filters.resourceType }} page={rows.page} hasNext={rows.hasNext} />
         </div>
       )}
     </main>
