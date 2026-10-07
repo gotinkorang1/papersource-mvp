@@ -18,6 +18,9 @@ export default function robots(): MetadataRoute.Robots {
         "/search",
         "/login",
         "/api/",
+        // Legacy paths from the previous host are gone and should not be
+        // revisited by crawlers.
+        "/cgi-bin/",
       ],
     }],
     sitemap: `${SITE_URL}/sitemap.xml`,

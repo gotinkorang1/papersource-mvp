@@ -12,7 +12,7 @@ describe("robots", () => {
       expect.objectContaining({
         userAgent: "*",
         allow: ["/"],
-        disallow: expect.arrayContaining(["/admin/", "/account/", "/checkout/", "/api/"]),
+        disallow: expect.arrayContaining(["/admin/", "/account/", "/checkout/", "/api/", "/cgi-bin/"]),
       }),
     ]);
   });

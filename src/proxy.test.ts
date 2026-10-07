@@ -17,6 +17,15 @@ import { proxy } from "./proxy";
 const sessionId = "a7105cc2-81b4-44e5-bdf3-87f929c1c501";
 beforeEach(() => { state.configured = false; state.refresh = async () => {}; });
 
+it("returns gone for legacy cgi-bin paths without creating a session", async () => {
+  state.configured = true;
+  state.refresh = async () => { throw new Error("Legacy paths must not reach auth refresh"); };
+  const response = await proxy(new NextRequest("http://localhost:3000/cgi-bin/"));
+  expect(response.status).toBe(410);
+  expect(response.headers.get("cache-control")).toContain("max-age=86400");
+  expect(response.cookies.getAll()).toEqual([]);
+});
+
 it("makes a new guest ID available to the current request and browser", async () => {
   const request = new NextRequest("http://localhost:3000/shop");
   const response = await proxy(request);

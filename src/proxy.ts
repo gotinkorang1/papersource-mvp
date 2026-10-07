@@ -8,6 +8,16 @@ import {
 } from "@/lib/session/constants";
 
 export async function proxy(request: NextRequest) {
+  // `/cgi-bin/` is a legacy hosting path. It is not part of the Next.js
+  // application, so return an explicit permanent removal signal instead of
+  // allowing the platform to answer with an opaque 403 to crawlers.
+  if (request.nextUrl.pathname === "/cgi-bin" || request.nextUrl.pathname.startsWith("/cgi-bin/")) {
+    return new NextResponse(null, {
+      status: 410,
+      headers: { "Cache-Control": "public, max-age=86400" },
+    });
+  }
+
   // Reject explicit cross-site state-changing requests before auth refresh or
   // guest-cookie creation. Requests without an Origin header are kept
   // compatible with signed webhooks and non-browser clients.
