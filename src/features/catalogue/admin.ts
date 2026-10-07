@@ -85,6 +85,10 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     .limit(ADMIN_PRODUCT_PAGE_SIZE)
     .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE);
   const imageRows = rows.length ? await db.select({ productId: productImages.productId }).from(productImages).where(inArray(productImages.productId, rows.map((row) => row.id))) : [];
+  const imageCounts = new Map<string, number>();
+  for (const image of imageRows) {
+    imageCounts.set(image.productId, (imageCounts.get(image.productId) ?? 0) + 1);
+  }
   let trending = new Map<string, number>();
   try {
     trending = await listTrendingProductIds(rows.map((row) => row.id));
@@ -98,7 +102,7 @@ export async function listAdminProducts(filters?: { search?: string; status?: st
     brandName: row.brandName ?? "Unknown brand",
     categoryName: row.categoryName ?? "Uncategorized",
     isNew: isProductNew(row.createdAt),
-    imageCount: imageRows.filter((image) => image.productId === row.id).length,
+    imageCount: imageCounts.get(row.id) ?? 0,
     viewCount: trending.get(row.id),
     isTrending: trendingIds.has(row.id),
     })),
