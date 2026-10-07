@@ -493,7 +493,8 @@ export async function listProductCardsFromDb(
     if (!ids) {
       return [];
     }
-    rows = rows.filter((row) => ids.includes(row.product.categoryId));
+    const categoryIds = new Set(ids);
+    rows = rows.filter((row) => categoryIds.has(row.product.categoryId));
   }
 
   if (filter?.brandSlug) {
