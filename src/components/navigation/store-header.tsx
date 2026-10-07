@@ -11,6 +11,7 @@ import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { listDivisionCategories } from "@/features/catalogue";
 import { normalizeNavigationHref, uniqueNavigationLinks } from "./navigation-model";
 import { HeaderSearch } from "@/components/navigation/header-search";
+import { AnnouncementTicker } from "@/components/navigation/announcement-ticker";
 
 export async function StoreHeader() {
   const [managedLinks, categories] = await Promise.all([
@@ -55,6 +56,7 @@ export async function StoreHeader() {
           <MobileMenu categories={categories} />
         </div>
       </div>
+      <AnnouncementTicker />
     </header>
   );
 }

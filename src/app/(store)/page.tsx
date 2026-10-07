@@ -18,7 +18,7 @@ import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { categoryImagesFor } from "@/features/catalogue/category-images";
 import { absoluteUrl, pageMetadata, webPageJsonLd } from "@/lib/seo";
-import { ArrowRight, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Truck } from "lucide-react";
+import { ArrowRight, BadgeCheck, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Store, Truck } from "lucide-react";
 
 const WorkdayCarousel = dynamic(
   () => import("@/components/marketing/workday-carousel").then((module) => module.WorkdayCarousel),
@@ -79,8 +79,8 @@ export default async function HomePage() {
         <p className="mt-5 text-sm text-slate">Nationwide supply available on request.</p>
         <LiveDeliveryStatus />
         <div className="mt-5 grid max-w-xl grid-cols-3 divide-x divide-border rounded-xl border border-border/80 bg-card/70 px-2 py-3 shadow-sm sm:max-w-lg sm:px-3">
-          {[{ label: "Shop pickup", value: "Free" }, { label: "Accra & Tema", value: "Delivery" }, { label: "Prices", value: "VAT included" }].map((item) => (
-            <div key={item.label} className="px-2 text-center sm:px-3"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate">{item.label}</p><p className="mt-1 text-xs font-semibold text-ink sm:text-sm">{item.value}</p></div>
+          {[{ label: "Shop pickup", value: "Free", icon: Store }, { label: "Accra & Tema", value: "Delivery", icon: Truck }, { label: "Prices", value: "VAT included", icon: BadgeCheck }].map(({ label, value, icon: Icon }) => (
+            <div key={label} className="flex items-center justify-center gap-2 px-2 text-left sm:px-3"><span className="grid size-7 shrink-0 place-items-center rounded-full bg-paper-green/10 text-paper-green"><Icon className="size-3.5" aria-hidden="true" /></span><span><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate">{label}</p><p className="mt-0.5 text-xs font-semibold text-ink sm:text-sm">{value}</p></span></div>
           ))}
         </div>
           </div>
