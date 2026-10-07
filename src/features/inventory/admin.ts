@@ -1,4 +1,4 @@
-import { asc, eq, inArray, isNull, sql } from "drizzle-orm";
+import { and, asc, eq, ilike, inArray, isNull, or, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
 import {
   inventory,
@@ -20,6 +20,14 @@ export class InventoryAdminError extends Error {
 export const INVENTORY_ADJUST_REASONS = ["receive", "adjust"] as const;
 
 export const INVENTORY_BULK_OPERATIONS = ["add", "remove"] as const;
+
+export const INVENTORY_PAGE_SIZE = 50;
+
+export type InventoryListFilters = {
+  search?: string;
+  sort?: "product" | "sku" | "sellable";
+  page?: number;
+};
 
 export function parseOpeningInventory(input: { onHand: string; lowStockThreshold: string }) {
   const parse = (value: string, fallback: number, label: string) => {
@@ -77,9 +85,25 @@ export function parseBulkInventoryAdjustment(input: {
   };
 }
 
-export async function listInventoryRows() {
+export async function listInventoryRows(filters: InventoryListFilters = {}) {
   const db = getDb();
-  return db
+  const search = filters.search?.trim();
+  const page = Number.isFinite(filters.page) && (filters.page ?? 1) > 0
+    ? Math.floor(filters.page ?? 1)
+    : 1;
+  const sort = filters.sort ?? "product";
+  const where = and(
+    isNull(products.deletedAt),
+    search
+      ? or(ilike(products.name, `%${search}%`), ilike(productVariants.sku, `%${search}%`))
+      : undefined,
+  );
+  const orderBy = sort === "sku"
+    ? [asc(productVariants.sku), asc(products.name)]
+    : sort === "sellable"
+      ? [asc(sql`${inventory.onHand} - ${inventory.reserved}`), asc(products.name), asc(productVariants.sku)]
+      : [asc(products.name), asc(productVariants.sku)];
+  const result = await db
     .select({
       inventoryId: inventory.id,
       variantId: productVariants.id,
@@ -89,6 +113,29 @@ export async function listInventoryRows() {
       onHand: inventory.onHand,
       reserved: inventory.reserved,
       lowStockThreshold: inventory.lowStockThreshold,
+    })
+    .from(inventory)
+    .innerJoin(productVariants, eq(productVariants.id, inventory.variantId))
+    .innerJoin(products, eq(products.id, productVariants.productId))
+    .where(where)
+    .orderBy(...orderBy)
+    .limit(INVENTORY_PAGE_SIZE + 1)
+    .offset((page - 1) * INVENTORY_PAGE_SIZE);
+
+  return {
+    rows: result.slice(0, INVENTORY_PAGE_SIZE),
+    page,
+    hasNext: result.length > INVENTORY_PAGE_SIZE,
+  };
+}
+
+export async function listInventoryVariantOptions() {
+  const db = getDb();
+  return db
+    .select({
+      variantId: productVariants.id,
+      sku: productVariants.sku,
+      productName: products.name,
     })
     .from(inventory)
     .innerJoin(productVariants, eq(productVariants.id, inventory.variantId))

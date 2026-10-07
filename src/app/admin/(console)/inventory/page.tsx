@@ -5,9 +5,10 @@ import { SubmitProgressButton } from "@/components/admin/submit-progress-button"
 import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { BulkInventorySubmit } from "@/components/admin/bulk-inventory-submit";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { paperButton } from "@/components/commerce/paper-button";
 import { sellableQuantity, stockLevelFromQuantity } from "@/features/inventory/stock";
-import { listInventoryRows } from "@/features/inventory/admin";
+import { listInventoryRows, listInventoryVariantOptions } from "@/features/inventory/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -16,17 +17,21 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string; sort?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; sort?: string; page?: string }>;
 };
 
 export default async function AdminInventoryPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("inventory", "read");
-  const allRows = await listInventoryRows();
   const canWrite = canAccessAdmin(actor.role, "inventory", "write");
-  const { error, q = "", sort = "product" } = await searchParams;
-  const query = q.trim().toLocaleLowerCase();
-  const filteredRows = query ? allRows.filter((row) => `${row.productName} ${row.sku}`.toLocaleLowerCase().includes(query)) : allRows;
-  const rows = [...filteredRows].sort((a, b) => sort === "sellable" ? sellableQuantity(a.onHand, a.reserved) - sellableQuantity(b.onHand, b.reserved) : sort === "sku" ? a.sku.localeCompare(b.sku) : a.productName.localeCompare(b.productName) || a.sku.localeCompare(b.sku));
+  const { error, q = "", sort = "product", page: pageParam } = await searchParams;
+  const page = Number.parseInt(pageParam ?? "1", 10);
+  const inventoryResult = await listInventoryRows({
+    search: q,
+    sort: sort === "sku" || sort === "sellable" ? sort : "product",
+    page: Number.isFinite(page) && page > 0 ? page : 1,
+  });
+  const rows = inventoryResult.rows;
+  const allRows = canWrite ? await listInventoryVariantOptions() : [];
 
   return (
     <main>
@@ -37,11 +42,11 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
       </p>
       <AdminError error={error} />
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="inventory-search">Search inventory</label><input id="inventory-search" name="q" type="search" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="product">Sort: product</option><option value="sku">Sort: SKU</option><option value="sellable">Sort: sellable stock</option></select><SubmitProgressButton idleLabel="Search" pendingLabel="Searching…" className={paperButton({ variant: "secondary" })} />{q || sort !== "product" ? <Link href="/admin/inventory" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
-      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} {rows.length === 1 ? "inventory row" : "inventory rows"}{q ? " matching your search" : ""}.</p>
+      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} inventory {rows.length === 1 ? "row" : "rows"} on this page{q ? " matching your search" : ""}.</p>
       {canWrite && rows.length > 0 ? (
         <form id="bulk-inventory-form" action="/admin/inventory/mutate" method="post" className="mt-5 grid gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex sm:flex-wrap sm:items-end">
           <input type="hidden" name="intent" value="bulk-adjust" />
-          <div className="sm:mr-auto"><p className="font-medium text-ink">Bulk stock update</p><p className="mt-1 text-xs text-slate">Select rows below, then add or remove the same quantity.</p></div>
+          <div className="sm:mr-auto"><p className="font-medium text-ink">Bulk stock update</p><p className="mt-1 text-xs text-slate">Select rows on this page, then add or remove the same quantity.</p></div>
           <label className="grid gap-1 text-xs font-medium text-ink">Action<select name="operation" className={adminFieldClass}><option value="add">Add stock</option><option value="remove">Remove stock</option></select></label>
           <label className="grid gap-1 text-xs font-medium text-ink">Quantity<input name="quantity" type="number" min="1" step="1" required className={`${adminFieldClass} w-28`} placeholder="0" /></label>
           <label className="grid gap-1 text-xs font-medium text-ink">Reason<select name="reason" className={adminFieldClass}><option value="receive">Receive</option><option value="adjust">Adjust</option></select></label>
@@ -88,6 +93,12 @@ export default async function AdminInventoryPage({ searchParams }: PageProps) {
           </tbody>
         </table>
       </div>
+      <AdminPagination
+        pathname="/admin/inventory"
+        params={{ q: q || undefined, sort: sort !== "product" ? sort : undefined }}
+        page={inventoryResult.page}
+        hasNext={inventoryResult.hasNext}
+      />
       {canWrite && allRows.length > 0 ? (
         <form
           action="/admin/inventory/mutate"
