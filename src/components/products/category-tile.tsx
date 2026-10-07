@@ -2,6 +2,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import type { CSSProperties } from "react";
 
 export function CategoryTile({
   name,
@@ -10,6 +11,7 @@ export function CategoryTile({
   imageSrc,
   imageAlt = "",
   className,
+  style,
 }: {
   name: string;
   caption?: string;
@@ -17,12 +19,14 @@ export function CategoryTile({
   imageSrc?: string;
   imageAlt?: string;
   className?: string;
+  style?: CSSProperties;
 }) {
   return (
     <Link
       href={href}
+      style={style}
       className={cn(
-        "surface-lift group flex min-h-40 flex-col justify-between rounded-2xl border border-border/80 bg-card p-3.5 transition-[background-color,transform,box-shadow] duration-300 ease-out hover:bg-cream hover:shadow-lg motion-safe:hover:-translate-y-1 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:p-4",
+        "surface-lift group flex min-h-40 flex-col justify-between rounded-2xl border border-border/80 bg-card p-3.5 transition-[background-color,transform,box-shadow] duration-300 ease-out hover:bg-cream hover:shadow-lg motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-2 motion-safe:hover:-translate-y-1 focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:p-4",
         className,
       )}
     >

@@ -139,6 +139,7 @@ export default async function HomePage() {
                   caption={category.caption}
                   imageSrc={image.src}
                   imageAlt={image.alt}
+                  style={{ animationDelay: `${Math.min(index, 7) * 45}ms` }}
                 />
               );
             })}
