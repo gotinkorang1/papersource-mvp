@@ -7,7 +7,7 @@ export async function GET(request: Request) {
   if (query.length < 2 || query.length > 80) return NextResponse.json({ suggestions: [] });
 
   try {
-    const products = await listProductCards({ query });
+    const products = await listProductCards({ query, maxResults: 7 });
     return NextResponse.json({
       suggestions: products.slice(0, 7).map(({ slug, name, sku, specLine }) => ({ slug, name, sku, specLine })),
     }, { headers: { "Cache-Control": "public, max-age=30, stale-while-revalidate=120" } });
