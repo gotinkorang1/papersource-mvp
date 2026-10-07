@@ -44,7 +44,8 @@ export function ProductGallery({
   const touchStartX = useRef<number | null>(null);
   const galleryRef = useRef<HTMLDivElement>(null);
   const active = displayGallery[activeIndex] ?? displayGallery[0];
-  const moveImage = useCallback((direction: 1 | -1) => setActiveIndex((index) => (index + direction + displayGallery.length) % displayGallery.length), [displayGallery.length]);
+  const galleryLength = displayGallery.length;
+  const moveImage = useCallback((direction: 1 | -1) => setActiveIndex((index) => (index + direction + galleryLength) % galleryLength), [galleryLength]);
   const markFailed = (source: string) => setFailedSources((current) => new Set(current).add(source));
   useEffect(() => {
     // Reset failed-image state when navigating to another product/gallery.
@@ -54,10 +55,10 @@ export function ProductGallery({
   useEffect(() => {
     // Keep the active thumbnail valid if images are edited while the page stays mounted.
     // eslint-disable-next-line react-hooks/set-state-in-effect
-    setActiveIndex((index) => Math.min(index, Math.max(0, displayGallery.length - 1)));
-  }, [displayGallery.length]);
+    setActiveIndex((index) => Math.min(index, Math.max(0, galleryLength - 1)));
+  }, [galleryLength]);
   useEffect(() => {
-    if (displayGallery.length < 2) return;
+    if (galleryLength < 2) return;
     const onKeyDown = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement | null;
       if (!target || !galleryRef.current?.contains(target) || target.isContentEditable || ["INPUT", "TEXTAREA", "SELECT"].includes(target.tagName)) return;
@@ -72,7 +73,7 @@ export function ProductGallery({
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [displayGallery.length, moveImage]);
+  }, [galleryLength, moveImage]);
   return (
     <div className="mx-auto w-full max-w-xl">
       <div
