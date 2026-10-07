@@ -11,6 +11,52 @@
   animation: papersource-ticker 28s linear infinite;
 }
 
+/* Quiet visual system for editorial sections. These accents add depth without
+   competing with product imagery or adding another runtime dependency. */
+.paper-section-wash {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.paper-section-wash::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(circle at 10% 8%, color-mix(in srgb, var(--ps-ochre) 9%, transparent) 0 1px, transparent 1.5px) 0 0 / 18px 18px,
+    linear-gradient(115deg, transparent 0 58%, color-mix(in srgb, var(--ps-paper-green) 4%, transparent) 58% 59%, transparent 59% 100%);
+  content: "";
+  opacity: 0.7;
+}
+
+.paper-section-title {
+  position: relative;
+  width: fit-content;
+}
+
+.paper-section-title::after {
+  display: block;
+  width: 2.5rem;
+  height: 0.2rem;
+  margin-top: 0.65rem;
+  border-radius: 999px;
+  background: linear-gradient(90deg, var(--ps-ochre), color-mix(in srgb, var(--ps-ochre) 20%, transparent));
+  content: "";
+}
+
+.paper-hover-lift {
+  transition: transform 220ms ease, box-shadow 220ms ease, border-color 220ms ease;
+}
+
+.paper-hover-lift:hover,
+.paper-hover-lift:focus-within {
+  border-color: color-mix(in srgb, var(--ps-paper-green) 34%, var(--ps-border));
+  box-shadow: 0 16px 34px rgb(16 42 67 / 0.1);
+  transform: translateY(-2px);
+}
+
 .announcement-ticker-track:hover,
 .announcement-ticker-track:focus-within {
   animation-play-state: paused;
@@ -19,6 +65,15 @@
 @media (prefers-reduced-motion: reduce) {
   .announcement-ticker-track {
     animation: none;
+  }
+
+  .paper-hover-lift {
+    transition: none;
+  }
+
+  .paper-hover-lift:hover,
+  .paper-hover-lift:focus-within {
+    transform: none;
   }
 }
 

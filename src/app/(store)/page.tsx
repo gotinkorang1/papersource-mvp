@@ -95,11 +95,11 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section aria-labelledby="why-papersource" className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
+      <section aria-labelledby="why-papersource" className="paper-section-wash mx-auto max-w-6xl rounded-3xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-paper-green">A better way to restock</p>
-            <h2 id="why-papersource" className="mt-2 font-heading text-2xl tracking-tight text-ink sm:text-3xl">Everything your team needs, with less friction.</h2>
+            <h2 id="why-papersource" className="paper-section-title mt-2 font-heading text-2xl tracking-tight text-ink sm:text-3xl">Everything your team needs, with less friction.</h2>
           </div>
           <p className="max-w-sm text-sm leading-6 text-slate">Clear prices for everyday orders, and a dedicated quote path when your requirements are larger.</p>
         </div>
@@ -109,7 +109,7 @@ export default async function HomePage() {
             { icon: Layers3, title: "Retail or bulk", body: "Checkout everyday items or build a quote for larger requirements." },
             { icon: ShieldCheck, title: "A dependable partner", body: "Clear pricing, practical support and a team that follows through." },
           ].map(({ icon: Icon, title, body }, index) => (
-            <div key={title} className={`group flex gap-3 p-5 transition-colors hover:bg-muted/40 sm:p-6 ${index > 0 ? "border-t border-border sm:border-l sm:border-t-0" : ""}`}>
+            <div key={title} className={`paper-hover-lift group flex gap-3 p-5 transition-colors hover:bg-muted/40 sm:p-6 ${index > 0 ? "border-t border-border sm:border-l sm:border-t-0" : ""}`}>
               <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-paper-green/10 text-paper-green transition-transform duration-200 group-hover:scale-105"><Icon className="size-5" aria-hidden /></span>
               <div><p className="font-semibold text-ink">{title}</p><p className="mt-1 text-sm leading-6 text-slate">{body}</p></div>
             </div>
@@ -119,12 +119,12 @@ export default async function HomePage() {
 
       <WorkdayCarousel />
 
-      <section className="border-y border-border/80 bg-card py-14 sm:py-16 md:py-20">
+      <section className="paper-section-wash border-y border-border/80 bg-card py-14 sm:py-16 md:py-20">
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="flex items-end justify-between gap-4">
             <div>
               <h2 className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Shop by need</h2>
-              <p className="mt-2 max-w-xl text-base font-medium text-ink sm:text-lg">Start with a category and find the supplies your team uses every day.</p>
+              <p className="paper-section-title mt-2 max-w-xl text-base font-medium text-ink sm:text-lg">Start with a category and find the supplies your team uses every day.</p>
             </div>
             <Link href="/shop" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-paper-green sm:inline-flex">Browse all <ArrowRight className="size-4" aria-hidden /></Link>
           </div>
@@ -165,16 +165,16 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-y border-border bg-muted/30 py-14 sm:py-16" aria-labelledby="how-it-works">
+      <section className="paper-section-wash border-y border-border bg-muted/30 py-14 sm:py-16" aria-labelledby="how-it-works">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-          <div className="max-w-2xl"><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Simple by design</p><h2 id="how-it-works" className="mt-3 text-3xl tracking-tight text-ink sm:text-4xl">From “we need supplies” to sorted.</h2><p className="mt-3 text-slate">Choose the route that fits your workday. We keep the next step clear.</p></div>
+          <div className="max-w-2xl"><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Simple by design</p><h2 id="how-it-works" className="paper-section-title mt-3 text-3xl tracking-tight text-ink sm:text-4xl">From “we need supplies” to sorted.</h2><p className="mt-3 text-slate">Choose the route that fits your workday. We keep the next step clear.</p></div>
           <div className="mt-8 grid gap-3 md:grid-cols-3 md:gap-4">
             {[
               { icon: Search, step: "01", title: "Find what you need", body: "Browse the catalogue by category, brand or search." },
               { icon: ClipboardList, step: "02", title: "Choose your route", body: "Use Cart for quick checkout or Quote for volume planning." },
               { icon: PackageCheck, step: "03", title: "We make it happen", body: "Get clear updates, dependable fulfilment and delivery support." },
             ].map(({ icon: Icon, step, title, body }) => (
-              <div key={step} className="rounded-2xl border border-border bg-card p-5 shadow-sm transition-[transform,box-shadow] duration-300 hover:shadow-md motion-safe:hover:-translate-y-0.5 sm:p-6">
+              <div key={step} className="paper-hover-lift rounded-2xl border border-border bg-card p-5 shadow-sm sm:p-6">
                 <div className="flex items-center justify-between gap-4"><span className="grid size-10 place-items-center rounded-xl bg-paper-green/10 text-paper-green"><Icon className="size-5" aria-hidden /></span><span className="text-xs font-semibold tracking-[0.16em] text-slate">{step}</span></div>
                 <h3 className="mt-5 font-semibold text-ink">{title}</h3><p className="mt-2 text-sm leading-6 text-slate">{body}</p>
               </div>
@@ -183,10 +183,10 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <section className="border-t border-border/70 bg-background py-16 sm:py-20">
+      <section className="paper-section-wash border-t border-border/70 bg-background py-16 sm:py-20">
         <div className="mx-auto max-w-6xl px-4">
           <div className="flex items-end justify-between gap-4">
-            <div><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">A considered shortlist</p><h2 className="mt-2 text-3xl tracking-tight text-ink sm:text-4xl">Featured workplace essentials</h2></div>
+            <div><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">A considered shortlist</p><h2 className="paper-section-title mt-2 text-3xl tracking-tight text-ink sm:text-4xl">Featured workplace essentials</h2></div>
             <Link href="/shop" className="hidden shrink-0 items-center gap-1 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ink transition hover:border-paper-green hover:text-paper-green sm:inline-flex">View catalogue <ArrowRight className="size-4" aria-hidden /></Link>
           </div>
           <p className="mt-3 max-w-2xl text-slate">
@@ -202,14 +202,14 @@ export default async function HomePage() {
 
       <Testimonials />
 
-      <section className="border-t border-border/70 bg-card py-14 sm:py-16" aria-labelledby="buying-guides">
+      <section className="paper-section-wash border-t border-border/70 bg-card py-14 sm:py-16" aria-labelledby="buying-guides">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
           <div className="flex items-end justify-between gap-4">
-            <div><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Useful guidance</p><h2 id="buying-guides" className="mt-2 text-3xl tracking-tight text-ink sm:text-4xl">Make a more confident choice</h2></div>
+            <div><p className="text-xs font-semibold tracking-[0.18em] text-paper-green uppercase">Useful guidance</p><h2 id="buying-guides" className="paper-section-title mt-2 text-3xl tracking-tight text-ink sm:text-4xl">Make a more confident choice</h2></div>
             <Link href="/guides" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-paper-green sm:inline-flex">All guides <ArrowRight className="size-4" aria-hidden /></Link>
           </div>
           <p className="mt-3 max-w-2xl text-slate">Practical advice for offices, schools and organisations buying stationery and workplace supplies in Ghana.</p>
-          <div className="mt-7 grid gap-4 md:grid-cols-3">{SEO_GUIDES.slice(0, 3).map((guide) => <article key={guide.slug} className="rounded-2xl border border-border bg-background p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"><h3 className="font-heading text-xl text-ink"><Link href={`/guides/${guide.slug}`} className="underline-offset-4 hover:underline">{guide.title}</Link></h3><p className="mt-2 text-sm leading-6 text-slate">{guide.description}</p><Link href={`/guides/${guide.slug}`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline underline-offset-4">Read guide</Link></article>)}</div>
+          <div className="mt-7 grid gap-4 md:grid-cols-3">{SEO_GUIDES.slice(0, 3).map((guide) => <article key={guide.slug} className="paper-hover-lift rounded-2xl border border-border bg-background p-5 shadow-sm"><h3 className="font-heading text-xl text-ink"><Link href={`/guides/${guide.slug}`} className="underline-offset-4 hover:underline">{guide.title}</Link></h3><p className="mt-2 text-sm leading-6 text-slate">{guide.description}</p><Link href={`/guides/${guide.slug}`} className="mt-4 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline underline-offset-4">Read guide</Link></article>)}</div>
           <Link href="/guides" className="mt-6 inline-flex min-h-11 items-center text-sm font-semibold text-ink underline underline-offset-4 sm:hidden">Browse all buying guides →</Link>
         </div>
       </section>
