@@ -599,6 +599,8 @@ export async function getProductBySlugFromDb(
 }
 
 export async function listFeaturedProductCardsFromDb(): Promise<ProductCardModel[]> {
-  const cards = await listProductCardsFromDb();
-  return cards.slice(0, 4);
+  // The home page only renders four featured cards. Limit before card
+  // decoration and trend enrichment so we do not process the full catalogue
+  // just to discard every row after the first four.
+  return listProductCardsFromDb({ maxResults: 4 });
 }
