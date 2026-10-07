@@ -66,18 +66,28 @@ const listProductCardsRequestCached = cache(async (
   query?: string,
 ) => listProductCardsFromDb({ categorySlug, brandSlug, query }));
 
+const listDivisionCategoriesRequestCached = cache(async () =>
+  isDatabaseConfigured() ? listDivisionCategoriesFromDb() : listDivisionCategoriesFromSeed(),
+);
+const listIndexableDivisionCategoriesRequestCached = cache(async () =>
+  isDatabaseConfigured() ? listIndexableDivisionCategoriesFromDb() : listIndexableDivisionCategoriesFromSeed(),
+);
+const listBrandsRequestCached = cache(async () =>
+  isDatabaseConfigured() ? listBrandsFromDb() : listBrandsFromSeed(),
+);
+const listBrandDirectoryRequestCached = cache(async () =>
+  isDatabaseConfigured() ? listBrandDirectoryFromDb() : listBrandDirectoryFromSeed(),
+);
+const listFeaturedProductCardsRequestCached = cache(async () =>
+  isDatabaseConfigured() ? listFeaturedProductCardsFromDb() : listFeaturedProductCardsFromSeed(),
+);
+
 export async function listDivisionCategories(): Promise<CatalogueCategoryView[]> {
-  if (isDatabaseConfigured()) {
-    return listDivisionCategoriesFromDb();
-  }
-  return listDivisionCategoriesFromSeed();
+  return listDivisionCategoriesRequestCached();
 }
 
 export async function listIndexableDivisionCategories(): Promise<CatalogueCategoryView[]> {
-  if (isDatabaseConfigured()) {
-    return listIndexableDivisionCategoriesFromDb();
-  }
-  return listIndexableDivisionCategoriesFromSeed();
+  return listIndexableDivisionCategoriesRequestCached();
 }
 
 export async function getCategoryBySlug(
@@ -93,15 +103,11 @@ export async function getCategoryBySlug(
 }
 
 export async function listBrands(): Promise<CatalogueBrandView[]> {
-  if (isDatabaseConfigured()) {
-    return listBrandsFromDb();
-  }
-  return listBrandsFromSeed();
+  return listBrandsRequestCached();
 }
 
 export async function listBrandDirectory() {
-  if (isDatabaseConfigured()) return listBrandDirectoryFromDb();
-  return listBrandDirectoryFromSeed();
+  return listBrandDirectoryRequestCached();
 }
 
 export async function getBrandBySlug(
@@ -132,8 +138,5 @@ export async function getProductBySlug(
 }
 
 export async function listFeaturedProductCards(): Promise<ProductCardModel[]> {
-  if (isDatabaseConfigured()) {
-    return listFeaturedProductCardsFromDb();
-  }
-  return listFeaturedProductCardsFromSeed();
+  return listFeaturedProductCardsRequestCached();
 }
