@@ -229,7 +229,16 @@ export async function listAdminCategories(filters?: { search?: string; sort?: st
   const total = Number(totalRow?.total ?? 0);
   const page = resolveAdminProductPage(filters?.page, total);
   const rows = await db
-    .select()
+    .select({
+      id: categories.id,
+      parentId: categories.parentId,
+      name: categories.name,
+      slug: categories.slug,
+      description: categories.description,
+      position: categories.position,
+      imagePublicId: categories.imagePublicId,
+      active: categories.active,
+    })
     .from(categories)
     .where(where)
     .orderBy(filters?.sort === "name" ? asc(categories.name) : asc(categories.position), asc(categories.name))
@@ -257,7 +266,7 @@ export async function listAdminBrands(filters?: { search?: string; sort?: string
   const total = Number(totalRow?.total ?? 0);
   const page = resolveAdminProductPage(filters?.page, total);
   const rows = await db
-    .select()
+    .select({ id: brands.id, name: brands.name, slug: brands.slug, active: brands.active })
     .from(brands)
     .where(where)
     .orderBy(filters?.sort === "slug" ? asc(brands.slug) : asc(brands.name))
