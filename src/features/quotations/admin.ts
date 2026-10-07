@@ -40,10 +40,14 @@ function assertQuotesRead(role: StaffRole) {
   }
 }
 
-export async function listSubmittedQuotes(role: StaffRole) {
+export const ADMIN_QUOTE_PAGE_SIZE = 50;
+
+export async function listSubmittedQuotes(role: StaffRole, pageParam?: string) {
   assertQuotesRead(role);
   const db = getDb();
-  return db
+  const requestedPage = Number.parseInt(pageParam ?? "1", 10);
+  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const rows = await db
     .select({
       id: quotes.id,
       number: quotes.number,
@@ -57,7 +61,10 @@ export async function listSubmittedQuotes(role: StaffRole) {
     .from(quotes)
     .leftJoin(organizations, eq(organizations.id, quotes.organizationId))
     .where(ne(quotes.status, "draft"))
-    .orderBy(desc(quotes.updatedAt));
+    .orderBy(desc(quotes.updatedAt))
+    .limit(ADMIN_QUOTE_PAGE_SIZE + 1)
+    .offset((page - 1) * ADMIN_QUOTE_PAGE_SIZE);
+  return { rows: rows.slice(0, ADMIN_QUOTE_PAGE_SIZE), page, hasNext: rows.length > ADMIN_QUOTE_PAGE_SIZE };
 }
 
 export async function getQuoteForAdmin(role: StaffRole, quoteId: string) {

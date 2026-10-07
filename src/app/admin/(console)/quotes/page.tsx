@@ -4,14 +4,16 @@ import { listSubmittedQuotes } from "@/features/quotations/admin";
 import { formatGhs } from "@/lib/money";
 import { requireStaffArea } from "@/lib/staff/require";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 
 export const metadata: Metadata = {
   title: "Quotes",
 };
 
-export default async function AdminQuotesPage() {
+export default async function AdminQuotesPage({ searchParams }: { searchParams: Promise<{ page?: string }> }) {
   const actor = await requireStaffArea("quotes", "read");
-  const rows = await listSubmittedQuotes(actor.role);
+  const quoteResult = await listSubmittedQuotes(actor.role, (await searchParams).page);
+  const rows = quoteResult.rows;
 
   return (
     <main>
@@ -51,6 +53,7 @@ export default async function AdminQuotesPage() {
           </table>
         </div>
       )}
+      <AdminPagination pathname="/admin/quotes" params={{}} page={quoteResult.page} hasNext={quoteResult.hasNext} />
     </main>
   );
 }

@@ -5,15 +5,17 @@ import { formatGhs } from "@/lib/money";
 import { requireStaffArea } from "@/lib/staff/require";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 
 export const metadata: Metadata = {
   title: "Orders",
 };
 
-export default async function AdminOrdersPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; source?: string; sort?: string }> }) {
+export default async function AdminOrdersPage({ searchParams }: { searchParams: Promise<{ q?: string; status?: string; source?: string; sort?: string; page?: string }> }) {
   const actor = await requireStaffArea("orders", "read");
   const filters = await searchParams;
-  const filteredRows = await listAdminOrders(actor.role, { search: filters.q, status: filters.status, source: filters.source, sort: filters.sort });
+  const orderResult = await listAdminOrders(actor.role, { search: filters.q, status: filters.status, source: filters.source, sort: filters.sort, page: filters.page });
+  const filteredRows = orderResult.rows;
 
   return (
     <main>
@@ -51,6 +53,7 @@ export default async function AdminOrdersPage({ searchParams }: { searchParams: 
           </table>
         </div>
       )}
+      <AdminPagination pathname="/admin/orders" params={{ q: filters.q, status: filters.status, source: filters.source, sort: filters.sort }} page={orderResult.page} hasNext={orderResult.hasNext} />
     </main>
   );
 }

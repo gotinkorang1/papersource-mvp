@@ -15,6 +15,8 @@ const orderStatusValues = [
   "cancelled",
 ] as const;
 
+export const ADMIN_ORDER_PAGE_SIZE = 50;
+
 export class OrderAdminError extends Error {
   constructor(message: string) {
     super(message);
@@ -22,7 +24,7 @@ export class OrderAdminError extends Error {
   }
 }
 
-export async function listAdminOrders(role: StaffRole, filters?: { search?: string; status?: string; source?: string; sort?: string }) {
+export async function listAdminOrders(role: StaffRole, filters?: { search?: string; status?: string; source?: string; sort?: string; page?: string }) {
   if (!canAccessAdmin(role, "orders", "read")) {
     throw new OrderAdminError("This role cannot view orders.");
   }
@@ -34,7 +36,10 @@ export async function listAdminOrders(role: StaffRole, filters?: { search?: stri
     filters?.source && orderSourceValues.includes(filters.source as (typeof orderSourceValues)[number]) ? eq(orders.source, filters.source as (typeof orderSourceValues)[number]) : undefined,
   );
   const order = filters?.sort === "total" ? desc(orders.grandTotal) : filters?.sort === "status" ? asc(orders.status) : desc(orders.updatedAt);
-  return db.select().from(orders).where(where).orderBy(order);
+  const requestedPage = Number.parseInt(filters?.page ?? "1", 10);
+  const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
+  const rows = await db.select().from(orders).where(where).orderBy(order).limit(ADMIN_ORDER_PAGE_SIZE + 1).offset((page - 1) * ADMIN_ORDER_PAGE_SIZE);
+  return { rows: rows.slice(0, ADMIN_ORDER_PAGE_SIZE), page, hasNext: rows.length > ADMIN_ORDER_PAGE_SIZE };
 }
 
 export async function getAdminOrder(role: StaffRole, orderId: string) {
