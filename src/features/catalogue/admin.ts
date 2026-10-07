@@ -232,8 +232,25 @@ export async function listAdminBrands() {
     .orderBy(asc(brands.name));
 }
 
-export async function listAdminPricingRows() {
+export async function listAdminPricingRows(filters?: { search?: string; sort?: string; page?: string }) {
   const db = getDb();
+  const search = filters?.search?.trim();
+  const where = and(
+    isNull(products.deletedAt),
+    search
+      ? or(ilike(products.name, `%${search}%`), ilike(productVariants.sku, `%${search}%`))
+      : undefined,
+  );
+  const order = filters?.sort === "sku"
+    ? [asc(productVariants.sku), asc(products.name)]
+    : [asc(products.name), asc(productVariants.sku)];
+  const [totalRow] = await db
+    .select({ total: count() })
+    .from(productVariants)
+    .innerJoin(products, eq(products.id, productVariants.productId))
+    .where(where);
+  const total = Number(totalRow?.total ?? 0);
+  const page = resolveAdminProductPage(filters?.page, total);
   const rows = await db
     .select({
       variantId: productVariants.id,
@@ -247,8 +264,10 @@ export async function listAdminPricingRows() {
     })
     .from(productVariants)
     .innerJoin(products, eq(products.id, productVariants.productId))
-    .where(isNull(products.deletedAt))
-    .orderBy(asc(products.name), asc(productVariants.sku));
+    .where(where)
+    .orderBy(...order)
+    .limit(ADMIN_PRODUCT_PAGE_SIZE)
+    .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE);
 
   const variantIds = rows.map((row) => row.variantId);
   const tiers = variantIds.length
@@ -259,10 +278,16 @@ export async function listAdminPricingRows() {
         .orderBy(asc(priceTiers.minimumQuantity))
     : [];
 
-  return rows.map((row) => ({
-    ...row,
-    tiers: tiers.filter((tier) => tier.variantId === row.variantId),
-  }));
+  return {
+    rows: rows.map((row) => ({
+      ...row,
+      tiers: tiers.filter((tier) => tier.variantId === row.variantId),
+    })),
+    total,
+    page,
+    pageSize: ADMIN_PRODUCT_PAGE_SIZE,
+    totalPages: Math.max(1, Math.ceil(total / ADMIN_PRODUCT_PAGE_SIZE)),
+  };
 }
 
 export async function createProduct(input: {

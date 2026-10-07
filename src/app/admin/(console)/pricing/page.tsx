@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { ConfirmSubmitForm } from "@/components/admin/confirm-submit-form";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminPricingRows } from "@/features/catalogue/admin";
 import { formatGhs } from "@/lib/money";
@@ -14,17 +15,19 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string; sort?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; sort?: string; page?: string }>;
 };
 
 export default async function AdminPricingPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("pricing", "read");
-  const allRows = await listAdminPricingRows();
   const canWrite = canAccessAdmin(actor.role, "pricing", "write");
-  const { error, q = "", sort = "product" } = await searchParams;
-  const query = q.trim().toLocaleLowerCase();
-  const filteredRows = query ? allRows.filter((row) => `${row.productName} ${row.sku}`.toLocaleLowerCase().includes(query)) : allRows;
-  const rows = [...filteredRows].sort((a, b) => sort === "sku" ? a.sku.localeCompare(b.sku) : a.productName.localeCompare(b.productName) || a.sku.localeCompare(b.sku));
+  const { error, q = "", sort = "product", page: pageParam } = await searchParams;
+  const pricingResult = await listAdminPricingRows({
+    search: q,
+    sort: sort === "sku" ? sort : "product",
+    page: pageParam,
+  });
+  const rows = pricingResult.rows;
 
   return (
     <main>
@@ -35,7 +38,7 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
       </p>
       <AdminError error={error} />
       <form className="mt-6 flex flex-wrap gap-2" method="get"><label className="sr-only" htmlFor="pricing-search">Search pricing</label><input id="pricing-search" name="q" type="search" defaultValue={q} className={`${adminFieldClass} min-w-[16rem] flex-1`} placeholder="Search product or SKU" /><select name="sort" defaultValue={sort} className={adminFieldClass}><option value="product">Sort: product</option><option value="sku">Sort: SKU</option></select><SubmitProgressButton idleLabel="Search" pendingLabel="Searching…" className={paperButton({ variant: "secondary" })} />{q || sort !== "product" ? <Link href="/admin/pricing" className="self-center text-sm text-slate underline">Clear</Link> : null}</form>
-      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} {rows.length === 1 ? "pricing row" : "pricing rows"}{q ? " matching your search" : ""}.</p>
+      <p className="mt-3 text-sm text-slate" aria-live="polite">Showing {rows.length} pricing {rows.length === 1 ? "row" : "rows"} on this page{q ? " matching your search" : ""}.</p>
       <div className="mt-8 space-y-6">
         {rows.length === 0 ? <div className="rounded-xl border border-dashed border-border bg-card px-5 py-10 text-center text-sm text-slate">{q ? "No pricing rows match this search." : "No pricing rows yet."}</div> : rows.map((row) => (
           <section key={row.variantId} className="rounded-xl border border-border bg-card p-5">
@@ -90,6 +93,12 @@ export default async function AdminPricingPage({ searchParams }: PageProps) {
           </section>
         ))}
       </div>
+      <AdminPagination
+        pathname="/admin/pricing"
+        params={{ q: q || undefined, sort: sort !== "product" ? sort : undefined }}
+        page={pricingResult.page}
+        hasNext={pricingResult.page < pricingResult.totalPages}
+      />
     </main>
   );
 }
