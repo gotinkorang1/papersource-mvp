@@ -10,6 +10,7 @@ import { buildShopMenuColumns } from "@/components/navigation/shop-menu-model";
 import { FALLBACK_NAVIGATION, listActiveNavigation } from "@/features/content";
 import { listDivisionCategories } from "@/features/catalogue";
 import { normalizeNavigationHref, uniqueNavigationLinks } from "./navigation-model";
+import { HeaderSearch } from "@/components/navigation/header-search";
 
 export async function StoreHeader() {
   const [managedLinks, categories] = await Promise.all([
@@ -44,6 +45,9 @@ export async function StoreHeader() {
           <ManagedNavLinks links={[{ label: "About", href: "/about" }, { label: "Contact", href: "/contact" }]} />
           {additionalManagedLinks.length ? <ManagedNavLinks links={additionalManagedLinks} /> : null}
         </nav>
+        <div className="hidden min-w-0 flex-1 justify-end xl:flex">
+          <HeaderSearch className="max-w-xs" />
+        </div>
         <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-3">
           <AccountLink />
           <ThemeToggle />
