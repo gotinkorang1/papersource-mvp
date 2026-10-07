@@ -7,6 +7,7 @@ import { normalizeShopCategoryLinks } from "./shop-menu-model";
 import { BUSINESS_PHONE_NUMBERS } from "@/lib/seo";
 import { GROUP_LINKS } from "@/lib/group-links";
 import { AnalyticsPreferences } from "@/components/analytics/analytics-preferences";
+import { ExternalLink } from "lucide-react";
 
 export async function StoreFooter() {
   const [managedLinks, categories] = await Promise.all([
@@ -62,7 +63,7 @@ export async function StoreFooter() {
           <nav className="mt-2 grid gap-1" aria-label="NiiPlants Group websites">
             {GROUP_LINKS.map((link) => (
               <a key={link.href} href={link.href} target="_blank" rel="noopener noreferrer" className="inline-flex min-h-10 w-fit items-center text-sm hover:text-ink hover:underline underline-offset-4" title={link.description}>
-                {link.label}
+                {link.label}<ExternalLink className="ml-1.5 size-3.5 opacity-60" aria-hidden="true" />
               </a>
             ))}
           </nav>
