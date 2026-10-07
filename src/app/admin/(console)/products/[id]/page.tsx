@@ -339,7 +339,7 @@ export default async function AdminProductDetailPage({
                   const thumbnailUrl = cloudinaryImageUrl(image.cloudinaryPublicId, 160);
                   const editorUrl = canWrite ? cloudinaryImageUrl(image.cloudinaryPublicId, 1200) : null;
                   return <>
-                    {thumbnailUrl ? <Image src={thumbnailUrl} alt={image.alt} width={64} height={64} className="size-16 shrink-0 rounded-md object-cover" /> : null}
+                    {thumbnailUrl ? <Image src={thumbnailUrl} alt={image.alt} width={64} height={64} unoptimized className="size-16 shrink-0 rounded-md object-cover" /> : null}
                     <div className="min-w-0 flex-1"><p className="text-xs font-semibold uppercase tracking-[0.12em] text-paper-green">Image {imageIndex + 1}{imageIndex === 0 ? " · Primary" : ""}</p><p className="truncate font-mono text-xs text-slate">{image.cloudinaryPublicId}</p>{canWrite ? <form action="/admin/products/mutate" method="post" className="mt-2 flex flex-wrap items-center gap-2"><input type="hidden" name="intent" value="update-image" /><input type="hidden" name="productId" value={product.id} /><input type="hidden" name="imageId" value={image.id} /><label className="sr-only" htmlFor={`alt-${image.id}`}>Alt text</label><input id={`alt-${image.id}`} name="alt" required defaultValue={image.alt} className={`${adminFieldClass} min-w-0 flex-1`} /><SubmitProgressButton idleLabel="Save alt text" pendingLabel="Saving…" className="min-h-10 px-3 text-xs" /></form> : <p className="mt-1 text-sm text-slate">{image.alt}</p>}{editorUrl ? <div className="mt-2"><SavedProductImageEditor productId={product.id} imageId={image.id} imageUrl={editorUrl} /></div> : null}</div>
                   </>;
                 })()}
