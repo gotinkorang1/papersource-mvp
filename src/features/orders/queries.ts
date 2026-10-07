@@ -38,7 +38,19 @@ export async function listAdminOrders(role: StaffRole, filters?: { search?: stri
   const order = filters?.sort === "total" ? desc(orders.grandTotal) : filters?.sort === "status" ? asc(orders.status) : desc(orders.updatedAt);
   const requestedPage = Number.parseInt(filters?.page ?? "1", 10);
   const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
-  const rows = await db.select().from(orders).where(where).orderBy(order).limit(ADMIN_ORDER_PAGE_SIZE + 1).offset((page - 1) * ADMIN_ORDER_PAGE_SIZE);
+  const rows = await db
+    .select({
+      id: orders.id,
+      number: orders.number,
+      source: orders.source,
+      status: orders.status,
+      grandTotal: orders.grandTotal,
+    })
+    .from(orders)
+    .where(where)
+    .orderBy(order)
+    .limit(ADMIN_ORDER_PAGE_SIZE + 1)
+    .offset((page - 1) * ADMIN_ORDER_PAGE_SIZE);
   return { rows: rows.slice(0, ADMIN_ORDER_PAGE_SIZE), page, hasNext: rows.length > ADMIN_ORDER_PAGE_SIZE };
 }
 
