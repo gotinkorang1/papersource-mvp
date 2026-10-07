@@ -11,10 +11,10 @@ export function DualPathCounts() {
   const quoteCount = quoteLines.reduce((sum, line) => sum + line.quantity, 0);
 
   return (
-    <div className="hidden items-center gap-3 text-sm sm:flex">
+    <div className="hidden items-center gap-1 rounded-full border border-border/80 bg-cream/70 p-1 text-sm sm:flex">
       <button
         type="button"
-        className={`inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${quoteOpen ? "text-ink" : "text-graphite"}`}
+        className={`inline-flex min-h-10 items-center gap-1.5 rounded-full px-2 transition-colors hover:bg-card hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${quoteOpen ? "bg-card text-ink shadow-sm" : "text-graphite"}`}
         aria-label={itemCountLabel("Quote list", quoteCount)}
         aria-expanded={quoteOpen}
         aria-pressed={quoteOpen}
@@ -28,7 +28,7 @@ export function DualPathCounts() {
       </button>
       <button
         type="button"
-        className={`inline-flex min-h-11 items-center gap-1.5 rounded-md px-1 transition-colors hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-ink ${cartOpen ? "text-ink" : "text-graphite"}`}
+        className={`inline-flex min-h-10 items-center gap-1.5 rounded-full px-2 transition-colors hover:bg-card hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink ${cartOpen ? "bg-card text-ink shadow-sm" : "text-graphite"}`}
         aria-label={itemCountLabel("Cart", cartCount)}
         aria-expanded={cartOpen}
         aria-pressed={cartOpen}

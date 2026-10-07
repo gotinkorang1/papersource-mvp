@@ -33,8 +33,8 @@ export async function StoreHeader() {
   );
   return (
     <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/95 shadow-[0_4px_18px_rgba(16,42,67,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-card/80">
-      <div className="mx-auto flex min-h-14 w-full max-w-7xl items-center gap-2 px-3 py-1.5 sm:min-h-16 sm:gap-5 sm:px-6 sm:py-3 lg:px-8">
-        <Wordmark />
+      <div className="mx-auto flex min-h-14 w-full max-w-7xl items-center gap-2 px-3 py-1 sm:min-h-16 sm:gap-5 sm:px-6 sm:py-2.5 lg:px-8">
+        <Wordmark className="shrink-0" />
         <nav
           className="hidden items-center gap-3 text-sm font-medium text-graphite lg:flex lg:gap-5"
           aria-label="Primary"
@@ -44,7 +44,7 @@ export async function StoreHeader() {
           <ManagedNavLinks links={[{ label: "About", href: "/about" }, { label: "Contact", href: "/contact" }]} />
           {additionalManagedLinks.length ? <ManagedNavLinks links={additionalManagedLinks} /> : null}
         </nav>
-        <div className="ml-auto flex shrink-0 items-center gap-3 sm:gap-4">
+        <div className="ml-auto flex shrink-0 items-center gap-1.5 sm:gap-3">
           <AccountLink />
           <ThemeToggle />
           <DualPathCounts />

@@ -49,7 +49,7 @@ export default async function HomePage() {
           })),
         }}
       />
-      <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-10 shadow-[0_18px_55px_rgba(16,42,67,0.06)] sm:px-6 sm:py-14 md:px-8 md:py-20 lg:py-24">
+      <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-8 shadow-[0_18px_55px_rgba(16,42,67,0.06)] sm:px-6 sm:py-14 md:px-8 md:py-20 lg:py-24">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-ochre/10 blur-3xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-24 -z-10 size-80 rounded-full bg-paper-green/10 blur-3xl" />
         <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
@@ -75,10 +75,13 @@ export default async function HomePage() {
             Request Bulk Quote
           </Link>
         </div>
-        <p className="mt-5 text-sm text-slate">
-          Nationwide supply available on request.
-        </p>
+        <p className="mt-5 text-sm text-slate">Nationwide supply available on request.</p>
         <LiveDeliveryStatus />
+        <div className="mt-5 grid max-w-xl grid-cols-3 divide-x divide-border rounded-xl border border-border/80 bg-card/70 px-2 py-3 shadow-sm sm:max-w-lg sm:px-3">
+          {[{ label: "Shop pickup", value: "Free" }, { label: "Accra & Tema", value: "Delivery" }, { label: "Prices", value: "VAT included" }].map((item) => (
+            <div key={item.label} className="px-2 text-center sm:px-3"><p className="text-[10px] font-semibold uppercase tracking-[0.12em] text-slate">{item.label}</p><p className="mt-1 text-xs font-semibold text-ink sm:text-sm">{item.value}</p></div>
+          ))}
+        </div>
           </div>
           <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-border bg-cream shadow-[0_24px_60px_rgba(16,42,67,0.16)] ring-1 ring-ink/5">
             <Image src="/images/catalogue-stationery-generated.png" alt="Stationery, notebooks, paper and desk supplies arranged for a productive workday" fill priority loading="eager" fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />

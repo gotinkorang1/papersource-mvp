@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, X } from "lucide-react";
+import { ClipboardList, Menu, ShoppingBag, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
@@ -71,14 +71,21 @@ export function MobileMenu({ categories = [] }: { categories?: readonly Category
       {open ? (
         <>
           <button type="button" aria-label="Close menu overlay" className="fixed inset-0 z-40 cursor-default bg-ink/30 backdrop-blur-[1px] motion-safe:animate-in motion-safe:fade-in-0 lg:hidden" onClick={() => setOpen(false)} />
-          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-8.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-4 shadow-[0_18px_40px_rgba(16,42,67,0.12)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 sm:px-6 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-ink [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-ink">
+          <div ref={menuRef} id={menuId} role="dialog" aria-modal="true" aria-label="Menu" className="absolute inset-x-0 top-full z-50 max-h-[calc(100dvh-4.5rem)] overflow-y-auto border-t border-border bg-card px-4 py-3 shadow-[0_18px_40px_rgba(16,42,67,0.12)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1 sm:px-6 [&_a]:inline-flex [&_a]:min-h-11 [&_a]:items-center [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-ink [&_button:focus-visible]:outline-2 [&_button:focus-visible]:outline-offset-2 [&_button:focus-visible]:outline-ink">
             <div className="grid gap-2 sm:grid-cols-2">
-            <Link href="/shop" className="rounded-md bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
+            <Link href="/shop" className="rounded-lg bg-ink px-4 py-3 text-sm font-semibold text-white transition-colors hover:bg-ink/90" onClick={() => setOpen(false)}>
               Shop all products
             </Link>
-            <Link href="/request-quote" className="rounded-md border border-ink px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-cream" onClick={() => setOpen(false)}>
+            <Link href="/request-quote" className="rounded-lg border border-ink px-4 py-3 text-sm font-semibold text-ink transition-colors hover:bg-cream" onClick={() => setOpen(false)}>
               Request a quote
             </Link>
+            </div>
+            <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
+              <Link href="/login" className="text-sm font-semibold text-ink underline-offset-4 hover:underline" onClick={() => setOpen(false)}>Sign in</Link>
+              <div className="flex items-center gap-1.5">
+                <Link href="/quote" className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold text-ink hover:bg-cream" onClick={() => setOpen(false)}><ClipboardList className="size-3.5" aria-hidden /> Quote list</Link>
+                <Link href="/cart" className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-ink px-3 text-xs font-semibold text-white hover:bg-ink/90" onClick={() => setOpen(false)}><ShoppingBag className="size-3.5" aria-hidden /> Cart</Link>
+              </div>
             </div>
             <div className="mt-4 grid gap-1 border-t border-border pt-3 sm:grid-cols-2">
             {mobileMenuLinks.map((link) => {
