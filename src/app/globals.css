@@ -244,7 +244,9 @@
    white label. In dark mode the semantic surfaces become light, so keep the
    label on the dark foreground token for readable contrast. */
 .dark .bg-ink.text-white,
-.dark .bg-paper-green.text-white {
+.dark .bg-paper-green.text-white,
+.dark :is(.bg-ink\/90, .bg-ink\/80, .bg-ink\/70).text-white,
+.dark :is(.bg-paper-green\/90, .bg-paper-green\/80).text-white {
   color: var(--primary-foreground) !important;
 }
 
