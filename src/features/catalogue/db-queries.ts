@@ -283,6 +283,47 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
   };
 }, ["catalogue-active-products"], { revalidate: 300, tags: ["catalogue"] });
 
+type ActiveProductsContext = Awaited<ReturnType<typeof loadActiveProducts>>;
+type CatalogueIndexes = {
+  categoryById: Map<string, ActiveProductsContext["categoryRows"][number]>;
+  brandById: Map<string, ActiveProductsContext["brandRows"][number]>;
+  brandBySlug: Map<string, ActiveProductsContext["brandRows"][number]>;
+  attributesByProductId: Map<string, ActiveProductsContext["attributeRows"]>;
+  aliasesByProductId: Map<string, ActiveProductsContext["aliasRows"]>;
+  tiersByVariantId: Map<string, ActiveProductsContext["tierRows"]>;
+  imageByProductId: Map<string, ActiveProductsContext["imageRows"][number]>;
+};
+
+function indexCatalogueContext(ctx: ActiveProductsContext): CatalogueIndexes {
+  const attributesByProductId = new Map<string, ActiveProductsContext["attributeRows"]>();
+  for (const row of ctx.attributeRows) {
+    const entries = attributesByProductId.get(row.productId) ?? [];
+    entries.push(row);
+    attributesByProductId.set(row.productId, entries);
+  }
+  const aliasesByProductId = new Map<string, ActiveProductsContext["aliasRows"]>();
+  for (const row of ctx.aliasRows) {
+    const entries = aliasesByProductId.get(row.productId) ?? [];
+    entries.push(row);
+    aliasesByProductId.set(row.productId, entries);
+  }
+  const tiersByVariantId = new Map<string, ActiveProductsContext["tierRows"]>();
+  for (const row of ctx.tierRows) {
+    const entries = tiersByVariantId.get(row.variantId) ?? [];
+    entries.push(row);
+    tiersByVariantId.set(row.variantId, entries);
+  }
+  return {
+    categoryById: new Map(ctx.categoryRows.map((row) => [row.id, row])),
+    brandById: new Map(ctx.brandRows.map((row) => [row.id, row])),
+    brandBySlug: new Map(ctx.brandRows.map((row) => [row.slug, row])),
+    attributesByProductId,
+    aliasesByProductId,
+    tiersByVariantId,
+    imageByProductId: new Map(ctx.imageRows.map((row) => [row.productId, row])),
+  };
+}
+
 const loadProductDetailContext = unstable_cache(async function loadProductDetailContext(slug: string) {
   const db = getDb();
   const { categoryRows, brandRows, deliveryBadge } = await loadCatalogueContext();
@@ -364,17 +405,16 @@ export async function listBrandDirectoryFromDb() {
 function toCardFromRow(
   row: Awaited<ReturnType<typeof loadActiveProducts>>["productRows"][number],
   ctx: Awaited<ReturnType<typeof loadActiveProducts>>,
+  indexes: CatalogueIndexes,
 ): ProductCardModel {
-  const attributes = ctx.attributeRows
-    .filter((attribute) => attribute.productId === row.product.id)
+  const attributes = [...(indexes.attributesByProductId.get(row.product.id) ?? [])]
     .sort((a, b) => a.position - b.position)
     .map((attribute) => ({
       namespace: attribute.namespace,
       key: attribute.key,
       valueText: attribute.valueText,
     }));
-  const tiers = ctx.tierRows
-    .filter((tier) => tier.variantId === row.variant.id)
+  const tiers = (indexes.tiersByVariantId.get(row.variant.id) ?? [])
     .map((tier) => ({
       minimumQuantity: tier.minimumQuantity,
       maximumQuantity: tier.maximumQuantity,
@@ -389,7 +429,7 @@ function toCardFromRow(
   const onHand = row.stock?.onHand ?? 0;
   const reserved = row.stock?.reserved ?? 0;
   const lowStockThreshold = row.stock?.lowStockThreshold ?? 5;
-  const image = ctx.imageRows.find((entry) => entry.productId === row.product.id);
+  const image = indexes.imageByProductId.get(row.product.id);
 
   return decorateProductPresentation({
     id: row.product.id,
@@ -419,16 +459,15 @@ function toCardFromRow(
 function haystacksForRow(
   row: Awaited<ReturnType<typeof loadActiveProducts>>["productRows"][number],
   ctx: Awaited<ReturnType<typeof loadActiveProducts>>,
+  indexes: CatalogueIndexes,
 ): string[] {
-  const category = ctx.categoryRows.find((entry) => entry.id === row.product.categoryId);
+  const category = indexes.categoryById.get(row.product.categoryId);
   const division = category?.parentId
-    ? ctx.categoryRows.find((entry) => entry.id === category.parentId)
+    ? indexes.categoryById.get(category.parentId)
     : category;
-  const brand = ctx.brandRows.find((entry) => entry.id === row.product.brandId);
-  const attributes = ctx.attributeRows.filter(
-    (attribute) => attribute.productId === row.product.id,
-  );
-  const aliases = ctx.aliasRows.filter((alias) => alias.productId === row.product.id);
+  const brand = indexes.brandById.get(row.product.brandId);
+  const attributes = indexes.attributesByProductId.get(row.product.id) ?? [];
+  const aliases = indexes.aliasesByProductId.get(row.product.id) ?? [];
 
   return [
     row.product.name,
@@ -446,6 +485,7 @@ export async function listProductCardsFromDb(
   filter?: Filter,
 ): Promise<ProductCardModel[]> {
   const ctx = await loadActiveProducts();
+  const indexes = indexCatalogueContext(ctx);
   let rows = ctx.productRows;
 
   if (filter?.categorySlug) {
@@ -457,7 +497,7 @@ export async function listProductCardsFromDb(
   }
 
   if (filter?.brandSlug) {
-    const brand = ctx.brandRows.find((entry) => entry.slug === filter.brandSlug);
+    const brand = indexes.brandBySlug.get(filter.brandSlug);
     if (!brand) {
       return [];
     }
@@ -466,11 +506,11 @@ export async function listProductCardsFromDb(
 
   if (filter?.query) {
     rows = rows.filter((row) =>
-      matchesCatalogueQuery(haystacksForRow(row, ctx), filter.query ?? ""),
+      matchesCatalogueQuery(haystacksForRow(row, ctx, indexes), filter.query ?? ""),
     );
   }
 
-  const cards = rows.map((row) => toCardFromRow(row, ctx));
+  const cards = rows.map((row) => toCardFromRow(row, ctx, indexes));
   let trending = new Map<string, number>();
   try {
     trending = await listTrendingProductIds(cards.map((card) => card.id));
@@ -497,6 +537,7 @@ export async function getProductBySlugFromDb(
   const ctx = await loadProductDetailContext(slug);
   if (!ctx) return null;
   const row = ctx.productRows[0];
+  const indexes = indexCatalogueContext(ctx);
 
   const category = ctx.categoryRows.find((entry) => entry.id === row.product.categoryId);
   const division = category?.parentId
@@ -527,7 +568,7 @@ export async function getProductBySlugFromDb(
     });
 
   return {
-    ...toCardFromRow(row, ctx),
+    ...toCardFromRow(row, ctx, indexes),
     imageSources: imageSources.length ? imageSources : undefined,
     barcode: row.variant.barcode,
     description: row.product.description ?? "",
