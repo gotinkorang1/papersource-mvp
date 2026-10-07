@@ -54,6 +54,8 @@ type ProductFilter = {
   categorySlug?: string;
   brandSlug?: string;
   query?: string;
+  excludeProductId?: string;
+  maxResults?: number;
 };
 
 // Server components can request the same catalogue slice more than once in a
@@ -64,7 +66,9 @@ const listProductCardsRequestCached = cache(async (
   categorySlug?: string,
   brandSlug?: string,
   query?: string,
-) => listProductCardsFromDb({ categorySlug, brandSlug, query }));
+  excludeProductId?: string,
+  maxResults?: number,
+) => listProductCardsFromDb({ categorySlug, brandSlug, query, excludeProductId, maxResults }));
 
 const listDivisionCategoriesRequestCached = cache(async () =>
   isDatabaseConfigured() ? listDivisionCategoriesFromDb() : listDivisionCategoriesFromSeed(),
@@ -123,7 +127,7 @@ export async function listProductCards(
   filter?: ProductFilter,
 ): Promise<ProductCardModel[]> {
   if (isDatabaseConfigured()) {
-    return listProductCardsRequestCached(filter?.categorySlug, filter?.brandSlug, filter?.query);
+    return listProductCardsRequestCached(filter?.categorySlug, filter?.brandSlug, filter?.query, filter?.excludeProductId, filter?.maxResults);
   }
   return listProductCardsFromSeed(filter);
 }

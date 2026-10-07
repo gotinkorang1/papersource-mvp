@@ -35,6 +35,8 @@ type Filter = {
   categorySlug?: string;
   brandSlug?: string;
   query?: string;
+  excludeProductId?: string;
+  maxResults?: number;
 };
 
 function descendantIds(
@@ -513,6 +515,13 @@ export async function listProductCardsFromDb(
     rows = rows.filter((row) =>
       matchesCatalogueQuery(haystacksForRow(row, ctx, indexes), filter.query ?? ""),
     );
+  }
+
+  if (filter?.excludeProductId) {
+    rows = rows.filter((row) => row.product.id !== filter.excludeProductId);
+  }
+  if (filter?.maxResults && filter.maxResults > 0) {
+    rows = rows.slice(0, filter.maxResults);
   }
 
   const cards = rows.map((row) => toCardFromRow(row, ctx, indexes));

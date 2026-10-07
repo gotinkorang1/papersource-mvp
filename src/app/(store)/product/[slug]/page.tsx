@@ -66,10 +66,10 @@ export default async function ProductPage({ params }: PageProps) {
   const savedLists = customer ? await listSavedLists(customer) : [];
   const [reviews, relatedProducts, reviewOrderId] = await Promise.all([
     listApprovedProductReviews(product.id),
-    listProductCards({ categorySlug: product.categorySlug }),
+    listProductCards({ categorySlug: product.categorySlug, excludeProductId: product.id, maxResults: 5 }),
     customer ? findDeliveredOrderForReview(customer.profileId, product.id) : Promise.resolve(null),
   ]);
-  const related = relatedProducts.filter((entry) => entry.id !== product.id).slice(0, 4);
+  const related = relatedProducts.slice(0, 4);
   const bulkTiers = visibleBulkTiers(product.tiers, product.unitPricePesewas);
   const supplementalMetadata = bookMetadata(product);
   const productDescription = productSeoDescription(product);
