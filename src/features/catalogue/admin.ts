@@ -223,13 +223,28 @@ export async function listAdminCategories() {
     .orderBy(asc(categories.position), asc(categories.name));
 }
 
-export async function listAdminBrands() {
+export async function listAdminBrands(filters?: { search?: string; sort?: string; page?: string }) {
   const db = getDb();
-  return db
+  const search = filters?.search?.trim();
+  const where = and(
+    isNull(brands.deletedAt),
+    search ? or(ilike(brands.name, `%${search}%`), ilike(brands.slug, `%${search}%`)) : undefined,
+  );
+  const [totalRow] = await db.select({ total: count() }).from(brands).where(where);
+  const total = Number(totalRow?.total ?? 0);
+  const page = resolveAdminProductPage(filters?.page, total);
+  const rows = await db
     .select()
     .from(brands)
-    .where(isNull(brands.deletedAt))
-    .orderBy(asc(brands.name));
+    .where(where)
+    .orderBy(filters?.sort === "slug" ? asc(brands.slug) : asc(brands.name))
+    .limit(ADMIN_PRODUCT_PAGE_SIZE)
+    .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE);
+  return {
+    rows,
+    page,
+    totalPages: Math.max(1, Math.ceil(total / ADMIN_PRODUCT_PAGE_SIZE)),
+  };
 }
 
 export async function listAdminPricingRows(filters?: { search?: string; sort?: string; page?: string }) {

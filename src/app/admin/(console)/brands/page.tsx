@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdminError, AdminField, adminFieldClass } from "@/components/admin/field";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { paperButton } from "@/components/commerce/paper-button";
 import { listAdminBrands } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
@@ -13,17 +14,15 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string; message?: string; sort?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; message?: string; sort?: string; page?: string }>;
 };
 
 export default async function AdminBrandsPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("brands", "read");
-  const allRows = await listAdminBrands();
   const canWrite = canAccessAdmin(actor.role, "brands", "write");
-  const { error, q = "", message, sort = "name" } = await searchParams;
-  const query = q.trim().toLocaleLowerCase();
-  const filteredRows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
-  const rows = [...filteredRows].sort((a, b) => sort === "slug" ? a.slug.localeCompare(b.slug) : a.name.localeCompare(b.name));
+  const { error, q = "", message, sort = "name", page: pageParam } = await searchParams;
+  const brandResult = await listAdminBrands({ search: q, sort: sort === "slug" ? sort : "name", page: pageParam });
+  const rows = brandResult.rows;
 
   return (
     <main>
@@ -59,6 +58,7 @@ export default async function AdminBrandsPage({ searchParams }: PageProps) {
           </tbody>
         </table>
       </form>
+      <AdminPagination pathname="/admin/brands" params={{ q: q || undefined, sort: sort !== "name" ? sort : undefined }} page={brandResult.page} hasNext={brandResult.page < brandResult.totalPages} />
       {canWrite
         ? rows.map((row) => (
             <details
