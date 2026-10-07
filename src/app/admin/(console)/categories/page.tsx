@@ -3,9 +3,10 @@ import Link from "next/link";
 import { AdminError, AdminField, adminAreaClass, adminFieldClass } from "@/components/admin/field";
 import { SelectAllCheckbox } from "@/components/admin/select-all-checkbox";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 import { CategoryImageManager } from "@/components/admin/category-image-manager";
 import { paperButton } from "@/components/commerce/paper-button";
-import { listAdminCategories } from "@/features/catalogue/admin";
+import { listAdminCategories, listAdminCategoryOptions } from "@/features/catalogue/admin";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 
@@ -14,17 +15,18 @@ export const metadata: Metadata = {
 };
 
 type PageProps = {
-  searchParams: Promise<{ error?: string; q?: string; message?: string; sort?: string }>;
+  searchParams: Promise<{ error?: string; q?: string; message?: string; sort?: string; page?: string }>;
 };
 
 export default async function AdminCategoriesPage({ searchParams }: PageProps) {
   const actor = await requireStaffArea("categories", "read");
-  const allRows = await listAdminCategories();
   const canWrite = canAccessAdmin(actor.role, "categories", "write");
-  const { error, q = "", message, sort = "position" } = await searchParams;
-  const query = q.trim().toLocaleLowerCase();
-  const filteredRows = query ? allRows.filter((row) => `${row.name} ${row.slug}`.toLocaleLowerCase().includes(query)) : allRows;
-  const rows = [...filteredRows].sort((a, b) => sort === "name" ? a.name.localeCompare(b.name) : a.position - b.position || a.name.localeCompare(b.name));
+  const { error, q = "", message, sort = "position", page: pageParam } = await searchParams;
+  const [categoryResult, allRows] = await Promise.all([
+    listAdminCategories({ search: q, sort: sort === "name" ? sort : "position", page: pageParam }),
+    listAdminCategoryOptions(),
+  ]);
+  const rows = categoryResult.rows;
   const categoryById = new Map(allRows.map((row) => [row.id, row]));
   const categoryPath = (row: (typeof allRows)[number]) => {
     const parts: string[] = [];
@@ -73,6 +75,7 @@ export default async function AdminCategoriesPage({ searchParams }: PageProps) {
           </tbody>
         </table>
       </div>
+      <AdminPagination pathname="/admin/categories" params={{ q: q || undefined, sort: sort !== "position" ? sort : undefined }} page={categoryResult.page} hasNext={categoryResult.page < categoryResult.totalPages} />
       {canWrite
         ? rows.map((row) => (
             <details

@@ -218,10 +218,29 @@ export async function getAdminProduct(productId: string) {
   };
 }
 
-export async function listAdminCategories() {
+export async function listAdminCategories(filters?: { search?: string; sort?: string; page?: string }) {
   const db = getDb();
-  return db
+  const search = filters?.search?.trim();
+  const where = and(
+    isNull(categories.deletedAt),
+    search ? or(ilike(categories.name, `%${search}%`), ilike(categories.slug, `%${search}%`)) : undefined,
+  );
+  const [totalRow] = await db.select({ total: count() }).from(categories).where(where);
+  const total = Number(totalRow?.total ?? 0);
+  const page = resolveAdminProductPage(filters?.page, total);
+  const rows = await db
     .select()
+    .from(categories)
+    .where(where)
+    .orderBy(filters?.sort === "name" ? asc(categories.name) : asc(categories.position), asc(categories.name))
+    .limit(ADMIN_PRODUCT_PAGE_SIZE)
+    .offset((page - 1) * ADMIN_PRODUCT_PAGE_SIZE);
+  return { rows, page, totalPages: Math.max(1, Math.ceil(total / ADMIN_PRODUCT_PAGE_SIZE)) };
+}
+
+export async function listAdminCategoryOptions() {
+  return getDb()
+    .select({ id: categories.id, parentId: categories.parentId, name: categories.name, slug: categories.slug })
     .from(categories)
     .where(isNull(categories.deletedAt))
     .orderBy(asc(categories.position), asc(categories.name));
