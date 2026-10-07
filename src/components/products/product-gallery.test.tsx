@@ -1,7 +1,12 @@
 import { render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
-import { ProductGallery } from "./product-gallery";
+import { ProductGallery, productThumbnailSrc } from "./product-gallery";
+
+it("uses a small Cloudinary derivative for thumbnails", () => {
+  expect(productThumbnailSrc("https://res.cloudinary.com/demo/image/upload/f_auto,q_auto,w_1200/products/pen.jpg")).toContain("w_160");
+  expect(productThumbnailSrc("/images/pen.jpg")).toBe("/images/pen.jpg");
+});
 
 vi.mock("server-only", () => ({}));
 
