@@ -367,7 +367,7 @@ const loadProductDetailContext = unstable_cache(async function loadProductDetail
 const loadBrandDirectory = unstable_cache(async function loadBrandDirectory() {
   const db = getDb();
   const rows = await db
-    .select({
+    .selectDistinct({
       brandId: brands.id,
       brandName: brands.name,
       brandSlug: brands.slug,
