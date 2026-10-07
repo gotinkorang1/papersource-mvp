@@ -147,6 +147,6 @@ describe("productJsonLd", () => {
       { ...product, description: "   ", categoryName: "Copier Paper" },
       "http://localhost:3000/product/double-a-premium-a4",
     );
-    expect(json.description).toBe("Double A Premium A4 Paper by Double A. Shop Copier Paper from PaperSource Ghana.");
+    expect(json.description).toBe("Double A Premium A4 Paper by Double A. Shop Copier Paper from PaperSource Ghana with Accra, Tema and nationwide supply on request.");
   });
 });

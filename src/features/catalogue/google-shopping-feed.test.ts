@@ -48,7 +48,7 @@ describe("Google Shopping feed", () => {
       },
     ]);
 
-    expect(xml).toContain("Classic Notebook by PaperSource. Shop Notebooks from PaperSource Ghana.");
+    expect(xml).toContain("Classic Notebook by PaperSource. Shop Notebooks from PaperSource Ghana with Accra, Tema and nationwide supply on request.");
   });
 
   it("publishes verified secondary product images as additional image links", () => {
