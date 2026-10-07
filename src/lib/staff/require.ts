@@ -21,7 +21,16 @@ export async function readStaffActor(): Promise<StaffActor | null> {
     }
     throw error;
   }
-  const { data, error } = await supabase.auth.getUser();
+  let authResult: Awaited<ReturnType<typeof supabase.auth.getUser>>;
+  try {
+    authResult = await supabase.auth.getUser();
+  } catch {
+    // Public storefront pages should remain renderable when Supabase auth is
+    // restricted or temporarily unavailable. Protected routes still fail
+    // closed through requireStaff and redirect to the staff sign-in screen.
+    return null;
+  }
+  const { data, error } = authResult;
   const email = data.user?.email?.trim().toLowerCase();
   if (error || !email) return null;
 
