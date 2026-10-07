@@ -97,8 +97,11 @@ export function ProductGridList({
         </div>
       ) : viewMode === "default" ? (
         <>
+          {/* Both responsive shells share the same data. Keep their images lazy
+              so the hidden breakpoint variant cannot create duplicate eager
+              downloads for the first product. */}
           <div data-catalogue-view="list" className="grid gap-3 sm:hidden">
-            {products.map((product, index) => <ProductListItem key={`mobile-${product.id}`} product={product} variant="list" onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} priority={index === 0} />)}
+            {products.map((product) => <ProductListItem key={`mobile-${product.id}`} product={product} variant="list" onAddToCart={addToCart} onAddToQuote={addToQuote} canEdit={canEdit} />)}
           </div>
           <ProductGrid className="hidden sm:grid">
             {products.map((product, index) => (
@@ -110,7 +113,6 @@ export function ProductGridList({
                   onAddToCart={addToCart}
                   onAddToQuote={addToQuote}
                   canEdit={canEdit}
-                  priority={index === 0}
                 />
               </div>
             ))}
