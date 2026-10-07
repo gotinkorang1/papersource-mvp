@@ -4,7 +4,7 @@ import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { productImageAlt } from "@/features/catalogue/product-metadata";
 import { decorateProductPresentation } from "@/features/catalogue/presentation";
 import { listTrendingProductIds } from "@/features/catalogue/trending";
-import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery, uniqueCatalogueProducts } from "@/features/catalogue/search";
+import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
   sellableQuantity,
@@ -224,8 +224,11 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
   const db = getDb();
   const { categoryRows, brandRows, deliveryBadge } = await loadCatalogueContext();
 
-  const productRows = uniqueCatalogueProducts(await db
-    .select({
+  // Cards display one active variant per product. Select that representative
+  // variant in Postgres so multi-variant products do not transfer duplicate
+  // product rows before being discarded in application code.
+  const productRows = await db
+    .selectDistinctOn([products.id], {
       product: { id: products.id, name: products.name, slug: products.slug, brandId: products.brandId, categoryId: products.categoryId, productType: products.productType, description: products.description, createdAt: products.createdAt, updatedAt: products.updatedAt },
       variant: { id: productVariants.id, productId: productVariants.productId, sku: productVariants.sku, barcode: productVariants.barcode, unitLabel: productVariants.unitLabel, baseUnitPrice: productVariants.baseUnitPrice, active: productVariants.active },
       stock: { variantId: inventory.variantId, onHand: inventory.onHand, reserved: inventory.reserved, lowStockThreshold: inventory.lowStockThreshold },
@@ -239,7 +242,8 @@ const loadActiveProducts = unstable_cache(async function loadActiveProducts() {
         isNull(products.deletedAt),
         eq(productVariants.active, true),
       ),
-    ));
+    )
+    .orderBy(asc(products.id), asc(productVariants.sku));
 
   const productIds = productRows.map((row) => row.product.id);
   const variantIds = productRows.map((row) => row.variant.id);
