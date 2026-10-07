@@ -54,4 +54,35 @@ export function categoryImageFor(category: Pick<CatalogueCategoryView, "slug" | 
   };
 }
 
+/**
+ * Resolve a set of category tiles without repeating a visible image.
+ *
+ * Admin-uploaded artwork remains the source of truth when it is unique. If
+ * multiple categories happen to reference the same uploaded asset, use the
+ * category's curated fallback instead so the storefront still communicates
+ * what each category contains.
+ */
+export function categoryImagesFor(
+  categories: Pick<CatalogueCategoryView, "slug" | "name" | "imagePublicId">[],
+) {
+  const used = new Set<string>();
+
+  return categories.map((category) => {
+    const resolved = categoryImageFor(category);
+    if (!used.has(resolved.src)) {
+      used.add(resolved.src);
+      return resolved;
+    }
+
+    const curated = categoryImages[category.slug];
+    if (curated && !used.has(curated.src)) {
+      used.add(curated.src);
+      return curated;
+    }
+
+    used.add(resolved.src);
+    return resolved;
+  });
+}
+
 export { categoryImageFallback };

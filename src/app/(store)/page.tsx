@@ -16,7 +16,7 @@ import {
 import { SEO_GUIDES } from "@/features/content/seo-guides";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
-import { categoryImageFor } from "@/features/catalogue/category-images";
+import { categoryImagesFor } from "@/features/catalogue/category-images";
 import { absoluteUrl, pageMetadata, webPageJsonLd } from "@/lib/seo";
 import { ArrowRight, Check, ClipboardList, Layers3, PackageCheck, Search, ShieldCheck, Truck } from "lucide-react";
 
@@ -34,6 +34,7 @@ export const metadata: Metadata = pageMetadata({
 
 export default async function HomePage() {
   const categories = await listDivisionCategories();
+  const categoryImages = categoryImagesFor(categories);
   const featured = await listFeaturedProductCards();
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
@@ -128,16 +129,19 @@ export default async function HomePage() {
             <Link href="/shop" className="hidden shrink-0 items-center gap-1 text-sm font-semibold text-ink underline underline-offset-4 transition hover:text-paper-green sm:inline-flex">Browse all <ArrowRight className="size-4" aria-hidden /></Link>
           </div>
           <div className="mt-7 grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-4">
-            {categories.map((category) => (
-              <CategoryTile
-                key={category.slug}
-                name={category.name}
-                href={`/shop/${category.slug}`}
-                caption={category.caption}
-                imageSrc={categoryImageFor(category).src}
-                imageAlt={categoryImageFor(category).alt}
-              />
-            ))}
+            {categories.map((category, index) => {
+              const image = categoryImages[index];
+              return (
+                <CategoryTile
+                  key={category.slug}
+                  name={category.name}
+                  href={`/shop/${category.slug}`}
+                  caption={category.caption}
+                  imageSrc={image.src}
+                  imageAlt={image.alt}
+                />
+              );
+            })}
           </div>
           <Link href="/shop" className="mt-6 inline-flex text-sm font-semibold text-ink underline underline-offset-4 sm:hidden">Browse all products →</Link>
         </div>
