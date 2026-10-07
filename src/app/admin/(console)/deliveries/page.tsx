@@ -5,17 +5,19 @@ import { SubmitProgressButton } from "@/components/admin/submit-progress-button"
 import { listAdminDeliveries } from "@/features/admin/queries";
 import { formatGhs } from "@/lib/money";
 import { requireStaffArea } from "@/lib/staff/require";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 
 export const metadata: Metadata = { title: "Deliveries" };
 
 export default async function AdminDeliveriesPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string; status?: string; sort?: string }>;
+  searchParams: Promise<{ q?: string; status?: string; sort?: string; page?: string }>;
 }) {
   const actor = await requireStaffArea("deliveries", "read");
   const filters = await searchParams;
-  const rows = await listAdminDeliveries(actor.role, filters);
+  const result = await listAdminDeliveries(actor.role, { ...filters, page: Number(filters.page) });
+  const rows = result.rows;
 
   return (
     <main>
@@ -29,13 +31,13 @@ export default async function AdminDeliveriesPage({
         <div className="flex items-center gap-3"><SubmitProgressButton idleLabel="Filter" pendingLabel="Filtering…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" />{filters.q || filters.status || filters.sort ? <Link href="/admin/deliveries" className="text-xs text-slate underline">Clear</Link> : null}</div>
       </form>
       {rows.length === 0 ? <p className="mt-8 rounded-lg border border-border bg-card p-6 text-slate">No deliveries match these filters.</p> : (
-        <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
+        <><div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card shadow-sm">
           <table className="admin-responsive-table w-full min-w-[760px] text-sm">
             <caption className="sr-only">Deliveries</caption>
             <thead className="bg-muted/60"><tr className="border-b border-border text-left text-slate"><th scope="col" className="px-4 py-3 font-medium">Order</th><th scope="col" className="px-4 py-3 font-medium">Zone</th><th scope="col" className="px-4 py-3 font-medium">Status</th><th scope="col" className="px-4 py-3 font-medium">Total</th><th scope="col" className="px-4 py-3 font-medium">Customer</th><th scope="col" className="px-4 py-3 font-medium">Updated</th></tr></thead>
             <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="px-4 py-3" data-label="Order"><Link href={`/admin/orders/${row.id}`} className="font-medium text-ink underline underline-offset-2 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">{row.number}</Link></td><td className="px-4 py-3" data-label="Zone">{row.zoneName}<span className="block text-xs text-slate">{row.zoneRegion}</span></td><td className="px-4 py-3" data-label="Status"><AdminStatusBadge status={row.status} /></td><td className="px-4 py-3 tabular-nums" data-label="Total">{formatGhs(row.grandTotal)}</td><td className="px-4 py-3" data-label="Customer">{row.customerEmail ?? "Guest"}</td><td className="px-4 py-3 text-slate" data-label="Updated">{row.updatedAt.toLocaleDateString("en-GH")}</td></tr>)}</tbody>
           </table>
-        </div>
+        </div><AdminPagination pathname="/admin/deliveries" params={{ q: filters.q, status: filters.status, sort: filters.sort }} page={result.page} hasNext={result.hasNext} /></>
       )}
     </main>
   );

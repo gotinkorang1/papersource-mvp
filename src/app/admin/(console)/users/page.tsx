@@ -4,17 +4,20 @@ import { listAdminStaff } from "@/features/admin/queries";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 import type { StaffRole } from "@/lib/staff/types";
+import { AdminPagination } from "@/components/admin/admin-pagination";
 
 export const metadata: Metadata = { title: "Staff users" };
 export const dynamic = "force-dynamic";
 
 const roles: StaffRole[] = ["super_admin", "admin", "sales", "warehouse", "content_manager"];
 
-export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string }> }) {
+export default async function AdminUsersPage({ searchParams }: { searchParams: Promise<{ error?: string; success?: string; page?: string }> }) {
   const actor = await requireStaffArea("users", "read");
-  const rows = await listAdminStaff(actor.role);
+  const filters = await searchParams;
+  const result = await listAdminStaff(actor.role, Number(filters.page));
+  const rows = result.rows;
   const canWrite = canAccessAdmin(actor.role, "roles", "write");
-  const { error, success } = await searchParams;
+  const { error, success } = filters;
 
   return (
     <main className="max-w-5xl">
@@ -25,13 +28,13 @@ export default async function AdminUsersPage({ searchParams }: { searchParams: P
       {success ? <p role="status" className="mt-4 border border-paper-green/40 bg-paper-green/10 px-4 py-3 text-sm text-paper-green">{success === "invited" ? "Invitation sent. The staff member can finish setup from their email." : "Role updated."}</p> : null}
       {canWrite ? <form action="/admin/users/mutate" method="post" className="mt-8 grid gap-4 rounded-xl border border-border bg-card p-5 sm:grid-cols-[1fr_1fr_12rem_auto] sm:items-end"><input type="hidden" name="intent" value="invite" /><label className="grid gap-1 text-xs font-medium text-slate">Full name<input name="fullName" required minLength={2} maxLength={120} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink" placeholder="Ama Mensah" /></label><label className="grid gap-1 text-xs font-medium text-slate">Work email<input name="email" required type="email" maxLength={320} className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink" placeholder="ama@company.com" /></label><label className="grid gap-1 text-xs font-medium text-slate">Initial role<select name="role" defaultValue="sales" className="h-10 rounded-lg border border-border bg-background px-3 text-sm text-ink">{roles.filter((role) => role !== "super_admin").map((role) => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}</select></label><SubmitProgressButton idleLabel="Invite staff" pendingLabel="Sending…" className="h-10 rounded-lg bg-primary px-4 text-sm font-semibold text-primary-foreground" /></form> : null}
       {rows.length === 0 ? <p className="mt-8 text-slate">No staff profiles have been assigned yet.</p> : (
-        <div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
+        <><div className="mt-8 overflow-x-auto rounded-xl border border-border bg-card">
           <table className="admin-responsive-table w-full min-w-[40rem] text-sm">
             <caption className="sr-only">Staff users and roles</caption>
             <thead><tr className="border-b border-border text-left text-slate"><th scope="col" className="px-4 py-3 font-medium">Name</th><th scope="col" className="px-4 py-3 font-medium">Email</th><th scope="col" className="px-4 py-3 font-medium">Role</th><th scope="col" className="px-4 py-3 font-medium">Access</th></tr></thead>
             <tbody>{rows.map((row) => <tr key={row.id} className="border-b border-border transition-colors hover:bg-muted/40 last:border-0"><td className="px-4 py-3 font-medium text-ink" data-label="Name">{row.fullName}</td><td className="px-4 py-3" data-label="Email">{row.email}</td><td className="px-4 py-3 capitalize" data-label="Role">{row.role.replaceAll("_", " ")}</td><td className="px-4 py-3" data-label="Access">{canWrite ? <form action="/admin/users/mutate" method="post" className="flex flex-wrap items-center justify-end gap-2"><input type="hidden" name="profileId" value={row.id} /><select name="role" defaultValue={row.role} className="h-9 rounded-md border border-border bg-background px-2 text-sm text-ink" aria-label={`Role for ${row.email}`}>{roles.map((role) => <option key={role} value={role}>{role.replaceAll("_", " ")}</option>)}</select><SubmitProgressButton idleLabel="Save" pendingLabel="Saving…" className="rounded-md border border-ink px-3 py-1.5 text-xs font-semibold text-ink transition hover:bg-ink hover:text-white" /></form> : <span className="text-slate">Read only</span>}</td></tr>)}</tbody>
           </table>
-        </div>
+        </div><AdminPagination pathname="/admin/users" params={{}} page={result.page} hasNext={result.hasNext} /></>
       )}
     </main>
   );
