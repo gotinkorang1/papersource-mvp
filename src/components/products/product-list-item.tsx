@@ -83,7 +83,7 @@ export function ProductListItem({
       )}
     >
       <Link href={`/product/${product.slug}`} className={cn("relative block min-w-0 self-start overflow-hidden rounded-xl bg-cream", content ? "aspect-[4/3]" : "aspect-square")} aria-label={`View ${product.name}`}>
-        <Image src={resolvedImageSource} alt={product.imageAlt.trim() || product.name} fill preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 104px, 192px" : "(max-width: 640px) 88px, 128px"} onError={() => { if (resolvedImageSource !== "/images/set-school-stationery.jpg") setResolvedImageSource("/images/set-school-stationery.jpg"); }} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
+        <Image src={resolvedImageSource} alt={product.imageAlt.trim() || product.name} fill unoptimized={resolvedImageSource.startsWith("https://res.cloudinary.com/")} preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 104px, 192px" : "(max-width: 640px) 88px, 128px"} onError={() => { if (resolvedImageSource !== "/images/set-school-stationery.jpg") setResolvedImageSource("/images/set-school-stationery.jpg"); }} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
       </Link>
       <div className="min-w-0 self-center">
         <div className="flex flex-wrap items-center gap-2"><PresentationBadges product={product} /><StockBadge level={product.stock} /></div>
