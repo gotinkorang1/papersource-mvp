@@ -35,7 +35,7 @@ export function MobileNav() {
             href="/"
             onClick={closeDrawers}
             aria-current={currentPathname === "/" ? "page" : undefined}
-            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${currentPathname === "/" ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md border-t-2 px-2 py-1 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${currentPathname === "/" ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
             <House className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Home
@@ -46,7 +46,7 @@ export function MobileNav() {
             href="/shop"
             onClick={closeDrawers}
             aria-current={shopActive ? "page" : undefined}
-            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${shopActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md border-t-2 px-2 py-1 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${shopActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
             <Store className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Shop
@@ -57,7 +57,7 @@ export function MobileNav() {
             href="/search"
             onClick={closeDrawers}
             aria-current={isActive("/search") ? "page" : undefined}
-            className={`group flex min-h-14 flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${isActive("/search") ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-[3.25rem] flex-col items-center justify-center gap-0.5 rounded-md border-t-2 px-2 py-1 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${isActive("/search") ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
           >
             <Search className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />
             Search
@@ -66,7 +66,7 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className={`group flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${quoteActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-[3.25rem] w-full flex-col items-center justify-center gap-0.5 rounded-md border-t-2 px-2 py-1 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${quoteActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
             aria-label={itemCountLabel("Quote list", quoteCount)}
             aria-expanded={quoteOpen}
             aria-pressed={quoteOpen}
@@ -82,7 +82,7 @@ export function MobileNav() {
         <li>
           <button
             type="button"
-            className={`group flex min-h-14 w-full flex-col items-center justify-center gap-1 rounded-md border-t-2 px-2 py-2 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${cartActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
+            className={`group flex min-h-[3.25rem] w-full flex-col items-center justify-center gap-0.5 rounded-md border-t-2 px-2 py-1 text-xs transition-[color,background-color,border-color] hover:bg-cream/60 hover:text-ink focus-visible:z-10 focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink ${cartActive ? "border-ochre bg-cream/40 text-ink" : "border-transparent text-slate"}`}
             aria-label={itemCountLabel("Cart", cartCount)}
             aria-expanded={cartOpen}
             aria-pressed={cartOpen}
