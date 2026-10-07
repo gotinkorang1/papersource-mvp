@@ -401,7 +401,10 @@ function toCardFromRow(
     unitLabel: row.variant.unitLabel,
     unitPricePesewas: list.unitPricePesewas ?? row.variant.baseUnitPrice,
     imageAlt: productImageAlt({ name: row.product.name, specLine: buildSpecLine(attributes) || buildSupplementalSpecLine(attributes), alt: image?.alt }),
-    imageSrc: image ? cloudinaryImageUrl(image.cloudinaryPublicId, 1200) ?? undefined : undefined,
+    // Cards are rendered in a small grid/list slot. Keep the source transform
+    // close to the largest rendered slot so Cloudinary and Next do not move a
+    // full 1200px image through the request path for every catalogue card.
+    imageSrc: image ? cloudinaryImageUrl(image.cloudinaryPublicId, 640) ?? undefined : undefined,
     stock: stockLevelFromQuantity(
       sellableQuantity(onHand, reserved),
       lowStockThreshold,

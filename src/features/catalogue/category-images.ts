@@ -41,7 +41,9 @@ const categoryImages: Record<string, { src: string; alt: string }> = {
 const categoryImageFallback = "/images/catalogue-stationery-generated.png";
 
 export function categoryImageFor(category: Pick<CatalogueCategoryView, "slug" | "name" | "imagePublicId">) {
-  const uploaded = category.imagePublicId ? cloudinaryImageUrl(category.imagePublicId, 1000) : null;
+  // Category tiles are never displayed at 1000px in the storefront. Use a
+  // bounded transform to avoid downloading oversized originals for tiles.
+  const uploaded = category.imagePublicId ? cloudinaryImageUrl(category.imagePublicId, 640) : null;
   if (uploaded) return { src: uploaded, alt: `${category.name} workplace supplies` };
   const exact = categoryImages[category.slug];
   if (exact) return exact;
