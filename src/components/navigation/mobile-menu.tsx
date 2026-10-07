@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { mobileMenuLinks, isNavigationLinkActive } from "./navigation-model";
 import { normalizeShopCategoryLinks, type CategorySummary } from "./shop-menu-model";
+import { ThemeToggle } from "@/components/ui/theme-toggle";
 
 export function MobileMenu({ categories = [] }: { categories?: readonly CategorySummary[] }) {
   const [open, setOpen] = useState(false);
@@ -83,6 +84,7 @@ export function MobileMenu({ categories = [] }: { categories?: readonly Category
             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 border-b border-border pb-3">
               <Link href="/login" className="text-sm font-semibold text-ink underline-offset-4 hover:underline" onClick={() => setOpen(false)}>Sign in</Link>
               <div className="flex items-center gap-1.5">
+                <ThemeToggle />
                 <Link href="/quote" className="inline-flex min-h-10 items-center gap-1.5 rounded-full border border-border px-3 text-xs font-semibold text-ink hover:bg-cream" onClick={() => setOpen(false)}><ClipboardList className="size-3.5" aria-hidden /> Quote list</Link>
                 <Link href="/cart" className="inline-flex min-h-10 items-center gap-1.5 rounded-full bg-ink px-3 text-xs font-semibold text-white hover:bg-ink/90" onClick={() => setOpen(false)}><ShoppingBag className="size-3.5" aria-hidden /> Cart</Link>
               </div>
