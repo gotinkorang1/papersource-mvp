@@ -1,4 +1,5 @@
 import { isDatabaseConfigured } from "@/lib/db/client";
+import { cache } from "react";
 import {
   getBrandBySlugFromDb,
   getCategoryBySlugFromDb,
@@ -55,6 +56,16 @@ type ProductFilter = {
   query?: string;
 };
 
+// Server components can request the same catalogue slice more than once in a
+// render (for example a page shell and a recommendation block). React's
+// request cache deduplicates that work before the longer-lived database cache
+// is consulted. Primitive arguments keep equivalent filter objects shareable.
+const listProductCardsRequestCached = cache(async (
+  categorySlug?: string,
+  brandSlug?: string,
+  query?: string,
+) => listProductCardsFromDb({ categorySlug, brandSlug, query }));
+
 export async function listDivisionCategories(): Promise<CatalogueCategoryView[]> {
   if (isDatabaseConfigured()) {
     return listDivisionCategoriesFromDb();
@@ -106,7 +117,7 @@ export async function listProductCards(
   filter?: ProductFilter,
 ): Promise<ProductCardModel[]> {
   if (isDatabaseConfigured()) {
-    return listProductCardsFromDb(filter);
+    return listProductCardsRequestCached(filter?.categorySlug, filter?.brandSlug, filter?.query);
   }
   return listProductCardsFromSeed(filter);
 }
