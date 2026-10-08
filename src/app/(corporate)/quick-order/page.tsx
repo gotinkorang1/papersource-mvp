@@ -35,7 +35,7 @@ export default async function QuickOrderPage({ searchParams }: PageProps) {
         <span className="font-mono text-ink">PS-BDL-SMLOFF</span>.
       </p>
       {error ? (
-        <p role="alert" className="mt-6 border border-error/40 bg-white px-4 py-3 text-sm text-error">
+        <p role="alert" className="mt-6 border border-error/40 bg-card px-4 py-3 text-sm text-error">
           {error}
         </p>
       ) : null}
