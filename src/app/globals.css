@@ -88,6 +88,20 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.paper-confidence-rail {
+  isolation: isolate;
+}
+
+.paper-confidence-rail__item {
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .paper-confidence-rail__item:nth-child(2n + 1) {
+    border-left: 0;
+  }
+}
+
 .paper-mobile-menu {
   overscroll-behavior: contain;
   scrollbar-gutter: stable;
