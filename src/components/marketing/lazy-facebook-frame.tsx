@@ -7,6 +7,7 @@ type LazyFacebookFrameProps = {
   title: string;
   className: string;
   minHeight: number;
+  themeAware?: boolean;
 };
 
 /**
@@ -14,9 +15,29 @@ type LazyFacebookFrameProps = {
  * reserves its space, then the iframe is mounted shortly before it enters the
  * viewport so the social feed remains available without delaying LCP.
  */
-export function LazyFacebookFrame({ src, title, className, minHeight }: LazyFacebookFrameProps) {
+export function LazyFacebookFrame({ src, title, className, minHeight, themeAware = false }: LazyFacebookFrameProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const [ready, setReady] = useState(false);
+  const [resolvedSrc, setResolvedSrc] = useState(src);
+
+  useEffect(() => {
+    if (!themeAware) return;
+
+    const updateTheme = () => {
+      try {
+        const url = new URL(src);
+        url.searchParams.set("colorscheme", document.documentElement.classList.contains("dark") ? "dark" : "light");
+        setResolvedSrc(url.toString());
+      } catch {
+        setResolvedSrc(src);
+      }
+    };
+
+    updateTheme();
+    const observer = new MutationObserver(updateTheme);
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, [src, themeAware]);
 
   useEffect(() => {
     const element = containerRef.current;
@@ -43,7 +64,7 @@ export function LazyFacebookFrame({ src, title, className, minHeight }: LazyFace
       {ready ? (
         <iframe
           title={title}
-          src={src}
+          src={resolvedSrc}
           loading="lazy"
           scrolling="no"
           frameBorder="0"
