@@ -67,6 +67,13 @@
   box-shadow: 0 16px 34px rgb(0 0 0 / 0.24);
 }
 
+/* `ink` intentionally inverts between themes. Keep any legacy white text
+   paired with that utility readable while individual surfaces migrate to
+   primary-foreground. */
+.dark [class~="bg-ink"][class~="text-white"] {
+  color: var(--primary-foreground);
+}
+
 .announcement-ticker-track:hover,
 .announcement-ticker-track:focus-within {
   animation-play-state: paused;

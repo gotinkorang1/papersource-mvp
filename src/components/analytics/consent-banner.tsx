@@ -58,7 +58,7 @@ export function ConsentBanner() {
       <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         <Link href="/privacy" className="mr-auto text-xs font-semibold text-slate underline underline-offset-4">Privacy details</Link>
         <button type="button" onClick={() => { dispatchAnalyticsConsent("denied"); setVisible(false); }} className="min-h-10 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-ink hover:bg-muted">Decline</button>
-        <button type="button" onClick={() => { dispatchAnalyticsConsent("granted"); setVisible(false); }} className="min-h-10 rounded-lg bg-ink px-3 py-2 text-sm font-semibold text-white hover:bg-ink/90">Allow analytics</button>
+      <button type="button" onClick={() => { dispatchAnalyticsConsent("granted"); setVisible(false); }} className="min-h-10 rounded-lg bg-ink px-3 py-2 text-sm font-semibold text-primary-foreground hover:bg-ink/90">Allow analytics</button>
       </div>
     </aside>
   );
