@@ -58,7 +58,13 @@ export async function GET(request: NextRequest) {
           type,
           next: request.nextUrl.searchParams.get("next"),
         });
-    if (result.status !== "signed_in") return response;
+    if (result.status !== "signed_in") {
+      if (result.status === "error" && result.errorKind === "service") {
+        const servicePath = type === "recovery" ? "/forgot-password?authError=service" : "/login?authError=service";
+        response.headers.set("Location", new URL(servicePath, siteUrl).toString());
+      }
+      return response;
+    }
 
     try {
       const guestCookie = request.cookies.get(GUEST_SESSION_COOKIE)?.value;

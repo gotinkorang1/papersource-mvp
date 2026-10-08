@@ -137,6 +137,13 @@ describe("customer Auth operations", () => {
     expect(synchronizeProfile).not.toHaveBeenCalled();
   });
 
+  it("separates temporary Auth outages from expired recovery links", async () => {
+    auth.verifyOtp.mockResolvedValue({ data: { session: null, user: null }, error: { status: 402, message: "quota detail" } });
+    expect(await service().confirm({ tokenHash: "temporary-failure", type: "recovery" })).toEqual({
+      status: "error", message: "Account services are temporarily unavailable. Please try again.", errorKind: "service",
+    });
+  });
+
   it("returns a neutral reset-email result and ignores submitted callback URLs", async () => {
     expect(await service().requestPasswordReset({ email: " UNKNOWN@EXAMPLE.TEST ", redirectTo: "https://evil.test" })).toEqual({ status: "email_sent" });
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith("unknown@example.test", { redirectTo: "https://papersourcegh.com/auth/confirm?type=recovery" });

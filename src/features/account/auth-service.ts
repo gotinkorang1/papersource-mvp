@@ -8,7 +8,7 @@ type AuthClient = Pick<SupabaseClient["auth"],
   "signUp" | "signInWithPassword" | "verifyOtp" | "exchangeCodeForSession" | "resetPasswordForEmail" | "updateUser" | "signOut" | "getClaims">;
 
 export type CustomerAuthResult =
-  | { status: "error"; message: string; fieldErrors?: Record<string, string[]> }
+  | { status: "error"; message: string; fieldErrors?: Record<string, string[]>; errorKind?: "service" }
   | { status: "email_sent" | "password_updated" | "signed_out" }
   | { status: "signed_in"; customer: CustomerActor; next: string };
 
@@ -62,6 +62,16 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
   const failure = (message: string): CustomerAuthResult => ({ status: "error", message });
   const signInFailure = "Could not sign in. Check your details and try again.";
   const confirmationFailure = "This link is invalid or expired. Request a new email.";
+  const serviceFailure = "Account services are temporarily unavailable. Please try again.";
+
+  function isTransientAuthError(error: unknown) {
+    if (!error || typeof error !== "object") return false;
+    const candidate = error as { status?: unknown; code?: unknown };
+    const status = typeof candidate.status === "number" ? candidate.status : null;
+    return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500);
+  }
+
+  const serviceError = (): CustomerAuthResult => ({ status: "error", message: serviceFailure, errorKind: "service" });
 
   async function finishSignIn(next: string, message: string): Promise<CustomerAuthResult> {
     try {
@@ -115,9 +125,10 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       const { tokenHash, type, next } = parsed.data;
       try {
         const { data, error } = await auth.verifyOtp({ token_hash: tokenHash, type });
-        if (error || !data.session) return failure(confirmationFailure);
+        if (error) return isTransientAuthError(error) ? serviceError() : failure(confirmationFailure);
+        if (!data.session) return failure(confirmationFailure);
         return finishSignIn(type === "recovery" ? "/reset-password" : safeCustomerReturnPath(next), confirmationFailure);
-      } catch { return failure(confirmationFailure); }
+      } catch { return serviceError(); }
     },
 
     async confirmOAuth(input: unknown): Promise<CustomerAuthResult> {
@@ -126,9 +137,10 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       const destination = parsed.data.type === "recovery" ? "/reset-password" : safeCustomerReturnPath(parsed.data.next);
       try {
         const { data, error } = await auth.exchangeCodeForSession(parsed.data.code);
-        if (error || !data.session) return failure(confirmationFailure);
+        if (error) return isTransientAuthError(error) ? serviceError() : failure(confirmationFailure);
+        if (!data.session) return failure(confirmationFailure);
         return finishSignIn(destination, confirmationFailure);
-      } catch { return failure(confirmationFailure); }
+      } catch { return serviceError(); }
     },
 
     async requestPasswordReset(input: unknown): Promise<CustomerAuthResult> {

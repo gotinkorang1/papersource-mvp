@@ -41,6 +41,11 @@ export default async function LoginPage({ searchParams }: PageProps) {
           Social sign-in was cancelled or is temporarily unavailable. Try again, or use email sign-in instead.
         </p>
       ) : null}
+      {params.authError === "service" ? (
+        <p role="alert" className="mt-4 rounded-md border border-error/40 bg-error/10 px-4 py-3 text-sm text-error">
+          Account services are temporarily unavailable. Please try again in a moment, or use guest checkout.
+        </p>
+      ) : null}
       <CustomerAuthForm mode="login" next={next} />
       <p className="mt-4 text-sm text-ink"><Link href="/forgot-password" className="underline">Forgot password?</Link></p>
       <p className="mt-6 text-sm text-slate">

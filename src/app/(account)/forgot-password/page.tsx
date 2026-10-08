@@ -11,6 +11,7 @@ export default async function ForgotPasswordPage({ searchParams }: { searchParam
       <h1 className="text-3xl text-ink">Reset your password</h1>
       <p className="mt-3 text-slate">Enter your email and we’ll send a link to choose a new password.</p>
       {authError === "confirmation" ? <p role="alert" className="mt-4 rounded-md border border-error/40 bg-error/10 p-4 text-sm text-error">This reset link is invalid or expired. Request a new link below.</p> : null}
+      {authError === "service" ? <p role="alert" className="mt-4 rounded-md border border-error/40 bg-error/10 p-4 text-sm text-error">Account services are temporarily unavailable. Please wait a moment and request a new link.</p> : null}
       <CustomerAuthForm mode="forgot" />
       <p className="mt-6 text-sm text-ink"><Link href="/login" className="underline underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Back to sign in</Link></p>
     </main>

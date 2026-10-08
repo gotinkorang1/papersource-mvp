@@ -18,12 +18,13 @@ const jwt = `${encode({ alg: "HS256", typ: "JWT" })}.${encode({ sub: profileId, 
 const session = { access_token: jwt, refresh_token: "private-refresh-token", token_type: "bearer", expires_in: 3600, expires_at: 4102444800, user };
 const calls: { path: string; body: unknown }[] = [];
 let rejectToken = false;
+let rejectStatus = 403;
 
 function request(query: string, cookie = sessionId) {
   return new NextRequest(`https://papersourcegh.com/auth/confirm?${query}`, { headers: { cookie: `ps_sid=${cookie}` } });
 }
 beforeEach(() => {
-  vi.resetAllMocks(); calls.length = 0; rejectToken = false;
+  vi.resetAllMocks(); calls.length = 0; rejectToken = false; rejectStatus = 403;
   boundary.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "test-publishable-key";
   boundary.profile.mockImplementation(async (identity) => identity);
   // Only the external HTTP boundary is simulated; exercise the actual SSR SDK,
@@ -34,7 +35,7 @@ beforeEach(() => {
     const body = typeof init?.body === "string" ? JSON.parse(init.body) : null;
     calls.push({ path, body });
     if (url.pathname === "/auth/v1/verify") return rejectToken
-      ? Response.json({ code: "otp_expired", msg: "private expired-token detail" }, { status: 403 })
+      ? Response.json({ code: rejectStatus === 402 ? "quota_exceeded" : "otp_expired", msg: "private provider detail" }, { status: rejectStatus })
       : Response.json(session);
     if (url.pathname === "/auth/v1/user") return Response.json(user);
     if (url.pathname === "/auth/v1/logout") return new Response(null, { status: 204 });
@@ -93,6 +94,12 @@ describe("token hash confirmation callback with real Supabase SSR", () => {
     expect(boundary.merge).not.toHaveBeenCalled();
     expect(response.headers.get("cache-control")).toContain("no-store");
     expect(response.cookies.getAll()).toEqual([]);
+  });
+  it("routes temporary Auth outages to a service-unavailable state", async () => {
+    rejectToken = true;
+    rejectStatus = 402;
+    const response = await GET(request("token_hash=private-hash&type=recovery"));
+    expect(response.headers.get("location")).toBe("https://papersourcegh.com/forgot-password?authError=service");
   });
   it("clears the newly created session if profile synchronization fails", async () => {
     boundary.profile.mockRejectedValue(new Error("private SQL"));
