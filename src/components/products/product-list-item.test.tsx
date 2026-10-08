@@ -46,6 +46,15 @@ describe("ProductListItem", () => {
     expect(image).toHaveAttribute("src", expect.stringContaining("set-school-stationery.jpg"));
   });
 
+  it("uses a semantic fallback for a failed book thumbnail", () => {
+    render(<ProductListItem product={{ ...sampleProducts[0], name: "Book: Ghana office handbook", specLine: "Paperback book", imageSrc: "https://cdn.example.invalid/book.jpg" }} />);
+
+    const image = screen.getByRole("img", { name: /Double A Premium A4 paper/ });
+    fireEvent.error(image);
+
+    expect(image).toHaveAttribute("src", expect.stringContaining("stack-books-with-library-scene.jpg"));
+  });
+
   it("confirms cart and quote additions in list view", async () => {
     const user = userEvent.setup();
     const addToCart = vi.fn();
