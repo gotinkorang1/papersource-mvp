@@ -27,7 +27,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   };
 
   useEffect(() => {
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const reduceMotion = typeof window.matchMedia === "function" && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     activeLinkRef.current?.scrollIntoView({
       behavior: reduceMotion ? "auto" : "smooth",
       block: "nearest",
@@ -63,6 +63,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
   }, [navOpen]);
 
   useEffect(() => {
+    if (typeof window.matchMedia !== "function") return;
     const desktop = window.matchMedia("(min-width: 768px)");
     const closeOnDesktop = () => {
       if (desktop.matches) setNavOpen(false);
