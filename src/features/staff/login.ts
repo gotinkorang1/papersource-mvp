@@ -34,7 +34,13 @@ export async function authenticateStaff(input: { email: string; password: string
     throw new StaffAuthError("Admin sign-in is temporarily unavailable. Please try again when the authentication service is restored.", "unavailable");
   }
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password: input.password });
+  let data: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>["data"];
+  let error: Awaited<ReturnType<typeof supabase.auth.signInWithPassword>>["error"];
+  try {
+    ({ data, error } = await supabase.auth.signInWithPassword({ email, password: input.password }));
+  } catch {
+    throw new StaffAuthError("Admin sign-in is temporarily unavailable. Please try again when the authentication service is restored.", "unavailable");
+  }
   if (error) {
     if (isStaffAuthServiceUnavailable(error)) {
       throw new StaffAuthError("Admin sign-in is temporarily unavailable because the authentication service has reached a usage limit. Please try again later.", "unavailable");

@@ -50,4 +50,12 @@ describe("staff session boundaries", () => {
     await expect(authenticateStaff({ email: "admin@papersourcegh.com", password: "password" })).rejects.toThrow("That staff sign-in is not valid.");
     expect(state.clearLocalSupabaseAuthCookies).toHaveBeenCalledOnce();
   });
+
+  it("turns Auth transport failures into a retryable staff error", async () => {
+    state.signInWithPassword.mockRejectedValue(new Error("network detail"));
+    await expect(authenticateStaff({ email: "admin@papersourcegh.com", password: "password" })).rejects.toMatchObject({
+      code: "unavailable",
+      message: expect.stringContaining("temporarily unavailable"),
+    });
+  });
 });
