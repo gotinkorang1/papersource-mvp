@@ -4,6 +4,7 @@ import { z } from "zod";
 import { readVerifiedCustomerIdentity, type CustomerActor } from "@/lib/customer/identity";
 import { safeCustomerReturnPath } from "@/lib/customer/return-path";
 import { isTransientAuthError } from "@/lib/auth/transient-error";
+import { clearLocalSupabaseAuthCookies } from "@/lib/supabase/clear-auth-cookies";
 
 type AuthClient = Pick<SupabaseClient["auth"],
   "signUp" | "signInWithPassword" | "verifyOtp" | "exchangeCodeForSession" | "resetPasswordForEmail" | "updateUser" | "signOut" | "getClaims">;
@@ -67,6 +68,15 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
 
   const serviceError = (): CustomerAuthResult => ({ status: "error", message: serviceFailure, errorKind: "service" });
 
+  async function revokeLocalSession() {
+    try {
+      const { error } = await auth.signOut({ scope: "local" });
+      if (error) await clearLocalSupabaseAuthCookies();
+    } catch {
+      await clearLocalSupabaseAuthCookies();
+    }
+  }
+
   async function finishSignIn(next: string, message: string): Promise<CustomerAuthResult> {
     try {
       const identity = await readVerifiedCustomerIdentity(auth);
@@ -75,7 +85,7 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       return { status: "signed_in", customer, next };
     } catch (error) {
       // Best effort only: provider outages must not be reported as successful sign-in.
-      try { await auth.signOut({ scope: "local" }); } catch { /* Keep failure neutral. */ }
+      await revokeLocalSession();
       return isTransientAuthError(error) ? serviceError() : failure(message);
     }
   }

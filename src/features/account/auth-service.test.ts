@@ -1,6 +1,8 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import type { SupabaseClient } from "@supabase/supabase-js";
 vi.mock("server-only", () => ({}));
+const clearAuthCookies = vi.hoisted(() => vi.fn());
+vi.mock("@/lib/supabase/clear-auth-cookies", () => ({ clearLocalSupabaseAuthCookies: clearAuthCookies }));
 import { createCustomerAuthService } from "./auth-service";
 
 const actor = { profileId: "18cc3e14-1525-4b7f-b4bd-174d5518461d", email: "ama@example.test", fullName: "Ama", phone: null };
@@ -25,6 +27,7 @@ beforeEach(() => {
   auth.resetPasswordForEmail.mockResolvedValue({ data: {}, error: null });
   auth.updateUser.mockResolvedValue({ data: { user: { id: actor.profileId } }, error: null });
   auth.signOut.mockResolvedValue({ error: null });
+  clearAuthCookies.mockResolvedValue(undefined);
   synchronizeProfile.mockImplementation(async (identity) => ({ ...identity, fullName: "Saved name" }));
 });
 
@@ -105,6 +108,13 @@ describe("customer Auth operations", () => {
     expect(await service().login(registration)).toMatchObject({ status: "error" });
     expect(synchronizeProfile).not.toHaveBeenCalled();
     expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+  });
+
+  it("clears local auth cookies when profile cleanup cannot revoke the session", async () => {
+    synchronizeProfile.mockRejectedValue(new Error("sensitive SQL"));
+    auth.signOut.mockResolvedValue({ error: { status: 503, message: "Auth unavailable" } });
+    expect(await service().login(registration)).toMatchObject({ status: "error" });
+    expect(clearAuthCookies).toHaveBeenCalledOnce();
   });
 
   it("confirms token hashes and returns only a verified customer DTO", async () => {
