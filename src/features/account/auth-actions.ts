@@ -10,6 +10,7 @@ import { publicEnv } from "@/lib/env";
 import { readGuestSessionId } from "@/lib/session/guest";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { isTransientAuthError } from "@/lib/auth/transient-error";
+import { clearLocalSupabaseAuthCookies } from "@/lib/supabase/clear-auth-cookies";
 
 type AuthOperation = "login" | "register" | "requestPasswordReset" | "updatePassword";
 
@@ -96,7 +97,10 @@ export async function signOutCustomerAction(): Promise<void> {
     const client = await createSupabaseServerClient();
     const { error } = await client.auth.signOut({ scope: "global" });
     signedOut = !error;
-  } catch { /* Never report failed sign-out as success. */ }
+    if (error) await clearLocalSupabaseAuthCookies();
+  } catch {
+    await clearLocalSupabaseAuthCookies();
+  }
   if (!signedOut) redirect("/account?authError=sign-out");
   // Supabase clears its own cookies; ps_sid remains a guest-only capability.
   revalidatePath("/", "layout");

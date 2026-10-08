@@ -10,7 +10,12 @@ vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: boundary.c
 vi.mock("@/lib/customer/profiles", () => ({ synchronizeCustomerProfile: boundary.profile }));
 vi.mock("@/features/account/merge", () => ({ mergeGuestCommerce: boundary.merge }));
 vi.mock("@/lib/env", () => ({ publicEnv: { NEXT_PUBLIC_SITE_URL: "https://papersourcegh.com" } }));
-vi.mock("next/headers", () => ({ cookies: async () => ({ get: (name: string) => boundary.jar.has(name) ? { value: boundary.jar.get(name) } : undefined }) }));
+const cookieStore = vi.hoisted(() => ({
+  get: (name: string) => boundary.jar.has(name) ? { value: boundary.jar.get(name) } : undefined,
+  getAll: vi.fn(() => [] as { name: string; value: string }[]),
+  delete: vi.fn(),
+}));
+vi.mock("next/headers", () => ({ cookies: async () => cookieStore }));
 vi.mock("next/cache", () => ({ revalidatePath: boundary.revalidate }));
 vi.mock("next/navigation", () => ({ redirect: (path: string) => { throw new Error(`REDIRECT:${path}`); } }));
 import { loginCustomerAction, registerCustomerAction, requestPasswordResetAction, updateCustomerPasswordAction, signOutCustomerAction } from "./auth-actions";
@@ -121,5 +126,19 @@ describe("customer auth Server Actions", () => {
   it("does not falsely report successful signout on provider failure", async () => {
     boundary.auth.signOut.mockResolvedValue({ error: { message: "provider secret" } });
     await expect(signOutCustomerAction()).rejects.toThrow("REDIRECT:/account?authError=sign-out");
+  });
+  it("clears local Supabase auth cookies when customer signout cannot reach Auth", async () => {
+    boundary.auth.signOut.mockResolvedValue({ error: { status: 402, message: "quota restricted" } });
+    cookieStore.getAll.mockReturnValue([
+      { name: "sb-example-auth-token", value: "secret" },
+      { name: "sb-example-auth-token.0", value: "secret" },
+      { name: "ps_sid", value: guestId },
+    ]);
+
+    await expect(signOutCustomerAction()).rejects.toThrow("REDIRECT:/account?authError=sign-out");
+
+    expect(cookieStore.delete).toHaveBeenCalledWith("sb-example-auth-token");
+    expect(cookieStore.delete).toHaveBeenCalledWith("sb-example-auth-token.0");
+    expect(cookieStore.delete).not.toHaveBeenCalledWith("ps_sid");
   });
 });

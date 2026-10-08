@@ -1,13 +1,6 @@
 import { NextResponse } from "next/server";
-import { cookies } from "next/headers";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
-
-async function clearLocalAuthCookies() {
-  const cookieStore = await cookies();
-  for (const { name } of cookieStore.getAll()) {
-    if (/^sb-.+-auth-token(?:\.\d+)?$/.test(name)) cookieStore.delete(name);
-  }
-}
+import { clearLocalSupabaseAuthCookies } from "@/lib/supabase/clear-auth-cookies";
 
 export async function POST(request: Request) {
   // Logout should remain deterministic even when Auth is rate-limited or
@@ -16,10 +9,10 @@ export async function POST(request: Request) {
   try {
     const supabase = await createSupabaseServerClient();
     const { error } = await supabase.auth.signOut({ scope: "local" });
-    if (error) await clearLocalAuthCookies();
+    if (error) await clearLocalSupabaseAuthCookies();
   } catch {
     // Deliberately avoid exposing provider/quota details in the redirect.
-    await clearLocalAuthCookies();
+    await clearLocalSupabaseAuthCookies();
   }
   const response = NextResponse.redirect(new URL("/admin/login", request.url), 303);
   return response;

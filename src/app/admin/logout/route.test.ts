@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
+vi.mock("server-only", () => ({}));
 const state = vi.hoisted(() => ({ signOut: vi.fn(), create: vi.fn(), cookieStore: { getAll: vi.fn(), delete: vi.fn() } }));
 vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: state.create }));
 vi.mock("next/headers", () => ({ cookies: async () => state.cookieStore }));
