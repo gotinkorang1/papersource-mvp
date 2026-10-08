@@ -44,7 +44,11 @@ export const readCustomerActorStatus = cache(async (): Promise<CustomerActorStat
 export const readCustomerActor = cache(async (): Promise<CustomerActor | null> => (await readCustomerActorStatus()).actor);
 
 export async function requireCustomer(next: unknown = "/account"): Promise<CustomerActor> {
-  const actor = await readCustomerActor();
-  if (!actor) redirect(`/login?next=${encodeURIComponent(safeCustomerReturnPath(next))}`);
+  const { actor, unavailable } = await readCustomerActorStatus();
+  if (!actor) {
+    const params = new URLSearchParams({ next: safeCustomerReturnPath(next) });
+    if (unavailable) params.set("authError", "service");
+    redirect(`/login?${params.toString()}`);
+  }
   return actor;
 }

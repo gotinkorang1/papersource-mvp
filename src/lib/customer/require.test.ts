@@ -63,3 +63,7 @@ it("redirects missing identity using only an allowed destination", async () => {
   await expect(requireCustomer("/checkout")).rejects.toThrow("redirect:/login?next=%2Fcheckout");
   await expect(requireCustomer("https://foreign.example")).rejects.toThrow("redirect:/login?next=%2Faccount");
 });
+it("labels temporary account outages without weakening the safe destination", async () => {
+  state.getClaims.mockRejectedValue(Object.assign(new Error("quota restricted"), { status: 402 }));
+  await expect(requireCustomer("/account/orders")).rejects.toThrow("redirect:/login?next=%2Faccount%2Forders&authError=service");
+});
