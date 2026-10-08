@@ -21,6 +21,7 @@ import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
 import { ProductViewTracker } from "@/components/products/product-view-tracker";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { Layers3, MessageCircle, Store, Truck } from "lucide-react";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -127,10 +128,10 @@ export default async function ProductPage({ params }: PageProps) {
             <ProductPurchase product={product} savedLists={savedLists.map((list) => ({ id: list.id, name: list.name }))} />
           </div>
           <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-3 sm:p-4">
-            <div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div>
-            {product.deliveryBadge.pickupAvailable ? <div><p className="font-semibold text-ink">Shop pickup available</p><p className="mt-1">Collect your order from our shop with no delivery fee.</p></div> : null}
-            <div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div>
-            <div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div>
+            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Truck className="size-4" /></span><div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div></div>
+            {product.deliveryBadge.pickupAvailable ? <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Store className="size-4" /></span><div><p className="font-semibold text-ink">Shop pickup available</p><p className="mt-1">Collect your order from our shop with no delivery fee.</p></div></div> : null}
+            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Layers3 className="size-4" /></span><div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div></div>
+            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><MessageCircle className="size-4" /></span><div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div></div>
           </div>
           <p className="mt-6 max-w-prose text-sm text-slate">
             {productDescription}
