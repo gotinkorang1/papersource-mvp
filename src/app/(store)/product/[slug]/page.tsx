@@ -64,7 +64,11 @@ export default async function ProductPage({ params }: PageProps) {
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   const customer = await readCustomerActor();
-  const savedLists = customer ? await listSavedLists(customer) : [];
+  // Saved lists are an optional account enhancement. A missing/unapplied
+  // migration or transient database error must never take down a product page.
+  const savedLists = customer
+    ? await listSavedLists(customer).catch(() => [])
+    : [];
   const [reviews, relatedProducts, reviewOrderId] = await Promise.all([
     listApprovedProductReviews(product.id),
     listProductCards({ categorySlug: product.categorySlug, excludeProductId: product.id, maxResults: 5 }),
