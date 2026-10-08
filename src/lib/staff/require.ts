@@ -5,10 +5,13 @@ import { adminRoles, profiles } from "@/lib/db/schema";
 import { canAccessAdmin, type AdminAction, type AdminArea } from "@/lib/staff/rbac";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import type { StaffActor } from "@/lib/staff/types";
+import { isTransientAuthError } from "@/lib/auth/transient-error";
 
 export type { StaffActor };
 
-export async function readStaffActor(): Promise<StaffActor | null> {
+export type StaffActorStatus = { actor: StaffActor | null; unavailable: boolean };
+
+export async function readStaffActorStatus(): Promise<StaffActorStatus> {
   let supabase: Awaited<ReturnType<typeof createSupabaseServerClient>>;
   try {
     supabase = await createSupabaseServerClient();
@@ -17,22 +20,22 @@ export async function readStaffActor(): Promise<StaffActor | null> {
     // links. Missing optional auth configuration must not take the storefront
     // down; protected admin routes still fail closed through requireStaff.
     if (error instanceof Error && error.message === "Supabase public env is not configured") {
-      return null;
+      return { actor: null, unavailable: false };
     }
-    throw error;
+    return { actor: null, unavailable: isTransientAuthError(error) };
   }
   let authResult: Awaited<ReturnType<typeof supabase.auth.getUser>>;
   try {
     authResult = await supabase.auth.getUser();
-  } catch {
+  } catch (error) {
     // Public storefront pages should remain renderable when Supabase auth is
     // restricted or temporarily unavailable. Protected routes still fail
     // closed through requireStaff and redirect to the staff sign-in screen.
-    return null;
+    return { actor: null, unavailable: isTransientAuthError(error) };
   }
   const { data, error } = authResult;
   const email = data.user?.email?.trim().toLowerCase();
-  if (error || !email) return null;
+  if (error || !email) return { actor: null, unavailable: isTransientAuthError(error) };
 
   try {
     const db = getDb();
@@ -49,19 +52,23 @@ export async function readStaffActor(): Promise<StaffActor | null> {
       .where(eq(profiles.email, email))
       .limit(1);
 
-    return row ?? null;
+    return { actor: row ?? null, unavailable: false };
   } catch {
     // Identity is optional on public pages and on the login screen. If the
     // hosted database is temporarily restricted, fail closed without turning
     // the page into a 500; protected routes still redirect to sign-in.
-    return null;
+    return { actor: null, unavailable: true };
   }
 }
 
+export async function readStaffActor(): Promise<StaffActor | null> {
+  return (await readStaffActorStatus()).actor;
+}
+
 export async function requireStaff(): Promise<StaffActor> {
-  const actor = await readStaffActor();
+  const { actor, unavailable } = await readStaffActorStatus();
   if (!actor) {
-    redirect("/admin/login");
+    redirect(unavailable ? "/admin/login?retryable=1" : "/admin/login");
   }
   return actor;
 }
