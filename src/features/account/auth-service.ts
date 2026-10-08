@@ -176,8 +176,13 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       const message = "Could not sign out. Please try again.";
       try {
         const { error } = await auth.signOut({ scope: "global" });
-        return error ? (isTransientAuthError(error) ? serviceError() : failure(message)) : { status: "signed_out" };
-      } catch (error) { return isTransientAuthError(error) ? serviceError() : failure(message); }
+        if (!error) return { status: "signed_out" };
+        await clearLocalSupabaseAuthCookies();
+        return isTransientAuthError(error) ? serviceError() : failure(message);
+      } catch (error) {
+        await clearLocalSupabaseAuthCookies();
+        return isTransientAuthError(error) ? serviceError() : failure(message);
+      }
     },
   };
 }

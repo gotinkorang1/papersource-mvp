@@ -219,6 +219,7 @@ describe("customer Auth operations", () => {
   it("does not report sign-out success when revocation fails", async () => {
     auth.signOut.mockResolvedValue({ error: { message: "private detail" } });
     expect(await service().signOut()).toEqual({ status: "error", message: "Could not sign out. Please try again." });
+    expect(clearAuthCookies).toHaveBeenCalledOnce();
   });
 
   it.each([
