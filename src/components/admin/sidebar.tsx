@@ -7,7 +7,7 @@ import { paperButton } from "@/components/commerce/paper-button";
 import { SubmitProgressButton } from "@/components/admin/submit-progress-button";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffActor } from "@/lib/staff/types";
-import { ADMIN_NAV } from "./nav";
+import { ADMIN_NAV, ADMIN_PLACEHOLDER_SECTIONS } from "./nav";
 
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
@@ -173,20 +173,22 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
                 {items.map((item) => {
                   const current =
                     currentPathname === item.href || currentPathname.startsWith(`${item.href}/`);
+                  const planned = ADMIN_PLACEHOLDER_SECTIONS.includes(item.area as (typeof ADMIN_PLACEHOLDER_SECTIONS)[number]);
                   return (
                     <li key={item.href}>
                       <Link
                         href={item.href}
                         ref={current ? activeLinkRef : undefined}
                         onClick={closeTransientPanels}
-                        className={`flex min-h-11 w-full snap-start items-center rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${ 
+                        className={`flex min-h-11 w-full snap-start items-center justify-between gap-3 rounded-md px-3 py-2 text-sm whitespace-nowrap md:min-h-0 md:py-1.5 ${
                           current
                             ? "bg-sidebar-accent text-sidebar-accent-foreground ring-1 ring-sidebar-ring/50"
                             : "text-sidebar-foreground/75 hover:bg-sidebar-accent/70"
                         }`}
                         aria-current={current ? "page" : undefined}
                       >
-                        {item.label}
+                        <span>{item.label}</span>
+                        {planned ? <span className="rounded-full border border-sidebar-border px-1.5 py-0.5 text-[0.6rem] font-semibold tracking-[0.08em] text-sidebar-foreground/50 uppercase">Soon</span> : null}
                       </Link>
                     </li>
                   );
