@@ -34,4 +34,13 @@ describe("category image mapping", () => {
       "General workplace and school supplies",
     ]);
   });
+
+  it("selects another curated image when duplicate uploads have no slug fallback", () => {
+    const images = categoryImagesFor([
+      { slug: "custom-one", name: "Custom One", imagePublicId: "shared" },
+      { slug: "custom-two", name: "Custom Two", imagePublicId: "shared" },
+    ]);
+
+    expect(new Set(images.map((image) => image.src)).size).toBe(2);
+  });
 });
