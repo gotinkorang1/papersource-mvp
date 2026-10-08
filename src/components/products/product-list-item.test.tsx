@@ -10,6 +10,8 @@ describe("ProductListItem", () => {
   it("keeps content-mode product context visible on mobile", () => {
     render(<ProductListItem product={sampleProducts[0]} variant="content" />);
 
+    expect(screen.getByRole("article")).toHaveClass("paper-product-list-item");
+
     const context = screen.getByText(
       "A4 • 80gsm • 500 sheets. Available with clear pricing, stock visibility, and delivery support across Accra and Tema.",
     );

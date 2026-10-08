@@ -78,7 +78,7 @@ export function ProductListItem({
     <article
       data-catalogue-item={variant}
       className={cn(
-        "group grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md sm:gap-4 sm:p-4",
+        "paper-product-list-item group grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-[box-shadow,border-color,transform] hover:border-ink/15 hover:shadow-md motion-safe:hover:-translate-y-px sm:gap-4 sm:p-4",
         content ? "grid-cols-[6.5rem_minmax(0,1fr)] sm:grid-cols-[12rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[8rem_minmax(0,1fr)_auto]",
       )}
     >
