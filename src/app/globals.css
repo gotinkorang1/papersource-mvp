@@ -220,6 +220,15 @@
     animation-duration: 36s;
     gap: 2rem;
   }
+
+  .paper-store-footer-grid {
+    gap: 2.5rem;
+    padding-block: 2.5rem;
+  }
+
+  .paper-store-footer-grid > * {
+    min-width: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
