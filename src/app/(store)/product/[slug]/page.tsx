@@ -81,7 +81,7 @@ export default async function ProductPage({ params }: PageProps) {
   ];
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+    <main className="paper-product-page mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
       <ProductViewTracker productId={product.id} sku={product.sku} productName={product.name} pricePesewas={product.unitPricePesewas} enabled={!canEdit} />
       <script
         type="application/ld+json"
@@ -98,8 +98,8 @@ export default async function ProductPage({ params }: PageProps) {
       <Breadcrumbs items={crumbs.map((crumb, index) => ({ label: crumb.name, href: index === crumbs.length - 1 ? undefined : crumb.href }))} />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
-        <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,42,67,0.08)] sm:p-7">
+        <div className="paper-product-gallery lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
+        <div className="paper-product-detail-panel rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,42,67,0.08)] sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
               {product.brandName}

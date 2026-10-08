@@ -31,7 +31,7 @@ export default async function CartPage({ searchParams }: PageProps) {
   );
 
   return (
-    <main className="mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+    <main className="paper-document-page mx-auto max-w-4xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
       <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Retail checkout</p>
       <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Your cart</h1>
       <p className="mt-3 text-slate">
