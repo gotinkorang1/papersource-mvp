@@ -9,7 +9,8 @@ export function ThemeToggle() {
 
   useEffect(() => {
     const syncTheme = (saved: string | null) => {
-      const next = saved === "dark" || (!saved && window.matchMedia("(prefers-color-scheme: dark)").matches);
+      const prefersDark = typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const next = saved === "dark" || (!saved && prefersDark);
       document.documentElement.classList.toggle("dark", next);
       setDark(next);
     };
@@ -17,16 +18,22 @@ export function ThemeToggle() {
     const onStorage = (event: StorageEvent) => {
       if (event.key === "papersource-theme") syncTheme(event.newValue);
     };
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const media = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
     const onSystemThemeChange = () => {
       if (!readLocalValue("papersource-theme")) syncTheme(null);
     };
     window.addEventListener("storage", onStorage);
-    media.addEventListener("change", onSystemThemeChange);
+    const legacyMedia = media as (MediaQueryList & {
+      addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+      removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+    }) | null;
+    if (media && typeof media.addEventListener === "function") media.addEventListener("change", onSystemThemeChange);
+    else legacyMedia?.addListener?.(onSystemThemeChange);
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener("storage", onStorage);
-      media.removeEventListener("change", onSystemThemeChange);
+      if (media && typeof media.removeEventListener === "function") media.removeEventListener("change", onSystemThemeChange);
+      else legacyMedia?.removeListener?.(onSystemThemeChange);
     };
   }, []);
 
