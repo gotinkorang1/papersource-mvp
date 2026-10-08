@@ -17,10 +17,16 @@ export function ThemeToggle() {
     const onStorage = (event: StorageEvent) => {
       if (event.key === "papersource-theme") syncTheme(event.newValue);
     };
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const onSystemThemeChange = () => {
+      if (!readLocalValue("papersource-theme")) syncTheme(null);
+    };
     window.addEventListener("storage", onStorage);
+    media.addEventListener("change", onSystemThemeChange);
     return () => {
       window.clearTimeout(timer);
       window.removeEventListener("storage", onStorage);
+      media.removeEventListener("change", onSystemThemeChange);
     };
   }, []);
 
