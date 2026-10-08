@@ -12,6 +12,7 @@ import {
 } from "@/features/inventory/stock";
 import { getDb } from "@/lib/db/client";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
+import { seedDeliveryZones } from "@/features/catalogue/local-data";
 import {
   brands,
   categories,
@@ -74,7 +75,12 @@ const loadCatalogueContext = unstable_cache(async function loadCatalogueContext(
       .select({ id: brands.id, name: brands.name, slug: brands.slug })
       .from(brands)
       .where(and(eq(brands.active, true), isNull(brands.deletedAt))),
-    db.select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active }).from(deliveryZones).where(eq(deliveryZones.active, true)),
+    Promise.resolve(
+      db
+        .select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active })
+        .from(deliveryZones)
+        .where(eq(deliveryZones.active, true)),
+    ).catch(() => seedDeliveryZones),
   ]);
 
   return {
