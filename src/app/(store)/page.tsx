@@ -9,7 +9,6 @@ import { ProductGridList } from "@/components/products/product-grid-list";
 import { Testimonials } from "@/components/marketing/testimonials";
 import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
 import { SocialActivitySection } from "@/components/marketing/social-activity-section";
-import { ConfidenceRail } from "@/components/marketing/confidence-rail";
 import {
   listDivisionCategories,
   listFeaturedProductCards,
@@ -97,7 +96,6 @@ export default async function HomePage() {
       </section>
 
       <div className="mx-auto -mt-5 max-w-6xl px-4 sm:-mt-7 sm:px-6 lg:px-8">
-        <ConfidenceRail />
       </div>
 
       <section aria-labelledby="why-papersource" className="paper-section-wash mx-auto max-w-6xl rounded-3xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">

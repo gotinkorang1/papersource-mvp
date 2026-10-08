@@ -11,7 +11,6 @@ import { TOP_GHANA_KEYWORDS } from "@/lib/seo-keywords";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import type { CatalogueViewMode } from "@/components/products/catalogue-view-mode";
-import { ConfidenceRail } from "@/components/marketing/confidence-rail";
 
 type ShopSearchParams = { q?: string; category?: string; brand?: string; sort?: string; availability?: string; zone?: string; page?: string; view?: string };
 type PageProps = { searchParams: Promise<ShopSearchParams> };
@@ -75,7 +74,6 @@ export default async function ShopPage({ searchParams }: PageProps) {
           {['Retail checkout', 'Bulk quotations', 'Accra & Tema delivery'].map((label) => <span key={label} className="rounded-full border border-border bg-card px-3 py-1.5 text-xs font-semibold text-slate shadow-sm">{label}</span>)}
         </div>
       </div>
-      <ConfidenceRail className="mt-8" />
       <div className="mt-8">
         <CatalogueToolbar count={filteredProducts.length} query={query} category={category} brand={brand} sort={sort} availability={availability} zone={zone} view={viewMode ?? ""} categories={categories} brands={brands} />
       </div>
