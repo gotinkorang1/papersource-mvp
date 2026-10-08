@@ -2,21 +2,11 @@ import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 import { createCustomerAuthService } from "@/features/account/auth-service";
 import { mergeGuestCommerce } from "@/features/account/merge";
+import { isTransientAuthError } from "@/lib/auth/transient-error";
 import { synchronizeCustomerProfile } from "@/lib/customer/profiles";
 import { publicEnv } from "@/lib/env";
 import { GUEST_SESSION_COOKIE, isGuestSessionId } from "@/lib/session/constants";
 import { SITE_URL } from "@/lib/seo";
-
-function isTransientDependencyError(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
-  const candidate = error as { status?: unknown; code?: unknown };
-  const status = typeof candidate.status === "number" ? candidate.status : null;
-  const code = typeof candidate.code === "string" ? candidate.code : "";
-  return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
-    "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
-    "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
-  ].includes(code);
-}
 
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
@@ -82,7 +72,7 @@ export async function GET(request: NextRequest) {
       await mergeGuestCommerce({ profileId: result.customer.profileId, sessionId: isGuestSessionId(guestCookie) ? guestCookie : null });
     } catch (error) {
       try { await client.auth.signOut({ scope: "local" }); } catch { /* Keep failure neutral. */ }
-      if (isTransientDependencyError(error)) {
+      if (isTransientAuthError(error)) {
         response.headers.set("Location", new URL(type === "recovery" ? "/forgot-password?authError=service" : "/login?authError=service", siteUrl).toString());
       }
       return response;
