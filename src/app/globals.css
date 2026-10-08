@@ -81,6 +81,11 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+.paper-mobile-menu {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
 .paper-breadcrumbs {
   scrollbar-width: none;
   overscroll-behavior-inline: contain;
