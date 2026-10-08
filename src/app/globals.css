@@ -78,6 +78,19 @@
   position: relative;
 }
 
+.paper-breadcrumbs {
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+}
+
+.paper-breadcrumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.paper-breadcrumbs ol {
+  min-height: 2.75rem;
+}
+
 .paper-mobile-nav-item[aria-current="page"]::after,
 .paper-mobile-nav-item[aria-pressed="true"]::after {
   position: absolute;
