@@ -53,7 +53,7 @@ export default async function SavedListDetailPage({ params, searchParams }: { pa
             <form action="/account/lists/items/mutate" method="post">
               <input type="hidden" name="intent" value="bulk-quote" />
               <input type="hidden" name="listId" value={list.id} />
-              <SubmitProgressButton idleLabel="Add available to Quote" pendingLabel="Adding to Quote…" className="min-h-10 rounded-lg border border-paper-green px-3 py-2 text-sm font-semibold text-paper-green hover:bg-paper-green hover:text-white" />
+              <SubmitProgressButton idleLabel="Add available to Quote" pendingLabel="Adding to Quote…" className="min-h-10 rounded-lg border border-paper-green px-3 py-2 text-sm font-semibold text-paper-green hover:bg-paper-green hover:text-primary-foreground" />
             </form>
             <p className="basis-full text-xs text-slate">Unavailable items are skipped and remain visible below for cleanup.</p>
           </div>
