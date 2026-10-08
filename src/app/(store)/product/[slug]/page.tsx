@@ -127,7 +127,7 @@ export default async function ProductPage({ params }: PageProps) {
           <div className="mt-8">
             <ProductPurchase product={product} savedLists={savedLists.map((list) => ({ id: list.id, name: list.name }))} />
           </div>
-          <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-3 sm:p-4">
+          <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-2 sm:p-4 lg:grid-cols-4">
             <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Truck className="size-4" /></span><div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div></div>
             {product.deliveryBadge.pickupAvailable ? <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Store className="size-4" /></span><div><p className="font-semibold text-ink">Shop pickup available</p><p className="mt-1">Collect your order from our shop with no delivery fee.</p></div></div> : null}
             <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Layers3 className="size-4" /></span><div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div></div>
