@@ -122,7 +122,7 @@ export function ProductTaxonomyPicker({
         <div className="mt-2 grid gap-2">
           <input value={newName} onChange={(event) => setNewName(event.target.value)} className={adminFieldClass} placeholder={kind === "category" ? "e.g. Social Issues & Women’s Suffrage" : "e.g. Pilot"} aria-label={`New ${kind} name`} />
           {kind === "category" ? <select value={parentId} onChange={(event) => setParentId(event.target.value)} className={adminFieldClass} aria-label="Parent category"><option value="">Top-level category</option>{items.map((item) => <option key={item.id} value={item.id}>{labels.get(item.id)}</option>)}</select> : null}
-          <button type="button" disabled={saving || !newName.trim()} onClick={() => void (editing ? updateItem() : createItem())} className="min-h-10 rounded-lg bg-ink px-3 text-sm font-semibold text-white transition hover:bg-paper-green disabled:cursor-not-allowed disabled:opacity-50">{saving ? "Saving…" : editing ? `Save ${kind}` : `Add ${kind}`}</button>
+          <button type="button" disabled={saving || !newName.trim()} onClick={() => void (editing ? updateItem() : createItem())} className="min-h-10 rounded-lg bg-ink px-3 text-sm font-semibold text-white transition hover:bg-paper-green hover:text-primary-foreground disabled:cursor-not-allowed disabled:opacity-50">{saving ? "Saving…" : editing ? `Save ${kind}` : `Add ${kind}`}</button>
         </div>
       </div> : null}
       {status ? <p className="text-xs text-slate" role="status">{status}</p> : null}
