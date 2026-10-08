@@ -136,11 +136,29 @@
   container-type: inline-size;
 }
 
+.paper-admin-placeholder {
+  min-width: 0;
+  max-width: 48rem;
+}
+
+.paper-admin-placeholder-card {
+  margin-top: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--card);
+  padding: 1.25rem;
+  box-shadow: var(--ps-shadow-sm);
+}
+
 .admin-dashboard-metric {
   min-width: 0;
 }
 
 @media (max-width: 639px) {
+  .paper-admin-placeholder-card {
+    padding: 1rem;
+  }
+
   .paper-admin-dashboard .admin-dashboard-metric {
     min-height: 6.5rem;
     padding: 0.875rem;
