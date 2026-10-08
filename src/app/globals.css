@@ -106,7 +106,8 @@
 }
 
 .paper-document-page,
-.paper-product-page {
+.paper-product-page,
+.paper-account-page {
   min-width: 0;
 }
 
@@ -120,7 +121,8 @@
 
 @media (max-width: 639px) {
   .paper-document-page,
-  .paper-product-page {
+  .paper-product-page,
+  .paper-account-page {
     padding-top: 2rem;
     padding-bottom: 2.5rem;
   }

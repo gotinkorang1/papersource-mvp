@@ -16,7 +16,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
     listCustomerOrders(actor.profileId), listCustomerQuotes(actor.profileId), searchParams,
   ]);
   return (
-    <main>
+    <main className="paper-account-page mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
       <section className="rounded-3xl border border-border bg-muted/30 p-6 sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Your workspace</p>
         <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">Welcome back, {actor.fullName.split(" ")[0]}.</h1>
