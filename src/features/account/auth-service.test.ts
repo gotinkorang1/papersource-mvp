@@ -144,6 +144,36 @@ describe("customer Auth operations", () => {
     });
   });
 
+  it.each([
+    ["login", "signInWithPassword", { status: 402 }],
+    ["register", "signUp", { status: 503 }],
+    ["requestPasswordReset", "resetPasswordForEmail", { status: 429 }],
+    ["updatePassword", "updateUser", { status: 500 }],
+  ] as const)("classifies temporary provider failures as service errors for %s", async (operation, providerMethod, error) => {
+    auth[providerMethod].mockResolvedValue({ data: { user: null, session: null }, error });
+    const input = operation === "requestPasswordReset"
+      ? { email: registration.email }
+      : operation === "updatePassword"
+        ? { password: "new-password", confirmPassword: "new-password" }
+        : registration;
+    const result = await service()[operation](input);
+    expect(result).toEqual({
+      status: "error",
+      message: "Account services are temporarily unavailable. Please try again.",
+      errorKind: "service",
+    });
+  });
+
+  it("classifies transient profile-sync failures as service errors", async () => {
+    synchronizeProfile.mockRejectedValue({ status: 503, message: "database unavailable" });
+    expect(await service().login(registration)).toEqual({
+      status: "error",
+      message: "Account services are temporarily unavailable. Please try again.",
+      errorKind: "service",
+    });
+    expect(auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+  });
+
   it("returns a neutral reset-email result and ignores submitted callback URLs", async () => {
     expect(await service().requestPasswordReset({ email: " UNKNOWN@EXAMPLE.TEST ", redirectTo: "https://evil.test" })).toEqual({ status: "email_sent" });
     expect(auth.resetPasswordForEmail).toHaveBeenCalledWith("unknown@example.test", { redirectTo: "https://papersourcegh.com/auth/confirm?type=recovery" });

@@ -58,6 +58,14 @@ it("forwards Auth refresh cookies and cache headers without losing guest identit
   expect(response.headers.get("pragma")).toBe("no-cache");
   expect(response.headers.get("expires")).toBe("0");
 });
+it("keeps the request available when Auth refresh is temporarily unavailable", async () => {
+  state.configured = true;
+  state.refresh = async () => { throw Object.assign(new Error("quota restricted"), { status: 402 }); };
+  const request = new NextRequest("http://localhost:3000/account", { headers: { cookie: "sb-test-auth-token.0=existing-token" } });
+  const response = await proxy(request);
+  expect(response.status).toBe(200);
+  expect(response.cookies.get("ps_sid")?.value).toMatch(/^[0-9a-f-]{36}$/);
+});
 it("skips the Auth refresh request for anonymous visitors", async () => {
   state.configured = true;
   let refreshCalls = 0;

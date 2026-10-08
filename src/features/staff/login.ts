@@ -52,7 +52,7 @@ export async function authenticateStaff(input: { email: string; password: string
   }
 
   if (!row) {
-    await supabase.auth.signOut();
+    await supabase.auth.signOut({ scope: "local" });
     throw new StaffAuthError("That staff sign-in is not valid.");
   }
 

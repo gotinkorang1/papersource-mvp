@@ -68,7 +68,11 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
     if (!error || typeof error !== "object") return false;
     const candidate = error as { status?: unknown; code?: unknown };
     const status = typeof candidate.status === "number" ? candidate.status : null;
-    return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500);
+    const code = typeof candidate.code === "string" ? candidate.code : "";
+    return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
+      "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
+      "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
+    ].includes(code);
   }
 
   const serviceError = (): CustomerAuthResult => ({ status: "error", message: serviceFailure, errorKind: "service" });
@@ -79,10 +83,10 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       if (!identity) throw new Error("Unverified customer identity.");
       const customer = await synchronizeProfile(identity);
       return { status: "signed_in", customer, next };
-    } catch {
+    } catch (error) {
       // Best effort only: provider outages must not be reported as successful sign-in.
       try { await auth.signOut({ scope: "local" }); } catch { /* Keep failure neutral. */ }
-      return failure(message);
+      return isTransientAuthError(error) ? serviceError() : failure(message);
     }
   }
 
@@ -101,11 +105,11 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
           options: { data: { full_name: fullName, phone }, emailRedirectTo: callback.toString() },
         });
         if (error?.code === "user_already_exists") return { status: "email_sent" };
-        if (error) return failure("Could not create your account. Please try again.");
+        if (error) return isTransientAuthError(error) ? serviceError() : failure("Could not create your account. Please try again.");
         // An unconfirmed signup's user record is not an authenticated identity.
         if (!data.session) return { status: "email_sent" };
         return finishSignIn(destination, signInFailure);
-      } catch { return failure("Could not create your account. Please try again."); }
+      } catch (error) { return isTransientAuthError(error) ? serviceError() : failure("Could not create your account. Please try again."); }
     },
 
     async login(input: unknown): Promise<CustomerAuthResult> {
@@ -114,9 +118,10 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       const { email, password, next } = parsed.data;
       try {
         const { data, error } = await auth.signInWithPassword({ email, password });
-        if (error || !data.session) return failure(signInFailure);
+        if (error) return isTransientAuthError(error) ? serviceError() : failure(signInFailure);
+        if (!data.session) return failure(signInFailure);
         return finishSignIn(safeCustomerReturnPath(next), signInFailure);
-      } catch { return failure(signInFailure); }
+      } catch (error) { return isTransientAuthError(error) ? serviceError() : failure(signInFailure); }
     },
 
     async confirm(input: unknown): Promise<CustomerAuthResult> {
@@ -151,8 +156,8 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
         const { error } = await auth.resetPasswordForEmail(parsed.data.email, {
           redirectTo: new URL("/auth/confirm?type=recovery", origin).toString(),
         });
-        return error ? failure(message) : { status: "email_sent" };
-      } catch { return failure(message); }
+        return error ? (isTransientAuthError(error) ? serviceError() : failure(message)) : { status: "email_sent" };
+      } catch (error) { return isTransientAuthError(error) ? serviceError() : failure(message); }
     },
 
     async updatePassword(input: unknown): Promise<CustomerAuthResult> {
@@ -162,16 +167,17 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
       try {
         if (!await readVerifiedCustomerIdentity(auth)) return failure(message);
         const { data, error } = await auth.updateUser({ password: parsed.data.password });
-        return error || !data.user ? failure(message) : { status: "password_updated" };
-      } catch { return failure(message); }
+        if (error) return isTransientAuthError(error) ? serviceError() : failure(message);
+        return !data.user ? failure(message) : { status: "password_updated" };
+      } catch (error) { return isTransientAuthError(error) ? serviceError() : failure(message); }
     },
 
     async signOut(): Promise<CustomerAuthResult> {
       const message = "Could not sign out. Please try again.";
       try {
         const { error } = await auth.signOut({ scope: "global" });
-        return error ? failure(message) : { status: "signed_out" };
-      } catch { return failure(message); }
+        return error ? (isTransientAuthError(error) ? serviceError() : failure(message)) : { status: "signed_out" };
+      } catch (error) { return isTransientAuthError(error) ? serviceError() : failure(message); }
     },
   };
 }

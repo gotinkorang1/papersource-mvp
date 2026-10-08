@@ -35,6 +35,14 @@ export async function refreshSupabaseSession(request: NextRequest) {
       },
     },
   });
-  await supabase.auth.getClaims();
+  // Middleware must never turn a temporary Auth outage (including Supabase
+  // quota restrictions) into a blank/500 storefront response. Protected
+  // routes still perform their own authorization checks and can show their
+  // normal retry UI; public requests continue with the current cookies.
+  try {
+    await supabase.auth.getClaims();
+  } catch {
+    return response;
+  }
   return response;
 }

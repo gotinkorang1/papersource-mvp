@@ -12,8 +12,16 @@ export type { CustomerActor } from "./identity";
 
 export const readCustomerActor = cache(async (): Promise<CustomerActor | null> => {
   if (!isDatabaseConfigured() || !publicEnv.NEXT_PUBLIC_SUPABASE_URL || (!publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && !publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY)) return null;
-  const supabase = await createSupabaseServerClient();
-  const identity = await readVerifiedCustomerIdentity(supabase.auth);
+  let identity: CustomerActor | null;
+  try {
+    const supabase = await createSupabaseServerClient();
+    identity = await readVerifiedCustomerIdentity(supabase.auth);
+  } catch {
+    // Public entry points (login, register, product pages and navigation) must
+    // remain renderable when Auth is temporarily unavailable. Protected routes
+    // still require a verified actor and will redirect through requireCustomer.
+    return null;
+  }
   if (!identity) return null;
   try {
     return await synchronizeCustomerProfile(identity);

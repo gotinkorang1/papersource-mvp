@@ -47,6 +47,11 @@ it("supports guest-only installations without falling back to custom auth", asyn
   expect(await readCustomerActor()).toBeNull();
   expect(state.getClaims).not.toHaveBeenCalled();
 });
+it("keeps public account entry points renderable during a temporary Auth outage", async () => {
+  state.getClaims.mockRejectedValue(Object.assign(new Error("quota restricted"), { status: 402 }));
+  expect(await readCustomerActor()).toBeNull();
+  expect(state.sync).not.toHaveBeenCalled();
+});
 it("redirects missing identity using only an allowed destination", async () => {
   await expect(requireCustomer("/checkout")).rejects.toThrow("redirect:/login?next=%2Fcheckout");
   await expect(requireCustomer("https://foreign.example")).rejects.toThrow("redirect:/login?next=%2Faccount");
