@@ -23,6 +23,14 @@ function isTransientDependencyError(error: unknown): boolean {
   ].includes(code);
 }
 
+function safeCommerceMergeMessage(error: unknown): string | null {
+  const message = error instanceof Error ? error.message : "";
+  return [
+    "Reduce your cart quantity before signing in.",
+    "Reduce your quote quantity before signing in.",
+  ].includes(message) ? message : null;
+}
+
 async function execute(operation: AuthOperation, input: unknown): Promise<CustomerAuthFormState> {
   let result: CustomerAuthResult;
   try {
@@ -45,9 +53,10 @@ async function execute(operation: AuthOperation, input: unknown): Promise<Custom
         try { await client.auth.signOut({ scope: "local" }); } catch { /* Neutral failure below. */ }
         return {
           status: "error",
-          message: isTransientDependencyError(error)
-            ? "Account services are temporarily unavailable. Please try again."
-            : "Could not finish signing in. Please try again.",
+          message: safeCommerceMergeMessage(error)
+            ?? (isTransientDependencyError(error)
+              ? "Account services are temporarily unavailable. Please try again."
+              : "Could not finish signing in. Please try again."),
         };
       }
     }

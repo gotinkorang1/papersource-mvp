@@ -78,6 +78,14 @@ describe("customer auth Server Actions", () => {
     });
     expect(boundary.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
   });
+  it("preserves safe cart quantity guidance when a merge is rejected", async () => {
+    boundary.merge.mockRejectedValue(new Error("Reduce your cart quantity before signing in."));
+    expect(await loginCustomerAction({}, form())).toEqual({
+      status: "error",
+      message: "Reduce your cart quantity before signing in.",
+    });
+    expect(boundary.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+  });
   it("waits for signup confirmation without merging, redirecting or returning identity", async () => {
     boundary.auth.signUp.mockResolvedValue({ data: { session: null, user: { id: profileId } }, error: null });
     expect(await registerCustomerAction({}, form({ fullName: "Ama", phone: "" }))).toMatchObject({ status: "success", message: expect.stringMatching(/email/i) });
