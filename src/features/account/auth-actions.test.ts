@@ -70,6 +70,14 @@ describe("customer auth Server Actions", () => {
     expect(JSON.stringify(result)).not.toContain("SQL");
     expect(boundary.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
   });
+  it("reports a temporary commerce merge outage without blaming the customer", async () => {
+    boundary.merge.mockRejectedValue(Object.assign(new Error("database unavailable"), { status: 503 }));
+    expect(await loginCustomerAction({}, form())).toEqual({
+      status: "error",
+      message: "Account services are temporarily unavailable. Please try again.",
+    });
+    expect(boundary.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+  });
   it("waits for signup confirmation without merging, redirecting or returning identity", async () => {
     boundary.auth.signUp.mockResolvedValue({ data: { session: null, user: { id: profileId } }, error: null });
     expect(await registerCustomerAction({}, form({ fullName: "Ama", phone: "" }))).toMatchObject({ status: "success", message: expect.stringMatching(/email/i) });

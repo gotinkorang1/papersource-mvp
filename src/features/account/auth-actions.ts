@@ -12,6 +12,17 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type AuthOperation = "login" | "register" | "requestPasswordReset" | "updatePassword";
 
+function isTransientDependencyError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as { status?: unknown; code?: unknown };
+  const status = typeof candidate.status === "number" ? candidate.status : null;
+  const code = typeof candidate.code === "string" ? candidate.code : "";
+  return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
+    "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
+    "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
+  ].includes(code);
+}
+
 async function execute(operation: AuthOperation, input: unknown): Promise<CustomerAuthFormState> {
   let result: CustomerAuthResult;
   try {
@@ -29,10 +40,15 @@ async function execute(operation: AuthOperation, input: unknown): Promise<Custom
     if (result.status === "signed_in") {
       try {
         await mergeGuestCommerce({ profileId: result.customer.profileId, sessionId: await readGuestSessionId() });
-      } catch {
+      } catch (error) {
         // Do not announce success or leave a new session after failed integration.
         try { await client.auth.signOut({ scope: "local" }); } catch { /* Neutral failure below. */ }
-        return { status: "error", message: "Could not finish signing in. Please try again." };
+        return {
+          status: "error",
+          message: isTransientDependencyError(error)
+            ? "Account services are temporarily unavailable. Please try again."
+            : "Could not finish signing in. Please try again.",
+        };
       }
     }
   } catch {
