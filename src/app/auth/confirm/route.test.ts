@@ -116,6 +116,12 @@ describe("token hash confirmation callback with real Supabase SSR", () => {
     expect(response.cookies.getAll().filter(({ name }) => name.startsWith("sb-")).every(({ value }) => value === "")).toBe(true);
     expect(response.headers.get("cache-control")).toContain("no-store");
   });
+  it("routes a temporary commerce merge outage to a service-unavailable state", async () => {
+    boundary.merge.mockRejectedValue(Object.assign(new Error("database unavailable"), { status: 503 }));
+    const response = await GET(request("token_hash=private-hash&type=email"));
+    expect(response.headers.get("location")).toBe("https://papersourcegh.com/login?authError=service");
+    expect(calls.some(({ path }) => path === "/auth/v1/logout?scope=local")).toBe(true);
+  });
   it("rejects malformed guest cookies and ignores client session IDs", async () => {
     await GET(request(`token_hash=private-hash&type=email&sessionId=${sessionId}`, "malformed"));
     expect(boundary.merge).toHaveBeenCalledExactlyOnceWith({ profileId, sessionId: null });

@@ -7,6 +7,17 @@ import { publicEnv } from "@/lib/env";
 import { GUEST_SESSION_COOKIE, isGuestSessionId } from "@/lib/session/constants";
 import { SITE_URL } from "@/lib/seo";
 
+function isTransientDependencyError(error: unknown): boolean {
+  if (!error || typeof error !== "object") return false;
+  const candidate = error as { status?: unknown; code?: unknown };
+  const status = typeof candidate.status === "number" ? candidate.status : null;
+  const code = typeof candidate.code === "string" ? candidate.code : "";
+  return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
+    "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
+    "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
+  ].includes(code);
+}
+
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
   const isOAuthFailure = request.nextUrl.searchParams.has("error") || request.nextUrl.searchParams.has("error_code");
@@ -69,8 +80,11 @@ export async function GET(request: NextRequest) {
     try {
       const guestCookie = request.cookies.get(GUEST_SESSION_COOKIE)?.value;
       await mergeGuestCommerce({ profileId: result.customer.profileId, sessionId: isGuestSessionId(guestCookie) ? guestCookie : null });
-    } catch {
+    } catch (error) {
       try { await client.auth.signOut({ scope: "local" }); } catch { /* Keep failure neutral. */ }
+      if (isTransientDependencyError(error)) {
+        response.headers.set("Location", new URL(type === "recovery" ? "/forgot-password?authError=service" : "/login?authError=service", siteUrl).toString());
+      }
       return response;
     }
     // Preserve every cookie chunk/cache header already written by the SDK.
