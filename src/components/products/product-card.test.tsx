@@ -11,6 +11,7 @@ describe("ProductCard", () => {
   it("shows spec, unit price, tier hint, stock, and both CTAs", () => {
     render(<ProductCard product={product} />);
 
+    expect(screen.getByText("Double A Premium A4 Paper").closest("div.group")).toHaveClass("paper-product-card");
     expect(screen.getByText("Double A Premium A4 Paper")).toBeInTheDocument();
     expect(screen.getByText("A4 • 80gsm • 500 sheets")).toBeInTheDocument();
     expect(screen.getByText("GHS 78.00")).toBeInTheDocument();

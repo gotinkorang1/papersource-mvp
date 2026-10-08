@@ -95,7 +95,7 @@ export function ProductCard({
   };
 
   return (
-    <PaperCard className={cn("group flex min-w-0 flex-col overflow-hidden", className)} style={style}>
+    <PaperCard className={cn("paper-product-card group flex min-w-0 flex-col overflow-hidden", className)} style={style}>
       <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
         <Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`} className="absolute inset-0 z-[1] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink">
           <Image src={resolvedImageSource} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} fill unoptimized={resolvedImageSource.startsWith("https://res.cloudinary.com/")} preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes="(max-width: 389px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" onError={() => { if (resolvedImageSource !== "/images/set-school-stationery.jpg") setResolvedImageSource("/images/set-school-stationery.jpg"); }} className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />

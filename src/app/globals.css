@@ -71,6 +71,49 @@
   animation-play-state: paused;
 }
 
+/* Keep the persistent mobile actions easy to hit without making the bar
+   visually heavy. The compact fallback protects very small phones. */
+.paper-mobile-nav-item {
+  min-height: 3.5rem;
+  position: relative;
+}
+
+.paper-mobile-nav-item[aria-current="page"]::after,
+.paper-mobile-nav-item[aria-pressed="true"]::after {
+  position: absolute;
+  bottom: 0.25rem;
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: var(--ps-ochre);
+  content: "";
+}
+
+.paper-product-card {
+  container-type: inline-size;
+}
+
+.paper-product-card > div:last-child {
+  min-width: 0;
+}
+
+@container (max-width: 20rem) {
+  .paper-product-card > div:last-child {
+    padding: 0.75rem;
+  }
+
+  .paper-product-card .font-mono {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .paper-mobile-nav-item {
+    min-height: 3.25rem;
+    font-size: 0.6875rem;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .announcement-ticker-track {
     animation: none;
