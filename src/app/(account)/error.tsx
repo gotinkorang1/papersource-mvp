@@ -1,0 +1,25 @@
+"use client";
+
+import Link from "next/link";
+import { useEffect } from "react";
+import { captureClientBoundaryError } from "@/lib/observability/client-sentry";
+
+export default function AccountRouteError({ error, reset }: { error: Error & { digest?: string }; reset: () => void }) {
+  useEffect(() => {
+    console.error("PaperSource account route failed to render", { digest: error.digest });
+    captureClientBoundaryError(error, "account-route", error.digest);
+  }, [error]);
+
+  return (
+    <main role="alert" className="mx-auto max-w-2xl rounded-2xl border border-error/30 bg-surface p-6 shadow-sm sm:p-8">
+      <p className="text-sm font-medium uppercase tracking-[0.16em] text-error">Account temporarily unavailable</p>
+      <h1 className="mt-3 font-heading text-2xl text-ink">We couldn’t load this account page</h1>
+      <p className="mt-3 max-w-lg text-slate">Your account and order information are safe. Try again, or return to the shop while we reconnect.</p>
+      <div className="mt-6 flex flex-wrap gap-3">
+        <button type="button" onClick={reset} className="inline-flex min-h-11 items-center rounded-lg bg-ink px-5 py-2.5 font-medium text-cream transition hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Try again</button>
+        <Link href="/shop" className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 py-2.5 font-medium text-ink transition hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Back to shop</Link>
+        <Link href="/login" className="inline-flex min-h-11 items-center rounded-lg border border-border px-5 py-2.5 font-medium text-ink transition hover:border-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Sign in</Link>
+      </div>
+    </main>
+  );
+}
