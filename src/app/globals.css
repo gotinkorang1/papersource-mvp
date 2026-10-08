@@ -137,6 +137,15 @@
     min-height: 6.5rem;
     padding: 0.875rem;
   }
+
+  .paper-admin-orders-panel {
+    padding: 1rem;
+  }
+
+  .paper-admin-orders-panel .admin-responsive-table {
+    margin-inline: -0.25rem;
+    width: calc(100% + 0.5rem);
+  }
 }
 
 .paper-product-detail-panel {
