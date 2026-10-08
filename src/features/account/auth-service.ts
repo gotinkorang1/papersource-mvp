@@ -3,6 +3,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { readVerifiedCustomerIdentity, type CustomerActor } from "@/lib/customer/identity";
 import { safeCustomerReturnPath } from "@/lib/customer/return-path";
+import { isTransientAuthError } from "@/lib/auth/transient-error";
 
 type AuthClient = Pick<SupabaseClient["auth"],
   "signUp" | "signInWithPassword" | "verifyOtp" | "exchangeCodeForSession" | "resetPasswordForEmail" | "updateUser" | "signOut" | "getClaims">;
@@ -63,17 +64,6 @@ export function createCustomerAuthService({ auth, siteUrl, synchronizeProfile }:
   const signInFailure = "Could not sign in. Check your details and try again.";
   const confirmationFailure = "This link is invalid or expired. Request a new email.";
   const serviceFailure = "Account services are temporarily unavailable. Please try again.";
-
-  function isTransientAuthError(error: unknown) {
-    if (!error || typeof error !== "object") return false;
-    const candidate = error as { status?: unknown; code?: unknown };
-    const status = typeof candidate.status === "number" ? candidate.status : null;
-    const code = typeof candidate.code === "string" ? candidate.code : "";
-    return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
-      "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
-      "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
-    ].includes(code);
-  }
 
   const serviceError = (): CustomerAuthResult => ({ status: "error", message: serviceFailure, errorKind: "service" });
 

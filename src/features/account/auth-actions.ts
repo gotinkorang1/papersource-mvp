@@ -9,19 +9,9 @@ import { synchronizeCustomerProfile } from "@/lib/customer/profiles";
 import { publicEnv } from "@/lib/env";
 import { readGuestSessionId } from "@/lib/session/guest";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { isTransientAuthError } from "@/lib/auth/transient-error";
 
 type AuthOperation = "login" | "register" | "requestPasswordReset" | "updatePassword";
-
-function isTransientDependencyError(error: unknown): boolean {
-  if (!error || typeof error !== "object") return false;
-  const candidate = error as { status?: unknown; code?: unknown };
-  const status = typeof candidate.status === "number" ? candidate.status : null;
-  const code = typeof candidate.code === "string" ? candidate.code : "";
-  return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
-    "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
-    "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
-  ].includes(code);
-}
 
 function safeCommerceMergeMessage(error: unknown): string | null {
   const message = error instanceof Error ? error.message : "";
@@ -54,7 +44,7 @@ async function execute(operation: AuthOperation, input: unknown): Promise<Custom
         return {
           status: "error",
           message: safeCommerceMergeMessage(error)
-            ?? (isTransientDependencyError(error)
+            ?? (isTransientAuthError(error)
               ? "Account services are temporarily unavailable. Please try again."
               : "Could not finish signing in. Please try again."),
         };

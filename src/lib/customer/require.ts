@@ -7,21 +7,11 @@ import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { readVerifiedCustomerIdentityWithError, type CustomerActor } from "./identity";
 import { synchronizeCustomerProfile } from "./profiles";
 import { safeCustomerReturnPath } from "./return-path";
+import { isTransientAuthError } from "@/lib/auth/transient-error";
 
 export type { CustomerActor } from "./identity";
 
 export type CustomerActorStatus = { actor: CustomerActor | null; unavailable: boolean };
-
-function isTransientAuthDependency(error: unknown) {
-  if (!error || typeof error !== "object") return false;
-  const candidate = error as { status?: unknown; code?: unknown };
-  const status = typeof candidate.status === "number" ? candidate.status : null;
-  const code = typeof candidate.code === "string" ? candidate.code : "";
-  return status === 402 || status === 408 || status === 425 || status === 429 || (status !== null && status >= 500) || [
-    "over_request_rate_limit", "rate_limit_exceeded", "service_unavailable", "temporarily_unavailable",
-    "bad_gateway", "gateway_timeout", "internal_server_error", "database_unavailable",
-  ].includes(code);
-}
 
 export const readCustomerActorStatus = cache(async (): Promise<CustomerActorStatus> => {
   if (!isDatabaseConfigured() || !publicEnv.NEXT_PUBLIC_SUPABASE_URL || (!publicEnv.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY && !publicEnv.NEXT_PUBLIC_SUPABASE_ANON_KEY)) return { actor: null, unavailable: false };
@@ -29,13 +19,13 @@ export const readCustomerActorStatus = cache(async (): Promise<CustomerActorStat
   try {
     const supabase = await createSupabaseServerClient();
     const result = await readVerifiedCustomerIdentityWithError(supabase.auth);
-    if (!result.identity) return { actor: null, unavailable: isTransientAuthDependency(result.error) };
+    if (!result.identity) return { actor: null, unavailable: isTransientAuthError(result.error) };
     identity = result.identity;
   } catch (error) {
     // Public entry points (login, register, product pages and navigation) must
     // remain renderable when Auth is temporarily unavailable. Protected routes
     // still require a verified actor and will redirect through requireCustomer.
-    return { actor: null, unavailable: isTransientAuthDependency(error) };
+    return { actor: null, unavailable: isTransientAuthError(error) };
   }
   try {
     return { actor: await synchronizeCustomerProfile(identity), unavailable: false };
@@ -46,7 +36,7 @@ export const readCustomerActorStatus = cache(async (): Promise<CustomerActorStat
     if (error instanceof Error && error.message === "Customer profile unavailable.") {
       return { actor: null, unavailable: false };
     }
-    if (isTransientAuthDependency(error)) return { actor: null, unavailable: true };
+    if (isTransientAuthError(error)) return { actor: null, unavailable: true };
     throw error;
   }
 });
