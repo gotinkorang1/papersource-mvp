@@ -76,6 +76,8 @@
 .paper-mobile-nav-item {
   min-height: 3.5rem;
   position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .paper-breadcrumbs {
