@@ -1,13 +1,13 @@
 import { act, render, screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-const actions = vi.hoisted(() => ({ login: vi.fn(), register: vi.fn(), forgot: vi.fn(), reset: vi.fn(), signOut: vi.fn(), actor: vi.fn() }));
+const actions = vi.hoisted(() => ({ login: vi.fn(), register: vi.fn(), forgot: vi.fn(), reset: vi.fn(), signOut: vi.fn(), actor: vi.fn(), actorStatus: vi.fn() }));
 const supabase = vi.hoisted(() => ({ signInWithOAuth: vi.fn() }));
 vi.mock("@/features/account/auth-actions", () => ({
   loginCustomerAction: actions.login, registerCustomerAction: actions.register,
   requestPasswordResetAction: actions.forgot, updateCustomerPasswordAction: actions.reset, signOutCustomerAction: actions.signOut,
 }));
-vi.mock("@/lib/customer/require", () => ({ readCustomerActor: actions.actor }));
+vi.mock("@/lib/customer/require", () => ({ readCustomerActor: actions.actor, readCustomerActorStatus: actions.actorStatus }));
 vi.mock("@/lib/supabase/client", () => ({ createSupabaseBrowserClient: () => ({ auth: supabase }) }));
 import { CustomerAuthForm } from "./auth-form";
 import { SignOutButton } from "./sign-out-button";
@@ -18,6 +18,7 @@ import ResetPasswordPage from "@/app/(account)/reset-password/page";
 beforeEach(() => {
   vi.resetAllMocks();
   actions.actor.mockResolvedValue(null);
+  actions.actorStatus.mockResolvedValue({ actor: null, unavailable: false });
   supabase.signInWithOAuth.mockResolvedValue({ data: { url: "https://provider.example.test/oauth" }, error: null });
 });
 describe("customer authentication forms", () => {
@@ -135,5 +136,11 @@ describe("customer authentication forms", () => {
     render(await ResetPasswordPage());
     expect(screen.queryByRole("button", { name: "Update password" })).not.toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Request a new reset link" })).toHaveAttribute("href", "/forgot-password");
+  });
+  it("explains when password recovery is unavailable instead of calling the link expired", async () => {
+    actions.actorStatus.mockResolvedValue({ actor: null, unavailable: true });
+    render(await ResetPasswordPage());
+    expect(screen.getByRole("alert")).toHaveTextContent(/temporarily unavailable/i);
+    expect(screen.getByRole("alert")).not.toHaveTextContent(/latest reset link/i);
   });
 });

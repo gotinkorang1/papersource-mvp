@@ -16,7 +16,7 @@ vi.mock("next/navigation", () => ({ redirect: (url: string) => { throw new Error
 vi.mock("@/lib/supabase/server", () => ({ createSupabaseServerClient: async () => ({ auth: { getClaims: state.getClaims } }) }));
 vi.mock("@/lib/db/client", () => ({ isDatabaseConfigured: () => true, getDb: () => { throw new Error("No database access before verified identity"); } }));
 vi.mock("./profiles", () => ({ synchronizeCustomerProfile: state.sync }));
-import { readCustomerActor, requireCustomer } from "./require";
+import { readCustomerActor, readCustomerActorStatus, requireCustomer } from "./require";
 const sub = "a7105cc2-81b4-44e5-bdf3-87f929c1c501";
 const actor = { profileId: sub, email: "ama@example.com", fullName: "Saved name", phone: null };
 beforeEach(() => {
@@ -51,6 +51,13 @@ it("keeps public account entry points renderable during a temporary Auth outage"
   state.getClaims.mockRejectedValue(Object.assign(new Error("quota restricted"), { status: 402 }));
   expect(await readCustomerActor()).toBeNull();
   expect(state.sync).not.toHaveBeenCalled();
+});
+it("reports a temporary Auth outage separately from a missing recovery session", async () => {
+  state.getClaims.mockRejectedValue(Object.assign(new Error("quota restricted"), { status: 402 }));
+  await expect(readCustomerActorStatus()).resolves.toEqual({ actor: null, unavailable: true });
+
+  state.getClaims.mockResolvedValue({ data: null, error: null });
+  await expect(readCustomerActorStatus()).resolves.toEqual({ actor: null, unavailable: false });
 });
 it("redirects missing identity using only an allowed destination", async () => {
   await expect(requireCustomer("/checkout")).rejects.toThrow("redirect:/login?next=%2Fcheckout");
