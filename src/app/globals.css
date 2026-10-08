@@ -124,6 +124,21 @@
   min-width: 0;
 }
 
+.paper-admin-dashboard {
+  container-type: inline-size;
+}
+
+.admin-dashboard-metric {
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .paper-admin-dashboard .admin-dashboard-metric {
+    min-height: 6.5rem;
+    padding: 0.875rem;
+  }
+}
+
 .paper-product-detail-panel {
   min-width: 0;
 }
