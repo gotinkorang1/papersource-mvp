@@ -9,6 +9,7 @@
 
 .announcement-ticker-track {
   animation: papersource-ticker 28s linear infinite;
+  will-change: transform;
 }
 
 /* Quiet visual system for editorial sections. These accents add depth without
@@ -211,6 +212,13 @@
   .paper-mobile-nav-item {
     min-height: 3.25rem;
     font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .announcement-ticker-track {
+    animation-duration: 36s;
+    gap: 2rem;
   }
 }
 
