@@ -41,7 +41,12 @@ async function execute(operation: AuthOperation, input: unknown): Promise<Custom
         await mergeGuestCommerce({ profileId: result.customer.profileId, sessionId: await readGuestSessionId() });
       } catch (error) {
         // Do not announce success or leave a new session after failed integration.
-        try { await client.auth.signOut({ scope: "local" }); } catch { /* Neutral failure below. */ }
+        try {
+          const { error: signOutError } = await client.auth.signOut({ scope: "local" });
+          if (signOutError) await clearLocalSupabaseAuthCookies();
+        } catch {
+          await clearLocalSupabaseAuthCookies();
+        }
         return {
           status: "error",
           message: safeCommerceMergeMessage(error)

@@ -70,10 +70,14 @@ describe("customer auth Server Actions", () => {
   });
   it("rolls back the new session when merge fails without exposing database details", async () => {
     boundary.merge.mockRejectedValue(new Error("sensitive SQL"));
+    cookieStore.getAll.mockReturnValue([{ name: "sb-example-auth-token", value: "secret" }, { name: "ps_sid", value: guestId }]);
+    boundary.auth.signOut.mockRejectedValue(new Error("quota restricted"));
     const result = await loginCustomerAction({}, form());
     expect(result.status).toBe("error");
     expect(JSON.stringify(result)).not.toContain("SQL");
     expect(boundary.auth.signOut).toHaveBeenCalledWith({ scope: "local" });
+    expect(cookieStore.delete).toHaveBeenCalledWith("sb-example-auth-token");
+    expect(cookieStore.delete).not.toHaveBeenCalledWith("ps_sid");
   });
   it("reports a temporary commerce merge outage without blaming the customer", async () => {
     boundary.merge.mockRejectedValue(Object.assign(new Error("database unavailable"), { status: 503 }));
