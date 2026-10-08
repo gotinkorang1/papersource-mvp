@@ -7,6 +7,19 @@ import { synchronizeCustomerProfile } from "@/lib/customer/profiles";
 import { publicEnv } from "@/lib/env";
 import { GUEST_SESSION_COOKIE, isGuestSessionId } from "@/lib/session/constants";
 import { SITE_URL } from "@/lib/seo";
+import { isSupabaseAuthCookieName } from "@/lib/supabase/clear-auth-cookies";
+
+function clearResponseSupabaseAuthCookies(request: NextRequest, response: NextResponse) {
+  const names = new Set([
+    ...request.cookies.getAll().map(({ name }) => name),
+    ...response.cookies.getAll().map(({ name }) => name),
+  ]);
+  for (const name of names) {
+    if (isSupabaseAuthCookieName(name)) {
+      response.cookies.set(name, "", { path: "/", maxAge: 0, expires: new Date(0) });
+    }
+  }
+}
 
 export async function GET(request: NextRequest) {
   const type = request.nextUrl.searchParams.get("type");
@@ -71,7 +84,12 @@ export async function GET(request: NextRequest) {
       const guestCookie = request.cookies.get(GUEST_SESSION_COOKIE)?.value;
       await mergeGuestCommerce({ profileId: result.customer.profileId, sessionId: isGuestSessionId(guestCookie) ? guestCookie : null });
     } catch (error) {
-      try { await client.auth.signOut({ scope: "local" }); } catch { /* Keep failure neutral. */ }
+      try {
+        const { error: signOutError } = await client.auth.signOut({ scope: "local" });
+        if (signOutError) clearResponseSupabaseAuthCookies(request, response);
+      } catch {
+        clearResponseSupabaseAuthCookies(request, response);
+      }
       if (isTransientAuthError(error)) {
         response.headers.set("Location", new URL(type === "recovery" ? "/forgot-password?authError=service" : "/login?authError=service", siteUrl).toString());
       }

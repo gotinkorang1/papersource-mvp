@@ -19,12 +19,13 @@ const session = { access_token: jwt, refresh_token: "private-refresh-token", tok
 const calls: { path: string; body: unknown }[] = [];
 let rejectToken = false;
 let rejectStatus = 403;
+let rejectLogout = false;
 
 function request(query: string, cookie = sessionId) {
   return new NextRequest(`https://papersourcegh.com/auth/confirm?${query}`, { headers: { cookie: `ps_sid=${cookie}` } });
 }
 beforeEach(() => {
-  vi.resetAllMocks(); calls.length = 0; rejectToken = false; rejectStatus = 403;
+  vi.resetAllMocks(); calls.length = 0; rejectToken = false; rejectStatus = 403; rejectLogout = false;
   boundary.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY = "test-publishable-key";
   boundary.profile.mockImplementation(async (identity) => identity);
   // Only the external HTTP boundary is simulated; exercise the actual SSR SDK,
@@ -38,7 +39,9 @@ beforeEach(() => {
       ? Response.json({ code: rejectStatus === 402 ? "quota_exceeded" : "otp_expired", msg: "private provider detail" }, { status: rejectStatus })
       : Response.json(session);
     if (url.pathname === "/auth/v1/user") return Response.json(user);
-    if (url.pathname === "/auth/v1/logout") return new Response(null, { status: 204 });
+    if (url.pathname === "/auth/v1/logout") return rejectLogout
+      ? Response.json({ code: "service_unavailable" }, { status: 503 })
+      : new Response(null, { status: 204 });
     throw new Error(`Unexpected test Auth endpoint: ${url.pathname}`);
   });
 });
@@ -121,6 +124,13 @@ describe("token hash confirmation callback with real Supabase SSR", () => {
     const response = await GET(request("token_hash=private-hash&type=email"));
     expect(response.headers.get("location")).toBe("https://papersourcegh.com/login?authError=service");
     expect(calls.some(({ path }) => path === "/auth/v1/logout?scope=local")).toBe(true);
+  });
+  it("clears response cookies when local session revocation is unavailable", async () => {
+    rejectLogout = true;
+    boundary.merge.mockRejectedValue(new Error("private SQL"));
+    const response = await GET(request("token_hash=private-hash&type=email"));
+    expect(response.headers.get("location")).toBe("https://papersourcegh.com/login?authError=confirmation");
+    expect(response.cookies.getAll().filter(({ name }) => name.startsWith("sb-")).every(({ value }) => value === "")).toBe(true);
   });
   it("rejects malformed guest cookies and ignores client session IDs", async () => {
     await GET(request(`token_hash=private-hash&type=email&sessionId=${sessionId}`, "malformed"));
