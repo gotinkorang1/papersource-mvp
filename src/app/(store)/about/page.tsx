@@ -51,7 +51,7 @@ export default function AboutPage() {
           <p className="mt-6 max-w-2xl text-lg text-slate">PaperSource helps offices, schools, businesses and homes find the everyday paper, stationery, printing supplies and workplace essentials they need.</p>
           <p className="mt-4 max-w-2xl text-slate">We are a subsidiary of <strong className="font-medium text-ink">NiiPlants Group Ghana Limited</strong>, building a dependable supply experience for customers across Ghana.</p>
         </div>
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(16,42,67,0.12)]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(43,50,49,0.12)]">
           <Image src="/images/young-african-business-woman-standing-grey-wall.jpg" alt="Professional at work in a modern office" fill sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover" />
         </div>
       </section>

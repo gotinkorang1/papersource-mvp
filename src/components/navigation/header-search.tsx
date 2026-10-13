@@ -124,7 +124,7 @@ export function HeaderSearch({
         disabled={isNavigating}
         autoComplete="off"
         placeholder="Search paper, toner, pens, brands or SKU..."
-        className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink transition-[background-color,border-color,box-shadow] duration-200 placeholder:text-slate focus-visible:border-ink focus-visible:bg-card focus-visible:shadow-[0_0_0_3px_rgba(16,42,67,0.08)] focus-visible:outline-none"
+        className="h-10 w-full rounded-md border border-border bg-cream px-3 text-sm text-ink transition-[background-color,border-color,box-shadow] duration-200 placeholder:text-slate focus-visible:border-ink focus-visible:bg-card focus-visible:shadow-[0_0_0_3px_rgba(43,50,49,0.08)] focus-visible:outline-none"
       />
       {open && query.trim().length >= 2 ? (
         <div id={`${inputId}-suggestions`} role="listbox" aria-label="Search suggestions" className="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-border bg-card p-1 shadow-xl">

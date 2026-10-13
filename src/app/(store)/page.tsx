@@ -50,7 +50,7 @@ export default async function HomePage() {
           })),
         }}
       />
-      <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-8 shadow-[0_18px_55px_rgba(16,42,67,0.06)] sm:px-6 sm:py-14 md:px-8 md:py-20 lg:py-24">
+      <section className="paper-grain relative isolate mx-auto max-w-7xl overflow-hidden rounded-b-[2rem] border-x border-b border-border/70 px-4 py-8 shadow-[0_18px_55px_rgba(43,50,49,0.06)] sm:px-6 sm:py-14 md:px-8 md:py-20 lg:py-24">
         <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 -z-10 size-72 rounded-full bg-ochre/10 blur-3xl" />
         <div aria-hidden className="pointer-events-none absolute -bottom-32 -left-24 -z-10 size-80 rounded-full bg-paper-green/10 blur-3xl" />
         <div className="grid items-center gap-10 lg:grid-cols-[1.02fr_0.98fr] lg:gap-16">
@@ -84,7 +84,7 @@ export default async function HomePage() {
           ))}
         </div>
           </div>
-          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-border bg-cream shadow-[0_24px_60px_rgba(16,42,67,0.16)] ring-1 ring-ink/5">
+          <div className="relative aspect-[4/3] overflow-hidden rounded-[1.5rem] border border-border bg-cream shadow-[0_24px_60px_rgba(43,50,49,0.16)] ring-1 ring-ink/5">
             <Image src="/images/catalogue-stationery-generated.png" alt="Stationery, notebooks, paper and desk supplies arranged for a productive workday" fill priority loading="eager" fetchPriority="high" sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover transition-transform duration-700 motion-safe:hover:scale-105" />
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-xl border border-white/25 bg-ink/75 px-4 py-3 text-cream shadow-lg backdrop-blur-sm">
@@ -103,7 +103,7 @@ export default async function HomePage() {
           </div>
           <p className="max-w-sm text-sm leading-6 text-slate">Clear prices for everyday orders, and a dedicated quote path when your requirements are larger.</p>
         </div>
-        <div className="grid overflow-hidden rounded-2xl border border-border bg-card shadow-[0_14px_40px_rgba(16,42,67,0.06)] sm:grid-cols-3">
+        <div className="grid overflow-hidden rounded-2xl border border-border bg-card shadow-[0_14px_40px_rgba(43,50,49,0.06)] sm:grid-cols-3">
           {[
             { icon: Truck, title: "Delivery that keeps pace", body: "Accra and Tema delivery, with nationwide supply on request." },
             { icon: Layers3, title: "Retail or bulk", body: "Checkout everyday items or build a quote for larger requirements." },
@@ -149,7 +149,7 @@ export default async function HomePage() {
       </section>
 
       <section className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:py-20 lg:grid-cols-[0.9fr_1.1fr] lg:items-center lg:gap-16 lg:px-8">
-        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_16px_40px_rgba(16,42,67,0.1)]">
+        <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_16px_40px_rgba(43,50,49,0.1)]">
           <Image src="/images/aerial-view-african-descent-woman-working-computer-white-table-office.jpg" alt="Organised workplace desk with stationery and computer" fill sizes="(max-width: 1024px) 100vw, 42vw" className="object-cover" />
           <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/25 via-transparent to-transparent" />
         </div>

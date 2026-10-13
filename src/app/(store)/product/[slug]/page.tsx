@@ -99,7 +99,7 @@ export default async function ProductPage({ params }: PageProps) {
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
         <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,42,67,0.08)] sm:p-7">
+        <div className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(43,50,49,0.08)] sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
               {product.brandName}

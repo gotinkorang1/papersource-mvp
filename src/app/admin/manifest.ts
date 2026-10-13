@@ -12,19 +12,19 @@ export default function manifest(): MetadataRoute.Manifest {
     display: "standalone",
     display_override: ["window-controls-overlay", "standalone", "minimal-ui"],
     orientation: "any",
-    background_color: "#102a43",
-    theme_color: "#102a43",
+    background_color: "#2b3231",
+    theme_color: "#2b3231",
     lang: "en-GH",
     categories: ["business", "productivity"],
     icons: [
-      { src: "/icon.svg", sizes: "512x512", type: "image/svg+xml", purpose: "any" },
+      { src: "/brand/papersource-icon-192.png", sizes: "192x192", type: "image/png", purpose: "any" },
       { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "any" },
-      { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
+      { src: "/brand/papersource-maskable-512.png", sizes: "512x512", type: "image/png", purpose: "maskable" },
     ],
     shortcuts: [
-      { name: "Orders", short_name: "Orders", url: "/admin/orders", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Quotes", short_name: "Quotes", url: "/admin/quotes", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
-      { name: "Products", short_name: "Products", url: "/admin/products", icons: [{ src: "/icon.svg", sizes: "512x512", type: "image/svg+xml" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Orders", short_name: "Orders", url: "/admin/orders", icons: [{ src: "/brand/papersource-icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Quotes", short_name: "Quotes", url: "/admin/quotes", icons: [{ src: "/brand/papersource-icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
+      { name: "Products", short_name: "Products", url: "/admin/products", icons: [{ src: "/brand/papersource-icon-192.png", sizes: "192x192", type: "image/png" }, { src: "/icons/papersource-logo.png", sizes: "512x512", type: "image/png" }] },
     ],
   };
 }
