@@ -41,7 +41,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
       <p className="mt-4 max-w-2xl text-base text-slate sm:text-lg">
         Search paper, toner, pens, brands or SKU.
       </p>
-      <div className="mt-7 max-w-3xl rounded-2xl border border-border/80 bg-card p-3 shadow-[0_14px_38px_rgba(16,42,67,0.08)] sm:p-4">
+      <div className="mt-7 max-w-3xl rounded-2xl border border-border/80 bg-card p-3 shadow-[0_14px_38px_rgba(43,50,49,0.08)] sm:p-4">
         <HeaderSearch
           key={q}
           className="block w-full"

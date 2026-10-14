@@ -50,15 +50,16 @@ export const metadata: Metadata = {
     images: [DEFAULT_SHARE_IMAGE],
   },
   icons: {
+    // Light mark on a white tile so it reads on light and dark browser chrome.
     icon: [
-      { url: "/icon.svg", type: "image/svg+xml", sizes: "512x512" },
-      { url: "/icons/papersource-logo.png", type: "image/png", sizes: "512x512" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/brand/favicon-96.png", type: "image/png", sizes: "96x96" },
     ],
     // Keep the canonical SVG first so browsers that prioritize the shortcut
     // declaration do not retain a stale hosting-provider favicon.
     shortcut: [
-      { url: "/icon.svg", type: "image/svg+xml", sizes: "512x512" },
-      { url: "/icons/papersource-logo.png", type: "image/png", sizes: "512x512" },
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/favicon.ico", sizes: "any" },
     ],
     apple: "/icons/papersource-logo.png",
   },
@@ -81,8 +82,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#f8f6f1" },
-    { media: "(prefers-color-scheme: dark)", color: "#102a43" },
+    { media: "(prefers-color-scheme: light)", color: "#f5f2ea" },
+    { media: "(prefers-color-scheme: dark)", color: "#1f2524" },
   ],
 };
 

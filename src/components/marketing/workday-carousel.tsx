@@ -26,7 +26,7 @@ export function WorkdayCarousel() {
 
   return (
     <section aria-label="PaperSource solutions" className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 lg:px-8">
-      <div className="relative overflow-hidden rounded-2xl border border-border bg-ink text-cream shadow-[0_18px_48px_rgba(16,42,67,0.18)]" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }}>
+      <div className="relative overflow-hidden rounded-2xl border border-border bg-ink text-cream shadow-[0_18px_48px_rgba(43,50,49,0.18)]" onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={(event) => { if (!event.currentTarget.contains(event.relatedTarget)) setPaused(false); }}>
         <div className="grid md:grid-cols-[1.05fr_0.95fr]">
           <div className="flex flex-col justify-center p-6 pb-16 sm:p-10 sm:pb-16 md:p-12 md:pb-12">
             <p className="text-xs font-semibold tracking-[0.18em] text-ochre uppercase">{slide.eyebrow}</p>
