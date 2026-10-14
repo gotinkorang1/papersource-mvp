@@ -50,12 +50,10 @@ export const metadata: Metadata = {
     images: [DEFAULT_SHARE_IMAGE],
   },
   icons: {
-    // The SVG swaps between the light and dark marks with the OS colour
-    // scheme; the PNGs cover browsers that ignore SVG favicons.
+    // Light mark on a white tile so it reads on light and dark browser chrome.
     icon: [
       { url: "/icon.svg", type: "image/svg+xml" },
-      { url: "/brand/favicon-light-96.png", type: "image/png", sizes: "96x96", media: "(prefers-color-scheme: light)" },
-      { url: "/brand/favicon-dark-96.png", type: "image/png", sizes: "96x96", media: "(prefers-color-scheme: dark)" },
+      { url: "/brand/favicon-96.png", type: "image/png", sizes: "96x96" },
     ],
     // Keep the canonical SVG first so browsers that prioritize the shortcut
     // declaration do not retain a stale hosting-provider favicon.
