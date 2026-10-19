@@ -12,6 +12,7 @@ import {
   quotes,
   uploadedDocuments,
 } from "@/lib/db/schema";
+import { quoteStatusEnum } from "@/lib/db/schema";
 import type { QuoteStatus } from "@/lib/db/schema";
 import type { StaffRole } from "@/lib/staff/types";
 import { notifyQuoteReady, notifyQuoteRevised } from "@/lib/email";
@@ -42,8 +43,13 @@ function assertQuotesRead(role: StaffRole) {
 
 export const ADMIN_QUOTE_PAGE_SIZE = 50;
 
-export async function listSubmittedQuotes(role: StaffRole, pageParam?: string) {
+export function parseAdminQuoteStatus(value?: string): QuoteStatus | undefined {
+  return quoteStatusEnum.enumValues.find((status) => status === value && status !== "draft");
+}
+
+export async function listSubmittedQuotes(role: StaffRole, pageParam?: string, statusParam?: string) {
   assertQuotesRead(role);
+  const status = parseAdminQuoteStatus(statusParam);
   const db = getDb();
   const requestedPage = Number.parseInt(pageParam ?? "1", 10);
   const page = Number.isFinite(requestedPage) && requestedPage > 0 ? requestedPage : 1;
@@ -60,11 +66,11 @@ export async function listSubmittedQuotes(role: StaffRole, pageParam?: string) {
     })
     .from(quotes)
     .leftJoin(organizations, eq(organizations.id, quotes.organizationId))
-    .where(ne(quotes.status, "draft"))
+    .where(status ? eq(quotes.status, status) : ne(quotes.status, "draft"))
     .orderBy(desc(quotes.updatedAt))
     .limit(ADMIN_QUOTE_PAGE_SIZE + 1)
     .offset((page - 1) * ADMIN_QUOTE_PAGE_SIZE);
-  return { rows: rows.slice(0, ADMIN_QUOTE_PAGE_SIZE), page, hasNext: rows.length > ADMIN_QUOTE_PAGE_SIZE };
+  return { rows: rows.slice(0, ADMIN_QUOTE_PAGE_SIZE), page, status, hasNext: rows.length > ADMIN_QUOTE_PAGE_SIZE };
 }
 
 export async function getQuoteForAdmin(role: StaffRole, quoteId: string) {
