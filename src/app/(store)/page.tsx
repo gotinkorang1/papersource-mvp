@@ -14,6 +14,7 @@ import {
   listFeaturedProductCards,
 } from "@/features/catalogue";
 import { SEO_GUIDES } from "@/features/content/seo-guides";
+import { listFeaturedReviews } from "@/features/reviews/repository";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { categoryImagesFor } from "@/features/catalogue/category-images";
@@ -33,10 +34,13 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function HomePage() {
-  const categories = await listDivisionCategories();
+  const [categories, featured, reviews, staff] = await Promise.all([
+    listDivisionCategories(),
+    listFeaturedProductCards(),
+    listFeaturedReviews(3),
+    readStaffActor(),
+  ]);
   const categoryImages = categoryImagesFor(categories);
-  const featured = await listFeaturedProductCards();
-  const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   return (
     <main className="overflow-hidden">
@@ -94,9 +98,6 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
-
-      <div className="mx-auto -mt-5 max-w-6xl px-4 sm:-mt-7 sm:px-6 lg:px-8">
-      </div>
 
       <section aria-labelledby="why-papersource" className="paper-section-wash mx-auto max-w-6xl rounded-3xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
@@ -203,7 +204,7 @@ export default async function HomePage() {
         </div>
       </section>
 
-      <Testimonials />
+      <Testimonials reviews={reviews} />
 
       <section className="paper-section-wash border-t border-border/70 bg-card py-14 sm:py-16" aria-labelledby="buying-guides">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

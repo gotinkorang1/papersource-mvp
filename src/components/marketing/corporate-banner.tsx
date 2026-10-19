@@ -6,7 +6,7 @@ import { ArrowRight, Check } from "lucide-react";
 export function CorporateBanner({
   title,
   body,
-  href = "/quote",
+  href = "/request-quote",
   cta = "Start a Quote",
   className,
 }: {
