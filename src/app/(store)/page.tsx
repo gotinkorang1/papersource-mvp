@@ -6,6 +6,7 @@ import { paperButton } from "@/components/commerce/paper-button";
 import { CorporateBanner } from "@/components/marketing/corporate-banner";
 import { CategoryTile } from "@/components/products/category-tile";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { RecentlyViewed } from "@/components/products/recently-viewed";
 import { Testimonials } from "@/components/marketing/testimonials";
 import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
 import { SocialActivitySection } from "@/components/marketing/social-activity-section";
@@ -201,6 +202,7 @@ export default async function HomePage() {
             <ProductGridList products={featured} canEdit={canEdit} />
           </div>
           <Link href="/shop" className="mt-6 inline-flex items-center gap-1 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ink transition hover:border-paper-green hover:text-paper-green sm:hidden">View full catalogue <ArrowRight className="size-4" aria-hidden /></Link>
+          <RecentlyViewed className="mt-12" />
         </div>
       </section>
 

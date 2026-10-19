@@ -22,6 +22,9 @@ import { readCustomerActor } from "@/lib/customer/require";
 import { ProductViewTracker } from "@/components/products/product-view-tracker";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
 import { Layers3, MessageCircle, Store, Truck } from "lucide-react";
+import { RecentlyViewed } from "@/components/products/recently-viewed";
+import { getStoreSettings } from "@/features/settings/admin";
+import { productEnquiryMessage, whatsappChatLink } from "@/lib/whatsapp";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -61,9 +64,16 @@ export default async function ProductPage({ params }: PageProps) {
   }
 
   const origin = SITE_URL;
-  const staff = await readStaffActor();
+  const [staff, customer, settings] = await Promise.all([
+    readStaffActor(),
+    readCustomerActor(),
+    getStoreSettings().catch(() => null),
+  ]);
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
-  const customer = await readCustomerActor();
+  const enquiryLink = whatsappChatLink(
+    settings?.whatsappBusinessNumber,
+    productEnquiryMessage({ name: product.name, sku: product.sku, url: absoluteUrl(`/product/${product.slug}`) }),
+  );
   // Saved lists are an optional account enhancement. A missing/unapplied
   // migration or transient database error must never take down a product page.
   const savedLists = customer
@@ -130,6 +140,10 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
           <div className="mt-8">
             <ProductPurchase product={product} savedLists={savedLists.map((list) => ({ id: list.id, name: list.name }))} />
+            <a href={enquiryLink} target="_blank" rel="noopener noreferrer" className="mt-3 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-lg border border-[#128c7e]/40 bg-[#128c7e]/5 px-4 py-2.5 text-sm font-semibold text-[#0b6b5f] transition hover:bg-[#128c7e]/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink dark:text-[#5fd3c4]">
+              <MessageCircle className="size-4" aria-hidden /> Ask about this product on WhatsApp
+              <span className="sr-only">(opens WhatsApp)</span>
+            </a>
           </div>
           <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-2 sm:p-4 lg:grid-cols-4">
             <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Truck className="size-4" /></span><div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div></div>
@@ -154,6 +168,7 @@ export default async function ProductPage({ params }: PageProps) {
         <div className="flex flex-wrap items-end justify-between gap-3"><div><p className="text-sm font-medium uppercase tracking-[0.16em] text-slate">Keep exploring</p><h2 id="related-products-heading" className="mt-2 text-2xl text-ink">More from {product.categoryName}</h2></div><Link href={`/shop/${product.divisionSlug}`} className="text-sm font-semibold text-ink underline underline-offset-4">View all</Link></div>
         <div className="mt-6"><ProductGridList products={related} canEdit={canEdit} /></div>
       </section> : null}
+      <RecentlyViewed className="mt-14 border-t border-border pt-8" record={{ slug: product.slug, name: product.name, specLine: product.specLine || undefined, imageSrc: product.imageSrc, imageAlt: product.imageAlt || undefined }} />
       <ProductEngagement productId={product.id} productName={product.name} reviews={reviews} canReview={Boolean(reviewOrderId)} nextPath={`/product/${product.slug}`} />
     </main>
   );
