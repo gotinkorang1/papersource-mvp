@@ -21,6 +21,7 @@ import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
 import { ProductViewTracker } from "@/components/products/product-view-tracker";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
+import { Layers3, MessageCircle, Store, Truck } from "lucide-react";
 
 type PageProps = {
   params: Promise<{ slug: string }>;
@@ -63,7 +64,11 @@ export default async function ProductPage({ params }: PageProps) {
   const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   const customer = await readCustomerActor();
-  const savedLists = customer ? await listSavedLists(customer) : [];
+  // Saved lists are an optional account enhancement. A missing/unapplied
+  // migration or transient database error must never take down a product page.
+  const savedLists = customer
+    ? await listSavedLists(customer).catch(() => [])
+    : [];
   const [reviews, relatedProducts, reviewOrderId] = await Promise.all([
     listApprovedProductReviews(product.id),
     listProductCards({ categorySlug: product.categorySlug, excludeProductId: product.id, maxResults: 5 }),
@@ -81,7 +86,7 @@ export default async function ProductPage({ params }: PageProps) {
   ];
 
   return (
-    <main className="mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
+    <main className="paper-product-page mx-auto max-w-6xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
       <ProductViewTracker productId={product.id} sku={product.sku} productName={product.name} pricePesewas={product.unitPricePesewas} enabled={!canEdit} />
       <script
         type="application/ld+json"
@@ -98,8 +103,8 @@ export default async function ProductPage({ params }: PageProps) {
       <Breadcrumbs items={crumbs.map((crumb, index) => ({ label: crumb.name, href: index === crumbs.length - 1 ? undefined : crumb.href }))} />
 
       <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1.05fr)_minmax(0,0.95fr)] lg:gap-12">
-        <div className="lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
-        <div className="rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,42,67,0.08)] sm:p-7">
+        <div className="paper-product-gallery lg:sticky lg:top-24 lg:self-start"><ProductGallery key={product.slug} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} src={product.imageSrc} images={product.imageSources} /></div>
+        <div className="paper-product-detail-panel rounded-2xl border border-border bg-card p-5 shadow-[0_18px_50px_rgba(16,42,67,0.08)] sm:p-7">
           <p className="text-xs font-semibold uppercase tracking-[0.14em] text-paper-green">
             <Link href={`/brands/${product.brandSlug}`} className="hover:text-ink">
               {product.brandName}
@@ -126,11 +131,11 @@ export default async function ProductPage({ params }: PageProps) {
           <div className="mt-8">
             <ProductPurchase product={product} savedLists={savedLists.map((list) => ({ id: list.id, name: list.name }))} />
           </div>
-          <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-3 sm:p-4">
-            <div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div>
-            {product.deliveryBadge.pickupAvailable ? <div><p className="font-semibold text-ink">Shop pickup available</p><p className="mt-1">Collect your order from our shop with no delivery fee.</p></div> : null}
-            <div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div>
-            <div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div>
+          <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-2 sm:p-4 lg:grid-cols-4">
+            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Truck className="size-4" /></span><div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div></div>
+            {product.deliveryBadge.pickupAvailable ? <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Store className="size-4" /></span><div><p className="font-semibold text-ink">Shop pickup available</p><p className="mt-1">Collect your order from our shop with no delivery fee.</p></div></div> : null}
+            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Layers3 className="size-4" /></span><div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div></div>
+            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><MessageCircle className="size-4" /></span><div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div></div>
           </div>
           <p className="mt-6 max-w-prose text-sm text-slate">
             {productDescription}

@@ -20,7 +20,7 @@ describe("MobileMenu", () => {
 
     fireEvent.click(trigger);
     expect(document.body.style.overflow).toBe("hidden");
-    expect(screen.getByRole("dialog", { name: "Menu" })).toBeInTheDocument();
+    expect(screen.getByRole("dialog", { name: "Menu" })).toHaveClass("paper-mobile-menu");
 
     fireEvent.keyDown(window, { key: "Escape" });
     expect(document.body.style.overflow).toBe("");

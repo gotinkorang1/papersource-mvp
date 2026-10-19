@@ -39,4 +39,11 @@ describe("MobileNav", () => {
     expect(screen.getByRole("button", { name: /cart/i })).toHaveAttribute("aria-current", "page");
     expect(screen.getByRole("button", { name: /quote list/i })).not.toHaveAttribute("aria-current");
   });
+
+  it("uses the shared comfortable mobile navigation item treatment", () => {
+    render(<MobileNav />);
+
+    expect(screen.getByRole("link", { name: "Home" })).toHaveClass("paper-mobile-nav-item");
+    expect(screen.getByRole("button", { name: /cart/i })).toHaveClass("paper-mobile-nav-item");
+  });
 });

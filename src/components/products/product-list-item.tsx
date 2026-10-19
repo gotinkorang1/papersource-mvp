@@ -40,6 +40,7 @@ export function ProductListItem({
   const out = product.stock === "out";
   const content = variant === "content";
   const imageSource = catalogueImage(product);
+  const fallbackImageSource = catalogueImage({ ...product, imageSrc: "" });
   const [resolvedImageSource, setResolvedImageSource] = useState(imageSource);
   const [addedTo, setAddedTo] = useState<"cart" | "quote" | null>(null);
   const feedbackTimer = useRef<number | null>(null);
@@ -78,12 +79,12 @@ export function ProductListItem({
     <article
       data-catalogue-item={variant}
       className={cn(
-        "group grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-shadow hover:shadow-md sm:gap-4 sm:p-4",
+        "paper-product-list-item group grid grid-cols-[5.5rem_minmax(0,1fr)] gap-3 rounded-2xl border border-border bg-card p-3 shadow-sm transition-[box-shadow,border-color,transform] hover:border-ink/15 hover:shadow-md motion-safe:hover:-translate-y-px sm:gap-4 sm:p-4",
         content ? "grid-cols-[6.5rem_minmax(0,1fr)] sm:grid-cols-[12rem_minmax(0,1fr)_auto]" : "sm:grid-cols-[8rem_minmax(0,1fr)_auto]",
       )}
     >
       <Link href={`/product/${product.slug}`} className={cn("relative block min-w-0 self-start overflow-hidden rounded-xl bg-cream", content ? "aspect-[4/3]" : "aspect-square")} aria-label={`View ${product.name}`}>
-        <Image src={resolvedImageSource} alt={product.imageAlt.trim() || product.name} fill unoptimized={resolvedImageSource.startsWith("https://res.cloudinary.com/")} preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 104px, 192px" : "(max-width: 640px) 88px, 128px"} onError={() => { if (resolvedImageSource !== "/images/set-school-stationery.jpg") setResolvedImageSource("/images/set-school-stationery.jpg"); }} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
+        <Image src={resolvedImageSource} alt={product.imageAlt.trim() || product.name} fill unoptimized={resolvedImageSource.startsWith("https://res.cloudinary.com/")} preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes={content ? "(max-width: 640px) 104px, 192px" : "(max-width: 640px) 88px, 128px"} onError={() => { if (resolvedImageSource !== fallbackImageSource) setResolvedImageSource(fallbackImageSource); }} className="object-cover transition-transform duration-300 motion-safe:group-hover:scale-105" />
       </Link>
       <div className="min-w-0 self-center">
         <div className="flex flex-wrap items-center gap-2"><PresentationBadges product={product} /><StockBadge level={product.stock} /></div>

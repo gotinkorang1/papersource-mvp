@@ -95,6 +95,9 @@ export default async function HomePage() {
         </div>
       </section>
 
+      <div className="mx-auto -mt-5 max-w-6xl px-4 sm:-mt-7 sm:px-6 lg:px-8">
+      </div>
+
       <section aria-labelledby="why-papersource" className="paper-section-wash mx-auto max-w-6xl rounded-3xl px-4 py-10 sm:px-6 md:py-14 lg:px-8">
         <div className="mb-5 flex flex-wrap items-end justify-between gap-3">
           <div>

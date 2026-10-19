@@ -1,6 +1,6 @@
 "use client";
 
-import { LayoutGrid, List, Rows3, SquareStack } from "lucide-react";
+import { List, Rows3, SquareStack } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export type CatalogueViewMode = "default" | "grid" | "list" | "content";
@@ -8,10 +8,9 @@ export type CatalogueViewMode = "default" | "grid" | "list" | "content";
 const modes: Array<{
   value: CatalogueViewMode;
   label: string;
-  Icon: typeof LayoutGrid;
+  Icon: typeof SquareStack;
 }> = [
   { value: "default", label: "Default", Icon: SquareStack },
-  { value: "grid", label: "Grid", Icon: LayoutGrid },
   { value: "list", label: "List", Icon: List },
   { value: "content", label: "Content", Icon: Rows3 },
 ];
@@ -30,7 +29,7 @@ export function CatalogueViewModeControl({
       role="group"
       aria-label="Catalogue display"
       className={cn(
-        "grid w-full grid-cols-4 items-stretch gap-1 rounded-xl border border-border bg-card p-1 shadow-sm sm:inline-flex sm:w-fit sm:items-center",
+        "grid w-full grid-cols-3 items-stretch gap-1 rounded-xl border border-border bg-card p-1 shadow-sm sm:inline-flex sm:w-fit sm:items-center",
         compact ? "sm:w-fit" : "sm:w-fit",
       )}
     >

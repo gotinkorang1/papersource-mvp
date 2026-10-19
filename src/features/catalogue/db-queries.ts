@@ -12,6 +12,7 @@ import {
 } from "@/features/inventory/stock";
 import { getDb } from "@/lib/db/client";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
+import { seedBrands, seedCategories, seedDeliveryZones } from "@/features/catalogue/local-data";
 import {
   brands,
   categories,
@@ -69,12 +70,27 @@ const loadCatalogueContext = unstable_cache(async function loadCatalogueContext(
     db
       .select({ id: categories.id, parentId: categories.parentId, name: categories.name, slug: categories.slug, description: categories.description, position: categories.position, imagePublicId: categories.imagePublicId })
       .from(categories)
-      .where(and(eq(categories.active, true), isNull(categories.deletedAt))),
+      .where(and(eq(categories.active, true), isNull(categories.deletedAt)))
+      .catch(() => seedCategories.map((category) => ({
+        id: category.id,
+        parentId: category.parentId,
+        name: category.name,
+        slug: category.slug,
+        description: category.caption,
+        position: category.position,
+        imagePublicId: null,
+      }))),
     db
       .select({ id: brands.id, name: brands.name, slug: brands.slug })
       .from(brands)
-      .where(and(eq(brands.active, true), isNull(brands.deletedAt))),
-    db.select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active }).from(deliveryZones).where(eq(deliveryZones.active, true)),
+      .where(and(eq(brands.active, true), isNull(brands.deletedAt)))
+      .catch(() => seedBrands),
+    Promise.resolve(
+      db
+        .select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active })
+        .from(deliveryZones)
+        .where(eq(deliveryZones.active, true)),
+    ).catch(() => seedDeliveryZones),
   ]);
 
   return {

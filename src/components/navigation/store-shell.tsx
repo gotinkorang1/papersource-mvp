@@ -30,7 +30,7 @@ export async function StoreShell({ children }: { children: ReactNode }) {
     >
       <a
         href="#main-content"
-        className="sr-only fixed left-3 top-3 z-[100] rounded-md bg-ink px-4 py-2 text-sm font-semibold text-white shadow-lg focus:not-sr-only focus:outline-2 focus:outline-offset-2 focus:outline-ink"
+        className="sr-only fixed left-3 top-3 z-[100] rounded-md bg-ink px-4 py-2 text-sm font-semibold text-primary-foreground shadow-lg focus:not-sr-only focus:outline-2 focus:outline-offset-2 focus:outline-ink"
       >
         Skip to content
       </a>

@@ -9,6 +9,7 @@
 
 .announcement-ticker-track {
   animation: papersource-ticker 28s linear infinite;
+  will-change: transform;
 }
 
 /* Quiet visual system for editorial sections. These accents add depth without
@@ -66,9 +67,212 @@
   box-shadow: 0 16px 34px rgb(0 0 0 / 0.24);
 }
 
+/* `ink` intentionally inverts between themes. Keep any legacy white text
+   paired with that utility readable while individual surfaces migrate to
+   primary-foreground. */
+.dark [class~="bg-ink"][class~="text-white"] {
+  color: var(--primary-foreground);
+}
+
 .announcement-ticker-track:hover,
 .announcement-ticker-track:focus-within {
   animation-play-state: paused;
+}
+
+/* Keep the persistent mobile actions easy to hit without making the bar
+   visually heavy. The compact fallback protects very small phones. */
+.paper-mobile-nav-item {
+  min-height: 3.5rem;
+  position: relative;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.paper-confidence-rail {
+  isolation: isolate;
+}
+
+.paper-confidence-rail__item {
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .paper-confidence-rail__item:nth-child(2n + 1) {
+    border-left: 0;
+  }
+}
+
+.paper-mobile-menu {
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.paper-breadcrumbs {
+  scrollbar-width: none;
+  overscroll-behavior-inline: contain;
+}
+
+.paper-breadcrumbs::-webkit-scrollbar {
+  display: none;
+}
+
+.paper-breadcrumbs ol {
+  min-height: 2.75rem;
+}
+
+.paper-mobile-nav-item[aria-current="page"]::after,
+.paper-mobile-nav-item[aria-pressed="true"]::after {
+  position: absolute;
+  bottom: 0.25rem;
+  width: 0.25rem;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: var(--ps-ochre);
+  content: "";
+}
+
+.paper-product-card {
+  container-type: inline-size;
+}
+
+.paper-product-card > div:last-child {
+  min-width: 0;
+}
+
+.paper-product-list-item {
+  min-width: 0;
+}
+
+.paper-product-list-item > a {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ps-ink) 5%, transparent);
+}
+
+.paper-document-page,
+.paper-product-page,
+.paper-account-page {
+  min-width: 0;
+}
+
+.paper-admin-dashboard {
+  container-type: inline-size;
+}
+
+.paper-admin-placeholder {
+  min-width: 0;
+  max-width: 48rem;
+}
+
+.paper-admin-placeholder-card {
+  margin-top: 1.5rem;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--card);
+  padding: 1.25rem;
+  box-shadow: var(--ps-shadow-sm);
+}
+
+.admin-dashboard-metric {
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .paper-admin-placeholder-card {
+    padding: 1rem;
+  }
+
+  .paper-admin-dashboard .admin-dashboard-metric {
+    min-height: 6.5rem;
+    padding: 0.875rem;
+  }
+
+  .paper-admin-orders-panel {
+    padding: 1rem;
+  }
+
+  .paper-admin-orders-panel .admin-responsive-table {
+    margin-inline: -0.25rem;
+    width: calc(100% + 0.5rem);
+  }
+}
+
+.paper-product-detail-panel {
+  min-width: 0;
+}
+
+.paper-product-gallery {
+  min-width: 0;
+}
+
+@media (max-width: 639px) {
+  .paper-document-page,
+  .paper-product-page,
+  .paper-account-page {
+    padding-top: 2rem;
+    padding-bottom: 2.5rem;
+  }
+
+  .paper-product-detail-panel {
+    border-radius: 1rem;
+    padding: 1rem;
+  }
+
+  .paper-product-detail-panel h1 {
+    font-size: clamp(1.65rem, 8vw, 2.2rem);
+    line-height: 1.08;
+  }
+
+  .paper-product-list-item[data-catalogue-item="list"] {
+    grid-template-columns: 5rem minmax(0, 1fr);
+    gap: 0.75rem;
+    border-radius: 0.875rem;
+    padding: 0.75rem;
+  }
+
+  .paper-product-list-item[data-catalogue-item="content"] {
+    grid-template-columns: 6rem minmax(0, 1fr);
+    gap: 0.75rem;
+    border-radius: 0.875rem;
+    padding: 0.75rem;
+  }
+
+  .paper-product-list-item > div:last-child {
+    grid-column: 1 / -1;
+    margin-top: 0.15rem;
+    gap: 0.625rem;
+  }
+}
+
+@container (max-width: 20rem) {
+  .paper-product-card > div:last-child {
+    padding: 0.75rem;
+  }
+
+  .paper-product-card .font-mono {
+    font-size: 0.6rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .paper-mobile-nav-item {
+    min-height: 3.25rem;
+    font-size: 0.6875rem;
+  }
+}
+
+@media (max-width: 639px) {
+  .announcement-ticker-track {
+    animation-duration: 36s;
+    gap: 2rem;
+  }
+
+  .paper-store-footer-grid {
+    gap: 2.5rem;
+    padding-block: 2.5rem;
+  }
+
+  .paper-store-footer-grid > * {
+    min-width: 0;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
