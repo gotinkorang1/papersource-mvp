@@ -19,3 +19,15 @@ describe("whatsapp links", () => {
     expect(message).toContain("A4 Paper & Co (SKU PS-1)");
   });
 });
+
+describe("quoteListMessage", () => {
+  it("lists every quote line with SKU and quantity", async () => {
+    const { quoteListMessage } = await import("./whatsapp");
+    const message = quoteListMessage([
+      { name: "A4 Paper", sku: "PS-A4", quantity: 10, unitLabel: "ream" },
+      { name: "Stapler", sku: "PS-ST", quantity: 2 },
+    ]);
+    expect(message).toContain("1. A4 Paper (SKU PS-A4) x 10 ream");
+    expect(message).toContain("2. Stapler (SKU PS-ST) x 2");
+  });
+});

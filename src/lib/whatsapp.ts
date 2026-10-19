@@ -21,3 +21,14 @@ export function productEnquiryMessage(input: { name: string; sku: string; url: s
     "Quantity needed: ",
   ].join("\n");
 }
+
+export function quoteListMessage(lines: { name: string; sku: string; quantity: number; unitLabel?: string }[]): string {
+  return [
+    "Hello PaperSource, please quote for the following items:",
+    "",
+    ...lines.map((line, index) => `${index + 1}. ${line.name} (SKU ${line.sku}) x ${line.quantity}${line.unitLabel ? ` ${line.unitLabel}` : ""}`),
+    "",
+    "Organisation: ",
+    "Delivery location: ",
+  ].join("\n");
+}
