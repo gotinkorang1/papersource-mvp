@@ -212,6 +212,8 @@ export function listProductCardsFromSeed(filter?: {
   categorySlug?: string;
   brandSlug?: string;
   query?: string;
+  excludeProductId?: string;
+  maxResults?: number;
 }): ProductCardModel[] {
   let products = seedProducts;
 
@@ -237,7 +239,14 @@ export function listProductCardsFromSeed(filter?: {
     );
   }
 
-  return products.map(toCard);
+  let cards = products.map(toCard);
+  if (filter?.excludeProductId) {
+    cards = cards.filter((card) => card.id !== filter.excludeProductId);
+  }
+  if (filter?.maxResults && filter.maxResults > 0) {
+    cards = cards.slice(0, filter.maxResults);
+  }
+  return cards;
 }
 
 export function getProductBySlugFromSeed(slug: string): ProductDetailModel | null {
