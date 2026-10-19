@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
-import { History } from "lucide-react";
+import { History, Package } from "lucide-react";
 
 export type RecentlyViewedItem = {
   slug: string;
@@ -101,7 +101,9 @@ export function RecentlyViewed({ record, className }: { record?: RecentlyViewedI
               <span className="relative block aspect-square overflow-hidden rounded-lg bg-muted">
                 {item.imageSrc ? (
                   <Image src={item.imageSrc} alt={item.imageAlt || item.name} fill sizes="176px" className="object-contain p-1 transition-transform duration-300 motion-safe:group-hover:scale-105" />
-                ) : null}
+                ) : (
+                  <span className="grid size-full place-items-center text-slate/60"><Package className="size-8" aria-hidden /></span>
+                )}
               </span>
               <span className="mt-2 line-clamp-2 block text-sm font-medium leading-5 text-ink">{item.name}</span>
               {item.specLine ? <span className="mt-0.5 line-clamp-1 block text-xs text-slate">{item.specLine}</span> : null}
