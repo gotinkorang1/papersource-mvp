@@ -8,6 +8,7 @@ import { SubmitProgressButton } from "@/components/admin/submit-progress-button"
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import type { StaffActor } from "@/lib/staff/types";
 import { ADMIN_NAV, ADMIN_PLACEHOLDER_SECTIONS } from "./nav";
+import { BrandMark } from "@/components/marketing/brand-mark";
 
 export function AdminSidebar({ actor }: { actor: StaffActor }) {
   const pathname = usePathname();
@@ -120,7 +121,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
     <>
       <a href="#admin-main-content" className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[60] focus:rounded-md focus:bg-card focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-ink focus:shadow-lg focus:outline-2 focus:outline-offset-2 focus:outline-ink">Skip to content</a>
       <button ref={accountTriggerRef} type="button" aria-label={accountOpen ? "Close staff account menu" : "Open staff account menu"} aria-expanded={accountOpen} aria-controls="admin-account-panel" onClick={() => setAccountOpen((open) => !open)} className="fixed right-4 top-[calc(0.75rem+env(safe-area-inset-top))] z-40 inline-flex min-h-10 items-center gap-2 rounded-full border border-border bg-card/95 px-2.5 text-sm font-semibold text-ink shadow-sm backdrop-blur transition hover:-translate-y-0.5 hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink sm:right-6">
-        <span className="flex size-6 items-center justify-center rounded-full bg-ink text-[0.6rem] font-bold tracking-[0.12em] text-cream" aria-hidden="true">PS</span>
+        <BrandMark className="size-6" />
         <span className="hidden sm:inline">Administrator</span>
         <span className="text-xs" aria-hidden="true">{accountOpen ? "×" : "⌄"}</span>
       </button>
@@ -132,7 +133,7 @@ export function AdminSidebar({ actor }: { actor: StaffActor }) {
       {navOpen ? <button type="button" aria-label="Close admin navigation" className="fixed inset-0 z-10 bg-ink/30 md:hidden" onClick={() => setNavOpen(false)} /> : null}
       <aside className="relative sticky top-0 z-20 flex max-h-[calc(100svh-4.5rem)] w-full shrink-0 flex-col bg-sidebar text-sidebar-foreground shadow-sm md:h-[100svh] md:max-h-none md:w-64 md:shadow-none">
       <div className="flex min-h-14 items-center justify-between border-b border-sidebar-border px-4 py-2 sm:px-5 sm:py-3">
-        <Link href="/admin" aria-label="PaperSource admin dashboard" className="inline-flex size-9 items-center justify-center rounded-md border-2 border-ochre bg-cream font-heading text-xs font-bold tracking-[0.12em] text-ink shadow-[2px_2px_0_#e6a329] transition-transform hover:-translate-y-0.5 md:size-11 md:text-sm">PS</Link>
+        <Link href="/admin" aria-label="PaperSource admin dashboard" className="inline-flex h-9 items-center transition-transform hover:-translate-y-0.5 md:h-11"><BrandMark variant="lockup" tone="dark" className="h-full" /></Link>
         <button ref={navToggleRef} type="button" aria-expanded={navOpen} aria-controls="admin-navigation" onClick={() => setNavOpen((open) => !open)} className="inline-flex min-h-10 items-center gap-2 rounded-md border border-sidebar-border px-2.5 text-sm font-semibold text-sidebar-foreground transition hover:bg-sidebar-accent focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sidebar-ring md:hidden"><span>{navOpen ? "Close" : "Menu"}</span><span aria-hidden="true">{navOpen ? "×" : "☰"}</span></button>
       </div>
       <nav id="admin-navigation" className={`${navOpen ? "absolute left-0 right-0 top-full z-30 max-h-[calc(100svh-8rem)] bg-sidebar shadow-xl opacity-100" : "max-h-0 overflow-hidden opacity-0"} flex min-h-0 flex-1 snap-x snap-mandatory scroll-smooth gap-4 overflow-y-auto overscroll-contain px-3 pb-[calc(0.75rem+env(safe-area-inset-bottom))] pt-3 transition-[max-height,opacity] duration-300 motion-reduce:transition-none [scrollbar-width:thin] md:static md:block md:max-h-none md:space-y-6 md:overflow-x-hidden md:overflow-y-auto md:bg-transparent md:px-3 md:py-5 md:opacity-100 md:shadow-none`} aria-label="Admin">

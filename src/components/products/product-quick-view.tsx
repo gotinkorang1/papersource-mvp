@@ -97,7 +97,7 @@ export function ProductQuickView({
         if (event.target === event.currentTarget) onClose();
       }}
     >
-      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overscroll-contain overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-[0_24px_70px_rgba(16,42,67,0.24)] motion-safe:animate-in motion-safe:slide-in-from-bottom-2 sm:p-7 md:motion-safe:slide-in-from-bottom-0" onClick={(event) => event.stopPropagation()}>
+      <div className="relative z-10 max-h-[calc(100dvh-2rem)] w-full max-w-lg overscroll-contain overflow-y-auto rounded-2xl border border-border bg-card p-5 shadow-[0_24px_70px_rgba(43,50,49,0.24)] motion-safe:animate-in motion-safe:slide-in-from-bottom-2 sm:p-7 md:motion-safe:slide-in-from-bottom-0" onClick={(event) => event.stopPropagation()}>
         <button
           type="button"
           ref={closeRef}

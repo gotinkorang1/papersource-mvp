@@ -54,7 +54,7 @@
 .paper-hover-lift:hover,
 .paper-hover-lift:focus-within {
   border-color: color-mix(in srgb, var(--ps-paper-green) 34%, var(--ps-border));
-  box-shadow: 0 16px 34px rgb(16 42 67 / 0.1);
+  box-shadow: 0 16px 34px rgb(43 50 49 / 0.1);
   transform: translateY(-2px);
 }
 
@@ -301,6 +301,7 @@
   --color-ink: var(--ps-ink);
   --color-paper-green: var(--ps-paper-green);
   --color-ochre: var(--ps-ochre);
+  --color-gold: var(--ps-gold);
   --color-cream: var(--ps-cream);
   --color-paper: var(--ps-cream);
   --color-graphite: var(--ps-graphite);
@@ -350,91 +351,109 @@
   color-scheme: light;
   /* Keep the layout width stable when dialogs lock body scrolling. */
   scrollbar-gutter: stable;
-  --ps-ink: #102a43;
-  --ps-paper-green: #1f6b57;
+  /* Brand palette sampled from the PaperSource logo: charcoal ink, nib gold
+     and paper cream. Gold is deepened to bronze where it carries text. */
+  --ps-ink: #2b3231;
+  --ps-paper-green: #7a5d24;
   /* Darkened for WCAG AA contrast when used as text on cream surfaces. */
-  --ps-ochre: #9a6700;
-  --ps-cream: #f8f6f1;
+  --ps-ochre: #846526;
+  --ps-gold: #ba9e62;
+  --ps-cream: #f5f2ea;
   --ps-surface: #ffffff;
-  --ps-graphite: #20262e;
-  --ps-slate: #52606d;
-  --ps-border: #d8dee6;
+  --ps-graphite: #232928;
+  --ps-slate: #5d6463;
+  --ps-border: #dcd5c6;
   --ps-success: #15803d;
   --ps-error: #b42318;
 
-  --background: #f8f6f1;
-  --foreground: #20262e;
+  --background: #f5f2ea;
+  --foreground: #232928;
   --card: #ffffff;
-  --card-foreground: #20262e;
+  --card-foreground: #232928;
   --popover: #ffffff;
-  --popover-foreground: #20262e;
-  --primary: #102a43;
+  --popover-foreground: #232928;
+  --primary: #2b3231;
   --primary-foreground: #ffffff;
-  --secondary: #1f6b57;
+  --secondary: #7a5d24;
   --secondary-foreground: #ffffff;
-  --muted: #f1eee7;
-  --muted-foreground: #52606d;
-  --accent: #e6a329;
-  --accent-foreground: #102a43;
+  --muted: #ede8dd;
+  --muted-foreground: #5d6463;
+  --accent: #ba9e62;
+  --accent-foreground: #2b3231;
   --destructive: #b42318;
-  --border: #e4e7ec;
-  --input: #e4e7ec;
-  --ring: #102a43;
-  --chart-1: #102a43;
-  --chart-2: #1f6b57;
-  --chart-3: #e6a329;
-  --chart-4: #667085;
+  --border: #e5dfd2;
+  --input: #e5dfd2;
+  --ring: #2b3231;
+  --chart-1: #2b3231;
+  --chart-2: #ba9e62;
+  --chart-3: #7a5d24;
+  --chart-4: #8a918f;
   --chart-5: #15803d;
   --radius: 0.5rem;
-  --ps-shadow-sm: 0 2px 8px rgb(16 42 67 / 0.06);
-  --ps-shadow-md: 0 18px 44px rgb(16 42 67 / 0.12);
-  --sidebar: #102a43;
-  --sidebar-foreground: #f8f6f1;
-  --sidebar-primary: #e6a329;
-  --sidebar-primary-foreground: #102a43;
-  --sidebar-accent: #1a3a56;
-  --sidebar-accent-foreground: #f8f6f1;
-  --sidebar-border: #1a3a56;
-  --sidebar-ring: #e6a329;
+  --ps-shadow-sm: 0 2px 8px rgb(43 50 49 / 0.06);
+  --ps-shadow-md: 0 18px 44px rgb(43 50 49 / 0.12);
+  --sidebar: #2b3231;
+  --sidebar-foreground: #f5f2ea;
+  --sidebar-primary: #ba9e62;
+  --sidebar-primary-foreground: #2b3231;
+  --sidebar-accent: #384140;
+  --sidebar-accent-foreground: #f5f2ea;
+  --sidebar-border: #384140;
+  --sidebar-ring: #ba9e62;
 }
 
 .dark {
-  --ps-ink: #f8f6f1;
-  --ps-paper-green: #74c7a7;
-  --ps-ochre: #f3bd4e;
-  --ps-cream: #132f48;
-  --ps-surface: #1a3a56;
-  --ps-graphite: #f8f6f1;
-  --ps-slate: #b0b7c3;
+  --ps-ink: #f5f2ea;
+  --ps-paper-green: #d4b678;
+  --ps-ochre: #e0c58f;
+  --ps-gold: #d4b678;
+  --ps-cream: #252c2b;
+  --ps-surface: #2b3332;
+  --ps-graphite: #f5f2ea;
+  --ps-slate: #b5b9b4;
+  --ps-border: #3d4746;
   --ps-error: #ff8a80;
   --ps-success: #86efac;
-  --background: #102a43;
-  --foreground: #f8f6f1;
-  --card: #1a3a56;
-  --card-foreground: #f8f6f1;
-  --popover: #1a3a56;
-  --popover-foreground: #f8f6f1;
-  --primary: #f8f6f1;
-  --primary-foreground: #102a43;
-  --secondary: #1f6b57;
-  --secondary-foreground: #ffffff;
-  --muted: #1a3a56;
-  --muted-foreground: #b0b7c3;
-  --accent: #e6a329;
-  --accent-foreground: #102a43;
+  --background: #1f2524;
+  --foreground: #f5f2ea;
+  --card: #2b3332;
+  --card-foreground: #f5f2ea;
+  --popover: #2b3332;
+  --popover-foreground: #f5f2ea;
+  --primary: #f5f2ea;
+  --primary-foreground: #1f2524;
+  --secondary: #d4b678;
+  --secondary-foreground: #1f2524;
+  --muted: #2b3332;
+  --muted-foreground: #b5b9b4;
+  --accent: #d4b678;
+  --accent-foreground: #1f2524;
   --destructive: #f97066;
-  --border: #2a4a66;
-  --input: #2a4a66;
-  --ring: #e6a329;
-  --sidebar: #0c1f32;
-  --sidebar-foreground: #f8f6f1;
-  --sidebar-primary: #e6a329;
-  --sidebar-primary-foreground: #102a43;
-  --sidebar-accent: #1a3a56;
-  --sidebar-accent-foreground: #f8f6f1;
-  --sidebar-border: #2a4a66;
-  --sidebar-ring: #e6a329;
+  --border: #3d4746;
+  --input: #3d4746;
+  --ring: #d4b678;
+  --chart-1: #f5f2ea;
+  --chart-2: #d4b678;
+  --chart-3: #a8884a;
+  --chart-4: #8a918f;
+  --chart-5: #86efac;
+  --sidebar: #181d1c;
+  --sidebar-foreground: #f5f2ea;
+  --sidebar-primary: #d4b678;
+  --sidebar-primary-foreground: #1f2524;
+  --sidebar-accent: #2b3332;
+  --sidebar-accent-foreground: #f5f2ea;
+  --sidebar-border: #3d4746;
+  --sidebar-ring: #d4b678;
   color-scheme: dark;
+}
+
+/* `bg-ink` panels invert in dark mode (cream surface), so the gold used for
+   eyebrows and buttons inside them must switch back to the deeper bronze
+   that keeps AA contrast on cream. */
+.dark .bg-ink {
+  --ps-ochre: #846526;
+  --ps-gold: #ba9e62;
 }
 
 /* Legacy utility classes are kept for light mode compatibility. In dark mode,
@@ -669,11 +688,11 @@
     font-variation-settings: "slnt" 0;
     line-height: 1.6;
     overscroll-behavior-x: none;
-    background-image: radial-gradient(circle at 15% 0%, rgb(230 163 41 / 0.045), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(31 107 87 / 0.035), transparent 24rem);
+    background-image: radial-gradient(circle at 15% 0%, rgb(186 158 98 / 0.045), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(122 93 36 / 0.035), transparent 24rem);
   }
 
   .dark body {
-    background-image: radial-gradient(circle at 15% 0%, rgb(243 189 78 / 0.08), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(116 199 167 / 0.06), transparent 24rem);
+    background-image: radial-gradient(circle at 15% 0%, rgb(212 182 120 / 0.08), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(212 182 120 / 0.06), transparent 24rem);
   }
 
   /* Keep route changes feeling intentional while preserving a lightweight
@@ -688,7 +707,7 @@
   }
 
   .paper-grain {
-    background-image: radial-gradient(circle at 20% 10%, rgb(230 163 41 / 0.08), transparent 32%), radial-gradient(circle at 90% 80%, rgb(31 107 87 / 0.06), transparent 28%);
+    background-image: radial-gradient(circle at 20% 10%, rgb(186 158 98 / 0.08), transparent 32%), radial-gradient(circle at 90% 80%, rgb(122 93 36 / 0.06), transparent 28%);
   }
 
   :focus-visible {

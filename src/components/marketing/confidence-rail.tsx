@@ -10,7 +10,7 @@ const confidenceItems = [
 
 export function ConfidenceRail({ className = "" }: { className?: string }) {
   return (
-    <nav aria-label="PaperSource shopping benefits" className={`paper-confidence-rail grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_12px_34px_rgba(16,42,67,0.06)] sm:grid-cols-4 ${className}`}>
+    <nav aria-label="PaperSource shopping benefits" className={`paper-confidence-rail grid grid-cols-2 overflow-hidden rounded-2xl border border-border bg-card shadow-[0_12px_34px_rgba(43,50,49,0.06)] sm:grid-cols-4 ${className}`}>
       {confidenceItems.map(({ icon: Icon, label, detail, href }, index) => (
         <Link
           key={label}

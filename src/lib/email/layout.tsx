@@ -35,11 +35,11 @@ export function PaperSourceEmail({
           theme: {
             extend: {
               colors: {
-                ink: "#102A43",
-                cream: "#F8F6F1",
-                graphite: "#20262E",
-                slate: "#667085",
-                border: "#E4E7EC",
+                ink: "#2B3231",
+                cream: "#F5F2EA",
+                graphite: "#232928",
+                slate: "#5D6463",
+                border: "#E5DFD2",
                 surface: "#FFFFFF",
               },
             },

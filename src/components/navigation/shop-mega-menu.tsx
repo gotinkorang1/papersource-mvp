@@ -83,7 +83,7 @@ export function ShopMegaMenu({ columns }: { columns: ShopMenuColumn[] }) {
                   : (currentIndex + (event.key === "ArrowUp" ? -1 : 1) + items.length) % items.length;
             items[nextIndex]?.focus();
           }}
-          className="absolute top-[calc(100%-0.15rem)] left-0 z-30 w-[min(36rem,calc(100vw-2rem))] rounded-2xl border border-border/80 bg-card p-6 pt-5 shadow-[0_18px_44px_rgba(16,42,67,0.14)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1"
+          className="absolute top-[calc(100%-0.15rem)] left-0 z-30 w-[min(36rem,calc(100vw-2rem))] rounded-2xl border border-border/80 bg-card p-6 pt-5 shadow-[0_18px_44px_rgba(43,50,49,0.14)] motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-top-1"
         >
           <p className="text-xs tracking-[0.16em] text-slate uppercase">Shop</p>
           <div className="mt-4 grid gap-6 sm:grid-cols-3">

@@ -60,7 +60,7 @@ export default function ContactPage() {
           </div>
           <div className="mt-10 flex flex-wrap gap-3"><Link href="/request-quote" className="inline-flex min-h-11 items-center rounded-md bg-ink px-5 py-2.5 text-sm font-medium text-primary-foreground transition-colors hover:bg-ink/90">Request a Quote</Link><Link href="/shop" className="inline-flex min-h-11 items-center rounded-md border border-ink px-5 py-2.5 text-sm font-medium text-ink transition-colors hover:bg-cream">Shop products</Link></div>
         </div>
-        <div className="relative min-h-80 overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(16,42,67,0.1)] lg:min-h-full"><Image src="/images/aerial-view-african-descent-woman-working-computer-white-table-office.jpg" alt="Workplace desk with stationery and computer" fill sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" /></div>
+        <div className="relative min-h-80 overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(43,50,49,0.1)] lg:min-h-full"><Image src="/images/aerial-view-african-descent-woman-working-computer-white-table-office.jpg" alt="Workplace desk with stationery and computer" fill sizes="(max-width: 1024px) 100vw, 55vw" className="object-cover" /></div>
       </div>
       <section className="mt-12 grid gap-6 lg:grid-cols-[0.75fr_1.25fr] lg:items-stretch" aria-labelledby="asylum-down-location-heading">
         <div className="rounded-xl border border-border bg-card p-6 sm:p-8">
