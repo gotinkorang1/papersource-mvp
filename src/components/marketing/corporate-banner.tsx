@@ -36,7 +36,7 @@ export function CorporateBanner({
         </div>
         <Link
           href={href}
-          className={cn(paperButton({ variant: "accent" }), "inline-flex w-full shrink-0 gap-2 shadow-[0_10px_24px_rgba(186,158,98,0.18)] transition-transform duration-200 hover:-translate-y-0.5 sm:w-fit")}
+          className={cn(paperButton({ variant: "accent" }), "inline-flex w-full shrink-0 gap-2 shadow-[0_10px_24px_rgba(232,179,58,0.18)] transition-transform duration-200 hover:-translate-y-0.5 sm:w-fit")}
         >
           {cta} <ArrowRight className="size-4" aria-hidden />
         </Link>

@@ -28,7 +28,7 @@ export async function StoreFooter() {
             <p className="mt-1 max-w-xl text-sm leading-6 text-primary-foreground/75">We can help you find the right supplies, plan a bulk order, or arrange delivery across Ghana.</p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <Link href="/contact" className="inline-flex min-h-11 items-center rounded-lg bg-ochre px-4 py-2 text-sm font-semibold text-ink transition hover:bg-ochre/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ochre">Contact us</Link>
+            <Link href="/contact" className="inline-flex min-h-11 items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-ink transition hover:bg-gold/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ochre">Contact us</Link>
             <Link href="/request-quote" className="inline-flex min-h-11 items-center rounded-lg border border-primary-foreground/30 px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground">Start a quote</Link>
           </div>
         </div>

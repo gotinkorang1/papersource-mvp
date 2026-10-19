@@ -351,22 +351,23 @@
   color-scheme: light;
   /* Keep the layout width stable when dialogs lock body scrolling. */
   scrollbar-gutter: stable;
-  /* Brand palette sampled from the PaperSource logo: charcoal ink, nib gold
-     and paper cream. Gold is deepened to bronze where it carries text. */
+  /* Brand palette built on the PaperSource logo: charcoal ink and nib gold,
+     brightened for a livelier storefront, with a teal accent for labels and
+     icons. Gold is deepened to bronze (ochre) where it carries text. */
   --ps-ink: #2b3231;
-  --ps-paper-green: #7a5d24;
+  --ps-paper-green: #0b7a6c;
   /* Darkened for WCAG AA contrast when used as text on cream surfaces. */
-  --ps-ochre: #846526;
-  --ps-gold: #ba9e62;
-  --ps-cream: #f5f2ea;
+  --ps-ochre: #8f6300;
+  --ps-gold: #e8b33a;
+  --ps-cream: #fbf8f1;
   --ps-surface: #ffffff;
   --ps-graphite: #232928;
   --ps-slate: #5d6463;
-  --ps-border: #dcd5c6;
+  --ps-border: #e6dfcf;
   --ps-success: #15803d;
   --ps-error: #b42318;
 
-  --background: #f5f2ea;
+  --background: #fcfaf5;
   --foreground: #232928;
   --card: #ffffff;
   --card-foreground: #232928;
@@ -374,39 +375,39 @@
   --popover-foreground: #232928;
   --primary: #2b3231;
   --primary-foreground: #ffffff;
-  --secondary: #7a5d24;
+  --secondary: #0b7a6c;
   --secondary-foreground: #ffffff;
-  --muted: #ede8dd;
+  --muted: #f4efe3;
   --muted-foreground: #5d6463;
-  --accent: #ba9e62;
+  --accent: #e8b33a;
   --accent-foreground: #2b3231;
   --destructive: #b42318;
-  --border: #e5dfd2;
-  --input: #e5dfd2;
+  --border: #ebe5d8;
+  --input: #e0d9ca;
   --ring: #2b3231;
   --chart-1: #2b3231;
-  --chart-2: #ba9e62;
-  --chart-3: #7a5d24;
+  --chart-2: #e8b33a;
+  --chart-3: #0b7a6c;
   --chart-4: #8a918f;
   --chart-5: #15803d;
   --radius: 0.5rem;
   --ps-shadow-sm: 0 2px 8px rgb(43 50 49 / 0.06);
   --ps-shadow-md: 0 18px 44px rgb(43 50 49 / 0.12);
   --sidebar: #2b3231;
-  --sidebar-foreground: #f5f2ea;
-  --sidebar-primary: #ba9e62;
+  --sidebar-foreground: #fbf8f1;
+  --sidebar-primary: #e8b33a;
   --sidebar-primary-foreground: #2b3231;
   --sidebar-accent: #384140;
-  --sidebar-accent-foreground: #f5f2ea;
+  --sidebar-accent-foreground: #fbf8f1;
   --sidebar-border: #384140;
-  --sidebar-ring: #ba9e62;
+  --sidebar-ring: #e8b33a;
 }
 
 .dark {
   --ps-ink: #f5f2ea;
-  --ps-paper-green: #d4b678;
-  --ps-ochre: #e0c58f;
-  --ps-gold: #d4b678;
+  --ps-paper-green: #4fd1bd;
+  --ps-ochre: #f2c45a;
+  --ps-gold: #f2c45a;
   --ps-cream: #252c2b;
   --ps-surface: #2b3332;
   --ps-graphite: #f5f2ea;
@@ -422,38 +423,46 @@
   --popover-foreground: #f5f2ea;
   --primary: #f5f2ea;
   --primary-foreground: #1f2524;
-  --secondary: #d4b678;
+  --secondary: #4fd1bd;
   --secondary-foreground: #1f2524;
   --muted: #2b3332;
   --muted-foreground: #b5b9b4;
-  --accent: #d4b678;
+  --accent: #f2c45a;
   --accent-foreground: #1f2524;
   --destructive: #f97066;
   --border: #3d4746;
   --input: #3d4746;
-  --ring: #d4b678;
+  --ring: #f2c45a;
   --chart-1: #f5f2ea;
-  --chart-2: #d4b678;
-  --chart-3: #a8884a;
+  --chart-2: #f2c45a;
+  --chart-3: #4fd1bd;
   --chart-4: #8a918f;
   --chart-5: #86efac;
   --sidebar: #181d1c;
   --sidebar-foreground: #f5f2ea;
-  --sidebar-primary: #d4b678;
+  --sidebar-primary: #f2c45a;
   --sidebar-primary-foreground: #1f2524;
   --sidebar-accent: #2b3332;
   --sidebar-accent-foreground: #f5f2ea;
   --sidebar-border: #3d4746;
-  --sidebar-ring: #d4b678;
+  --sidebar-ring: #f2c45a;
   color-scheme: dark;
 }
 
 /* `bg-ink` panels invert in dark mode (cream surface), so the gold used for
    eyebrows and buttons inside them must switch back to the deeper bronze
    that keeps AA contrast on cream. */
+/* On charcoal `bg-ink` panels in light mode, text-weight gold and teal need
+   their bright variants to stay readable. */
+.bg-ink {
+  --ps-ochre: #f2c45a;
+  --ps-paper-green: #4fd1bd;
+}
+
 .dark .bg-ink {
-  --ps-ochre: #846526;
-  --ps-gold: #ba9e62;
+  --ps-ochre: #8f6300;
+  --ps-gold: #b8860b;
+  --ps-paper-green: #0b7a6c;
 }
 
 /* Legacy utility classes are kept for light mode compatibility. In dark mode,
@@ -688,7 +697,7 @@
     font-variation-settings: "slnt" 0;
     line-height: 1.6;
     overscroll-behavior-x: none;
-    background-image: radial-gradient(circle at 15% 0%, rgb(186 158 98 / 0.045), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(122 93 36 / 0.035), transparent 24rem);
+    background-image: radial-gradient(circle at 15% 0%, rgb(232 179 58 / 0.045), transparent 28rem), radial-gradient(circle at 100% 30%, rgb(11 122 108 / 0.035), transparent 24rem);
   }
 
   .dark body {
@@ -707,7 +716,7 @@
   }
 
   .paper-grain {
-    background-image: radial-gradient(circle at 20% 10%, rgb(186 158 98 / 0.08), transparent 32%), radial-gradient(circle at 90% 80%, rgb(122 93 36 / 0.06), transparent 28%);
+    background-image: radial-gradient(circle at 20% 10%, rgb(232 179 58 / 0.08), transparent 32%), radial-gradient(circle at 90% 80%, rgb(11 122 108 / 0.06), transparent 28%);
   }
 
   :focus-visible {

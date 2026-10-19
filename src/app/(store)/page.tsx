@@ -94,7 +94,7 @@ export default async function HomePage() {
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-xl border border-white/25 bg-ink/75 px-4 py-3 text-cream shadow-lg backdrop-blur-sm">
               <div><p className="text-[10px] font-semibold tracking-[0.14em] text-ochre uppercase">Ready for the workday</p><p className="mt-1 text-sm font-medium">Reliable stock. Thoughtful service.</p></div>
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-ochre text-ink"><Check className="size-4" aria-hidden /></span>
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-gold text-ink"><Check className="size-4" aria-hidden /></span>
             </div>
           </div>
         </div>

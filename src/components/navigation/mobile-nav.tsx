@@ -75,7 +75,7 @@ export function MobileNav() {
             aria-controls={quoteOpen ? "paper-drawer-quote-list" : undefined}
             onClick={() => setQuoteOpen(!quoteOpen)}
           >
-            <span className="relative"><ClipboardList className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{quoteCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{quoteCount > 99 ? "99+" : quoteCount}</span> : null}</span>
+            <span className="relative"><ClipboardList className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{quoteCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-gold px-1 text-center text-[10px] font-bold leading-4 text-ink">{quoteCount > 99 ? "99+" : quoteCount}</span> : null}</span>
             Quote
           </button>
         </li>
@@ -91,7 +91,7 @@ export function MobileNav() {
             aria-controls={cartOpen ? "paper-drawer-cart" : undefined}
             onClick={() => setCartOpen(!cartOpen)}
           >
-            <span className="relative"><ShoppingBag className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{cartCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-ochre px-1 text-center text-[10px] font-bold leading-4 text-ink">{cartCount > 99 ? "99+" : cartCount}</span> : null}</span>
+            <span className="relative"><ShoppingBag className="size-[1.125rem] transition-transform duration-200 group-hover:-translate-y-0.5 group-active:scale-90" aria-hidden />{cartCount > 0 ? <span className="absolute -right-3 -top-2 min-w-4 rounded-full bg-gold px-1 text-center text-[10px] font-bold leading-4 text-ink">{cartCount > 99 ? "99+" : cartCount}</span> : null}</span>
             Cart
           </button>
         </li>
