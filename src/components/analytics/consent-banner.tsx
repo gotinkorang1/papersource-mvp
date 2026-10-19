@@ -52,9 +52,9 @@ export function ConsentBanner() {
   if (!visible) return null;
 
   return (
-    <aside aria-label="Analytics cookie preferences" className="fixed inset-x-3 bottom-3 z-40 mx-auto max-w-xl rounded-2xl border border-border bg-card p-4 shadow-[0_18px_60px_rgba(43,50,49,0.2)] sm:inset-x-auto sm:right-6 sm:bottom-6">
+    <aside aria-label="Analytics cookie preferences" className="fixed inset-x-3 bottom-[calc(4.75rem+env(safe-area-inset-bottom))] z-40 mx-auto max-w-xl rounded-2xl border border-border bg-card p-3.5 shadow-[0_18px_60px_rgba(43,50,49,0.2)] sm:p-4 sm:inset-x-auto sm:right-6 lg:bottom-6">
       <p className="text-sm font-semibold text-ink">Help us improve PaperSource</p>
-      <p className="mt-1 text-sm leading-6 text-slate">Allow optional analytics and session insights so we can understand which products and checkout steps need improvement. We do not use this choice to send marketing, and you can decline without affecting the shop.</p>
+      <p className="mt-1 text-sm leading-6 text-slate">Allow optional analytics so we can see which products and checkout steps need improvement.<span className="hidden sm:inline"> We do not use this choice to send marketing, and you can decline without affecting the shop.</span></p>
       <div className="mt-3 flex flex-wrap items-center justify-end gap-2">
         <Link href="/privacy" className="mr-auto text-xs font-semibold text-slate underline underline-offset-4">Privacy details</Link>
         <button type="button" onClick={() => { dispatchAnalyticsConsent("denied"); setVisible(false); }} className="min-h-10 rounded-lg border border-border px-3 py-2 text-sm font-semibold text-ink hover:bg-muted">Decline</button>
