@@ -31,7 +31,7 @@ export function QuickOrderForm() {
       }}
     >
       <fieldset disabled={submitted} className="contents">
-      <div className="overflow-x-auto rounded-md border border-border bg-white">
+      <div className="overflow-x-auto rounded-md border border-border bg-card">
         <table className="w-full text-sm">
           <caption className="sr-only">SKU and quantity grid</caption>
           <thead>

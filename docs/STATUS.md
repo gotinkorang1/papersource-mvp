@@ -32,6 +32,15 @@ Admin store settings now include a hosted payment gateway switch (`payments_enab
 
 The storefront now includes About, Contact, Delivery, FAQ, Terms, Privacy and Returns pages. Security response headers and client-side Sentry route telemetry are configured; runtime activation still requires the production Sentry DSN.
 
+## October 2026 upgrade (`feat/site-upgrade`)
+
+- Merged the storefront UI refresh and the original PaperSource logo/palette branches; old palette values no longer appear in `src`.
+- Security: Next.js 16.3.8 plus `sharp`/`source-map-js` overrides; `pnpm audit --prod` is clean.
+- Homepage: featured products are chosen across divisions (photographed, in-stock first) instead of the first four rows; invented testimonials were replaced by approved verified-purchase reviews with a plain service-commitment fallback.
+- Storefront photography resized from 256 MB to 8 MB (max 2000 px).
+- New: WhatsApp product enquiries (uses the admin WhatsApp setting, falls back to 0555 001 313), "Send list on WhatsApp" from the quote basket, and a browser-local Recently viewed strip.
+- Not yet done: Fatima's 28 Sep product photos and prices (WhatsApp export in `public/books/WhatsApp Chat with PaperSource website update/`, untracked) still need importing into the catalogue.
+
 ## Remaining MVP work, in order
 
 1. Launch verification: complete authenticated hosted customer-account and admin journeys. Public route and API smoke checks pass; the local authenticated admin journey and the full local Playwright suite (27/27) now pass. The complete Vitest suite is green (80 files, 392 tests) using a single worker. Direct Vercel redeploys may still be limited by the daily deployment quota, so a pushed commit must be separately verified as Ready in Vercel.

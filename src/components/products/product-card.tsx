@@ -55,6 +55,7 @@ export function ProductCard({
   const addToQuote = onAddToQuote ?? preview?.addToQuote;
   const [quantity, setQuantity] = useState(1);
   const imageSource = catalogueImage(product);
+  const fallbackImageSource = catalogueImage({ ...product, imageSrc: "" });
   const [resolvedImageSource, setResolvedImageSource] = useState(imageSource);
   const [quickOpen, setQuickOpen] = useState(false);
   const [addedTo, setAddedTo] = useState<"cart" | "quote" | null>(null);
@@ -95,16 +96,16 @@ export function ProductCard({
   };
 
   return (
-    <PaperCard className={cn("group flex min-w-0 flex-col overflow-hidden", className)} style={style}>
+    <PaperCard className={cn("paper-product-card group flex min-w-0 flex-col overflow-hidden", className)} style={style}>
       <div className="group relative aspect-[4/3] overflow-hidden border-b border-border bg-cream">
         <Link href={`/product/${product.slug}`} aria-label={`View ${product.name}`} className="absolute inset-0 z-[1] focus-visible:outline-2 focus-visible:outline-offset-[-3px] focus-visible:outline-ink">
-          <Image src={resolvedImageSource} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} fill unoptimized={resolvedImageSource.startsWith("https://res.cloudinary.com/")} preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes="(max-width: 389px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" onError={() => { if (resolvedImageSource !== "/images/set-school-stationery.jpg") setResolvedImageSource("/images/set-school-stationery.jpg"); }} className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
+          <Image src={resolvedImageSource} alt={product.imageAlt.trim() || [product.name, product.specLine].filter(Boolean).join(", ")} fill unoptimized={resolvedImageSource.startsWith("https://res.cloudinary.com/")} preload={priority} loading={priority ? "eager" : "lazy"} fetchPriority={priority ? "high" : "auto"} sizes="(max-width: 389px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw" onError={() => { if (resolvedImageSource !== fallbackImageSource) setResolvedImageSource(fallbackImageSource); }} className="object-cover transition-transform duration-500 ease-out motion-safe:group-hover:scale-105" />
           <span className="absolute bottom-3 right-3 rounded-full bg-card/95 px-3 py-1.5 text-xs font-semibold text-ink opacity-0 shadow-sm transition-opacity group-hover:opacity-100 group-focus-within:opacity-100">View details</span>
         </Link>
         <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-ink/20 via-transparent to-transparent opacity-70" />
         <div className="absolute left-3 top-3 z-10"><StockBadge level={product.stock} /></div>
         {product.isNew || product.isTrending ? <div className="absolute left-3 bottom-3 z-10 flex max-w-[calc(100%-1.5rem)] flex-wrap gap-1.5">
-          {product.isNew ? <span className="rounded-full bg-ochre px-2 py-1 text-[0.68rem] font-semibold text-ink shadow-sm">New</span> : null}
+          {product.isNew ? <span className="rounded-full bg-gold px-2 py-1 text-[0.68rem] font-semibold text-ink shadow-sm">New</span> : null}
           {product.isTrending ? <span className="rounded-full bg-paper-green px-2 py-1 text-[0.68rem] font-semibold text-white shadow-sm">Trending{product.viewCount ? ` · ${product.viewCount}` : ""}</span> : null}
         </div> : null}
       </div>

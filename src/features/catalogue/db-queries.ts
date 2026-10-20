@@ -4,6 +4,7 @@ import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import { productImageAlt } from "@/features/catalogue/product-metadata";
 import { decorateProductPresentation } from "@/features/catalogue/presentation";
 import { listTrendingProductIds } from "@/features/catalogue/trending";
+import { pickFeaturedIds } from "@/features/catalogue/featured";
 import { buildSpecLine, buildSupplementalSpecLine, matchesCatalogueQuery } from "@/features/catalogue/search";
 import { storefrontDeliveryBadge } from "@/features/delivery/zones";
 import {
@@ -12,6 +13,7 @@ import {
 } from "@/features/inventory/stock";
 import { getDb } from "@/lib/db/client";
 import { cloudinaryImageUrl } from "@/lib/cloudinary";
+import { seedBrands, seedCategories, seedDeliveryZones } from "@/features/catalogue/local-data";
 import {
   brands,
   categories,
@@ -37,6 +39,8 @@ type Filter = {
   query?: string;
   excludeProductId?: string;
   maxResults?: number;
+  /** Restrict to these products, returned in the given order. */
+  productIds?: string[];
 };
 
 function descendantIds(
@@ -69,12 +73,27 @@ const loadCatalogueContext = unstable_cache(async function loadCatalogueContext(
     db
       .select({ id: categories.id, parentId: categories.parentId, name: categories.name, slug: categories.slug, description: categories.description, position: categories.position, imagePublicId: categories.imagePublicId })
       .from(categories)
-      .where(and(eq(categories.active, true), isNull(categories.deletedAt))),
+      .where(and(eq(categories.active, true), isNull(categories.deletedAt)))
+      .catch(() => seedCategories.map((category) => ({
+        id: category.id,
+        parentId: category.parentId,
+        name: category.name,
+        slug: category.slug,
+        description: category.caption,
+        position: category.position,
+        imagePublicId: null,
+      }))),
     db
       .select({ id: brands.id, name: brands.name, slug: brands.slug })
       .from(brands)
-      .where(and(eq(brands.active, true), isNull(brands.deletedAt))),
-    db.select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active }).from(deliveryZones).where(eq(deliveryZones.active, true)),
+      .where(and(eq(brands.active, true), isNull(brands.deletedAt)))
+      .catch(() => seedBrands),
+    Promise.resolve(
+      db
+        .select({ code: deliveryZones.code, name: deliveryZones.name, region: deliveryZones.region, feeMode: deliveryZones.feeMode, active: deliveryZones.active })
+        .from(deliveryZones)
+        .where(eq(deliveryZones.active, true)),
+    ).catch(() => seedDeliveryZones),
   ]);
 
   return {
@@ -520,6 +539,12 @@ export async function listProductCardsFromDb(
   if (filter?.excludeProductId) {
     rows = rows.filter((row) => row.product.id !== filter.excludeProductId);
   }
+  if (filter?.productIds) {
+    const order = new Map(filter.productIds.map((id, index) => [id, index]));
+    rows = rows
+      .filter((row) => order.has(row.product.id))
+      .sort((a, b) => (order.get(a.product.id) ?? 0) - (order.get(b.product.id) ?? 0));
+  }
   if (filter?.maxResults && filter.maxResults > 0) {
     rows = rows.slice(0, filter.maxResults);
   }
@@ -598,9 +623,39 @@ export async function getProductBySlugFromDb(
   };
 }
 
+function rootDivisionSlug(
+  categories: { id: string; parentId: string | null; slug: string }[],
+  categoryId: string,
+): string {
+  const byId = new Map(categories.map((category) => [category.id, category]));
+  let current = byId.get(categoryId);
+  const seen = new Set<string>();
+  while (current?.parentId && !seen.has(current.id)) {
+    seen.add(current.id);
+    const parent = byId.get(current.parentId);
+    if (!parent) break;
+    current = parent;
+  }
+  return current?.slug ?? "general-supplies";
+}
+
 export async function listFeaturedProductCardsFromDb(): Promise<ProductCardModel[]> {
-  // The home page only renders four featured cards. Limit before card
-  // decoration and trend enrichment so we do not process the full catalogue
-  // just to discard every row after the first four.
-  return listProductCardsFromDb({ maxResults: 4 });
+  // The home page renders four featured cards. Choose them from cheap row
+  // facts (division, image, stock) before card decoration and trend
+  // enrichment, so we only decorate the four rows we actually show.
+  const ctx = await loadActiveProducts();
+  const indexes = indexCatalogueContext(ctx);
+  const ids = pickFeaturedIds(
+    ctx.productRows.map((row) => ({
+      id: row.product.id,
+      divisionSlug: rootDivisionSlug(ctx.categoryRows, row.product.categoryId),
+      hasImage: indexes.imageByProductId.has(row.product.id),
+      stock: stockLevelFromQuantity(
+        sellableQuantity(row.stock?.onHand ?? 0, row.stock?.reserved ?? 0),
+        row.stock?.lowStockThreshold ?? 5,
+      ),
+    })),
+    4,
+  );
+  return listProductCardsFromDb({ productIds: ids });
 }

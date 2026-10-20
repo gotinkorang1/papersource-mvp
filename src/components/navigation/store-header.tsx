@@ -34,7 +34,7 @@ export async function StoreHeader() {
     links.filter((link) => !reservedRoutes.has(normalizeNavigationHref(link.href))),
   );
   return (
-    <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/95 shadow-[0_4px_18px_rgba(43,50,49,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-card/80">
+    <header className="relative sticky top-0 z-50 border-b border-border/80 bg-card/95 shadow-[0_4px_18px_rgba(43,50,49,0.04)] backdrop-blur-xl supports-[backdrop-filter]:bg-card/90">
       <div className="mx-auto flex min-h-14 w-full max-w-7xl items-center gap-2 px-3 py-1 sm:min-h-16 sm:gap-5 sm:px-6 sm:py-2.5 lg:px-8">
         <Wordmark className="shrink-0" />
         <nav

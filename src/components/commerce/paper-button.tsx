@@ -11,8 +11,8 @@ export const paperButton = cva(
         secondary:
           "border border-ink bg-transparent text-ink hover:bg-ink hover:text-primary-foreground",
         quote:
-          "border border-paper-green text-paper-green hover:-translate-y-px hover:bg-paper-green hover:text-primary-foreground hover:shadow-[0_8px_18px_rgba(122,93,36,0.18)]",
-        accent: "bg-ochre text-accent-foreground shadow-[0_5px_14px_rgba(186,158,98,0.18)] hover:-translate-y-px hover:bg-ochre/90",
+          "border border-paper-green text-paper-green hover:-translate-y-px hover:bg-paper-green hover:text-primary-foreground hover:shadow-[0_8px_18px_rgba(11,122,108,0.18)]",
+        accent: "bg-gold text-accent-foreground shadow-[0_5px_14px_rgba(232,179,58,0.18)] hover:-translate-y-px hover:bg-gold/90",
         ghost: "text-ink hover:bg-cream",
       },
     },

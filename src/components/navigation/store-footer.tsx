@@ -20,24 +20,24 @@ export async function StoreFooter() {
   const categoryLinks = normalizeShopCategoryLinks(categories);
   return (
     <footer className="mt-auto border-t border-border bg-card pb-[calc(4rem+env(safe-area-inset-bottom))] lg:pb-0 [&_a:focus-visible]:outline-2 [&_a:focus-visible]:outline-offset-2 [&_a:focus-visible]:outline-ink">
-      <div className="border-b border-border/70 bg-ink text-white">
+      <div className="border-b border-border/70 bg-ink text-primary-foreground">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-7 sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <div>
             <p className="text-xs font-semibold uppercase tracking-[0.16em] text-ochre">Need help choosing?</p>
             <p className="mt-1 text-lg font-semibold tracking-tight">Tell us what your workplace needs.</p>
-            <p className="mt-1 max-w-xl text-sm leading-6 text-white/75">We can help you find the right supplies, plan a bulk order, or arrange delivery across Ghana.</p>
+            <p className="mt-1 max-w-xl text-sm leading-6 text-primary-foreground/75">We can help you find the right supplies, plan a bulk order, or arrange delivery across Ghana.</p>
           </div>
           <div className="flex shrink-0 flex-wrap gap-2">
-            <Link href="/contact" className="inline-flex min-h-11 items-center rounded-lg bg-ochre px-4 py-2 text-sm font-semibold text-ink transition hover:bg-ochre/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ochre">Contact us</Link>
-            <Link href="/request-quote" className="inline-flex min-h-11 items-center rounded-lg border border-white/30 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white">Start a quote</Link>
+            <Link href="/contact" className="inline-flex min-h-11 items-center rounded-lg bg-gold px-4 py-2 text-sm font-semibold text-ink transition hover:bg-gold/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ochre">Contact us</Link>
+            <Link href="/request-quote" className="inline-flex min-h-11 items-center rounded-lg border border-primary-foreground/30 px-4 py-2 text-sm font-semibold text-primary-foreground transition hover:bg-primary-foreground/10 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-foreground">Start a quote</Link>
           </div>
         </div>
       </div>
-      <div className="mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-sm leading-relaxed text-slate sm:grid-cols-2 sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
+      <div className="paper-store-footer-grid mx-auto grid w-full max-w-7xl gap-10 px-4 py-12 text-sm leading-relaxed text-slate sm:grid-cols-2 sm:px-6 md:grid-cols-[1.4fr_repeat(3,1fr)] lg:px-8">
         <div>
           <Wordmark shrinkOnScroll={false} className="max-w-fit" />
           <p className="mt-4 max-w-xs">Ghana&apos;s modern workplace supply partner. Accra and Tema delivery, with nationwide supply on request.</p>
-          <Link href="/contact" className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-ink px-4 py-2 font-semibold text-white transition hover:-translate-y-0.5 hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Talk to our team</Link>
+          <Link href="/contact" className="mt-5 inline-flex min-h-11 items-center rounded-lg bg-ink px-4 py-2 font-semibold text-primary-foreground transition hover:-translate-y-0.5 hover:bg-ink/90 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink">Talk to our team</Link>
           <div className="mt-5"><p className="mb-2 text-xs font-semibold uppercase tracking-[0.14em] text-slate">Follow and connect</p><SocialLinks /></div>
         </div>
         <div>

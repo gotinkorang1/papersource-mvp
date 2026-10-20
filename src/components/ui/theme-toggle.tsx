@@ -2,14 +2,39 @@
 
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
-import { writeLocalValue } from "@/lib/browser/local-storage";
+import { readLocalValue, writeLocalValue } from "@/lib/browser/local-storage";
 
 export function ThemeToggle() {
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    const timer = window.setTimeout(() => setDark(document.documentElement.classList.contains("dark")), 0);
-    return () => window.clearTimeout(timer);
+    const syncTheme = (saved: string | null) => {
+      const prefersDark = typeof window.matchMedia === "function" && window.matchMedia("(prefers-color-scheme: dark)").matches;
+      const next = saved === "dark" || (!saved && prefersDark);
+      document.documentElement.classList.toggle("dark", next);
+      setDark(next);
+    };
+    const timer = window.setTimeout(() => syncTheme(readLocalValue("papersource-theme")), 0);
+    const onStorage = (event: StorageEvent) => {
+      if (event.key === "papersource-theme") syncTheme(event.newValue);
+    };
+    const media = typeof window.matchMedia === "function" ? window.matchMedia("(prefers-color-scheme: dark)") : null;
+    const onSystemThemeChange = () => {
+      if (!readLocalValue("papersource-theme")) syncTheme(null);
+    };
+    window.addEventListener("storage", onStorage);
+    const legacyMedia = media as (MediaQueryList & {
+      addListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+      removeListener?: (listener: (event: MediaQueryListEvent) => void) => void;
+    }) | null;
+    if (media && typeof media.addEventListener === "function") media.addEventListener("change", onSystemThemeChange);
+    else legacyMedia?.addListener?.(onSystemThemeChange);
+    return () => {
+      window.clearTimeout(timer);
+      window.removeEventListener("storage", onStorage);
+      if (media && typeof media.removeEventListener === "function") media.removeEventListener("change", onSystemThemeChange);
+      else legacyMedia?.removeListener?.(onSystemThemeChange);
+    };
   }, []);
 
   function toggle() {

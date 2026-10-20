@@ -10,6 +10,8 @@ describe("ProductListItem", () => {
   it("keeps content-mode product context visible on mobile", () => {
     render(<ProductListItem product={sampleProducts[0]} variant="content" />);
 
+    expect(screen.getByRole("article")).toHaveClass("paper-product-list-item");
+
     const context = screen.getByText(
       "A4 • 80gsm • 500 sheets. Available with clear pricing, stock visibility, and delivery support across Accra and Tema.",
     );
@@ -42,6 +44,15 @@ describe("ProductListItem", () => {
     fireEvent.error(image);
 
     expect(image).toHaveAttribute("src", expect.stringContaining("set-school-stationery.jpg"));
+  });
+
+  it("uses a semantic fallback for a failed book thumbnail", () => {
+    render(<ProductListItem product={{ ...sampleProducts[0], name: "Book: Ghana office handbook", specLine: "Paperback book", imageSrc: "https://cdn.example.invalid/book.jpg" }} />);
+
+    const image = screen.getByRole("img", { name: /Double A Premium A4 paper/ });
+    fireEvent.error(image);
+
+    expect(image).toHaveAttribute("src", expect.stringContaining("stack-books-with-library-scene.jpg"));
   });
 
   it("confirms cart and quote additions in list view", async () => {

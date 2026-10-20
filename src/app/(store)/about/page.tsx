@@ -7,7 +7,7 @@ import { GROUP_LINKS } from "@/lib/group-links";
 export const metadata: Metadata = pageMetadata({
   title: "About PaperSource",
   description:
-    "Learn about PaperSource, a NiiPlants Group Ghana Limited subsidiary helping Ghanaian workplaces source supplies simply.",
+    "Learn about PaperSource, a Ghana-registered stationery and office essentials business within NiiPlants Group Ghana Limited.",
   path: "/about",
 });
 
@@ -53,6 +53,24 @@ export default function AboutPage() {
         </div>
         <div className="relative aspect-[4/3] overflow-hidden rounded-xl border border-border bg-cream shadow-[0_20px_50px_rgba(43,50,49,0.12)]">
           <Image src="/images/young-african-business-woman-standing-grey-wall.jpg" alt="Professional at work in a modern office" fill sizes="(max-width: 1024px) 100vw, 46vw" className="object-cover" />
+        </div>
+      </section>
+
+      <section className="border-y border-border bg-cream/60 py-14 md:py-20">
+        <div className="mx-auto grid max-w-6xl gap-8 px-4 sm:px-6 md:grid-cols-[0.8fr_1.2fr] md:items-start lg:px-8">
+          <div>
+            <p className="text-sm tracking-[0.16em] text-slate uppercase">Our business</p>
+            <h2 className="mt-3 font-heading text-3xl font-semibold tracking-tight text-ink md:text-4xl">A Ghanaian business built for everyday supply.</h2>
+          </div>
+          <div className="max-w-3xl space-y-4 text-slate">
+            <p>PaperSource is registered in Ghana as a sole proprietorship under the business name PAPERSOURCE. Our principal activity is the sale of stationery and office essentials, serving the practical needs of offices, schools, organisations and households.</p>
+            <p>The business was registered in May 2026 and operates within the commerce and trading sector. That foundation guides how we work: keep product information clear, make purchasing straightforward, and provide a helpful route for larger or more involved requirements.</p>
+            <dl className="grid gap-4 pt-2 text-sm sm:grid-cols-3">
+              <div className="rounded-xl border border-border bg-card p-4"><dt className="font-semibold text-ink">Business name</dt><dd className="mt-1">PAPERSOURCE</dd></div>
+              <div className="rounded-xl border border-border bg-card p-4"><dt className="font-semibold text-ink">Registered</dt><dd className="mt-1">May 2026, Ghana</dd></div>
+              <div className="rounded-xl border border-border bg-card p-4"><dt className="font-semibold text-ink">Focus</dt><dd className="mt-1">Stationery and office essentials</dd></div>
+            </dl>
+          </div>
         </div>
       </section>
 

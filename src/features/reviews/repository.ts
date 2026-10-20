@@ -50,3 +50,30 @@ export async function createProductReview(input: { productId: string; profileId:
   if (!orderId) throw new Error("A delivered order for this product is required.");
   await getDb().insert(productReviews).values({ ...input, orderId, verifiedPurchase: true, title: input.title || null, status: "pending" });
 }
+
+export type FeaturedReview = ProductReview & { productName: string; productSlug: string };
+
+/**
+ * Recent approved, verified-purchase reviews with a rating of 4 or more, for
+ * the homepage. Returns an empty list when the database or the reviews table
+ * is unavailable so the homepage can fall back to service promises.
+ */
+export async function listFeaturedReviews(limit = 3): Promise<FeaturedReview[]> {
+  if (!isDatabaseConfigured()) return [];
+  try {
+    return await loadFeaturedReviews(limit);
+  } catch {
+    return [];
+  }
+}
+
+const loadFeaturedReviews = unstable_cache(async function loadFeaturedReviews(limit: number) {
+  const rows = await getDb()
+    .select({ id: productReviews.id, rating: productReviews.rating, title: productReviews.title, body: productReviews.body, displayName: productReviews.displayName, createdAt: productReviews.createdAt, verifiedPurchase: productReviews.verifiedPurchase, productName: products.name, productSlug: products.slug })
+    .from(productReviews)
+    .innerJoin(products, eq(products.id, productReviews.productId))
+    .where(and(eq(productReviews.status, "approved"), eq(productReviews.verifiedPurchase, true)))
+    .orderBy(desc(productReviews.createdAt))
+    .limit(30);
+  return rows.filter((row) => row.rating >= 4).slice(0, limit);
+}, ["featured-product-reviews"], { revalidate: 600, tags: ["reviews"] });

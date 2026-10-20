@@ -60,7 +60,7 @@ export function LazyFacebookFrame({ src, title, className, minHeight, themeAware
   }, []);
 
   return (
-    <div ref={containerRef} style={{ minHeight }}>
+    <div ref={containerRef} style={{ minHeight }} aria-busy={!ready || undefined}>
       {ready ? (
         <iframe
           title={title}
@@ -73,7 +73,7 @@ export function LazyFacebookFrame({ src, title, className, minHeight, themeAware
           className={className}
         />
       ) : (
-        <div aria-hidden="true" className="grid h-full min-h-[220px] place-items-center rounded-xl border border-border bg-card text-xs text-slate">
+        <div role="status" aria-live="polite" className="grid h-full min-h-[220px] place-items-center rounded-xl border border-border bg-card text-xs text-slate">
           Social updates load as you reach this section.
         </div>
       )}

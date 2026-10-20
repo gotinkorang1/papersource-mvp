@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { FileText } from "lucide-react";
+import { FileText, MessageCircle } from "lucide-react";
+import { getStoreSettings } from "@/features/settings/admin";
+import { quoteListMessage, whatsappChatLink } from "@/lib/whatsapp";
 import {
   removeQuoteLineAction,
   updateQuoteQuantityAction,
@@ -23,7 +25,10 @@ type PageProps = {
 
 export default async function QuoteBasketPage({ searchParams }: PageProps) {
   const sessionId = isDatabaseConfigured() ? await readCommerceIdentity() : null;
-  const lines = sessionId ? await listQuoteLines(sessionId) : [];
+  const [lines, settings] = await Promise.all([
+    sessionId ? listQuoteLines(sessionId) : Promise.resolve([]),
+    getStoreSettings().catch(() => null),
+  ]);
   const { added, unknown, notice, warning } = await searchParams;
 
   return (
@@ -104,7 +109,7 @@ export default async function QuoteBasketPage({ searchParams }: PageProps) {
               ))}
             </tbody>
           </table>
-          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-5"><p className="text-sm text-slate">Final prices are set by PaperSource after we review your requirements.</p><Link href="/request-quote" className={paperButton({ variant: "quote" })}>Request quotation</Link></div>
+          <div className="flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-border bg-muted/40 p-5"><p className="text-sm text-slate">Final prices are set by PaperSource after we review your requirements.</p><div className="flex w-full flex-col gap-2 sm:w-auto sm:flex-row"><a href={whatsappChatLink(settings?.whatsappBusinessNumber, quoteListMessage(lines))} target="_blank" rel="noopener noreferrer" className={paperButton({ variant: "secondary" })}><MessageCircle className="size-4" aria-hidden /> Send list on WhatsApp<span className="sr-only"> (opens WhatsApp)</span></a><Link href="/request-quote" className={paperButton({ variant: "quote" })}>Request quotation</Link></div></div>
         </div>
       )}
     </main>

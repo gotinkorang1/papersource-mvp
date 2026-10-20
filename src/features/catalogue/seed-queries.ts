@@ -1,3 +1,4 @@
+import { pickFeaturedIds } from "@/features/catalogue/featured";
 import { resolveUnitPrice } from "@/features/catalogue/pricing";
 import {
   seedBrands,
@@ -211,6 +212,8 @@ export function listProductCardsFromSeed(filter?: {
   categorySlug?: string;
   brandSlug?: string;
   query?: string;
+  excludeProductId?: string;
+  maxResults?: number;
 }): ProductCardModel[] {
   let products = seedProducts;
 
@@ -236,7 +239,14 @@ export function listProductCardsFromSeed(filter?: {
     );
   }
 
-  return products.map(toCard);
+  let cards = products.map(toCard);
+  if (filter?.excludeProductId) {
+    cards = cards.filter((card) => card.id !== filter.excludeProductId);
+  }
+  if (filter?.maxResults && filter.maxResults > 0) {
+    cards = cards.slice(0, filter.maxResults);
+  }
+  return cards;
 }
 
 export function getProductBySlugFromSeed(slug: string): ProductDetailModel | null {
@@ -244,6 +254,29 @@ export function getProductBySlugFromSeed(slug: string): ProductDetailModel | nul
   return product ? toDetail(product) : null;
 }
 
+function seedDivisionSlug(categoryId: string): string {
+  let current = categoryById(categoryId);
+  const seen = new Set<string>();
+  while (current?.parentId && !seen.has(current.id)) {
+    seen.add(current.id);
+    const parent = categoryById(current.parentId);
+    if (!parent) break;
+    current = parent;
+  }
+  return current?.slug ?? "general-supplies";
+}
+
 export function listFeaturedProductCardsFromSeed(): ProductCardModel[] {
-  return listProductCardsFromSeed().slice(0, 4);
+  const cards = seedProducts.map((product) => ({ product, card: toCard(product) }));
+  const ids = pickFeaturedIds(
+    cards.map(({ product, card }) => ({
+      id: card.id,
+      divisionSlug: seedDivisionSlug(product.categoryId),
+      hasImage: Boolean(card.imageSrc),
+      stock: card.stock,
+    })),
+    4,
+  );
+  const byId = new Map(cards.map(({ card }) => [card.id, card]));
+  return ids.flatMap((id) => byId.get(id) ?? []);
 }

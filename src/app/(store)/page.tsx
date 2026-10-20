@@ -6,6 +6,7 @@ import { paperButton } from "@/components/commerce/paper-button";
 import { CorporateBanner } from "@/components/marketing/corporate-banner";
 import { CategoryTile } from "@/components/products/category-tile";
 import { ProductGridList } from "@/components/products/product-grid-list";
+import { RecentlyViewed } from "@/components/products/recently-viewed";
 import { Testimonials } from "@/components/marketing/testimonials";
 import { LiveDeliveryStatus } from "@/components/marketing/live-delivery-status";
 import { SocialActivitySection } from "@/components/marketing/social-activity-section";
@@ -14,6 +15,7 @@ import {
   listFeaturedProductCards,
 } from "@/features/catalogue";
 import { SEO_GUIDES } from "@/features/content/seo-guides";
+import { listFeaturedReviews } from "@/features/reviews/repository";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { readStaffActor } from "@/lib/staff/require";
 import { categoryImagesFor } from "@/features/catalogue/category-images";
@@ -33,10 +35,13 @@ export const metadata: Metadata = pageMetadata({
 });
 
 export default async function HomePage() {
-  const categories = await listDivisionCategories();
+  const [categories, featured, reviews, staff] = await Promise.all([
+    listDivisionCategories(),
+    listFeaturedProductCards(),
+    listFeaturedReviews(3),
+    readStaffActor(),
+  ]);
   const categoryImages = categoryImagesFor(categories);
-  const featured = await listFeaturedProductCards();
-  const staff = await readStaffActor();
   const canEdit = staff ? canAccessAdmin(staff.role, "products", "write") : false;
   return (
     <main className="overflow-hidden">
@@ -89,7 +94,7 @@ export default async function HomePage() {
             <div aria-hidden className="absolute inset-0 bg-gradient-to-tr from-ink/20 via-transparent to-transparent" />
             <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between gap-3 rounded-xl border border-white/25 bg-ink/75 px-4 py-3 text-cream shadow-lg backdrop-blur-sm">
               <div><p className="text-[10px] font-semibold tracking-[0.14em] text-ochre uppercase">Ready for the workday</p><p className="mt-1 text-sm font-medium">Reliable stock. Thoughtful service.</p></div>
-              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-ochre text-ink"><Check className="size-4" aria-hidden /></span>
+              <span className="grid size-9 shrink-0 place-items-center rounded-full bg-gold text-ink"><Check className="size-4" aria-hidden /></span>
             </div>
           </div>
         </div>
@@ -197,10 +202,11 @@ export default async function HomePage() {
             <ProductGridList products={featured} canEdit={canEdit} />
           </div>
           <Link href="/shop" className="mt-6 inline-flex items-center gap-1 rounded-full border border-border px-4 py-2 text-sm font-semibold text-ink transition hover:border-paper-green hover:text-paper-green sm:hidden">View full catalogue <ArrowRight className="size-4" aria-hidden /></Link>
+          <RecentlyViewed className="mt-12" />
         </div>
       </section>
 
-      <Testimonials />
+      <Testimonials reviews={reviews} />
 
       <section className="paper-section-wash border-t border-border/70 bg-card py-14 sm:py-16" aria-labelledby="buying-guides">
         <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">

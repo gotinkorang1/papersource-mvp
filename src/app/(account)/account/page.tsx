@@ -45,7 +45,7 @@ export default async function AccountPage({ searchParams }: { searchParams: Prom
   ];
   const openQuoteCount = quotes.filter((quote) => openQuoteStatuses.has(quote.status)).length;
   return (
-    <main>
+    <main className="paper-account-page mx-auto w-full max-w-7xl px-4 py-10 sm:px-6 md:py-16 lg:px-8">
       <section className="rounded-3xl border border-border bg-muted/30 p-6 sm:p-8">
         <p className="text-sm font-semibold uppercase tracking-[0.16em] text-paper-green">Your workspace</p>
         <h1 className="mt-3 font-heading text-4xl font-semibold tracking-tight text-ink md:text-5xl">{firstName ? `Welcome back, ${firstName}.` : "Welcome back."}</h1>

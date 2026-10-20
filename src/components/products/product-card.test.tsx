@@ -1,6 +1,6 @@
 import { describe, expect, it, vi } from "vitest";
 vi.mock("server-only", () => ({}));
-import { render, screen, within } from "@testing-library/react";
+import { fireEvent, render, screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { ProductCard } from "@/components/products/product-card";
 import { sampleProducts } from "@/lib/design-system/fixtures";
@@ -11,6 +11,7 @@ describe("ProductCard", () => {
   it("shows spec, unit price, tier hint, stock, and both CTAs", () => {
     render(<ProductCard product={product} />);
 
+    expect(screen.getByText("Double A Premium A4 Paper").closest("div.group")).toHaveClass("paper-product-card");
     expect(screen.getByText("Double A Premium A4 Paper")).toBeInTheDocument();
     expect(screen.getByText("A4 • 80gsm • 500 sheets")).toBeInTheDocument();
     expect(screen.getByText("GHS 78.00")).toBeInTheDocument();
@@ -82,6 +83,15 @@ describe("ProductCard", () => {
       "sizes",
       "(max-width: 389px) 100vw, (max-width: 640px) 50vw, (max-width: 1024px) 50vw, (max-width: 1280px) 33vw, 25vw",
     );
+  });
+
+  it("uses a semantic fallback when a product image fails", () => {
+    render(<ProductCard product={{ ...product, name: "Book: Ghana office handbook", specLine: "Paperback book", imageSrc: "https://cdn.example.invalid/book.jpg" }} />);
+
+    const image = screen.getByRole("img", { name: /Double A Premium A4 paper/ });
+    fireEvent.error(image);
+
+    expect(image).toHaveAttribute("src", expect.stringContaining("stack-books-with-library-scene.jpg"));
   });
 
   it("uses the same responsive dual-path labels in quick view", async () => {

@@ -15,11 +15,11 @@ describe("CatalogueViewModeControl", () => {
     vi.unstubAllGlobals();
   });
 
-  it("exposes four labeled modes and marks the active mode", () => {
+  it("exposes the available labeled modes and marks the active mode", () => {
     render(<CatalogueViewModeControl value="list" onChange={() => undefined} />);
 
     expect(screen.getByRole("group", { name: "Catalogue display" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Grid" })).toHaveAttribute("aria-pressed", "false");
+    expect(screen.queryByRole("button", { name: "Grid" })).not.toBeInTheDocument();
     expect(screen.getByRole("button", { name: "List" })).toHaveAttribute("aria-pressed", "true");
     expect(screen.getByRole("button", { name: "Content" })).toHaveAttribute("aria-pressed", "false");
     expect(screen.getByRole("button", { name: "Default" })).toHaveAttribute("aria-pressed", "false");
@@ -48,9 +48,9 @@ describe("CatalogueViewModeControl", () => {
 
   it("lets a URL-provided mode be changed without a full page reload", async () => {
     const { container } = render(<ProductGridList products={[sampleProducts[0]]} viewMode="list" />);
-    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
+    fireEvent.click(screen.getByRole("button", { name: "Content" }));
 
-    await waitFor(() => expect(container.querySelector('[data-catalogue-view="grid"]')).toBeInTheDocument());
+    await waitFor(() => expect(container.querySelector('[data-catalogue-view="content"]')).toBeInTheDocument());
   });
 
   it("restores the device preference when no URL mode is supplied", async () => {

@@ -46,9 +46,9 @@ describe("AdminProductsView", () => {
   it("switches to a responsive edit-focused presentation", () => {
     render(<AdminProductsView rows={rows} canWrite />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
+    fireEvent.click(screen.getByRole("button", { name: "Content" }));
 
-    expect(document.querySelector('[data-catalogue-view="grid"]')).toBeInTheDocument();
+    expect(document.querySelector('[data-catalogue-view="content"]')).toBeInTheDocument();
     expect(screen.getByRole("checkbox", { name: "Select all products" })).toBeInTheDocument();
     expect(screen.getByRole("link", { name: "Edit product" })).toHaveAttribute("href", "/admin/products/product-1");
     expect(screen.getByRole("link", { name: "Manage images" })).toHaveAttribute("href", "/admin/products/product-1#images");
@@ -57,7 +57,7 @@ describe("AdminProductsView", () => {
   it("does not expose write controls to read-only staff", () => {
     render(<AdminProductsView rows={rows} canWrite={false} />);
 
-    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
+    fireEvent.click(screen.getByRole("button", { name: "Content" }));
 
     expect(screen.queryByRole("button", { name: "Apply to selected" })).not.toBeInTheDocument();
     expect(screen.queryByRole("checkbox", { name: /Select/ })).not.toBeInTheDocument();

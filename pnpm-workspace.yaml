@@ -5,6 +5,8 @@ allowBuilds:
   supabase: true
   '@sentry/cli': true
 overrides:
+  sharp: ^0.35.5
+  source-map-js: ^1.2.2
   engine.io: 6.6.10
   fast-uri: 3.1.8
   qs: 6.16.0

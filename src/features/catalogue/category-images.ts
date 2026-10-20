@@ -66,6 +66,7 @@ export function categoryImagesFor(
   categories: Pick<CatalogueCategoryView, "slug" | "name" | "imagePublicId">[],
 ) {
   const used = new Set<string>();
+  const curatedPool = Object.values(categoryImages);
 
   return categories.map((category) => {
     const resolved = categoryImageFor(category);
@@ -78,6 +79,15 @@ export function categoryImagesFor(
     if (curated && !used.has(curated.src)) {
       used.add(curated.src);
       return curated;
+    }
+
+    const unusedCurated = curatedPool.find((candidate) => !used.has(candidate.src));
+    if (unusedCurated) {
+      used.add(unusedCurated.src);
+      return {
+        ...unusedCurated,
+        alt: `${category.name} workplace supplies`,
+      };
     }
 
     used.add(resolved.src);
