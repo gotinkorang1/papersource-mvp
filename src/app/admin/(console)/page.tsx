@@ -1,12 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { count, desc, eq, inArray } from "drizzle-orm";
+import { and, asc, count, desc, eq, gte, inArray, isNull, lte, sql } from "drizzle-orm";
 import { getDb } from "@/lib/db/client";
-import { orders, profiles, quotes, productReviews } from "@/lib/db/schema";
+import { inventory, orders, payments, productReviews, products, productVariants, profiles, quotes } from "@/lib/db/schema";
 import { canAccessAdmin } from "@/lib/staff/rbac";
 import { requireStaffArea } from "@/lib/staff/require";
 import { AdminStatusBadge } from "@/components/admin/status-badge";
 import { getCatalogueSeoAudit } from "@/features/catalogue/seo-audit";
+import { sellableQuantity } from "@/features/inventory";
 
 export const metadata: Metadata = {
   title: "Admin",
@@ -26,6 +27,8 @@ export default async function AdminDashboardPage() {
   const canReadQuotes = canAccessAdmin(actor.role, "quotes", "read");
   const canReadOrders = canAccessAdmin(actor.role, "orders", "read");
   const canReadReviews = canAccessAdmin(actor.role, "reviews", "read");
+  const canReadPayments = canAccessAdmin(actor.role, "payments", "read");
+  const canReadInventory = canAccessAdmin(actor.role, "inventory", "read");
   const quickActions = [
     canAccessAdmin(actor.role, "products", "write")
       ? { label: "Add product", href: "/admin/products/new", hint: "Create a catalogue item" }
@@ -41,7 +44,7 @@ export default async function AdminDashboardPage() {
       : null,
   ].filter((action): action is NonNullable<typeof action> => Boolean(action));
 
-  const [openQuotes, pendingPayRows, nationwideRows, pendingReviewRows, recentOrders, seoAudit] = await Promise.all([
+  const [openQuotes, pendingPayRows, nationwideRows, pendingReviewRows, recentOrders, seoAudit, paymentIssueRows, lowStockRows] = await Promise.all([
     canReadQuotes
       ? db
           .select({ status: quotes.status, total: count() })
@@ -67,11 +70,29 @@ export default async function AdminDashboardPage() {
           .limit(6)
       : Promise.resolve([]),
     canAccessAdmin(actor.role, "products", "read") ? getCatalogueSeoAudit() : Promise.resolve(null),
+    canReadPayments
+      ? db
+          .select({ status: payments.status, total: count() })
+          .from(payments)
+          .where(and(inArray(payments.status, ["failed", "pending"]), gte(payments.createdAt, sql`now() - interval '7 days'`)))
+          .groupBy(payments.status)
+      : Promise.resolve([]),
+    canReadInventory
+      ? db
+          .select({ inventoryId: inventory.id, productId: products.id, productName: products.name, sku: productVariants.sku, onHand: inventory.onHand, reserved: inventory.reserved, lowStockThreshold: inventory.lowStockThreshold })
+          .from(inventory)
+          .innerJoin(productVariants, eq(productVariants.id, inventory.variantId))
+          .innerJoin(products, eq(products.id, productVariants.productId))
+          .where(and(isNull(products.deletedAt), eq(products.status, "active"), lte(sql`${inventory.onHand} - ${inventory.reserved}`, inventory.lowStockThreshold)))
+          .orderBy(asc(sql`${inventory.onHand} - ${inventory.reserved}`), asc(products.name))
+          .limit(6)
+      : Promise.resolve([]),
   ]);
   const pendingPay = pendingPayRows[0];
   const nationwide = nationwideRows[0];
   const pendingReviews = pendingReviewRows[0];
   const quoteCounts = new Map(openQuotes.map((row) => [row.status, row.total]));
+  const paymentIssues = new Map(paymentIssueRows.map((row) => [row.status, row.total]));
 
   return (
     <main className="paper-admin-dashboard mx-auto min-w-0 max-w-7xl">
@@ -111,7 +132,7 @@ export default async function AdminDashboardPage() {
         {canReadQuotes ? quoteStatuses.map((status) => (
           <Link
             key={status}
-            href="/admin/quotes"
+            href={`/admin/quotes?status=${status}`}
             className={`admin-dashboard-metric group min-h-28 rounded-xl border border-border border-t-4 ${quoteMetricTone[status] ?? "border-t-border"} bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink`}
           >
             <p className="text-xs tracking-[0.14em] text-slate uppercase"><AdminStatusBadge status={status} /></p>
@@ -121,7 +142,7 @@ export default async function AdminDashboardPage() {
           </Link>
         )) : null}
         {canReadOrders ? <Link
-          href="/admin/orders"
+          href="/admin/orders?status=pending_payment"
           className="admin-dashboard-metric group min-h-28 rounded-xl border border-border border-t-4 border-t-ochre bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
@@ -132,7 +153,7 @@ export default async function AdminDashboardPage() {
           </p>
         </Link> : null}
         {canReadOrders ? <Link
-          href="/admin/orders"
+          href="/admin/orders?status=awaiting_terms"
           className="admin-dashboard-metric group min-h-28 rounded-xl border border-border border-t-4 border-t-paper-green bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"
         >
           <p className="text-xs tracking-[0.14em] text-slate uppercase">
@@ -143,9 +164,12 @@ export default async function AdminDashboardPage() {
           </p>
         </Link> : null}
         {canReadReviews ? <Link href="/admin/reviews" className="admin-dashboard-metric group min-h-28 rounded-xl border border-border bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"><p className="text-xs tracking-[0.14em] text-slate uppercase">Pending reviews</p><p className="mt-2 font-heading text-3xl tabular-nums text-ink">{pendingReviews?.total ?? 0}</p><p className="mt-1 text-xs text-slate">Moderation queue</p></Link> : null}
-        {!canReadQuotes && !canReadOrders && !canReadReviews ? <div className="rounded-xl border border-dashed border-border bg-card p-4 sm:col-span-2 lg:col-span-5"><p className="text-sm font-semibold text-ink">Your workspace is ready</p><p className="mt-1 text-sm text-slate">Use the shortcuts above to manage the areas assigned to your role.</p></div> : null}
+        {canReadPayments ? <Link href="/admin/payments?status=failed" className="admin-dashboard-metric group min-h-28 rounded-xl border border-border border-t-4 border-t-error bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"><p className="text-xs tracking-[0.14em] text-slate uppercase">Failed payments</p><p className="mt-2 font-heading text-3xl tabular-nums text-ink">{paymentIssues.get("failed") ?? 0}</p><p className="mt-1 text-xs text-slate">Last 7 days</p></Link> : null}
+        {canReadPayments ? <Link href="/admin/payments?status=pending" className="admin-dashboard-metric group min-h-28 rounded-xl border border-border border-t-4 border-t-ochre bg-surface p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:border-ink hover:shadow-md focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-ink"><p className="text-xs tracking-[0.14em] text-slate uppercase">Pending MoMo / card</p><p className="mt-2 font-heading text-3xl tabular-nums text-ink">{paymentIssues.get("pending") ?? 0}</p><p className="mt-1 text-xs text-slate">Last 7 days</p></Link> : null}
+        {!canReadQuotes && !canReadOrders && !canReadReviews && !canReadPayments ? <div className="rounded-xl border border-dashed border-border bg-card p-4 sm:col-span-2 lg:col-span-5"><p className="text-sm font-semibold text-ink">Your workspace is ready</p><p className="mt-1 text-sm text-slate">Use the shortcuts above to manage the areas assigned to your role.</p></div> : null}
       </div>
       {canReadOrders ? <section className="paper-admin-orders-panel mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="recent-orders-heading"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Live queue</p><h2 id="recent-orders-heading" className="mt-1 font-heading text-xl text-ink">Recently updated orders</h2></div><Link href="/admin/orders" className="min-h-11 inline-flex items-center text-sm font-medium text-ink underline underline-offset-4">View all</Link></div>{recentOrders.length ? <div className="mt-5 overflow-x-auto"><table className="admin-responsive-table w-full min-w-[38rem] text-sm"><thead><tr className="border-b border-border text-left text-xs uppercase tracking-[0.12em] text-slate"><th className="px-2 py-3 font-medium">Order</th><th className="px-2 py-3 font-medium">Customer</th><th className="px-2 py-3 font-medium">Status</th><th className="px-2 py-3 font-medium">Updated</th></tr></thead><tbody>{recentOrders.map((order) => <tr key={order.id} className="border-b border-border last:border-0"><td className="px-2 py-3 font-medium text-ink" data-label="Order"><Link href={`/admin/orders/${order.id}`} className="underline underline-offset-4">{order.number ?? "Draft order"}</Link></td><td className="px-2 py-3 text-slate" data-label="Customer">{order.customerEmail ?? "Guest checkout"}</td><td className="px-2 py-3" data-label="Status"><AdminStatusBadge status={order.status} /></td><td className="px-2 py-3 text-slate" data-label="Updated">{new Date(order.updatedAt).toLocaleDateString("en-GH")}</td></tr>)}</tbody></table></div> : <p className="mt-5 text-sm text-slate">No orders have been updated yet.</p>}</section> : null}
+      {canReadInventory ? <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="low-stock-heading"><div className="flex flex-wrap items-center justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Catalogue</p><h2 id="low-stock-heading" className="mt-1 font-heading text-xl text-ink">Low stock</h2></div><Link href="/admin/inventory?sort=sellable" className="min-h-11 inline-flex items-center text-sm font-medium text-ink underline underline-offset-4">Open inventory</Link></div>{lowStockRows.length ? <ul className="mt-5 divide-y divide-border">{lowStockRows.map((row) => { const sellable = sellableQuantity(row.onHand, row.reserved); return <li key={row.inventoryId} className="flex flex-wrap items-center justify-between gap-2 py-3 text-sm"><span className="min-w-0"><Link href={`/admin/products/${row.productId}`} className="font-medium text-ink underline underline-offset-4">{row.productName}</Link><span className="ml-2 font-mono text-xs text-slate">{row.sku}</span></span><span className="flex items-center gap-3"><span className="tabular-nums text-slate">{sellable} sellable · alert at {row.lowStockThreshold}</span><AdminStatusBadge status={sellable <= 0 ? "out" : "low"} /></span></li>; })}</ul> : <p className="mt-5 text-sm text-slate">Every active product is above its low-stock threshold.</p>}</section> : null}
       {seoAudit ? <section className="mt-8 rounded-xl border border-border bg-surface p-5 sm:p-6" aria-labelledby="seo-health-heading"><div className="flex flex-wrap items-start justify-between gap-3"><div><p className="text-xs tracking-[0.14em] text-slate uppercase">Catalogue quality</p><h2 id="seo-health-heading" className="mt-1 font-heading text-xl text-ink">SEO health</h2><p className="mt-2 max-w-2xl text-sm text-slate">Active products with complete descriptions, images and aliases are easier to discover and easier for customers to understand.</p></div><Link href="/admin/products?status=active" className="min-h-11 inline-flex items-center text-sm font-medium text-ink underline underline-offset-4">Review products</Link></div><div className="mt-5 grid gap-3 sm:grid-cols-4"><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Active products</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.activeProducts}</p></div><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Missing descriptions</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.missingDescriptions}</p></div><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Missing images</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.missingImages}</p></div><div className="rounded-lg border border-border bg-card p-4"><p className="text-xs uppercase tracking-[0.12em] text-slate">Missing aliases</p><p className="mt-2 font-heading text-2xl text-ink">{seoAudit.missingAliases}</p></div></div></section> : null}
     </main>
   );
