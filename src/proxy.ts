@@ -7,6 +7,13 @@ import {
   isGuestSessionId,
 } from "@/lib/session/constants";
 
+function isBareFlagHomepageRequest(request: NextRequest) {
+  if (request.nextUrl.pathname !== "/" || !["GET", "HEAD"].includes(request.method)) return false;
+  // Next.js may normalise `?MA` to `?MA=`, so test parsed values, not raw text.
+  const params = [...request.nextUrl.searchParams];
+  return params.length > 0 && params.every(([, value]) => value === "");
+}
+
 export async function proxy(request: NextRequest) {
   // `/cgi-bin/` is a legacy hosting path. It is not part of the Next.js
   // application, so return an explicit permanent removal signal instead of
@@ -16,6 +23,16 @@ export async function proxy(request: NextRequest) {
       status: 410,
       headers: { "Cache-Control": "public, max-age=86400" },
     });
+  }
+
+  // Stray links such as `/?MA` serve the homepage under a valueless flag. The
+  // canonical tag already points at `/`, but Search Console keeps reporting
+  // these as alternates, so collapse them onto the canonical URL. Real query
+  // strings (`?utm_source=…`) carry values and pass through untouched.
+  if (isBareFlagHomepageRequest(request)) {
+    const url = request.nextUrl.clone();
+    url.search = "";
+    return NextResponse.redirect(url, 301);
   }
 
   // Reject explicit cross-site state-changing requests before auth refresh or
