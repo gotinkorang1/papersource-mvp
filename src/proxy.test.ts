@@ -26,6 +26,28 @@ it("returns gone for legacy cgi-bin paths without creating a session", async () 
   expect(response.cookies.getAll()).toEqual([]);
 });
 
+it("redirects valueless homepage flags to the canonical homepage", async () => {
+  state.configured = true;
+  state.refresh = async () => { throw new Error("Redirects must not reach auth refresh"); };
+  for (const path of ["/?MA", "/?ND&SA"]) {
+    const response = await proxy(new NextRequest(`http://localhost:3000${path}`));
+    expect(response.status).toBe(301);
+    expect(response.headers.get("location")).toBe("http://localhost:3000/");
+    expect(response.cookies.getAll()).toEqual([]);
+  }
+});
+
+it("keeps homepage query strings that carry values", async () => {
+  const response = await proxy(new NextRequest("http://localhost:3000/?utm_source=whatsapp"));
+  expect(response.status).toBe(200);
+  expect(response.headers.get("location")).toBeNull();
+});
+
+it("leaves valueless flags on other pages alone", async () => {
+  const response = await proxy(new NextRequest("http://localhost:3000/shop?MA"));
+  expect(response.headers.get("location")).toBeNull();
+});
+
 it("makes a new guest ID available to the current request and browser", async () => {
   const request = new NextRequest("http://localhost:3000/shop");
   const response = await proxy(request);
