@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Layers, MessageCircle, Store, Truck } from "lucide-react";
 import { BulkPriceTable } from "@/components/commerce/bulk-price-table";
 import { DeliveryBadge } from "@/components/commerce/delivery-badge";
 import { PriceDisplay } from "@/components/commerce/price-display";
@@ -21,7 +22,6 @@ import { listSavedLists } from "@/features/saved-lists/repository";
 import { readCustomerActor } from "@/lib/customer/require";
 import { ProductViewTracker } from "@/components/products/product-view-tracker";
 import { Breadcrumbs } from "@/components/navigation/breadcrumbs";
-import { Layers3, MessageCircle, Store, Truck } from "lucide-react";
 import { RecentlyViewed } from "@/components/products/recently-viewed";
 import { getStoreSettings } from "@/features/settings/admin";
 import { productEnquiryMessage, whatsappChatLink } from "@/lib/whatsapp";
@@ -145,12 +145,22 @@ export default async function ProductPage({ params }: PageProps) {
               <span className="sr-only">(opens WhatsApp)</span>
             </a>
           </div>
-          <div className="mt-8 grid gap-2 rounded-xl border border-border bg-muted/30 p-3 text-xs text-slate sm:grid-cols-2 sm:p-4 lg:grid-cols-4">
-            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Truck className="size-4" /></span><div><p className="font-semibold text-ink">Accra &amp; Tema delivery</p><p className="mt-1">Clear delivery pricing at checkout.</p></div></div>
-            {product.deliveryBadge.pickupAvailable ? <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Store className="size-4" /></span><div><p className="font-semibold text-ink">Shop pickup available</p><p className="mt-1">Collect your order from our shop with no delivery fee.</p></div></div> : null}
-            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><Layers3 className="size-4" /></span><div><p className="font-semibold text-ink">Bulk-ready pricing</p><p className="mt-1">Request a quote for larger quantities.</p></div></div>
-            <div className="flex gap-2.5"><span className="grid size-8 shrink-0 place-items-center rounded-lg bg-paper-green/10 text-paper-green" aria-hidden="true"><MessageCircle className="size-4" /></span><div><p className="font-semibold text-ink">Help when you need it</p><p className="mt-1">WhatsApp support from our team.</p></div></div>
-          </div>
+          <ul aria-label="Why buy from PaperSource" className="mt-8 grid gap-x-5 gap-y-4 rounded-xl border border-border bg-muted/30 p-4 sm:grid-cols-2 sm:p-5">
+            {[
+              { icon: Truck, title: "Accra & Tema delivery", body: "Clear delivery pricing at checkout." },
+              ...(product.deliveryBadge.pickupAvailable ? [{ icon: Store, title: "Shop pickup available", body: "Collect from our shop with no delivery fee." }] : []),
+              { icon: Layers, title: "Bulk-ready pricing", body: "Request a quote for larger quantities." },
+              { icon: MessageCircle, title: "Help when you need it", body: "WhatsApp support from our team." },
+            ].map(({ icon: Icon, title, body }) => (
+              <li key={title} className="flex items-start gap-3">
+                <span aria-hidden="true" className="grid size-9 shrink-0 place-items-center rounded-lg border border-border bg-surface text-paper-green"><Icon className="size-4" strokeWidth={1.75} /></span>
+                <span className="min-w-0 text-sm leading-5">
+                  <span className="block font-semibold text-ink">{title}</span>
+                  <span className="mt-0.5 block text-slate">{body}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
           <p className="mt-6 max-w-prose text-sm text-slate">
             {productDescription}
           </p>
