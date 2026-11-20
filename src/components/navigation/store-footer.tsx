@@ -79,6 +79,12 @@ export async function StoreFooter() {
       <div className="border-t border-border/70 bg-cream/50">
         <div className="mx-auto flex max-w-7xl flex-col gap-1 px-4 py-4 text-xs text-slate sm:flex-row sm:items-center sm:justify-between sm:px-6 lg:px-8">
           <p>PaperSource · A subsidiary of NiiPlants Group Ghana Limited</p>
+          <p className="order-last sm:order-none">
+            Developed by{" "}
+            <a href="https://gershon.one" target="_blank" rel="noopener" className="font-medium text-ink underline-offset-4 hover:text-paper-green hover:underline">Gershon Otinkorang</a>
+            {" "}of{" "}
+            <a href="https://cliqitfirm.com" target="_blank" rel="noopener" className="font-medium text-ink underline-offset-4 hover:text-paper-green hover:underline">Cliq It Firm Ltd</a>
+          </p>
           <nav className="flex gap-2" aria-label="Legal"><Link href="/privacy" className="inline-flex min-h-11 items-center px-2 hover:text-ink hover:underline underline-offset-4">Privacy</Link><Link href="/terms" className="inline-flex min-h-11 items-center px-2 hover:text-ink hover:underline underline-offset-4">Terms</Link></nav>
         </div>
       </div>
